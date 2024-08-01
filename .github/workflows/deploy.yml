@@ -42,7 +42,7 @@ jobs:
           FTP_HOST: ${{ secrets.FTP_HOST }}
         run: |
           echo "Starting FTP deployment..."
-          lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST <<EOF
+          lftp -d -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST <<EOF
           set ssl:verify-certificate no
           cd /public_html
           mirror -R --exclude .htaccess --exclude .well-known dist /public_html
@@ -51,9 +51,13 @@ jobs:
           echo "FTP deployment completed."
 
       - name: Verify deployment
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_HOST: ${{ secrets.FTP_HOST }}
         run: |
           echo "Verifying deployment..."
-          lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST <<EOF
+          lftp -d -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST <<EOF
           set ssl:verify-certificate no
           cd /public_html
           ls -al
