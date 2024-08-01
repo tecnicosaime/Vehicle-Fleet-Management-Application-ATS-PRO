@@ -38,6 +38,7 @@ import CezaTanim from "./_root/pages/sistem-tanimlari/ceza-tanim/CezaTanim";
 import ServisTanim from "./_root/pages/sistem-tanimlari/servis-tanim/ServisTanim";
 import FirmaTanim from "./_root/pages/sistem-tanimlari/firma-tanim/FirmaTanim";
 import PersonelTanim from "./_root/pages/sistem-tanimlari/personel-tanim/PersonelTanim";
+import LokasyonTanimlari from "./_root/pages/sistem-tanimlari/LokasyonTanimlari/LokasyonTanimlari.jsx";
 
 import Raporlar from "./_root/pages/raporlar/Raporlar";
 import KodYonetimi from "./_root/pages/kod-yonetimi/KodYonetimi";
@@ -83,7 +84,7 @@ const App = () => {
         <Route path="/cikis-fisleri" element={<CikisFisleri />} />
         <Route path="/transferler" element={<Transferler />} />
 
-
+        <Route path="/lokasyon-tanimlari" element={<LokasyonTanimlari />} />
 
         <Route path="/ayarlar" element={<Settings />} />
         <Route path="/hareketler" element={<Hareketler />} />

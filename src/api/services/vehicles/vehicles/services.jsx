@@ -1,6 +1,6 @@
 import http from "../../../http";
 
-export const GetVehiclesListService = async (search, page, data) => {
+export const GetVehiclesListService = async (search, page, pageSize, data) => {
   return await http.post(
     `/Vehicle/GetVehicles?parameter=${search}&page=${page}`,
     data

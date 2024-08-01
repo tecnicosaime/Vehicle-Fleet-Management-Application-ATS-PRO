@@ -126,6 +126,7 @@ const Vehicles = () => {
       const res = await GetVehiclesListService(
         search,
         tableParams.pagination.current,
+        tableParams.pagination.pageSize,
         filterData
       );
       setLoading(false);
@@ -143,7 +144,7 @@ const Vehicles = () => {
     };
 
     fetchData();
-  }, [search, tableParams.pagination.current, status, filterData]);
+  }, [search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setLoading(true);
