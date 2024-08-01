@@ -127,7 +127,7 @@ export default function MainTable() {
         lokasyonTanim: item.lokasyonTanim,
         lokasyonTip: item.lokasyonTipId,
         lokasyonPersonel: item.lokasyonDegistirenId,
-        children: []
+        children: [],
       };
     });
 
@@ -163,7 +163,7 @@ export default function MainTable() {
     {
       title: "Lokasyon Tanımı",
       key: "lokasyonBilgisi",
-      width: 300,
+      width: "100%",
       ellipsis: true,
       render: (text, record) => <div>{record.lokasyonTanim}</div>,
     },
@@ -221,13 +221,17 @@ export default function MainTable() {
     <div>
       <div
         style={{
+          backgroundColor: "white",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "space-between",
           marginBottom: "20px",
           gap: "10px",
-          padding: "0 5px",
-        }}>
+          padding: "10px",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
         <Input
           style={{ width: "250px" }}
           type="text"
@@ -238,24 +242,29 @@ export default function MainTable() {
         />
         <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
       </div>
-      <Spin spinning={loading}>
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={debouncedSearchTerm ? filteredData : fields}
-          pagination={false}
-          onRow={onRowClick}
-          scroll={{ y: "calc(100vh - 300px)" }}
-          expandedRowKeys={expandedRowKeys}
-          onExpand={onTableRowExpand} // Elle genişletme/küçültme işlemlerini takip et
-        />
-      </Spin>
-      <EditDrawer
-        selectedRow={drawer.data}
-        onDrawerClose={() => setDrawer({ ...drawer, visible: false })}
-        drawerVisible={drawer.visible}
-        onRefresh={refreshTableData}
-      />
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "10px",
+          height: "calc(100vh - 220px)",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <Spin spinning={loading}>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={debouncedSearchTerm ? filteredData : fields}
+            pagination={false}
+            onRow={onRowClick}
+            scroll={{ y: "calc(100vh - 300px)" }}
+            expandedRowKeys={expandedRowKeys}
+            onExpand={onTableRowExpand} // Elle genişletme/küçültme işlemlerini takip et
+          />
+        </Spin>
+        <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
+      </div>
     </div>
   );
 }
