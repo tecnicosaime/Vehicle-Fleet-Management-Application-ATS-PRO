@@ -185,6 +185,12 @@ const items = [
         label: t("sistemTanimlari"),
         children: [
             {
+                key: '401',
+                label: (
+                  <Link to={'/lokasyon-tanimlari'}>{t("lokasyon")}</Link>
+                ),
+            },
+            {
                 key: '40',
                 label: (
                     <Link to={'/firma-tanimlari'}>{t("firma")}</Link>
