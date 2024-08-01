@@ -3,8 +3,12 @@ import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { Input, Table, Spin } from "antd";
 import AxiosInstance from "../../../../../api/http.jsx";
 import CreateDrawer from "../Insert/CreateDrawer";
-import { SearchOutlined } from "@ant-design/icons";
+import { HomeOutlined, SearchOutlined } from "@ant-design/icons";
 import EditDrawer from "../Update/EditDrawer";
+import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+import { t } from "i18next";
+
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("lokasyonTanimlari") }];
 
 export default function MainTable() {
   const { watch, control, setValue } = useFormContext();
@@ -219,15 +223,18 @@ export default function MainTable() {
 
   return (
     <div>
+      <div style={{ backgroundColor: "white", marginBottom: "15px", padding: "15px", borderRadius: "8px 8px 8px 8px", filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))" }}>
+        <BreadcrumbComp items={breadcrumb} />
+      </div>
       <div
         style={{
           backgroundColor: "white",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "space-between",
-          marginBottom: "20px",
+          marginBottom: "15px",
           gap: "10px",
-          padding: "10px",
+          padding: "15px",
           borderRadius: "8px 8px 8px 8px",
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
@@ -246,7 +253,7 @@ export default function MainTable() {
         style={{
           backgroundColor: "white",
           padding: "10px",
-          height: "calc(100vh - 220px)",
+          height: "calc(100vh - 290px)",
           borderRadius: "8px 8px 8px 8px",
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
