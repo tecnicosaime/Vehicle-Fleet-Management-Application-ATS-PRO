@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { t } from "i18next";
 import axios from "axios";
-import { Table, Popover, Button, Input, Spin } from "antd";
+import { Table, Popover, Button, Input, Spin, Typography } from "antd";
 import { MenuOutlined, HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetVehiclesListService } from "../../../../api/services/vehicles/vehicles/services";
@@ -14,11 +14,11 @@ import Content from "../../../components/drag-drop-table/DraggableCheckbox";
 import AddModal from "./add/AddModal";
 import Filter from "./filter/Filter";
 import OperationsInfo from "./operations/OperationsInfo";
+import DurumFiltresi from "./components/DurumFiltresi.jsx";
 
-const breadcrumb = [
-  { href: "/", title: <HomeOutlined /> },
-  { title: t("araclar") },
-];
+const { Text } = Typography;
+
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("araclar") }];
 
 const Vehicles = () => {
   const { setPlaka } = useContext(PlakaContext);
@@ -40,7 +40,7 @@ const Vehicles = () => {
   const [filterData, setFilterData] = useState({});
   const [country, setCountry] = useState({
     name: "",
-    code: ""
+    code: "",
   });
 
   useEffect(() => {
@@ -49,9 +49,8 @@ const Vehicles = () => {
 
   async function getLocation() {
     const res = await axios.get("http://ip-api.com/json");
-    if (res.status === 200)
-      setCountry({ name: res.data.country, code: res.data.countryCode });
-  } 
+    if (res.status === 200) setCountry({ name: res.data.country, code: res.data.countryCode });
+  }
 
   const getBaseColumns = (country) => [
     {
@@ -59,9 +58,11 @@ const Vehicles = () => {
       dataIndex: "plaka",
       key: 1,
       render: (text, record) => (
-        <Link to={`/detay/${record.aracId}`} className="plaka-button"><span>{country.code}</span> <span>{text}</span></Link>
+        <Link to={`/detay/${record.aracId}`} className="plaka-button">
+          <span>{country.code}</span> <span>{text}</span>
+        </Link>
       ),
-      width: 160
+      width: 160,
     },
     {
       title: t("aracTip"),
@@ -123,12 +124,7 @@ const Vehicles = () => {
       DemoService().then((res) => res.data);
 
       setLoading(true);
-      const res = await GetVehiclesListService(
-        search,
-        tableParams.pagination.current,
-        tableParams.pagination.pageSize,
-        filterData
-      );
+      const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);
       setLoading(false);
       setIsInitialLoading(false);
 
@@ -189,18 +185,10 @@ const Vehicles = () => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   // get selected rows data
-  if (!localStorage.getItem("selectedRowKeys"))
-    localStorage.setItem("selectedRowKeys", JSON.stringify([]));
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
     if (selected) {
@@ -210,16 +198,11 @@ const Vehicles = () => {
       }
     } else {
       setKeys((prevKeys) => prevKeys.filter((key) => key !== row.aracId));
-      setRows((prevRows) =>
-        prevRows.filter((item) => item.aracId !== row.aracId)
-      );
+      setRows((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
     }
   };
 
-  useEffect(
-    () => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)),
-    [keys]
-  );
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
     const newPlakaEntries = rows.map((vehicle) => ({
@@ -232,31 +215,29 @@ const Vehicles = () => {
   }, [rows]);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setKeys(storedSelectedKeys);
     }
   }, []);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setSelectedRowKeys(storedSelectedKeys);
     }
   }, [tableParams.pagination.current, search]);
 
   useEffect(() => {
-    setColumns(getBaseColumns(country).map((column, i) => ({
-      ...column,
-      key: `${i}`,
-      onHeaderCell: () => ({
-        id: `${i}`,
-      }),
-    })));
+    setColumns(
+      getBaseColumns(country).map((column, i) => ({
+        ...column,
+        key: `${i}`,
+        onHeaderCell: () => ({
+          id: `${i}`,
+        }),
+      }))
+    );
   }, [country]);
 
   // Custom loading icon
@@ -271,23 +252,15 @@ const Vehicles = () => {
       <div className="content">
         <div className="flex justify-between align-center">
           <div className="flex align-center gap-1">
-            <Popover
-              content={content}
-              placement="bottom"
-              trigger="click"
-              open={openRowHeader}
-              onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-            >
+            <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
               <Button className="btn primary-btn">
                 <MenuOutlined />
               </Button>
             </Popover>
-            <Input
-              placeholder="Arama"
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <Input placeholder="Arama" onChange={(e) => setSearch(e.target.value)} />
             <AddModal setStatus={setStatus} />
             <Filter filter={filter} clearFilters={clear} />
+            <DurumFiltresi />
           </div>
           <div>
             <OperationsInfo ids={keys} />
@@ -305,7 +278,9 @@ const Vehicles = () => {
               pagination={{
                 ...tableParams.pagination,
                 showTotal: (total) => (
-                  <p className="text-info">[{total} {t("kayit")}]</p>
+                  <p className="text-info">
+                    [{total} {t("kayit")}]
+                  </p>
                 ),
                 locale: {
                   items_per_page: `/ ${t("sayfa")}`,
@@ -325,7 +300,7 @@ const Vehicles = () => {
                 },
               }}
               scroll={{
-                x: 1200
+                x: 1200,
               }}
               locale={{
                 emptyText: "Veri Bulunamadı",
