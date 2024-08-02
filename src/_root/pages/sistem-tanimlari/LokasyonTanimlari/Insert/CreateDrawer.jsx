@@ -78,17 +78,18 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   //* export
   const onSubmit = (data) => {
     const Body = {
-      LOK_TANIM: data.lokasyonTanimi,
-      LOK_ANA_LOKASYON_ID: data.anaLokasyonID,
-      LOK_TIP_ID: data.LokasyonTipiID,
-      LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
-      LOK_PERSONEL_ID: data.lokasyonYoneticiID,
-      LOK_EMAIL: data.lokasyonEmail,
-      LOK_ACIKLAMA: data.lokasyonAciklama,
-      LOK_BINA_KOD_ID: data.LokasyonBinaID,
-      LOK_KAT_KOD_ID: data.LokasyonKatID,
-      LOK_AKTIF: data.lokasyonAktif,
-      LOK_MALZEME_DEPO_ID: data.lokasyonDepoID,
+      lokasyonTanim: data.lokasyonTanimi,
+      anaLokasyonId: data.anaLokasyonID,
+      lokasyonTipId: data.LokasyonTipiID || 0,
+      lokasyonAciklama: data.lokasyonAciklama,
+      lokasyonAktif: data.lokasyonAktif,
+
+      // LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
+      // LOK_PERSONEL_ID: data.lokasyonYoneticiID,
+      // LOK_EMAIL: data.lokasyonEmail,
+      // LOK_BINA_KOD_ID: data.LokasyonBinaID,
+      // LOK_KAT_KOD_ID: data.LokasyonKatID,
+      // LOK_MALZEME_DEPO_ID: data.lokasyonDepoID,
       // add more fields as needed
     };
 
@@ -96,17 +97,17 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
     // handle response
     // });
 
-    AxiosInstance.post("addLokasyon", Body)
+    AxiosInstance.post("Location/AddLocation", Body)
       .then((response) => {
         // Handle successful response here, e.g.:
         console.log("Data sent successfully:", response);
 
-        if (response.status_code === 200 || response.status_code === 201) {
+        if (response.data.statusCode === 200 || response.data.statusCode === 201) {
           message.success("Ekleme Başarılı.");
           setOpen(false);
           onRefresh();
           reset();
-        } else if (response.status_code === 401) {
+        } else if (response.data.statusCode === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
         } else {
           message.error("Ekleme Başarısız.");

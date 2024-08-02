@@ -1,16 +1,5 @@
 import React from "react";
-import {
-  Drawer,
-  Typography,
-  Button,
-  Input,
-  Select,
-  DatePicker,
-  TimePicker,
-  Row,
-  Col,
-  Checkbox,
-} from "antd";
+import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import LokasyonTipi from "./components/LokasyonTipi";
 import LokasyonBina from "./components/LokasyonBina";
@@ -126,11 +115,7 @@ export default function MainTabs() {
             width: "100%",
           }}
         >
-          <Controller
-            name="lokasyonTanimi"
-            control={control}
-            render={({ field }) => <Input {...field} style={{ flex: 1 }} />}
-          />
+          <Controller name="lokasyonTanimi" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
           <Controller
             name="selectedLokasyonId"
             control={control}
@@ -147,10 +132,7 @@ export default function MainTabs() {
             control={control}
             defaultValue={true} // or true if you want it checked by default
             render={({ field }) => (
-              <Checkbox
-                checked={field.value}
-                onChange={(e) => field.onChange(e.target.checked)}
-              >
+              <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
                 Aktif
               </Checkbox>
             )}
@@ -422,7 +404,7 @@ export default function MainTabs() {
           />
           <LokasyonTablo
             onSubmit={(selectedData) => {
-              setValue("anaLokasyonTanim", selectedData.LOK_TANIM);
+              setValue("anaLokasyonTanim", selectedData.lokasyonTanim);
               setValue("anaLokasyonID", selectedData.key);
             }}
           />

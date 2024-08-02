@@ -102,18 +102,19 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
   //* export
   const onSubmit = (data) => {
     const Body = {
-      TB_LOKASYON_ID: data.selectedLokasyonId,
-      LOK_TANIM: data.lokasyonTanimi,
-      LOK_ANA_LOKASYON_ID: data.anaLokasyonID,
-      LOK_TIP_ID: data.LokasyonTipiID,
-      LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
-      LOK_PERSONEL_ID: data.lokasyonYoneticiID,
-      LOK_EMAIL: data.lokasyonEmail,
-      LOK_ACIKLAMA: data.lokasyonAciklama,
-      LOK_BINA_KOD_ID: data.LokasyonBinaID,
-      LOK_KAT_KOD_ID: data.LokasyonKatID,
-      LOK_AKTIF: data.lokasyonAktif,
-      LOK_MALZEME_DEPO_ID: data.lokasyonDepoID,
+      lokasyonId: data.selectedLokasyonId,
+      lokasyonTanim: data.lokasyonTanimi,
+      anaLokasyonId: data.anaLokasyonID,
+      lokasyonTipId: data.LokasyonTipiID || 0,
+      lokasyonAciklama: data.lokasyonAciklama,
+      lokasyonAktif: data.lokasyonAktif,
+
+      // LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
+      // LOK_PERSONEL_ID: data.lokasyonYoneticiID,
+      // LOK_EMAIL: data.lokasyonEmail,
+      // LOK_BINA_KOD_ID: data.LokasyonBinaID,
+      // LOK_KAT_KOD_ID: data.LokasyonKatID,
+      // LOK_MALZEME_DEPO_ID: data.lokasyonDepoID,
       // add more fields as needed
     };
 
@@ -121,16 +122,16 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
     // handle response
     // });
 
-    AxiosInstance.post("UpdateLokasyon", Body)
+    AxiosInstance.post("Location/UpdateLocation", Body)
       .then((response) => {
         // Handle successful response here, e.g.:
         console.log("Data sent successfully:", response);
-        if (response.status_code === 200 || response.status_code === 201) {
+        if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
           message.success("Ekleme Başarılı.");
           onDrawerClose(); // Close the modal
           onRefresh();
           reset();
-        } else if (response.status_code === 401) {
+        } else if (response.data.statusCode === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
         } else {
           message.error("Ekleme Başarısız.");
@@ -152,8 +153,11 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       //   console.log(key, selectedRow[key]);
       //   setValue(key, selectedRow[key]);
       setValue("selectedLokasyonId", selectedRow.key);
-      setValue("lokasyonTanimi", selectedRow.LOK_TANIM);
-      setValue("lokasyonAktif", selectedRow.LOK_AKTIF);
+      setValue("lokasyonTanimi", selectedRow.lokasyonTanim);
+      setValue("lokasyonAktif", selectedRow.lokasyonAktif);
+      setValue("lokasyonAciklama", selectedRow.lokasyonAciklama);
+      setValue("anaLokasyonID", selectedRow.anaLokasyonId);
+      setValue("anaLokasyonTanim", selectedRow.anaLokasyonTanim);
       setValue("LokasyonTipi", selectedRow.LOK_TIP);
       setValue("LokasyonTipiID", selectedRow.LOK_TIP_ID);
       setValue("LokasyonBina", selectedRow.LOK_BINA);
@@ -166,10 +170,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       setValue("lokasyonYoneticiID", selectedRow.LOK_PERSONEL_ID);
       setValue("lokasyonDepoTanim", selectedRow.LOK_DEPO);
       setValue("lokasyonDepoID", selectedRow.LOK_MALZEME_DEPO_ID);
-      setValue("anaLokasyonTanim", selectedRow.ANA_LOK_TANIM);
-      setValue("anaLokasyonID", selectedRow.LOK_ANA_LOKASYON_ID);
       setValue("lokasyonEmail", selectedRow.LOK_EMAIL);
-      setValue("lokasyonAciklama", selectedRow.LOK_ACIKLAMA);
 
       // add more fields as needed
 
@@ -204,11 +205,13 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
                     backgroundColor: "#2bc770",
                     borderColor: "#2bc770",
                     color: "#ffffff",
-                  }}>
+                  }}
+                >
                   Güncelle
                 </Button>
               </Space>
-            }>
+            }
+          >
             {/* <MainTabs /> */}
             <SecondTabs refreshKey={drawerKey} />
             {/*<Footer />*/}

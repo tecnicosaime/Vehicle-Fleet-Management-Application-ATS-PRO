@@ -10,9 +10,6 @@ const { Text } = Typography;
 const CustomSpin = styled(Spin)`
   .ant-spin-dot-item {
     background-color: #0091ff !important; /* Blue color */
-    gap: 10px;
-    display: flex;
-    flex-direction: column;
   }
 `;
 

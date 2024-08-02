@@ -6,9 +6,17 @@ import CreateDrawer from "../Insert/CreateDrawer";
 import { HomeOutlined, SearchOutlined } from "@ant-design/icons";
 import EditDrawer from "../Update/EditDrawer";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+import ContextMenu from "../components/ContextMenu/ContextMenu.jsx";
 import { t } from "i18next";
+import styled from "styled-components";
 
 const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("lokasyonTanimlari") }];
+
+const CustomSpin = styled(Spin)`
+  .ant-spin-dot-item {
+    background-color: #0091ff !important; /* Blue color */
+  }
+`;
 
 export default function MainTable() {
   const { watch, control, setValue } = useFormContext();
@@ -18,6 +26,7 @@ export default function MainTable() {
   });
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]); // State for selected rows
   const [loading, setLoading] = useState(true);
 
   // edit drawer için
@@ -188,8 +197,9 @@ export default function MainTable() {
     // Other columns...
   ];
 
-  const onSelectChange = (newSelectedRowKeys) => {
+  const onSelectChange = (newSelectedRowKeys, newSelectedRows) => {
     setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRows(newSelectedRows); // Update selected rows state
     // Seçilen satırın ID'sini formun bir alanına yazdır
     if (newSelectedRowKeys.length > 0) {
       setValue("selectedLokasyonId", newSelectedRowKeys[0]);
@@ -231,7 +241,7 @@ export default function MainTable() {
           backgroundColor: "white",
           display: "flex",
           flexWrap: "wrap",
-          // justifyContent: "space-between",
+          justifyContent: "space-between",
           marginBottom: "15px",
           gap: "10px",
           padding: "15px",
@@ -239,15 +249,19 @@ export default function MainTable() {
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
       >
-        <Input
-          style={{ width: "250px" }}
-          type="text"
-          placeholder="Arama yap..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          prefix={<SearchOutlined style={{ color: "#0091ff" }} />} // Arama ikonunu ekle
-        />
-        <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+        <div style={{ display: "flex", alignItems: "center", flexDirection: "row", gap: "10px" }}>
+          <Input
+            style={{ width: "250px" }}
+            type="text"
+            placeholder="Arama yap..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            prefix={<SearchOutlined style={{ color: "#0091ff" }} />} // Arama ikonunu ekle
+          />
+          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+        </div>
+
+        <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
       </div>
       <div
         style={{
@@ -258,7 +272,7 @@ export default function MainTable() {
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
       >
-        <Spin spinning={loading}>
+        <CustomSpin spinning={loading}>
           <Table
             rowSelection={rowSelection}
             columns={columns}
@@ -269,7 +283,7 @@ export default function MainTable() {
             expandedRowKeys={expandedRowKeys}
             onExpand={onTableRowExpand} // Elle genişletme/küçültme işlemlerini takip et
           />
-        </Spin>
+        </CustomSpin>
         <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
       </div>
     </div>
