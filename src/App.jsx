@@ -21,11 +21,10 @@ import YakitTransferler from "./_root/pages/yakit-yonetim/transferler/YakitTrans
 import YakitGirisFisleri from "./_root/pages/yakit-yonetim/giris-fis/YakitGirisFisleri";
 // malzeme depo
 import Malzemeler from "./_root/pages/malzeme-depo/malzeme/Malzemeler";
-import GirisFisleri from './_root/pages/malzeme-depo/giris-fis/GirisFisleri'
-import CikisFisleri from './_root/pages/malzeme-depo/cikis-fis/CikisFisleri'
+import GirisFisleri from "./_root/pages/malzeme-depo/giris-fis/GirisFisleri";
+import CikisFisleri from "./_root/pages/malzeme-depo/cikis-fis/CikisFisleri";
 import Transferler from "./_root/pages/malzeme-depo/transferler/Transferler";
 import Hareketler from "./_root/pages/malzeme-depo/hareketler/Hareketler";
-
 
 import Suruculer from "./_root/pages/sistem-tanimlari/surucu/SurucuTanim";
 import Settings from "./_root/pages/settings/Settings";
@@ -40,7 +39,7 @@ import FirmaTanim from "./_root/pages/sistem-tanimlari/firma-tanim/FirmaTanim";
 import PersonelTanim from "./_root/pages/sistem-tanimlari/personel-tanim/PersonelTanim";
 import LokasyonTanimlari from "./_root/pages/sistem-tanimlari/LokasyonTanimlari/LokasyonTanimlari.jsx";
 
-import Raporlar from "./_root/pages/raporlar/Raporlar";
+import Raporlar from "./_root/pages/raporlar/RaporYonetimi.jsx";
 import KodYonetimi from "./_root/pages/kod-yonetimi/KodYonetimi";
 
 const App = () => {
