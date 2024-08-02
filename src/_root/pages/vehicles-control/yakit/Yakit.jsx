@@ -2,25 +2,16 @@ import { useEffect, useState } from "react";
 import { t } from "i18next";
 import dayjs from "dayjs";
 import { Checkbox, Table, Popover, Button, Input, Popconfirm, Spin } from "antd";
-import {
-  MenuOutlined,
-  HomeOutlined,
-  DeleteOutlined,
-  ArrowUpOutlined,
-  LoadingOutlined
-} from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, DeleteOutlined, ArrowUpOutlined, LoadingOutlined } from "@ant-design/icons";
 import { DeleteFuelCardService, GetFuelListService } from "../../../../api/services/vehicles/operations_services";
-import DragAndDropContext from '../../../components/drag-drop-table/DragAndDropContext';
-import SortableHeaderCell from '../../../components/drag-drop-table/SortableHeaderCell';
+import DragAndDropContext from "../../../components/drag-drop-table/DragAndDropContext";
+import SortableHeaderCell from "../../../components/drag-drop-table/SortableHeaderCell";
 import Content from "../../../components/drag-drop-table/DraggableCheckbox";
-import BreadcrumbComp from '../../../components/breadcrumb/Breadcrumb';
+import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
 import AddModal from "./add/AddModal";
 import UpdateModal from "./update/UpdateModal";
 
-const breadcrumb = [
-  { href: "/", title: <HomeOutlined />, },
-  { title: t("yakitIslemleri"), },
-];
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("yakitIslemleri") }];
 
 const Yakit = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -49,7 +40,6 @@ const Yakit = () => {
       key: 1,
       render: (text, record) => (
         <Button
-          className="plaka-button"
           onClick={() => {
             setUpdateModal(true);
             setId(record.siraNo);
@@ -79,9 +69,7 @@ const Yakit = () => {
       title: t("kullanim"),
       dataIndex: "ozelKullanim",
       key: 5,
-      render: (text, record) => (
-        <Checkbox checked={record.ozelKullanim} readOnly />
-      ),
+      render: (text, record) => <Checkbox checked={record.ozelKullanim} readOnly />,
     },
     {
       title: t("miktar"),
@@ -90,9 +78,7 @@ const Yakit = () => {
       render: (text, record) => (
         <div className="">
           <span>{text} </span>
-          <span style={{ fontSize: "14px", color: "rgb(147 147 147)" }}>
-            {record.birim === "LITRE" && "lt"}
-          </span>
+          <span style={{ fontSize: "14px", color: "rgb(147 147 147)" }}>{record.birim === "LITRE" && "lt"}</span>
         </div>
       ),
     },
@@ -126,9 +112,7 @@ const Yakit = () => {
       title: "Stoktan Kullanım",
       dataIndex: "stokKullanimi",
       key: 11,
-      render: (text, record) => (
-        <Checkbox checked={record.stokKullanimi} readOnly />
-      ),
+      render: (text, record) => <Checkbox checked={record.stokKullanimi} readOnly />,
     },
     {
       title: t("surucu"),
@@ -155,12 +139,7 @@ const Yakit = () => {
       dataIndex: "delete",
       key: 16,
       render: (_, record) => (
-        <Popconfirm
-          title={t("confirmQuiz")}
-          cancelText={t("cancel")}
-          okText={t("ok")}
-          onConfirm={() => handleDelete(record)}
-        >
+        <Popconfirm title={t("confirmQuiz")} cancelText={t("cancel")} okText={t("ok")} onConfirm={() => handleDelete(record)}>
           <DeleteOutlined style={{ color: "#dc3545" }} />
         </Popconfirm>
       ),
@@ -183,12 +162,12 @@ const Yakit = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setIsInitialLoading(true)
+      setIsInitialLoading(true);
       const res = await GetFuelListService(search, tableParams.pagination.current, filterData);
       setLoading(false);
-      setIsInitialLoading(false)
+      setIsInitialLoading(false);
       setDataSource(res?.data.fuel_list);
-      setTableParams(prevTableParams => ({
+      setTableParams((prevTableParams) => ({
         ...prevTableParams,
         pagination: {
           ...prevTableParams.pagination,
@@ -233,7 +212,7 @@ const Yakit = () => {
     setFilterData({});
   };
 
-  const newColumns = columns.map(col => ({
+  const newColumns = columns.map((col) => ({
     ...col,
     hidden: !checkedList.includes(col.key),
   }));
@@ -252,50 +231,41 @@ const Yakit = () => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   // get selected rows data
-  if (!localStorage.getItem('selectedRowKeys')) localStorage.setItem('selectedRowKeys', JSON.stringify([]));
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
     if (selected) {
       if (!keys.includes(row.siraNo)) {
-        setKeys(prevKeys => [...prevKeys, row.siraNo]);
-        setRows(prevRows => [...prevRows, row]);
+        setKeys((prevKeys) => [...prevKeys, row.siraNo]);
+        setRows((prevRows) => [...prevRows, row]);
       }
     } else {
-      setKeys(prevKeys => prevKeys.filter(key => key !== row.siraNo));
-      setRows(prevRows => prevRows.filter(item => item.siraNo !== row.siraNo));
+      setKeys((prevKeys) => prevKeys.filter((key) => key !== row.siraNo));
+      setRows((prevRows) => prevRows.filter((item) => item.siraNo !== row.siraNo));
     }
   };
 
-  useEffect(() => localStorage.setItem('selectedRowKeys', JSON.stringify(keys)), [keys]);
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(localStorage.getItem('selectedRowKeys'));
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setKeys(storedSelectedKeys);
     }
   }, []);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(localStorage.getItem('selectedRowKeys'));
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setSelectedRowKeys(storedSelectedKeys);
     }
   }, [tableParams.pagination.current]);
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
     <>
@@ -306,33 +276,19 @@ const Yakit = () => {
       <div className="content">
         <div className="flex justify-between align-center">
           <div className="flex align-center gap-1">
-            <Popover
-              content={content}
-              placement="bottom"
-              trigger="click"
-              open={openRowHeader}
-              onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-            >
+            <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
               <Button className="btn primary-btn">
                 <MenuOutlined />
               </Button>
             </Popover>
-            <Input
-              placeholder="Arama"
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <Input placeholder="Arama" onChange={(e) => setSearch(e.target.value)} />
             <AddModal setStatus={setStatus} />
             {/* <Filter filter={filter} clearFilters={clear} /> */}
           </div>
         </div>
       </div>
 
-      <UpdateModal
-        updateModal={updateModal}
-        setUpdateModal={setUpdateModal}
-        setStatus={setStatus}
-        id={id}
-      />
+      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} id={id} />
 
       <div className="content">
         <DragAndDropContext items={columns} setItems={setColumns}>
@@ -345,7 +301,7 @@ const Yakit = () => {
                 ...tableParams.pagination,
                 showTotal: (total) => <p className="text-info">[{total} kayıt]</p>,
                 locale: {
-                  items_per_page: `/ ${t('sayfa')}`,
+                  items_per_page: `/ ${t("sayfa")}`,
                 },
               }}
               loading={loading}
