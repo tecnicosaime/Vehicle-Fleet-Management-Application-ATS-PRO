@@ -184,7 +184,7 @@ const YakitTanimlar = () => {
   const handleRowSelection = (selectedRowKeys, selectedRows) => {
     setSelectedRowKeys(selectedRowKeys);
     setRows(selectedRows);
-    // console.log("Selected Rows: ", selectedRows);
+    console.log("Selected Rows: ", selectedRows);
   };
 
   useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(selectedRowKeys)), [selectedRowKeys]);
