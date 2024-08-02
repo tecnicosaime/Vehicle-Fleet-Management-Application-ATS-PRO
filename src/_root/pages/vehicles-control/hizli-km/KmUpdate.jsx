@@ -2,21 +2,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { t } from "i18next";
 import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Space,
-  Spin,
-  Table,
-  TimePicker,
-} from "antd";
-import {
-  AddKmLogService,
-  GetKmUpdateListService,
-  ValidateKmLogForAddService,
-} from "../../../../api/services/vehicles/vehicles/services";
+import { DatePicker, Form, Input, message, Space, Spin, Table, TimePicker } from "antd";
+import { AddKmLogService, GetKmUpdateListService, ValidateKmLogForAddService } from "../../../../api/services/vehicles/vehicles/services";
 import BreadcrumbComp from "../..//../components/breadcrumb/Breadcrumb";
 import Filter from "./filter/Filter";
 import ContextMenu from "./context-menu/ContextMenu";
@@ -42,18 +29,7 @@ const EditableRow = ({ ...props }) => {
     </Form>
   );
 };
-const EditableCell = ({
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  errorRows,
-  validatedRows,
-  handleRemoveValidatedRow,
-  handleKeyDown,
-  ...restProps
-}) => {
+const EditableCell = ({ editable, children, dataIndex, record, handleSave, errorRows, validatedRows, handleRemoveValidatedRow, handleKeyDown, ...restProps }) => {
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);
   const [openDatePicker, setOpenDatePicker] = useState(false);
@@ -139,11 +115,7 @@ const EditableCell = ({
     switch (dataIndex) {
       case "yeniKm":
         childNode = editing ? (
-          <Form.Item
-            style={{ margin: 0 }}
-            name={dataIndex}
-            className={`editable-cell-${dataIndex}-${record?.aracId}`}
-          >
+          <Form.Item style={{ margin: 0 }} name={dataIndex} className={`editable-cell-${dataIndex}-${record?.aracId}`}>
             <Input
               ref={inputRef}
               allowClear
@@ -162,11 +134,7 @@ const EditableCell = ({
             />
           </Form.Item>
         ) : (
-          <div
-            className={`editable-cell-value-wrap`}
-            style={{ paddingRight: 24 }}
-            onClick={toggleEdit}
-          >
+          <div className={`editable-cell-value-wrap`} style={{ paddingRight: 24 }} onClick={toggleEdit}>
             {children}
           </div>
         );
@@ -191,20 +159,10 @@ const EditableCell = ({
 
         childNode = editing ? (
           <Form.Item style={{ margin: 0 }} name={dataIndex}>
-            <DatePicker
-              allowClear={false}
-              format="DD.MM.YYYY"
-              open={openDatePicker}
-              onOpenChange={(status) => setOpenDatePicker(status)}
-              onChange={handleDatePickerChange}
-            />
+            <DatePicker allowClear={false} format="DD.MM.YYYY" open={openDatePicker} onOpenChange={(status) => setOpenDatePicker(status)} onChange={handleDatePickerChange} />
           </Form.Item>
         ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{ paddingRight: 24 }}
-            onClick={toggleEdit}
-          >
+          <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
             {formatDate(record)}
           </div>
         );
@@ -213,19 +171,10 @@ const EditableCell = ({
       case "saat":
         childNode = editing ? (
           <Form.Item style={{ margin: 0 }} name={dataIndex}>
-            <TimePicker
-              open={openTimePicker}
-              format="HH:mm:ss"
-              onOpenChange={(status) => setOpenTimePicker(status)}
-              onChange={handleTimePickerChange}
-            />
+            <TimePicker open={openTimePicker} format="HH:mm:ss" onOpenChange={(status) => setOpenTimePicker(status)} onChange={handleTimePickerChange} />
           </Form.Item>
         ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{ paddingRight: 24 }}
-            onClick={toggleEdit}
-          >
+          <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
             {children}
           </div>
         );
@@ -239,23 +188,15 @@ const EditableCell = ({
   let error;
   let valid;
   if (errorRows?.length > 0) {
-    error = errorRows.some((row) => row.kmAracId === record.aracId && row.error)
-      ? "error-text"
-      : "";
+    error = errorRows.some((row) => row.kmAracId === record.aracId && row.error) ? "error-text" : "";
   }
 
   if (validatedRows?.length > 0) {
-    valid = validatedRows.some((row) => row.kmAracId === record.aracId)
-      ? "success-text"
-      : "";
+    valid = validatedRows.some((row) => row.kmAracId === record.aracId) ? "success-text" : "";
   }
 
   return (
-    <td
-      {...restProps}
-      data-index={record?.aracId}
-      className={`${error} ${valid}`}
-    >
+    <td {...restProps} data-index={record?.aracId} className={`${error} ${valid}`}>
       {childNode}
     </td>
   );
@@ -400,9 +341,7 @@ const KmUpdate = () => {
           let formattedDate;
 
           if (ddMMyyyyRegex.test(dateString)) {
-            formattedDate = dayjs(dateString, "DD.MM.YYYY").format(
-              "YYYY-MM-DD"
-            );
+            formattedDate = dayjs(dateString, "DD.MM.YYYY").format("YYYY-MM-DD");
           } else {
             formattedDate = dayjs(dateString).format("YYYY-MM-DD");
           }
@@ -431,25 +370,16 @@ const KmUpdate = () => {
           ValidateKmLogForAddService(body).then((res) => {
             if (res?.data.statusCode === 400) {
               if (!errorRows.some((item) => item.kmAracId === body.kmAracId)) {
-                setErrorRows((prevErrorRows) => [
-                  ...prevErrorRows,
-                  { ...body, error: true },
-                ]);
+                setErrorRows((prevErrorRows) => [...prevErrorRows, { ...body, error: true }]);
               }
 
-              const filteredValidatedRows = validatedRows.filter(
-                (item) => item.kmAracId !== row.aracId
-              );
+              const filteredValidatedRows = validatedRows.filter((item) => item.kmAracId !== row.aracId);
               setValidatedRows(filteredValidatedRows);
             } else if (res?.data.statusCode === 200) {
-              const filteredErrorRows = errorRows.filter(
-                (item) => item.kmAracId !== row.aracId
-              );
+              const filteredErrorRows = errorRows.filter((item) => item.kmAracId !== row.aracId);
               setErrorRows(filteredErrorRows);
 
-              const existingIndex = validatedRows.findIndex(
-                (item) => item.kmAracId === body.kmAracId
-              );
+              const existingIndex = validatedRows.findIndex((item) => item.kmAracId === body.kmAracId);
               if (existingIndex > -1) {
                 setValidatedRows((prevValidatedRows) => {
                   const updatedRows = [...prevValidatedRows];
@@ -462,17 +392,12 @@ const KmUpdate = () => {
                   return updatedRows;
                 });
               } else {
-                setValidatedRows((prevValidatedRows) => [
-                  ...prevValidatedRows,
-                  body,
-                ]);
+                setValidatedRows((prevValidatedRows) => [...prevValidatedRows, body]);
               }
             }
           });
         } else {
-          const filteredErrorRows = errorRows.filter(
-            (item) => item.kmAracId !== row.aracId
-          );
+          const filteredErrorRows = errorRows.filter((item) => item.kmAracId !== row.aracId);
           setErrorRows(filteredErrorRows);
         }
       }
@@ -483,15 +408,11 @@ const KmUpdate = () => {
   const handleKeyDown = (e, dataIndex, key) => {
     if (e.key === "Tab") {
       e.preventDefault();
-      const currentRowIndex = dataSource.findIndex(
-        (item) => item.aracId === key
-      );
+      const currentRowIndex = dataSource.findIndex((item) => item.aracId === key);
       let nextRowIndex = e.shiftKey ? currentRowIndex - 1 : currentRowIndex + 1;
 
       if (nextRowIndex >= 0 && nextRowIndex < dataSource.length) {
-        const nextCell = document.querySelector(
-          `td[data-index="${key - 1}"] .editable-cell-value-wrap`
-        );
+        const nextCell = document.querySelector(`td[data-index="${key - 1}"] .editable-cell-value-wrap`);
 
         if (nextCell) {
           nextCell.click();
@@ -535,9 +456,7 @@ const KmUpdate = () => {
   };
 
   const handleRemoveValidatedRow = (kmAracId) => {
-    const filteredRows = validatedRows.filter(
-      (row) => row.kmAracId !== kmAracId
-    );
+    const filteredRows = validatedRows.filter((row) => row.kmAracId !== kmAracId);
     setValidatedRows(filteredRows);
   };
 
@@ -756,13 +675,7 @@ const KmUpdate = () => {
         {contextHolder}
       </div>
 
-      {showContext && (
-        <ContextMenu
-          position={contextMenuPosition}
-          rowData={selectedRowData}
-          setStatus={setStatus}
-        />
-      )}
+      {showContext && <ContextMenu position={contextMenuPosition} rowData={selectedRowData} setStatus={setStatus} />}
     </div>
   );
 };
