@@ -8,13 +8,18 @@ import {
   PieChartOutlined,
   ApartmentOutlined,
   WalletOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../api/http.jsx";
 import RaporsTables from "./components/RaporsTables";
+import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb.jsx";
+import { t } from "i18next";
 
 const { Text } = Typography;
+
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("raporTanimlari") }];
 
 const onChange = (key) => {
   // console.log(key);
@@ -73,10 +78,10 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
 
   useEffect(() => {
     // fetch data from API
-    AxiosInstance.get("RaporGetir").then((response) => {
+    AxiosInstance.get("ReportGroup/api/GetReportGroup").then((response) => {
       // map over the data to create items
-      const newItems = response.map((item) => ({
-        key: item.RPR_RAPOR_GRUP_ID.toString(),
+      const newItems = response.data.map((item) => ({
+        key: item.tbRaporGroupId.toString(),
         label: (
           <div
             style={{
@@ -85,7 +90,7 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
               justifyContent: "space-between",
             }}
           >
-            <div style={{ marginRight: "10px" }}>{item.RPG_ACIKLAMA}</div>
+            <div style={{ marginRight: "10px" }}>{item.rpgAciklama}</div>
             <Text
               style={{
                 display: "flex",
@@ -97,16 +102,11 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
                 height: "20px",
               }}
             >
-              {item.RAPOR_SAYISI}
+              {item.raporSayisi}
             </Text>
           </div>
         ),
-        children: (
-          <RaporsTables
-            tabKey={item.RPR_RAPOR_GRUP_ID.toString()}
-            tabName={item.RPG_ACIKLAMA}
-          />
-        ), // replace with actual component
+        children: <RaporsTables tabKey={item.tbRaporGroupId.toString()} tabName={item.rpgAciklama} />, // replace with actual component
       }));
 
       // set the items
@@ -329,12 +329,28 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
 
   return (
     <div>
-      <StyledTabs
-        tabPosition="left"
-        defaultActiveKey="1"
-        items={items}
-        onChange={onChange}
-      />
+      <div
+        style={{
+          backgroundColor: "white",
+          marginBottom: "15px",
+          padding: "15px",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <BreadcrumbComp items={breadcrumb} />
+      </div>
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "10px",
+          height: "calc(100vh - 210px)",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <StyledTabs tabPosition="left" defaultActiveKey="1" items={items} onChange={onChange} />
+      </div>
     </div>
   );
 }

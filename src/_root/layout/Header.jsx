@@ -29,11 +29,11 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
           />
           <HomeOutlined />
           <LanguageSelector />
-          <Input className="search-input" placeholder={t("arama")} allowClear />
         </div>
         <div style={{ gap: "10px" }} className="flex gap-1 justify-between align-center">
           <Hatirlatici />
           <Bildirim />
+          <Input className="search-input" placeholder={t("arama")} allowClear />
           <Avatar className="header-avatar" icon={<AntDesignOutlined />} />
         </div>
       </div>

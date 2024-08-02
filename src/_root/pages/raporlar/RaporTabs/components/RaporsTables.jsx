@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Input, Spin, Table, Typography } from "antd";
-import {
-  CheckOutlined,
-  CloseOutlined,
-  SearchOutlined,
-  ToolOutlined,
-} from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../api/http.jsx";
 
@@ -35,14 +30,12 @@ function RaporsTables({ tabKey, tabName }) {
   const fetchEquipmentData = async () => {
     try {
       setLoading(true);
-      const response = await AxiosInstance.get(
-        `RaporListele?RaporGrupID=${tabKey}`
-      );
+      const response = await AxiosInstance.get(`Report/GetReportListByGroupId?id=${tabKey}`);
       if (response) {
-        const formattedData = response.map((item) => {
+        const formattedData = response.data.map((item) => {
           return {
             ...item,
-            key: item.TB_RAPOR_ID,
+            key: item.tbRaporId,
           };
         });
         setData(formattedData); // Directly set the data
@@ -64,9 +57,7 @@ function RaporsTables({ tabKey, tabName }) {
   };
 
   useEffect(() => {
-    const filtered = data.filter((item) =>
-      normalizeString(item.RPR_TANIM).includes(normalizeString(searchTerm))
-    );
+    const filtered = data.filter((item) => normalizeString(item.rprTanim).includes(normalizeString(searchTerm)));
     setFilteredData(filtered);
   }, [searchTerm, data]);
 
@@ -79,9 +70,7 @@ function RaporsTables({ tabKey, tabName }) {
     }
 
     // Seçilen satırların verisini bul
-    const newSelectedRows = data.filter((row) =>
-      newSelectedRowKeys.includes(row.key)
-    );
+    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
     setSelectedRows(newSelectedRows); // Seçilen satırların verilerini state'e ata
   };
 
@@ -98,13 +87,11 @@ function RaporsTables({ tabKey, tabName }) {
   const columns = [
     {
       title: "",
-      dataIndex: "RPR_TANIM",
-      key: "RPR_TANIM",
+      dataIndex: "rprTanim",
+      key: "rprTanim",
       width: 150,
       ellipsis: true,
-      render: (text, record) => (
-        <a onClick={() => setDrawer({ visible: true, data: record })}>{text}</a>
-      ),
+      render: (text, record) => <a onClick={() => setDrawer({ visible: true, data: record })}>{text}</a>,
     },
     // {
     //   title: "Özel Alan 10",
