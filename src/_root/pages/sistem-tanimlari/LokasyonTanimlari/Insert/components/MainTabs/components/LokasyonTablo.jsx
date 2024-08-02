@@ -25,7 +25,7 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit }) {
     {
       title: "",
       key: "lokasyonBilgisi",
-      render: (text, record) => <div>{record.LOK_TANIM}</div>,
+      render: (text, record) => <div>{record.lokasyonTanim}</div>,
     },
     // Other columns...
   ];
@@ -35,18 +35,18 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit }) {
     let tree = [];
 
     data.forEach((item) => {
-      nodes[item.TB_LOKASYON_ID] = {
+      nodes[item.lokasyonId] = {
         ...item,
-        key: item.TB_LOKASYON_ID,
+        key: item.lokasyonId,
         children: [],
       };
     });
 
     data.forEach((item) => {
-      if (item.LOK_ANA_LOKASYON_ID && nodes[item.LOK_ANA_LOKASYON_ID]) {
-        nodes[item.LOK_ANA_LOKASYON_ID].children.push(nodes[item.TB_LOKASYON_ID]);
+      if (item.anaLokasyonId && nodes[item.anaLokasyonId]) {
+        nodes[item.anaLokasyonId].children.push(nodes[item.lokasyonId]);
       } else {
-        tree.push(nodes[item.TB_LOKASYON_ID]);
+        tree.push(nodes[item.lokasyonId]);
       }
     });
 
@@ -73,7 +73,7 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit }) {
 
     const filtered = nodeList
       .map((node) => {
-        let nodeMatch = toLowerTurkish(node.LOK_TANIM).includes(lowerSearchTerm);
+        let nodeMatch = toLowerTurkish(node.lokasyonTanim).includes(lowerSearchTerm);
         let childrenMatch = false;
         let filteredChildren = [];
 
@@ -126,9 +126,9 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit }) {
 
   const fetchData = () => {
     setLoading(true);
-    AxiosInstance.get("GetLokasyonList")
+    AxiosInstance.get("Location/GetLocationList")
       .then((response) => {
-        const tree = formatDataForTable(response.data || response);
+        const tree = formatDataForTable(response.data);
         setTreeData(tree);
         setLoading(false);
       })
