@@ -55,19 +55,19 @@ export default function SecondTabs({ refreshKey }) {
     },
     {
       key: "2",
-      label: "Makineler",
+      label: "Araçlar",
       children: <MakineTablo key={refreshKey} />,
     },
     {
       key: "3",
-      label: "Personeller",
+      label: "Sürücüler",
       children: <PersonelTablo />,
     },
-    {
-      key: "4",
-      label: "Projeler",
-      children: <ProjeTablo />,
-    },
+    // {
+    //   key: "4",
+    //   label: "Projeler",
+    //   children: <ProjeTablo />,
+    // },
     {
       key: "5",
       label: "Ekli Belgeler",

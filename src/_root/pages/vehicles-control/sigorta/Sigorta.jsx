@@ -10,6 +10,7 @@ import Content from "../../../components/drag-drop-table/DraggableCheckbox";
 import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
 import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
+import DurumFiltresi from "./components/DurumFiltresi.jsx";
 
 const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("sigortaIslemleri") }];
 
@@ -118,12 +119,12 @@ const Sigorta = () => {
       dataIndex: "hasarIndirimi",
       key: 14,
     },
-    {
-      title: t("varsayilan"),
-      dataIndex: "varsayilan",
-      key: 15,
-      render: (text) => <Checkbox checked={text} />,
-    },
+    // {
+    //   title: t("varsayilan"),
+    //   dataIndex: "varsayilan",
+    //   key: 15,
+    //   render: (text) => <Checkbox checked={text} />,
+    // },
     // {
     //   title: "",
     //   dataIndex: "delete",
@@ -271,6 +272,7 @@ const Sigorta = () => {
             <AddModal setStatus={setStatus} />
             {/* <Filter filter={filter} clearFilters={clear} /> */}
           </div>
+          <DurumFiltresi />
         </div>
       </div>
 
