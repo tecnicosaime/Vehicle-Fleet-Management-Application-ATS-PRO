@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Popover, Typography, Spin } from "antd";
-import { BellOutlined } from "@ant-design/icons";
+import { Button, Popover, Typography, Spin, Badge } from "antd";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import AxiosInstance from "../../../api/http";
 import styled from "styled-components";
 
 const { Text } = Typography;
@@ -21,6 +19,7 @@ const Row = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  cursor: pointer;
 `;
 
 const Indicator = styled.div`
@@ -29,37 +28,25 @@ const Indicator = styled.div`
   border-radius: 50%;
 `;
 
-export default function HatirlaticiPopover() {
+const Hatirlatici = ({ data, getHatirlatici, loading }) => {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-
-  const getHatirlatici = async () => {
-    try {
-      setLoading(true);
-      const response = await AxiosInstance.get("/Reminder");
-      if (response.data) {
-        setData(response.data);
-        setLoading(false); // Yükleme bittiğinde
-      } else {
-        console.error("API response is not in expected format");
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [requested, setRequested] = useState(false); // Bayrak
 
   useEffect(() => {
-    if (open) {
+    if (open && !requested) {
       getHatirlatici();
+      setRequested(true); // Bayrağı ayarla
     }
-  }, [open]);
+  }, [open, requested, getHatirlatici]);
 
   const handleOpenChange = (newOpen) => {
+    if (!newOpen) {
+      setRequested(false); // Popover kapandığında bayrağı sıfırla
+    }
     setOpen(newOpen);
   };
+
+  const totalReminders = data ? Object.values(data).reduce((acc, currentValue) => acc + currentValue, 0) : 0;
 
   const content = (
     <ContentWrapper>
@@ -73,16 +60,15 @@ export default function HatirlaticiPopover() {
               <Indicator style={{ backgroundColor: "red" }} />
               <Text>Sigorta</Text>
             </div>
-            <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "#ff000066", color: "red" }}>{data.sigortaHatirlaticiSayisi}</Text>
+            <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "#ff000066", color: "red" }}>{data?.sigortaHatirlaticiSayisi}</Text>
           </Row>
           <Row>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#009b84" }} />
-              <Text>Araç Kartı</Text>
+              <Text>Taşıt Kartı</Text>
             </div>
-
             <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "rgb(0 155 132 / 35%)", color: "#009b84" }}>
-              {data.aracKartiHatirlaticiSayisi}
+              {data?.aracKartiHatirlaticiSayisi}
             </Text>
           </Row>
           <Row>
@@ -90,9 +76,8 @@ export default function HatirlaticiPopover() {
               <Indicator style={{ backgroundColor: "rgb(106,14,168)" }} />
               <Text>Ceza Ödeme</Text>
             </div>
-
             <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "rgb(106 14 168 / 35%)", color: "rgb(106,14,168)" }}>
-              {data.cezaHatirlaticiSayisi}
+              {data?.cezaHatirlaticiSayisi}
             </Text>
           </Row>
           <Row>
@@ -100,9 +85,8 @@ export default function HatirlaticiPopover() {
               <Indicator style={{ backgroundColor: "rgb(202,108,0)" }} />
               <Text>Yakit Tüketimi</Text>
             </div>
-
             <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "rgb(202,108,0,0.35)", color: "rgb(202,108,0)" }}>
-              {data.yakitTuketimiHatirlaticiSayisi}
+              {data?.yakitTuketimiHatirlaticiSayisi}
             </Text>
           </Row>
           <Row>
@@ -110,9 +94,8 @@ export default function HatirlaticiPopover() {
               <Indicator style={{ backgroundColor: "rgba(0,196,255,0.88)" }} />
               <Text>Kiralama</Text>
             </div>
-
             <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "rgb(0,196,255,0.35)", color: "rgb(0,161,207)" }}>
-              {data.kiralamaHatirlaticiSayisi}
+              {data?.kiralamaHatirlaticiSayisi}
             </Text>
           </Row>
           <Row>
@@ -120,9 +103,8 @@ export default function HatirlaticiPopover() {
               <Indicator style={{ backgroundColor: "rgba(0,59,209,0.88)" }} />
               <Text>Stok</Text>
             </div>
-
             <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "rgb(0,59,209,0.20)", color: "rgb(0,59,209,0.88)" }}>
-              {data.stokHatirlaticiSayisi}
+              {data?.stokHatirlaticiSayisi}
             </Text>
           </Row>
           <Row>
@@ -131,7 +113,7 @@ export default function HatirlaticiPopover() {
               <Text>Sürücü</Text>
             </div>
             <Text style={{ borderRadius: "8px 8px 8px 8px", padding: "1px 7px", backgroundColor: "rgb(255,117,31,0.20)", color: "rgb(255,117,31,0.88)" }}>
-              {data.surucuHatirlaticiSayisi}
+              {data?.surucuHatirlaticiSayisi}
             </Text>
           </Row>
         </div>
@@ -141,7 +123,11 @@ export default function HatirlaticiPopover() {
 
   return (
     <Popover content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
-      <Button type="succes" shape="circle" icon={<FaRegCalendarAlt style={{ fontSize: "20px" }} />}></Button>
+      <Badge count={totalReminders} offset={[-3, 3]}>
+        <Button type="succes" shape="circle" icon={<FaRegCalendarAlt style={{ fontSize: "20px" }} />}></Button>
+      </Badge>
     </Popover>
   );
-}
+};
+
+export default Hatirlatici;

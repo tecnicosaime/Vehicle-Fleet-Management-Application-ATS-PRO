@@ -44,7 +44,7 @@ function DurumFiltresi(props) {
       <Select
         showSearch
         style={{
-          width: 150,
+          width: 200,
         }}
         allowClear
         placeholder="Durum"
