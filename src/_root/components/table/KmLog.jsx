@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
-import {
-  KMLogListDeleteService,
-  KMLogListGetByIdService,
-  KMLogListUpdateService,
-  KMLogListValidateService,
-} from "../../../api/service";
+import { KMLogListDeleteService, KMLogListGetByIdService, KMLogListUpdateService, KMLogListValidateService } from "../../../api/service";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Input, InputNumber, Modal, Popconfirm, Table } from "antd";
 import { t } from "i18next";
@@ -25,8 +20,8 @@ const KmLog = ({ data, setDataStatus }) => {
   });
 
   useEffect(() => {
-    KMLogListGetByIdService(data?.aracId, tableParams?.pagination.current).then(
-      (res) => {
+    if (data && data.aracId) {
+      KMLogListGetByIdService(data?.aracId, tableParams?.pagination.current).then((res) => {
         setDataSource(res?.data.km_list);
         setTableParams({
           ...tableParams,
@@ -35,9 +30,9 @@ const KmLog = ({ data, setDataStatus }) => {
             total: res?.data.total_count,
           },
         });
-      }
-    );
-  }, [tableParams?.pagination.current, status]);
+      });
+    }
+  }, [data, tableParams?.pagination.current, status]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
@@ -151,10 +146,7 @@ const KmLog = ({ data, setDataStatus }) => {
       dataIndex: "delete",
       render: (_, record) =>
         dataSource.length >= 1 ? (
-          <Popconfirm
-            title="Silmeye eminmisiniz?"
-            onConfirm={() => handleDelete(record)}
-          >
+          <Popconfirm title="Silmeye eminmisiniz?" onConfirm={() => handleDelete(record)}>
             <DeleteOutlined style={{ color: "#dc3545" }} />
           </Popconfirm>
         ) : null,
@@ -164,10 +156,7 @@ const KmLog = ({ data, setDataStatus }) => {
       dataIndex: "edit",
       render: (_, record) =>
         dataSource.length >= 1 ? (
-          <Button
-            onClick={() => openUpdateModal(record)}
-            style={{ border: "none", color: "#5B548B" }}
-          >
+          <Button onClick={() => openUpdateModal(record)} style={{ border: "none", color: "#5B548B" }}>
             <EditOutlined />
           </Button>
         ) : null,
@@ -181,11 +170,7 @@ const KmLog = ({ data, setDataStatus }) => {
   });
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn primary-btn km-update"
-      onClick={handleEdit}
-    >
+    <Button key="submit" className="btn primary-btn km-update" onClick={handleEdit}>
       Güncelle
     </Button>,
     <Button key="back" className="btn cancel-btn" onClick={onClose}>
@@ -195,53 +180,25 @@ const KmLog = ({ data, setDataStatus }) => {
 
   return (
     <>
-      <Table
-        rowClassName={() => "editable-row"}
-        pagination={tableParams.pagination}
-        dataSource={dataSource}
-        columns={columns}
-        size="small"
-        onChange={handleTableChange}
-      />
-      <Modal
-        title={"Kilometre Güncelleme Geçmişi Düzelt"}
-        open={updateModal}
-        onCancel={onClose}
-        maskClosable={false}
-        footer={footer}
-        width={500}
-      >
+      <Table rowClassName={() => "editable-row"} pagination={tableParams.pagination} dataSource={dataSource} columns={columns} size="small" onChange={handleTableChange} />
+      <Modal title={"Kilometre Güncelleme Geçmişi Düzelt"} open={updateModal} onCancel={onClose} maskClosable={false} footer={footer} width={500}>
         <div className="grid gap-1">
           <div className="col-span-6">
             <div className="flex flex-col gap-1">
               <label>{t("tarih")}</label>
-              <Input
-                className="w-full"
-                placeholder="Tarih"
-                disabled
-                value={dayjs(updateData?.tarih).format("DD.MM.YYYY")}
-              />
+              <Input className="w-full" placeholder="Tarih" disabled value={dayjs(updateData?.tarih).format("DD.MM.YYYY")} />
             </div>
           </div>
           <div className="col-span-6">
             <div className="flex flex-col gap-1">
               <label>{t("saat")}</label>
-              <Input
-                className="w-full"
-                placeholder="Saat"
-                disabled
-                value={updateData?.saat}
-              />
+              <Input className="w-full" placeholder="Saat" disabled value={updateData?.saat} />
             </div>
           </div>
           <div className="col-span-6">
             <div className="flex flex-col gap-1">
               <label>{t("eskiKm")}</label>
-              <Input
-                placeholder="Eski Km"
-                disabled
-                value={updateData?.eskiKm}
-              />
+              <Input placeholder="Eski Km" disabled value={updateData?.eskiKm} />
             </div>
           </div>
           <div className="col-span-6">

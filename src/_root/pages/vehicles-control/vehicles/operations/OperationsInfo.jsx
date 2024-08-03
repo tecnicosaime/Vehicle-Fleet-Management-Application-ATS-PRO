@@ -3,18 +3,9 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import {
-  FaWrench,
-  FaGear,
-  FaBuildingShield,
-  FaTruckFast,
-} from "react-icons/fa6";
+import { FaWrench, FaGear, FaBuildingShield, FaTruckFast } from "react-icons/fa6";
 import { FaFire, FaWallet, FaCarCrash } from "react-icons/fa";
-import {
-  MdFormatListBulleted,
-  MdHealthAndSafety,
-  MdSettingsInputComponent,
-} from "react-icons/md";
+import { MdFormatListBulleted, MdHealthAndSafety, MdSettingsInputComponent } from "react-icons/md";
 import { PlakaContext } from "../../../../../context/plakaSlice";
 import Yakit from "./yakit/Yakit";
 import Ceza from "./ceza/Ceza";
@@ -24,9 +15,10 @@ import Kaza from "./kaza/Kaza";
 import Sigorta from "./sigorta/Sigorta";
 import Lastik from "./lastik/Lastik";
 import Bakim from "./bakim/Bakim";
+import KmTakibi from "./KmTakibi/KmTakibi.jsx";
 
 const OperationsInfo = ({ ids }) => {
-  const { setPlaka } = useContext(PlakaContext)
+  const { setPlaka } = useContext(PlakaContext);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const items = [
@@ -96,18 +88,24 @@ const OperationsInfo = ({ ids }) => {
 
   const renderModal = () => {
     switch (selectedItem) {
-      case '1':
-        return <Bakim visible={selectedItem === '1'} onClose={() => {
-          setSelectedItem(null)
-          setPlaka([])
-        }} ids={ids} />;
+      case "1":
+        return (
+          <Bakim
+            visible={selectedItem === "1"}
+            onClose={() => {
+              setSelectedItem(null);
+              setPlaka([]);
+            }}
+            ids={ids}
+          />
+        );
       case "2":
         return (
           <Yakit
             visible={selectedItem === "2"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
@@ -117,8 +115,8 @@ const OperationsInfo = ({ ids }) => {
           <Harcama
             visible={selectedItem === "4"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
@@ -128,8 +126,8 @@ const OperationsInfo = ({ ids }) => {
           <Kaza
             visible={selectedItem === "5"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
@@ -139,8 +137,8 @@ const OperationsInfo = ({ ids }) => {
           <Ceza
             visible={selectedItem === "6"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
@@ -150,8 +148,8 @@ const OperationsInfo = ({ ids }) => {
           <Sigorta
             visible={selectedItem === "7"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
@@ -161,8 +159,19 @@ const OperationsInfo = ({ ids }) => {
           <Lastik
             visible={selectedItem === "8"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
+            }}
+            ids={ids}
+          />
+        );
+      case "9":
+        return (
+          <KmTakibi
+            visible={selectedItem === "9"}
+            onClose={() => {
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
@@ -172,8 +181,8 @@ const OperationsInfo = ({ ids }) => {
           <Sefer
             visible={selectedItem === "10"}
             onClose={() => {
-              setSelectedItem(null)
-              setPlaka([])
+              setSelectedItem(null);
+              setPlaka([]);
             }}
             ids={ids}
           />
