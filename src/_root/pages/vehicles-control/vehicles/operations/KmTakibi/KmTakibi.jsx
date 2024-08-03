@@ -8,6 +8,7 @@ import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../..
 
 function KmTakibi({ visible, onClose, ids }) {
   const [dataSource, setDataSource] = useState([]);
+  const [kmHistryModal, setKmHistryModal] = useState(false);
   const [dataStatus, setDataStatus] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ function KmTakibi({ visible, onClose, ids }) {
 
   return (
     <div>
-      <Modal title={`${t("kilometreGuncellemeGecmisi")}: ${dataSource?.plaka}`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+      <Modal title={`${t("kilometreTakibi")}: ${dataSource?.plaka}`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
         <KmLog data={dataSource} setDataStatus={setDataStatus} />
       </Modal>
     </div>
