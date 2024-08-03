@@ -22,11 +22,11 @@ function DurumFiltresi(props) {
   return (
     <div>
       <Select
-        showSearch
+        // showSearch
         style={{
           width: 200,
         }}
-        allowClear
+        // allowClear
         placeholder="Durum"
         optionFilterProp="label"
         filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
