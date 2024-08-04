@@ -111,6 +111,7 @@ const AddModal = ({ setStatus }) => {
       setValue("surucu", data.surucuAdi);
       setValue("surucuId", data.surucuId);
       setValue("tarih", dayjs(currentDate));
+      setValue("maliyet", true);
     }
   }, [plaka, data]);
 
