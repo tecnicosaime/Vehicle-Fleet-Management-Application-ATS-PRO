@@ -186,7 +186,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading }) => {
   );
 
   return (
-    <div>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
       <FormProvider {...methods}>
         <Popover content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
           <Badge count={totalReminders} offset={[-3, 3]}>
