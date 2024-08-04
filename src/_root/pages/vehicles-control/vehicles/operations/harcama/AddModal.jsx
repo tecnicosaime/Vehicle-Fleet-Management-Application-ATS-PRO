@@ -7,7 +7,7 @@ import { Button, message, Modal, Tabs } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
 import { AddExpenseItemService } from "../../../../../../api/services/vehicles/operations_services";
-import PersonalFields from "../../../../../components/form/personal-fields/PersonalFields"
+import PersonalFields from "../../../../../components/form/personal-fields/PersonalFields";
 import GeneralInfo from "./tabs/GeneralInfo";
 
 const AddModal = ({ setStatus }) => {
@@ -106,6 +106,8 @@ const AddModal = ({ setStatus }) => {
       setValue("plaka", plaka[0].plaka);
       setValue("lokasyon", plaka[0].lokasyon);
       setValue("lokasyonId", plaka[0].lokasyonId);
+      setValue("surucu", plaka[0].surucuAdi);
+      setValue("surucuId", plaka[0].surucuId);
     }
   }, [plaka]);
 
@@ -154,7 +156,7 @@ const AddModal = ({ setStatus }) => {
   });
 
   const personalProps = {
-    form: "HARCAMA", 
+    form: "HARCAMA",
     fields,
     setFields,
   };
@@ -163,9 +165,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo />
-      ),
+      children: <GeneralInfo />,
     },
     {
       key: "2",
@@ -188,11 +188,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
         {t("kaydet")}
       </Button>
     ),
@@ -214,14 +210,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniHarcamaGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniHarcamaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

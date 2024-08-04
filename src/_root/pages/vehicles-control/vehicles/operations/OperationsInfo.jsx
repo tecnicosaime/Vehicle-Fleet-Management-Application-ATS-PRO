@@ -32,11 +32,11 @@ const OperationsInfo = ({ ids }) => {
       key: "2",
       icon: <FaFire className="text-info" />,
     },
-    {
-      label: t("gorevler"),
-      key: "3",
-      icon: <MdFormatListBulleted className="text-info" />,
-    },
+    // {
+    //   label: t("gorevler"),
+    //   key: "3",
+    //   icon: <MdFormatListBulleted className="text-info" />,
+    // },
     {
       label: t("harcamalar"),
       key: "4",
