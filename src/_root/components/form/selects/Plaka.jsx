@@ -53,14 +53,8 @@ const Plaka = ({ name, codeName, required }) => {
             optionFilterProp="children"
             className={fieldState.error ? "input-error" : ""}
             value={name ? watch(name) : watch("plaka")}
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={
               plaka.length === 0
                 ? plateList.map((item) => ({
@@ -85,17 +79,13 @@ const Plaka = ({ name, codeName, required }) => {
               } else {
                 const selectedOption = plaka.find((option) => option.id === e);
                 if (selectedOption) {
-                  name
-                    ? setValue(name, selectedOption.plaka)
-                    : setValue("plaka", selectedOption.plaka);
+                  name ? setValue(name, selectedOption.plaka) : setValue("plaka", selectedOption.plaka);
                 }
               }
             }}
             disabled={plaka.length === 1}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />
