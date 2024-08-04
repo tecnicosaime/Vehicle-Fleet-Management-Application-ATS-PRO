@@ -27,6 +27,12 @@ const CustomSpin = styled(Spin)`
   }
 `;
 
+const CustomTable = styled(Table)`
+  .ant-pagination-item-ellipsis {
+    display: flex !important;
+  }
+`;
+
 // Sütunların boyutlarını ayarlamak için kullanılan component
 
 const ResizableTitle = (props) => {
@@ -852,7 +858,7 @@ const Sigorta = () => {
         <div style={{ display: "flex", gap: "10px" }}></div>
       </div>
       <Spin spinning={loading}>
-        <Table
+        <CustomTable
           components={components}
           rowSelection={rowSelection}
           columns={filteredColumns}
