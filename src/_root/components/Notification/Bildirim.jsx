@@ -35,11 +35,13 @@ export default function Bildirim() {
   );
 
   return (
-    <Popover content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
-      <IconContainer>
-        <Button type="success" shape="circle" icon={<IoNotificationsOutline style={{ fontSize: "24px" }} />}></Button>
-        <Badge />
-      </IconContainer>
-    </Popover>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Popover content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
+        <IconContainer>
+          <Button type="success" shape="circle" icon={<IoNotificationsOutline style={{ fontSize: "24px" }} />}></Button>
+          <Badge />
+        </IconContainer>
+      </Popover>
+    </div>
   );
 }
