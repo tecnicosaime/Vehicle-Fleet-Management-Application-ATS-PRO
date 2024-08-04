@@ -1,106 +1,106 @@
-import { useContext, useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Select } from "antd";
-import { PlakaContext } from "../../../../context/plakaSlice";
-import { GetFuelCardContentByIdService } from "../../../../api/services/vehicles/yakit/services";
-import { CodeControlByUrlService } from "../../../../api/services/code/services";
+import { DownloadDocumentByIdService } from "../../../api/services/upload/services";
+import { InboxOutlined, FileOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Button, message, Spin, Upload } from "antd";
 
-const Plaka = ({ name, codeName, required }) => {
-  const { plaka, setData } = useContext(PlakaContext);
-  const { setValue, control, watch } = useFormContext();
-  const [plateList, setPlateList] = useState([]);
+const FileUpload = ({ filesUrl, loadingFiles, setFiles }) => {
+  const [filesArr, setFilesArr] = useState([]);
 
   useEffect(() => {
-    if (plaka.length === 1) {
-      GetFuelCardContentByIdService(plaka[0].id).then((res) => {
-        setData(res.data);
-      });
-    }
-  }, [plaka]);
+    setFilesArr(filesUrl);
+  }, [filesUrl]);
 
-  const handleChange = (e) => {
-    GetFuelCardContentByIdService(e).then((res) => {
-      setData(res.data);
-      if (res.data.surucuId) {
-        setValue("surucuId1", res.data.surucuId);
-      }
-    });
+  const handleUpload = (file) => {
+    const formData = new FormData();
+    formData.append("documents", file);
+    setFiles(formData);
   };
 
-  const handleClick = async () => {
-    if (plaka.length === 0) {
-      const res = await CodeControlByUrlService("Vehicle/GetVehiclePlates");
-      const updatedData = res.data.map((item) => {
-        if ("aracId" in item && "plaka" in item) {
-          return {
-            ...item,
-            id: item.aracId,
-          };
-        }
-        return item;
+  const downloadFile = (file) => {
+    const data = {
+      fileId: file.tbDosyaId,
+      extension: file.dosyaUzanti,
+      fileName: file.dosyaAd,
+    };
+
+    DownloadDocumentByIdService(data)
+      .then((res) => {
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(res.data);
+        link.download = file.dosyaAd;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      })
+      .catch((err) => {
+        console.error("Error downloading file:", err);
       });
-      setPlateList(updatedData);
-    }
   };
+
+  // Custom loading icon
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Controller
-      name={codeName ? codeName : "plaka"}
-      control={control}
-      rules={{ required: required ? "Bu alan boş bırakılamaz!" : false }}
-      render={({ field, fieldState }) => (
-        <>
-          <Select
-            {...field}
-            showSearch
-            allowClear
-            optionFilterProp="children"
-            className={fieldState.error ? "input-error" : ""}
-            value={name ? watch(name) : watch("plaka")}
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-            options={
-              plaka.length === 0
-                ? plateList.map((item) => ({
-                    label: item.plaka,
-                    value: item.id,
-                  }))
-                : plaka.map((item) => ({
-                    label: item.plaka,
-                    value: item.id,
-                  }))
-            }
-            onClick={handleClick}
-            onChange={(e) => {
-              field.onChange(e);
-              handleChange(e);
-              if (e === undefined) {
-                const selectedOption = plaka.find((option) => option.id === e);
-                if (!selectedOption) {
-                  name ? setValue(name, "") : setValue("plaka", "");
-                  setData([]);
-                }
-              } else {
-                const selectedOption = plaka.find((option) => option.id === e);
-                if (selectedOption) {
-                  name ? setValue(name, selectedOption.plaka) : setValue("plaka", selectedOption.plaka);
-                }
-              }
-            }}
-            disabled={plaka.length === 1}
-          />
-          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
-        </>
+    <>
+      {loadingFiles ? (
+        <div className="flex gap-1">
+          {filesArr.map((url, i) => {
+            return (
+              <div key={i} className="border p-10 mb-10">
+                <div style={{ margin: "10px", height: "150px", width: "150px", objectFit: "cover", position: "relative" }}>
+                  <Spin spinning={true} indicator={customIcon}></Spin>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex gap-1">
+          {filesArr.map((file, i) => {
+            return (
+              <div key={i} className="mb-10">
+                <Button className="btn btn-min file-btn" onClick={() => downloadFile(file)}>
+                  {" "}
+                  <FileOutlined /> {file.dosyaAd}
+                </Button>
+              </div>
+            );
+          })}
+        </div>
       )}
-    />
+
+      <Upload.Dragger
+        listType="picture"
+        className="upload-list-inline"
+        beforeUpload={(file) => {
+          const isLt2M = file.size / 1024 / 1024 < 2;
+
+          if (!isLt2M) {
+            message.error("File must be smaller than 2MB!");
+          }
+
+          if (isLt2M) {
+            handleUpload(file);
+          }
+          return false;
+        }}
+      >
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Tıklayın veya bu alana dosya sürükleyin</p>
+        <p className="ant-upload-hint">
+          Tek seferde bir veya birden fazla dosya yüklemeyi destekler. Şirket verileri veya diğer yasaklı dosyaların yüklenmesi kesinlikle yasaktır.
+        </p>
+      </Upload.Dragger>
+    </>
   );
 };
 
-Plaka.propTypes = {
-  name: PropTypes.string,
-  codeName: PropTypes.string,
-  required: PropTypes.bool,
+FileUpload.propTypes = {
+  filesUrl: PropTypes.array,
+  loadingFiles: PropTypes.bool,
+  setFiles: PropTypes.func,
 };
 
-export default Plaka;
+export default FileUpload;
