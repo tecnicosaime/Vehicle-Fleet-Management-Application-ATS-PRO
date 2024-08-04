@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import { Table, Popover, Button, Input, Spin, Checkbox } from "antd";
+import { Table, Popover, Button, Input, Spin, Checkbox, Progress } from "antd";
 import { MenuOutlined, HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 import { GetInsuranceListService } from "../../../../api/services/vehicles/operations_services";
 import DragAndDropContext from "../../../components/drag-drop-table/DragAndDropContext";
@@ -77,7 +77,7 @@ const Sigorta = () => {
       title: `${t("kalanSure")} (${t("gun")})`,
       dataIndex: "kalanSure",
       key: 6,
-      render: (text) => <p>{text}</p>,
+      render: (text) => <Progress percent={text} steps={8} />,
     },
     {
       title: t("policeNo"),
@@ -89,26 +89,26 @@ const Sigorta = () => {
       dataIndex: "tutar",
       key: 8,
     },
-    {
-      title: t("firma"),
-      dataIndex: "firma",
-      key: 9,
-    },
+    // {
+    //   title: t("firma"),
+    //   dataIndex: "firma",
+    //   key: 9,
+    // },
     {
       title: t("acenta"),
       dataIndex: "acenta",
       key: 10,
     },
-    {
-      title: t("yetkili"),
-      dataIndex: "yetkili",
-      key: 11,
-    },
-    {
-      title: t("ruhsatBelgeSeriNo"),
-      dataIndex: "ruhsatBelgeSeriNo",
-      key: 12,
-    },
+    // {
+    //   title: t("yetkili"),
+    //   dataIndex: "yetkili",
+    //   key: 11,
+    // },
+    // {
+    //   title: t("ruhsatBelgeSeriNo"),
+    //   dataIndex: "ruhsatBelgeSeriNo",
+    //   key: 12,
+    // },
     {
       title: t("aracBedeli"),
       dataIndex: "aracBedeli",
