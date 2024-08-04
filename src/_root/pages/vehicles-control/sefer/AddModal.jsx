@@ -137,6 +137,13 @@ const AddModal = ({ setStatus }) => {
     }
   }, [watch("seferNo")]);
 
+  useEffect(() => {
+    setValue("surucuId1", data.surucuId);
+    setValue("surucu1", data.surucuAdi);
+  }, [data]);
+
+  console.log("data", data);
+
   const onSubmit = handleSubmit((values) => {
     const body = {
       aracId: values.plaka,
@@ -169,8 +176,6 @@ const AddModal = ({ setStatus }) => {
       ozelAlan11: values.ozelAlan11 || 0,
       ozelAlan12: values.ozelAlan12 || 0,
     };
-
-    console.log(body);
 
     setLoading(true);
     AddExpeditionItemService(body).then((res) => {
