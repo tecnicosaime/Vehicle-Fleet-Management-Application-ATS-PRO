@@ -2,27 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import {
-  Modal,
-  Button,
-  Table,
-  Checkbox,
-  Popconfirm,
-  Input,
-  Popover,
-  Spin
-} from "antd";
-import {
-  DeleteOutlined,
-  MenuOutlined,
-  ArrowUpOutlined,
-  LoadingOutlined
-} from "@ant-design/icons";
+import { Modal, Button, Table, Checkbox, Popconfirm, Input, Popover, Spin } from "antd";
+import { DeleteOutlined, MenuOutlined, ArrowUpOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
-import {
-  DeleteFuelCardService,
-  GetFuelListByVehicleIdService,
-} from "../../../../../../api/services/vehicles/operations_services";
+import { DeleteFuelCardService, GetFuelListByVehicleIdService } from "../../../../../../api/services/vehicles/operations_services";
 import DragAndDropContext from "../../../../../components/drag-drop-table/DragAndDropContext";
 import SortableHeaderCell from "../../../../../components/drag-drop-table/SortableHeaderCell";
 import Content from "../../../../../components/drag-drop-table/DraggableCheckbox";
@@ -54,11 +37,7 @@ const Yakit = ({ visible, onClose, ids }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res = await GetFuelListByVehicleIdService(
-        search,
-        tableParams.pagination.current,
-        ids
-      );
+      const res = await GetFuelListByVehicleIdService(search, tableParams.pagination.current, ids);
       setLoading(false);
       setIsInitialLoading(false);
       setDataSource(res?.data.fuel_list || []);
@@ -96,11 +75,10 @@ const Yakit = ({ visible, onClose, ids }) => {
       key: 1,
       render: (text, record) => (
         <Button
-          className="plaka-button"
           onClick={() => {
             setUpdateModalOpen(true);
             setId(record.siraNo);
-            setAracId(record.aracId)
+            setAracId(record.aracId);
           }}
         >
           <span>{text}</span>
@@ -127,9 +105,7 @@ const Yakit = ({ visible, onClose, ids }) => {
       title: t("kullanim"),
       dataIndex: "ozelKullanim",
       key: 5,
-      render: (text, record) => (
-        <Checkbox checked={record.ozelKullanim} readOnly />
-      ),
+      render: (text, record) => <Checkbox checked={record.ozelKullanim} readOnly />,
     },
     {
       title: t("miktar"),
@@ -138,9 +114,7 @@ const Yakit = ({ visible, onClose, ids }) => {
       render: (text, record) => (
         <div className="">
           <span>{text} </span>
-          <span style={{ fontSize: "14px", color: "rgb(147 147 147)" }}>
-            {record.birim === "LITRE" && "lt"}
-          </span>
+          <span style={{ fontSize: "14px", color: "rgb(147 147 147)" }}>{record.birim === "LITRE" && "lt"}</span>
         </div>
       ),
     },
@@ -174,9 +148,7 @@ const Yakit = ({ visible, onClose, ids }) => {
       title: "Stoktan Kullanım",
       dataIndex: "stokKullanimi",
       key: 11,
-      render: (text, record) => (
-        <Checkbox checked={record.stokKullanimi} readOnly />
-      ),
+      render: (text, record) => <Checkbox checked={record.stokKullanimi} readOnly />,
     },
     {
       title: t("surucu"),
@@ -203,12 +175,7 @@ const Yakit = ({ visible, onClose, ids }) => {
       dataIndex: "delete",
       key: 16,
       render: (_, record) => (
-        <Popconfirm
-          title={t("confirmQuiz")}
-          cancelText={t("cancel")}
-          okText={t("ok")}
-          onConfirm={() => handleDelete(record)}
-        >
+        <Popconfirm title={t("confirmQuiz")} cancelText={t("cancel")} okText={t("ok")} onConfirm={() => handleDelete(record)}>
           <DeleteOutlined style={{ color: "#dc3545" }} />
         </Popconfirm>
       ),
@@ -267,18 +234,10 @@ const Yakit = ({ visible, onClose, ids }) => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   // get selected rows data
-  if (!localStorage.getItem("selectedRowKeys"))
-    localStorage.setItem("selectedRowKeys", JSON.stringify([]));
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
     if (selected) {
@@ -288,77 +247,42 @@ const Yakit = ({ visible, onClose, ids }) => {
       }
     } else {
       setKeys((prevKeys) => prevKeys.filter((key) => key !== row.aracId));
-      setRows((prevRows) =>
-        prevRows.filter((item) => item.aracId !== row.aracId)
-      );
+      setRows((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
     }
   };
 
-  useEffect(
-    () => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)),
-    [keys]
-  );
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setKeys(storedSelectedKeys);
     }
   }, []);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setSelectedRowKeys(storedSelectedKeys);
     }
   }, [tableParams.pagination.current]);
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal
-      title={`${t("yakitBilgileri")} - ${t("plaka")}: [${plakaData}]`}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1300}
-    >
+    <Modal title={`${t("yakitBilgileri")} - ${t("plaka")}: [${plakaData}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1300}>
       <div className="flex align-center gap-1 mb-20">
-        <Popover
-          content={content}
-          placement="bottom"
-          trigger="click"
-          open={openRowHeader}
-          onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-        >
+        <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
           <Button className="btn primary-btn">
             <MenuOutlined />
           </Button>
         </Popover>
-        <Input
-          placeholder={t("arama")}
-          style={{ width: "20%" }}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <Input placeholder={t("arama")} style={{ width: "20%" }} onChange={(e) => setSearch(e.target.value)} />
         <AddModal setStatus={setStatus} />
       </div>
 
-      <UpdateModal
-        updateModal={updateModalOpen}
-        setUpdateModal={setUpdateModalOpen}
-        id={id}
-        aracId={aracId}
-        setStatus={setStatus}
-        status={status}
-      />
+      <UpdateModal updateModal={updateModalOpen} setUpdateModal={setUpdateModalOpen} id={id} aracId={aracId} setStatus={setStatus} status={status} />
 
       <DragAndDropContext items={columns} setItems={setColumns}>
         <Spin spinning={loading || isInitialLoading} indicator={customIcon}>

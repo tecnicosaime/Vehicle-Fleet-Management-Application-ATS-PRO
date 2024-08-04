@@ -152,6 +152,10 @@ const items = [
         key: "18",
         label: <Link to={"/"}>{t("hareketler")}</Link>,
       },
+      {
+        key: "138",
+        label: <Link to={"/"}>{t("yakitTanklari")}</Link>,
+      },
     ],
   },
   {
