@@ -9,11 +9,9 @@ const Driver = ({ name, codeName, required }) => {
   const { watch, setValue, control } = useFormContext();
 
   const handleClickSelect = () => {
-    CodeControlByUrlService("Driver/GetDriverListForSelectInput").then(
-      (res) => {
-        setData(res.data);
-      }
-    );
+    CodeControlByUrlService("Driver/GetDriverListForSelectInput").then((res) => {
+      setData(res.data);
+    });
   };
 
   return (
@@ -29,14 +27,8 @@ const Driver = ({ name, codeName, required }) => {
             allowClear
             optionFilterProp="children"
             className={fieldState.error ? "input-error" : ""}
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={data.map((item) => ({
               label: item.isim,
               value: item.surucuId,
@@ -46,27 +38,19 @@ const Driver = ({ name, codeName, required }) => {
             onChange={(e) => {
               field.onChange(e);
               if (e === undefined) {
-                const selectedOption = data.find(
-                  (option) => option.surucuId === e
-                );
+                const selectedOption = data.find((option) => option.surucuId === e);
                 if (!selectedOption) {
                   name ? setValue(name, "") : setValue("surucu", "");
                 }
               } else {
-                const selectedOption = data.find(
-                  (option) => option.surucuId === e
-                );
+                const selectedOption = data.find((option) => option.surucuId === e);
                 if (selectedOption) {
-                  name
-                    ? setValue(name, selectedOption.isim)
-                    : setValue("surucu", selectedOption.isim);
+                  name ? setValue(name, selectedOption.isim) : setValue("surucu", selectedOption.isim);
                 }
               }
             }}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />

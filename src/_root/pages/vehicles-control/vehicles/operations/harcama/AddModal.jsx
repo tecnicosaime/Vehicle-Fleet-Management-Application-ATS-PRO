@@ -101,15 +101,18 @@ const AddModal = ({ setStatus }) => {
   });
   const { handleSubmit, reset, setValue } = methods;
 
+  const currentDate = dayjs().format("YYYY-MM-DD");
+
   useEffect(() => {
     if (plaka.length === 1) {
       setValue("plaka", plaka[0].plaka);
       setValue("lokasyon", plaka[0].lokasyon);
       setValue("lokasyonId", plaka[0].lokasyonId);
-      setValue("surucu", plaka[0].surucuAdi);
-      setValue("surucuId", plaka[0].surucuId);
+      setValue("surucu", data.surucuAdi);
+      setValue("surucuId", data.surucuId);
+      setValue("tarih", dayjs(currentDate));
     }
-  }, [plaka]);
+  }, [plaka, data]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
