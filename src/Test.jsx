@@ -1,68 +1,69 @@
-import { useState, useEffect } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import PropTypes from "prop-types";
-import { Select } from "antd";
-import { CodeControlByUrlService } from "../../../../api/services/code/services";
-
-const Driver = ({ name, codeName, required }) => {
-  const [data, setData] = useState([]);
-  const { watch, setValue, control } = useFormContext();
-
-  useEffect(() => {
-    handleClickSelect();
-  }, []);
-
-  const handleClickSelect = async () => {
-    try {
-      const res = await CodeControlByUrlService("Driver/GetDriverListForSelectInput");
-      setData(res.data);
-    } catch (error) {
-      console.error("Error fetching driver list:", error);
-    }
+const onSubmit = handleSubmit((values) => {
+  const body = {
+    aracId: plaka[0].aracId,
+    surucuId1: values.surucuId1 || 0,
+    surucuId2: values.surucuId2 || 0,
+    aciklama: values.aciklama,
+    seferNo: values.seferNo,
+    dorseId: values.dorseId || 0,
+    guzergahId: values.guzergahId || 0,
+    seferTipKodId: values.seferTipKodId || 0,
+    seferDurumKodId: values.seferDurumKodId || 0,
+    cikisTarih: dayjs(values.cikisTarih).format("YYYY-MM-DD"),
+    varisTarih: dayjs(values.varisTarih).format("YYYY-MM-DD"),
+    cikisSaat: dayjs(values.cikisSaat).format("HH:mm:ss"),
+    varisSaat: dayjs(values.varisSaat).format("HH:mm:ss"),
+    seferAdedi: values.seferAdedi || 0,
+    cikisKm: values.cikisKm || 0,
+    varisKm: values.varisKm || 0,
+    farkKm: values.farkKm || 0,
+    ozelAlan1: values.ozelAlan1 || "",
+    ozelAlan2: values.ozelAlan2 || "",
+    ozelAlan3: values.ozelAlan3 || "",
+    ozelAlan4: values.ozelAlan4 || "",
+    ozelAlan5: values.ozelAlan5 || "",
+    ozelAlan6: values.ozelAlan6 || "",
+    ozelAlan7: values.ozelAlan7 || "",
+    ozelAlan8: values.ozelAlan8 || "",
+    ozelAlanKodId9: values.ozelAlanKodId9 || 0,
+    ozelAlanKodId10: values.ozelAlanKodId10 || 0,
+    ozelAlan11: values.ozelAlan11 || 0,
+    ozelAlan12: values.ozelAlan12 || 0,
   };
 
-  return (
-    <Controller
-      name={codeName || "surucuId"}
-      control={control}
-      rules={{ required: required ? "Bu alan boş bırakılamaz!" : false }}
-      render={({ field, fieldState }) => (
-        <>
-          <Select
-            {...field}
-            showSearch
-            allowClear
-            optionFilterProp="children"
-            className={fieldState.error ? "input-error" : ""}
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").localeCompare(optionB?.label.toLowerCase() ?? "")}
-            options={data.map((item) => ({
-              label: item.isim,
-              value: item.surucuId,
-            }))}
-            value={watch(name || "surucu")}
-            onChange={(e) => {
-              field.onChange(e);
-              const selectedOption = data.find((option) => option.surucuId === e);
-              if (selectedOption) {
-                setValue(name || "surucu", selectedOption.isim);
-              } else {
-                setValue(name || "surucu", "");
-              }
-            }}
-            onClick={handleClickSelect}
-          />
-          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
-        </>
-      )}
-    />
-  );
-};
+  setLoading(true);
+  AddExpeditionItemService(body).then((res) => {
+    if (res?.data.statusCode === 200) {
+      setStatus(true);
+      setIsOpen(false);
+      setLoading(false);
+      setActiveKey("1");
+      if (plaka.length === 1) {
+        reset();
+      } else {
+        reset();
+      }
+      setIsValid("normal");
+    } else {
+      message.error("Bir sorun oluşdu! Tekrar deneyiniz.");
+    }
+  });
+  setStatus(false);
+});
 
-Driver.propTypes = {
-  name: PropTypes.string,
-  codeName: PropTypes.string,
-  required: PropTypes.bool,
-};
-
-export default Driver;
+return (
+  <>
+    <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
+      <PlusOutlined /> {t("ekle")}
+    </Button>
+    <Modal title={t("yeniSeferGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
+      <FormProvider {...methods}>
+        <form onSubmit={onSubmit}>
+          {" "}
+          {/* onSubmit ekledik */}
+          <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
+        </form>
+      </FormProvider>
+    </Modal>
+  </>
+);
