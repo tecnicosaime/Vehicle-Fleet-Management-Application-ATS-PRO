@@ -191,9 +191,9 @@ function Component4(props) {
             <StyledClockCircleOutlined />
           </div>
         )}
-        <Modal title="Makineler" width="90%" open={modalVisible} onOk={() => setModalVisible(false)} onCancel={() => setModalVisible(false)} centered footer={null}>
-          <div></div>
-        </Modal>
+        {/*<Modal title="Makineler" width="90%" open={modalVisible} onOk={() => setModalVisible(false)} onCancel={() => setModalVisible(false)} centered footer={null}>*/}
+        {/*  <div></div>*/}
+        {/*</Modal>*/}
 
         <Modal title="Tarih Seçimi" centered open={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose>
           {modalContent === "Yıl Seç" && (
