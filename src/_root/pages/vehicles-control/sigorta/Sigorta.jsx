@@ -87,7 +87,7 @@ const Sigorta = () => {
         } else {
           percent = 100 - (text / maxDays) * 100;
         }
-        return <Progress percent={percent} steps={8} format={() => `${text} ${t("gun")}`} />;
+        return <Progress percent={percent} steps={8} format={() => `${text}`} />;
       },
     },
     {
