@@ -2,21 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import {
-  Modal,
-  Button,
-  Table,
-  Checkbox,
-  Popconfirm,
-  Input,
-  Popover,
-  Spin,
-} from "antd";
-import {
-  DeleteOutlined,
-  MenuOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { Modal, Button, Table, Checkbox, Popconfirm, Input, Popover, Spin } from "antd";
+import { DeleteOutlined, MenuOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
 import DragAndDropContext from "../../../../../components/drag-drop-table/DragAndDropContext";
 import SortableHeaderCell from "../../../../../components/drag-drop-table/SortableHeaderCell";
@@ -50,11 +37,7 @@ const Sigorta = ({ visible, onClose, ids }) => {
     const fetchData = async () => {
       setLoading(true);
       setIsInitialLoading(true);
-      const res = await GetInsuranceListByVehicleIdService(
-        search,
-        tableParams.pagination.current,
-        ids
-      );
+      const res = await GetInsuranceListByVehicleIdService(search, tableParams.pagination.current, ids);
       setLoading(false);
       setIsInitialLoading(false);
       setDataSource(res?.data.list);
@@ -76,7 +59,6 @@ const Sigorta = ({ visible, onClose, ids }) => {
       key: 1,
       render: (text, record) => (
         <Button
-          className="plaka-button"
           onClick={() => {
             setUpdateModalOpen(true);
             setId(record.siraNo);
@@ -231,18 +213,10 @@ const Sigorta = ({ visible, onClose, ids }) => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   // get selected rows data
-  if (!localStorage.getItem("selectedRowKeys"))
-    localStorage.setItem("selectedRowKeys", JSON.stringify([]));
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
     if (selected) {
@@ -252,76 +226,42 @@ const Sigorta = ({ visible, onClose, ids }) => {
       }
     } else {
       setKeys((prevKeys) => prevKeys.filter((key) => key !== row.aracId));
-      setRows((prevRows) =>
-        prevRows.filter((item) => item.aracId !== row.aracId)
-      );
+      setRows((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
     }
   };
 
-  useEffect(
-    () => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)),
-    [keys]
-  );
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setKeys(storedSelectedKeys);
     }
   }, []);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setSelectedRowKeys(storedSelectedKeys);
     }
   }, [tableParams.pagination.current]);
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal
-      title={`${t("sigortaBilgileri")} - ${t("plaka")}: [${plakaData}]`}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={`${t("sigortaBilgileri")} - ${t("plaka")}: [${plakaData}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <div className="flex align-center gap-1 mb-10">
-        <Popover
-          content={content}
-          placement="bottom"
-          trigger="click"
-          open={openRowHeader}
-          onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-        >
+        <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
           <Button className="btn primary-btn">
             <MenuOutlined />
           </Button>
         </Popover>
-        <Input
-          placeholder={t("arama")}
-          style={{ width: "20%" }}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <Input placeholder={t("arama")} style={{ width: "20%" }} onChange={(e) => setSearch(e.target.value)} />
         <AddModal setStatus={setStatus} />
       </div>
 
-      <UpdateModal
-        updateModal={updateModalOpen}
-        setUpdateModal={setUpdateModalOpen}
-        id={id}
-        aracId={aracId}
-        setStatus={setStatus}
-      />
+      <UpdateModal updateModal={updateModalOpen} setUpdateModal={setUpdateModalOpen} id={id} aracId={aracId} setStatus={setStatus} />
 
       <DragAndDropContext items={columns} setItems={setColumns}>
         <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
