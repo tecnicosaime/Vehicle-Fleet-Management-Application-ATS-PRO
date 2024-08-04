@@ -9,7 +9,7 @@ import { PlakaContext } from "../../../../context/plakaSlice";
 import { AddExpeditionItemService } from "../../../../api/services/vehicles/operations_services";
 import { GetModuleCodeByCode } from "../../../../api/services/code/services";
 import { CodeItemValidateService } from "../../../../api/service";
-import PersonalFields from "../../../components/form/personal-fields/PersonalFields"
+import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
 import GeneralInfo from "./tabs/GeneralInfo";
 
 const AddModal = ({ setStatus }) => {
@@ -121,9 +121,7 @@ const AddModal = ({ setStatus }) => {
 
   useEffect(() => {
     if (isOpen && isFirstRender.current) {
-      GetModuleCodeByCode("SEFER_NO").then((res) =>
-        setValue("seferNo", res.data)
-      );
+      GetModuleCodeByCode("SEFER_NO").then((res) => setValue("seferNo", res.data));
     }
   }, [isOpen, setValue]);
 
@@ -141,7 +139,7 @@ const AddModal = ({ setStatus }) => {
 
   const onSubmit = handleSubmit((values) => {
     const body = {
-      aracId: plaka[0].aracId,
+      aracId: values.plaka,
       surucuId1: values.surucuId1 || 0,
       surucuId2: values.surucuId2 || 0,
       aciklama: values.aciklama,
@@ -171,6 +169,8 @@ const AddModal = ({ setStatus }) => {
       ozelAlan11: values.ozelAlan11 || 0,
       ozelAlan12: values.ozelAlan12 || 0,
     };
+
+    console.log(body);
 
     setLoading(true);
     AddExpeditionItemService(body).then((res) => {
@@ -202,11 +202,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo
-          isValid={isValid}
-        />
-      ),
+      children: <GeneralInfo isValid={isValid} />,
     },
     {
       key: "2",
@@ -229,18 +225,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={
-          isValid === "success"
-            ? false
-            : isValid === "error"
-              ? true
-              : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -262,16 +247,9 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniSeferGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniSeferGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
-          <form>
+          <form onSubmit={onSubmit}>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
           </form>
         </FormProvider>
