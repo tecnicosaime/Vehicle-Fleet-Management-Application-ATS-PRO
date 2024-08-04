@@ -77,7 +77,18 @@ const Sigorta = () => {
       title: `${t("kalanSure")} (${t("gun")})`,
       dataIndex: "kalanSure",
       key: 6,
-      render: (text) => <Progress percent={text} steps={8} />,
+      render: (text, record) => {
+        const maxDays = record.maxDays || 1000; // Assuming maxDays is provided in the record
+        let percent = 0;
+        if (text === 0) {
+          percent = 100;
+        } else if (text === maxDays) {
+          percent = 0;
+        } else {
+          percent = 100 - (text / maxDays) * 100;
+        }
+        return <Progress percent={percent} steps={8} format={() => `${text} ${t("gun")}`} />;
+      },
     },
     {
       title: t("policeNo"),
