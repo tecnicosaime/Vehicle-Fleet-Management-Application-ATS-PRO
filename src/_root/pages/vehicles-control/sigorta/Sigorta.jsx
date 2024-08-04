@@ -78,14 +78,16 @@ const Sigorta = () => {
       dataIndex: "kalanSure",
       key: 6,
       render: (text, record) => {
-        const maxDays = record.maxDays || 1000; // Assuming maxDays is provided in the record
+        const baslangicTarih = dayjs(record.baslangicTarih);
+        const bitisTarih = dayjs(record.bitisTarih);
+        const maxDays = bitisTarih.diff(baslangicTarih, "day");
         let percent = 0;
         if (text === 0) {
-          percent = 100;
-        } else if (text === maxDays) {
           percent = 0;
+        } else if (text === maxDays) {
+          percent = 100;
         } else {
-          percent = 100 - (text / maxDays) * 100;
+          percent = (text / maxDays) * 100;
         }
         return <Progress percent={percent} steps={8} format={() => `${text}`} />;
       },
