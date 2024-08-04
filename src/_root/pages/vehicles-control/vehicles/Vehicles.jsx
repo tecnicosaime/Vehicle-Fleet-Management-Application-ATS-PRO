@@ -59,9 +59,11 @@ const Vehicles = () => {
       dataIndex: "plaka",
       key: 1,
       render: (text, record) => (
-        <Link to={`/detay/${record.aracId}`} className="plaka-button">
-          <span>{country.code}</span> <span>{text}</span>
-        </Link>
+        <div style={{ minWidth: "160px", width: "100%" }}>
+          <Link to={`/detay/${record.aracId}`} className="plaka-button">
+            <span>{country.code}</span> <span>{text}</span>
+          </Link>
+        </div>
       ),
       width: 160,
     },
@@ -136,7 +138,7 @@ const Vehicles = () => {
     },
     {
       title: t("sigortaTarih"),
-      dataIndex: "sigortaTarih",
+      dataIndex: "SigortaBitisTarih",
       key: 15,
       render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
     },
