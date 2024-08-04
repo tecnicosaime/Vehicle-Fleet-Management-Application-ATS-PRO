@@ -142,8 +142,6 @@ const AddModal = ({ setStatus }) => {
     setValue("surucu1", data.surucuAdi);
   }, [data]);
 
-  console.log("data", data);
-
   const onSubmit = handleSubmit((values) => {
     const body = {
       aracId: values.plaka,

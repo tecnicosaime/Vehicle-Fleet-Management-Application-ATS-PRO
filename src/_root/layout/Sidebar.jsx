@@ -64,37 +64,11 @@ const items = [
       },
     ],
   },
-  {
-    key: "13",
-    icon: <BsFuelPump />,
-    label: t("yakitYonetimi"),
-    children: [
-      {
-        key: "14",
-        label: <Link to={"/yakit-tanimlari"}>{t("tanimlar")}</Link>,
-      },
-      {
-        key: "15",
-        label: <Link to={"/yakit-giris-fisleri"}>{t("girişFişleri")}</Link>,
-      },
-      {
-        key: "16",
-        label: <Link to={"/yakit-cikis-fisleri"}>{t("çıkışFişleri")}</Link>,
-      },
-      {
-        key: "17",
-        label: <Link to={"/yakit-transferler"}>{t("transferler")}</Link>,
-      },
-      {
-        key: "18",
-        label: <Link to={"/"}>{t("hareketler")}</Link>,
-      },
-    ],
-  },
+
   {
     key: "19",
     icon: <GiAutoRepair />,
-    label: "Bakım ve Onarım Yönetimi",
+    label: "Bakım ve Onarım İşlemleri",
     children: [
       {
         key: "20",
@@ -146,6 +120,37 @@ const items = [
       {
         key: "37",
         label: <Link to={"/hareketler"}>{t("malzemeHareketleri")}</Link>,
+      },
+      {
+        key: "837",
+        label: <Link to={"/depoTanimlari"}>{t("malzemeDepoTanimlari")}</Link>,
+      },
+    ],
+  },
+  {
+    key: "13",
+    icon: <BsFuelPump />,
+    label: t("yakitYonetimi"),
+    children: [
+      {
+        key: "14",
+        label: <Link to={"/yakit-tanimlari"}>{t("tanimlar")}</Link>,
+      },
+      {
+        key: "15",
+        label: <Link to={"/yakit-giris-fisleri"}>{t("girişFişleri")}</Link>,
+      },
+      {
+        key: "16",
+        label: <Link to={"/yakit-cikis-fisleri"}>{t("çıkışFişleri")}</Link>,
+      },
+      {
+        key: "17",
+        label: <Link to={"/yakit-transferler"}>{t("transferler")}</Link>,
+      },
+      {
+        key: "18",
+        label: <Link to={"/"}>{t("hareketler")}</Link>,
       },
     ],
   },

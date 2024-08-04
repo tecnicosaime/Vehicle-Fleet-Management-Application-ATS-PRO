@@ -15,6 +15,7 @@ import AddModal from "./add/AddModal";
 import Filter from "./filter/Filter";
 import OperationsInfo from "./operations/OperationsInfo";
 import DurumFiltresi from "./components/DurumFiltresi.jsx";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -103,6 +104,41 @@ const Vehicles = () => {
       title: t("yakitTip"),
       dataIndex: "yakitTip",
       key: 9,
+    },
+    {
+      title: t("aracBolge"),
+      dataIndex: "lokasyon",
+      key: 10,
+    },
+    {
+      title: t("muayeneTarihi"),
+      dataIndex: "muayeneTarih",
+      key: 11,
+      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+    },
+    {
+      title: t("aracEgzoz"),
+      dataIndex: "egzosTarih",
+      key: 12,
+      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+    },
+    {
+      title: t("aracVergi"),
+      dataIndex: "vergiTarih",
+      key: 13,
+      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+    },
+    {
+      title: t("sozlesmeTarih"),
+      dataIndex: "sozlesmeTarih",
+      key: 14,
+      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+    },
+    {
+      title: t("sigortaTarih"),
+      dataIndex: "sigortaTarih",
+      key: 15,
+      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
     },
   ];
 

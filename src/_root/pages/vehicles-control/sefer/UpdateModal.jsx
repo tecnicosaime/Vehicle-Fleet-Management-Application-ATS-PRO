@@ -5,10 +5,7 @@ import { t } from "i18next";
 import dayjs from "dayjs";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetExpeditionItemByIdService, UpdateExpeditionItemService } from "../../../../api/services/vehicles/operations_services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../api/services/upload/services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
 import { CodeItemValidateService } from "../../../../api/services/code/services";
 import { uploadFile, uploadPhoto } from "../../../../utils/upload";
 import { message, Modal, Tabs, Button } from "antd";
@@ -18,10 +15,10 @@ import FileUpload from "../../../components/upload/FileUpload";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 
 const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
-  const { plaka } = useContext(PlakaContext);
+  const { data, plaka } = useContext(PlakaContext);
   const [isValid, setIsValid] = useState("normal");
   const [code, setCode] = useState("normal");
-  const [activeKey, setActiveKey] = useState("1"); 
+  const [activeKey, setActiveKey] = useState("1");
   // file
   const [filesUrl, setFilesUrl] = useState([]);
   const [files, setFiles] = useState([]);
@@ -130,7 +127,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
     }
   }, [watch("seferNo"), code]);
 
-  useEffect(() => { setValue("seferAdedi", 1) }, [])
+  useEffect(() => {
+    setValue("seferAdedi", 1);
+  }, []);
 
   useEffect(() => {
     let fark;
@@ -185,13 +184,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "SEFER").then((res) =>
-        setImageUrls(res.data)
-      );
+      GetPhotosByRefGroupService(id, "SEFER").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "SEFER").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetDocumentsByRefGroupService(id, "SEFER").then((res) => setFilesUrl(res.data));
     }
   }, [id, updateModal]);
 
@@ -217,6 +212,11 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       setLoadingImages(false);
     }
   };
+
+  useEffect(() => {
+    setValue("surucuId1", data.surucuId);
+    setValue("surucu1", data.surucuAdi);
+  }, [data]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -248,25 +248,25 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       ozelAlanKodId10: values.ozelAlanKodId10 || 0,
       ozelAlan11: values.ozelAlan11 || 0,
       ozelAlan12: values.ozelAlan12 || 0,
-    }
+    };
 
     UpdateExpeditionItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
         if (plaka.length === 1) {
           reset();
         } else {
           reset();
         }
       }
-    })
+    });
 
     uploadFiles();
     uploadImages();
-    setStatus(false)
-  })
+    setStatus(false);
+  });
 
   const personalProps = {
     form: "SEFER",
@@ -288,33 +288,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -323,7 +307,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       onClick={() => {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
       }}
     >
       {t("kapat")}
@@ -331,14 +315,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   ];
 
   return (
-    <Modal
-      title={t("seferBilgisiGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("seferBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
