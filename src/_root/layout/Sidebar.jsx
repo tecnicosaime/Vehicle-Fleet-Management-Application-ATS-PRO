@@ -59,6 +59,10 @@ const items = [
         label: <Link to={"/"}>{t("lastikler")}</Link>,
       },
       {
+        key: "121",
+        label: <Link to={"/"}>{t("ekspertizler")}</Link>,
+      },
+      {
         key: "12",
         label: <Link to={"/hizli-km-guncelleme"}>{t("hizliKmGuncelleme")}</Link>,
       },
@@ -157,6 +161,45 @@ const items = [
         label: <Link to={"/"}>{t("yakitTanklari")}</Link>,
       },
     ],
+  },
+  {
+    key: "338",
+    icon: <HiOutlineDocumentReport />,
+    label: t("finansYonetim"),
+    children: [
+      {
+        key: "435",
+        label: <Link to={"/hazirlaniyor"}>{t("faturalar")}</Link>,
+      },
+      {
+        key: "661",
+        label: <Link to={"/hazirlaniyor"}>{t("cariHesaplar")}</Link>,
+      },
+    ],
+  },
+  {
+    key: "348",
+    icon: <HiOutlineDocumentReport />,
+    label: t("satinAlmaYonetim"),
+    children: [
+      {
+        key: "235",
+        label: <Link to={"/hazirlaniyor"}>{t("malzemeTalepleri")}</Link>,
+      },
+      {
+        key: "064",
+        label: <Link to={"/hazirlaniyor"}>{t("teklifler")}</Link>,
+      },
+      {
+        key: "832",
+        label: <Link to={"/hazirlaniyor"}>{t("siparisler")}</Link>,
+      },
+    ],
+  },
+  {
+    key: "368",
+    icon: <HiOutlineDocumentReport />,
+    label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
   },
   {
     key: "38",

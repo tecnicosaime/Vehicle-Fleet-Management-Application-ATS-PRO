@@ -41,6 +41,7 @@ import LokasyonTanimlari from "./_root/pages/sistem-tanimlari/LokasyonTanimlari/
 
 import Raporlar from "./_root/pages/raporlar/RaporYonetimi.jsx";
 import KodYonetimi from "./_root/pages/kod-yonetimi/KodYonetimi";
+import Hazirlaniyor from "./_root/pages/Hazirlaniyor";
 
 const App = () => {
   const [hasToken, setHasToken] = useState(false);
@@ -99,6 +100,7 @@ const App = () => {
 
         <Route path="/surucu-tanimlari" element={<Suruculer />} />
         <Route path="/raporlar" element={<Raporlar />} />
+        <Route path="/hazirlaniyor" element={<Hazirlaniyor />} />
       </Route>
       {hasToken && <Route path="/login" element={<AuthLayout />} />}
     </Routes>
