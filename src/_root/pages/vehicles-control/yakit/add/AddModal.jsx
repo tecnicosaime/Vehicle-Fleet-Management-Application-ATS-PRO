@@ -8,7 +8,7 @@ import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../context/plakaSlice";
 import { AddFuelService, GetFuelCardContentByIdService } from "../../../../../api/services/vehicles/operations_services";
 import GeneralInfo from "./GeneralInfo";
-import PersonalFields from "../../../../components/form/personal-fields/PersonalFields"
+import PersonalFields from "../../../../components/form/personal-fields/PersonalFields";
 
 const AddModal = ({ setStatus }) => {
   const { data, plaka, setData, setHistory } = useContext(PlakaContext);
@@ -162,6 +162,7 @@ const AddModal = ({ setStatus }) => {
     const body = {
       aracId: data.aracId,
       plaka: data.plaka,
+      LokasyonId: watch("lokasyonIdFromPlaka"),
       tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
       saat: dayjs(values.saat).format("HH:mm:ss"),
       surucuId: values.surucuId || -1,
@@ -180,7 +181,7 @@ const AddModal = ({ setStatus }) => {
       kmLog: kmLog,
       depoYakitMiktar: values.depoYakitMiktar,
       yakitTanki: values.yakitTanki,
-      lokasyonId: values.lokasyonId || -1,
+      // lokasyonId: values.lokasyonId || -1,
       ozelAlan1: values.ozelAlan1 || "",
       ozelAlan2: values.ozelAlan2 || "",
       ozelAlan3: values.ozelAlan3 || "",
@@ -196,65 +197,70 @@ const AddModal = ({ setStatus }) => {
       hasToInsertKmLog: values.engelle ? values.engelle : false,
     };
 
-    AddFuelService(body).then((res) => {
-      if (res?.data.statusCode === 200) {
-        setStatus(true);
-        setResponse("normal");
-        if (plaka.length === 1) {
-          reset({
-            plaka: data.plaka,
-            sonAlinanKm: data.sonAlinanKm,
-            litreFiyat: data.litreFiyat,
-            tarih: dayjs(new Date()),
-            saat: dayjs(new Date()),
-            alinanKm: null,
-            farkKm: null,
-            miktar: null,
-            fullDepo: false,
-            tutar: null,
-            tuketim: null,
-            engelle: false,
-            surucuId: data.surucuId,
-            yakitTipId: data.yakitTipId,
-            yakitTip: data.yakitTip,
-            surucu: data.surucuAdi,
-            stokKullanimi: data.stokKullanimi,
-            yakitHacmi: data.yakitHacmi,
-          });
+    AddFuelService(body)
+      .then((res) => {
+        if (res?.data.statusCode === 200) {
+          setStatus(true);
+          setResponse("normal");
+          setopenModal(false);
+          if (plaka.length === 1) {
+            reset({
+              plaka: data.plaka,
+              sonAlinanKm: data.sonAlinanKm,
+              litreFiyat: data.litreFiyat,
+              tarih: dayjs(new Date()),
+              saat: dayjs(new Date()),
+              alinanKm: null,
+              farkKm: null,
+              miktar: null,
+              fullDepo: false,
+              tutar: null,
+              tuketim: null,
+              engelle: false,
+              surucuId: data.surucuId,
+              yakitTipId: data.yakitTipId,
+              yakitTip: data.yakitTip,
+              surucu: data.surucuAdi,
+              stokKullanimi: data.stokKullanimi,
+              yakitHacmi: data.yakitHacmi,
+            });
+          } else {
+            reset({
+              plaka: null,
+              sonAlinanKm: null,
+              litreFiyat: null,
+              tarih: dayjs(new Date()),
+              saat: dayjs(new Date()),
+              alinanKm: null,
+              farkKm: null,
+              miktar: null,
+              fullDepo: false,
+              tutar: null,
+              tuketim: null,
+              engelle: false,
+              surucuId: null,
+              yakitTipId: null,
+              yakitTip: null,
+              surucu: null,
+              stokKullanimi: null,
+              yakitHacmi: null,
+            });
+          }
+          setHistory([]);
+          setLoading(false);
+          setActiveKey("1");
+          if (plaka.length === 1) {
+            GetFuelCardContentByIdService(plaka[0].id).then((res) => {
+              setData(res.data);
+            });
+          }
         } else {
-          reset({
-            plaka: null,
-            sonAlinanKm: null,
-            litreFiyat: null,
-            tarih: dayjs(new Date()),
-            saat: dayjs(new Date()),
-            alinanKm: null,
-            farkKm: null,
-            miktar: null,
-            fullDepo: false,
-            tutar: null,
-            tuketim: null,
-            engelle: false,
-            surucuId: null,
-            yakitTipId: null,
-            yakitTip: null,
-            surucu: null,
-            stokKullanimi: null,
-            yakitHacmi: null,
-          });
+          message.error("Bir sorun oluşdu! Tekrar deneyiniz.");
         }
-        setHistory([]);
+      })
+      .finally(() => {
         setLoading(false);
-        setActiveKey("1");
-        if (plaka.length === 1) {
-          GetFuelCardContentByIdService(plaka[0].id).then((res) => {
-            setData(res.data);
-          });
-        }
-      } else {
-        message.error("Bir sorun oluşdu! Tekrar deneyiniz.");
-      }
-    });
+      });
     setStatus(false);
   });
 
@@ -268,13 +274,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: "Genel Bilgiler",
-      children: (
-        <GeneralInfo
-          setIsValid={setIsValid}
-          response={response}
-          setResponse={setResponse}
-        />
-      ),
+      children: <GeneralInfo setIsValid={setIsValid} response={response} setResponse={setResponse} />,
     },
     {
       key: "2",
@@ -316,12 +316,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={isValid}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid}>
         {t("kaydet")}
       </Button>
     ),
@@ -348,7 +343,14 @@ const AddModal = ({ setStatus }) => {
       <Modal
         title={t("yeniYakitGirisi")}
         open={openModal}
-        onCancel={() => setopenModal(false)}
+        destroyOnClose
+        onCancel={() => {
+          setopenModal(false);
+          resetForm(plaka, data, reset);
+          setResponse("normal");
+          setHistory([]);
+          setActiveKey("1");
+        }}
         maskClosable={false}
         footer={footer}
         width={1200}

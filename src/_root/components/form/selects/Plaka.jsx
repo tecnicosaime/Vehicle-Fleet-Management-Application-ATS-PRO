@@ -81,6 +81,10 @@ const Plaka = ({ name, codeName, required }) => {
                 if (selectedOption) {
                   name ? setValue(name, selectedOption.plaka) : setValue("plaka", selectedOption.plaka);
                 }
+                const selectedPlate = plateList.find((option) => option.id === e);
+                if (selectedPlate && "lokasyonId" in selectedPlate) {
+                  setValue("lokasyonIdFromPlaka", selectedPlate.lokasyonId);
+                }
               }
             }}
             disabled={plaka.length === 1}
