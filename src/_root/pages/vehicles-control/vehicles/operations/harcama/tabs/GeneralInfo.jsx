@@ -38,8 +38,10 @@ const GeneralInfo = () => {
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("lokasyon")}</label>
-                <Location />
+                <label>
+                  {t("lokasyon")} <span className="text-danger">*</span>
+                </label>
+                <Location required={true} />
               </div>
             </div>
           </div>
