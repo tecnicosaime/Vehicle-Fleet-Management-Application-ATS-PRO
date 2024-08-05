@@ -157,7 +157,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       setValue("lokasyonAktif", selectedRow.lokasyonAktif);
       setValue("lokasyonAciklama", selectedRow.lokasyonAciklama);
       setValue("anaLokasyonID", selectedRow.anaLokasyonId);
-      setValue("anaLokasyonTanim", selectedRow.anaLokasyonTanim);
+      setValue("anaLokasyonTanim", selectedRow.anaLokasyon);
       setValue("LokasyonTipi", selectedRow.LOK_TIP);
       setValue("LokasyonTipiID", selectedRow.LOK_TIP_ID);
       setValue("LokasyonBina", selectedRow.LOK_BINA);
