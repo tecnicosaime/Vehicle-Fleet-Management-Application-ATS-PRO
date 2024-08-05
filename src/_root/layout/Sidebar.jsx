@@ -213,7 +213,7 @@ const items = [
     children: [
       {
         key: "401",
-        label: <Link to={"/lokasyon-tanimlari"}>{t("lokasyon")}</Link>,
+        label: <Link to={"/lokasyon-tanimlari"}>{t("lokasyonlar")}</Link>,
       },
       {
         key: "40",
