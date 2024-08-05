@@ -3,15 +3,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { t } from "i18next";
-import {LoadingOutlined} from "@ant-design/icons"
+import { LoadingOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
-import {
-  AddFuelService,
-  GetFuelCardContentByIdService,
-} from "../../../../../../../api/services/vehicles/operations_services";
-import GeneralInfo from "./GeneralInfo"; 
+import { AddFuelService, GetFuelCardContentByIdService } from "../../../../../../../api/services/vehicles/operations_services";
+import GeneralInfo from "./GeneralInfo";
 import PersonalFields from "../../../../../../components/form/personal-fields/PersonalFields";
 
 const AddModal = ({ setStatus }) => {
@@ -253,13 +250,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo
-          setIsValid={setIsValid}
-          response={response}
-          setResponse={setResponse}
-        />
-      ),
+      children: <GeneralInfo setIsValid={setIsValid} response={response} setResponse={setResponse} />,
     },
     {
       key: "2",
@@ -301,12 +292,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={isValid}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid}>
         {t("kaydet")}
       </Button>
     ),
@@ -330,14 +316,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniYakitGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniYakitGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <p className="count">
           {t("guncelKm")}: [ {watch("guncelKmLog")} km ]
         </p>
