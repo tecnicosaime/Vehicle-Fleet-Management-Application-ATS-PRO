@@ -157,7 +157,17 @@ function KatedilenMesafeler(props = {}) {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip" style={{ display: "flex", flexDirection: "column", gap: "5px", backgroundColor: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+        <div
+          className="custom-tooltip"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
           <p className="label">{`Ay: ${label}`}</p>
           {payload.map((entry, index) => (
             <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value} km`}</p>

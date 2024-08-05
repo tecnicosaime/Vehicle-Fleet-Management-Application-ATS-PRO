@@ -71,11 +71,7 @@ const Kapasite = ({ visible, onClose, id }) => {
     const fetchData = async () => {
       setLoading(true);
       setIsInitialLoading(true);
-      const res = await GetCapacityListByVehicleIdService(
-        id,
-        search,
-        tableParams.pagination.current
-      );
+      const res = await GetCapacityListByVehicleIdService(id, search, tableParams.pagination.current);
       setLoading(false);
       setIsInitialLoading(false);
       setDataSource(res?.data.list);
@@ -123,14 +119,7 @@ const Kapasite = ({ visible, onClose, id }) => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   const footer = [
     <Button key="back" className="btn btn-min cancel-btn" onClick={onClose}>
@@ -139,46 +128,22 @@ const Kapasite = ({ visible, onClose, id }) => {
   ];
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal
-      title={t("kapasiteBilgiler")}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("kapasiteBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <div className="flex justify-between align-center">
         <div className="flex align-center gap-1">
-          <Popover
-            content={content}
-            placement="bottom"
-            trigger="click"
-            open={openRowHeader}
-            onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-          >
+          <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
             <Button className="btn primary-btn">
               <MenuOutlined />
             </Button>
           </Popover>
-          <Input
-            placeholder="Arama"
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <Input placeholder="Arama" onChange={(e) => setSearch(e.target.value)} />
           <AddModal setStatus={setStatus} />
         </div>
       </div>
-      <UpdateModal
-        updateModal={updateModal}
-        setUpdateModal={setUpdateModal}
-        setStatus={setStatus}
-        status={status}
-        id={kpId}
-      />
+      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} status={status} id={kpId} />
       <div className="mt-20">
         <DragAndDropContext items={columns} setItems={setColumns}>
           <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
@@ -188,7 +153,9 @@ const Kapasite = ({ visible, onClose, id }) => {
               pagination={{
                 ...tableParams.pagination,
                 showTotal: (total) => (
-                  <p className="text-info">[{total} {t("kayit")}]</p>
+                  <p className="text-info">
+                    [{total} {t("kayit")}]
+                  </p>
                 ),
                 locale: {
                   items_per_page: `/ ${t("sayfa")}`,

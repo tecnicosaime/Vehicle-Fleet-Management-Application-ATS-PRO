@@ -57,7 +57,7 @@ const GeneralInfo = ({ isValid, setImages, urls }) => {
       message.error("You can only upload JPG/PNG file!");
     }
     const formData = new FormData();
-    formData.append('images', file);
+    formData.append("images", file);
     setImages(formData);
     return isJpgOrPng;
   };
@@ -87,13 +87,7 @@ const GeneralInfo = ({ isValid, setImages, urls }) => {
                   render={({ field }) => (
                     <Input
                       {...field}
-                      style={
-                        isValid === "error"
-                          ? { borderColor: "#dc3545" }
-                          : isValid === "success"
-                            ? { borderColor: "#23b545" }
-                            : { color: "#000" }
-                      }
+                      style={isValid === "error" ? { borderColor: "#dc3545" } : isValid === "success" ? { borderColor: "#23b545" } : { color: "#000" }}
                       onChange={(e) => {
                         field.onChange(e.target.value);
                       }}
@@ -129,70 +123,40 @@ const GeneralInfo = ({ isValid, setImages, urls }) => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("lokasyon")}</label>
-                <Controller
-                  name="lokasyonId"
-                  control={control}
-                  render={({ field }) => <Location field={field} />}
-                />
+                <Controller name="lokasyonId" control={control} render={({ field }) => <Location field={field} />} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("departman")}</label>
-                <Controller
-                  name="departmanId"
-                  control={control}
-                  render={({ field }) => <Departman field={field} />}
-                />
+                <Controller name="departmanId" control={control} render={({ field }) => <Departman field={field} />} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("personelTipi")}</label>
-                <Controller
-                  name="personelTipiKodId"
-                  control={control}
-                  render={({ field }) => <PersonelTip field={field} />}
-                />
+                <Controller name="personelTipiKodId" control={control} render={({ field }) => <PersonelTip field={field} />} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("gorev")}</label>
-                <Controller
-                  name="gorevKodId"
-                  control={control}
-                  render={({ field }) => <PersonelGorev field={field} />}
-                />
+                <Controller name="gorevKodId" control={control} render={({ field }) => <PersonelGorev field={field} />} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("unvan")}</label>
-                <Controller
-                  name="unvanKodId"
-                  control={control}
-                  render={({ field }) => <PersonelUnvan field={field} />}
-                />
+                <Controller name="unvanKodId" control={control} render={({ field }) => <PersonelUnvan field={field} />} />
               </div>
             </div>
           </div>
         </div>
         <div className="col-span-4 p-10">
           <div className="flex flex-col gap-2 align-center justify-evenly h-full">
-            <img
-              src={profileImage || "/default-profile-image.png"}
-              alt="Profile"
-              style={{ width: "60%", height: "60%" }}
-            />
+            <img src={profileImage || "/default-profile-image.png"} alt="Profile" style={{ width: "60%", height: "60%" }} />
             <ImgCrop>
-              <Upload
-                listType="picture-card"
-                fileList={fileList}
-                onChange={onChange}
-                beforeUpload={beforeUpload}
-                showUploadList={false}
-              >
+              <Upload listType="picture-card" fileList={fileList} onChange={onChange} beforeUpload={beforeUpload} showUploadList={false}>
                 Resim yukle
               </Upload>
             </ImgCrop>

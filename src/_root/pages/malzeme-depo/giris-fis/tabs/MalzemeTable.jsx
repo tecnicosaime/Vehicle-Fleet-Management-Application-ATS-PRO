@@ -4,15 +4,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 import { GetMaterialListService } from "../../../../../api/services/malzeme/services";
 
-const MalzemeTable = ({
-  setSelectedRows,
-  selectedRowKeys,
-  setSelectedRowKeys,
-  keys,
-  rows,
-  setKeys,
-  setRows,
-}) => {
+const MalzemeTable = ({ setSelectedRows, selectedRowKeys, setSelectedRowKeys, keys, rows, setKeys, setRows }) => {
   const [dataSource, setDataSource] = useState([]);
   const [search, setSearch] = useState("");
   const [tableParams, setTableParams] = useState({
@@ -71,10 +63,7 @@ const MalzemeTable = ({
     const fetchData = async () => {
       setLoading(true);
       setIsInitialLoading(true);
-      const res = await GetMaterialListService(
-        search,
-        tableParams.pagination.current
-      );
+      const res = await GetMaterialListService(search, tableParams.pagination.current);
       setLoading(false);
       setIsInitialLoading(false);
       setDataSource(res?.data.materialList);
@@ -95,7 +84,7 @@ const MalzemeTable = ({
   };
 
   const handleHandleRowSelection = (row, selected) => {
-    console.log(row)
+    console.log(row);
     if (selected) {
       if (!keys.includes(row.malzemeId)) {
         setKeys([...keys, row.malzemeId]);
@@ -103,9 +92,7 @@ const MalzemeTable = ({
       }
     } else {
       const filteredKeys = keys.filter((key) => key !== row.malzemeId);
-      const filteredRows = rows.filter(
-        (item) => item.malzemeId !== row.malzemeId
-      );
+      const filteredRows = rows.filter((item) => item.malzemeId !== row.malzemeId);
       setKeys(filteredKeys);
       setRows(filteredRows);
     }
@@ -132,23 +119,16 @@ const MalzemeTable = ({
   };
 
   useEffect(() => {
-    const storedSelectedKeys =
-      JSON.parse(localStorage.getItem("selectedRowKeys")) || [];
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys")) || [];
     setSelectedRowKeys(storedSelectedKeys);
   }, [tableParams.pagination.current, localStorage.getItem("selectedRowKeys")]);
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
     <>
-      <Input
-        placeholder={t("arama")}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{ width: "30%" }}
-      />
+      <Input placeholder={t("arama")} onChange={(e) => setSearch(e.target.value)} style={{ width: "30%" }} />
       <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
         <Table
           rowSelection={{

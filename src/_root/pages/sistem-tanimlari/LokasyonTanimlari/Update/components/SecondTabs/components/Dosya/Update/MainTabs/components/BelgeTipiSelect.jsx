@@ -26,8 +26,7 @@ export default function BelgeTipiSelect() {
   };
 
   return (
-    <div
-      style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: "space-between", width: "350px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: "space-between", width: "350px" }}>
       <Text style={{ fontSize: "14px" }}>Belge Tipi:</Text>
       <Controller
         name="belgeTipi"
@@ -40,9 +39,7 @@ export default function BelgeTipiSelect() {
             allowClear
             placeholder="Seçim Yapınız"
             optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false
-            }
+            filterOption={(input, option) => (option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false)}
             onDropdownVisibleChange={(open) => {
               if (open) {
                 fetchData(); // Fetch data when the dropdown is opened

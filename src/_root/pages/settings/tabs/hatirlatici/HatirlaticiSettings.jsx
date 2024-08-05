@@ -1,11 +1,5 @@
-
-
 const HatirlaticiSettings = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default HatirlaticiSettings
+export default HatirlaticiSettings;

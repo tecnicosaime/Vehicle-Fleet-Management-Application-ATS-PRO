@@ -53,10 +53,7 @@ const GoogleMaps = () => {
         () => {
           const defaultPosition = { lat: -3.745, lng: -38.523 };
           setPosition(defaultPosition);
-          setValue(
-            "coordinates",
-            `${defaultPosition.lat}, ${defaultPosition.lng}`
-          );
+          setValue("coordinates", `${defaultPosition.lat}, ${defaultPosition.lng}`);
         }
       );
     } else {
@@ -82,9 +79,7 @@ const GoogleMaps = () => {
       locationButton.style.cursor = "pointer";
       locationButton.style.fontSize = "24px";
       locationButton.style.padding = "10px";
-      map.controls[window.google.maps.ControlPosition.TOP_RIGHT].push(
-        locationButton
-      );
+      map.controls[window.google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
 
       locationButton.addEventListener("click", () => {
         if (navigator.geolocation) {
@@ -95,10 +90,7 @@ const GoogleMaps = () => {
                 lng: position.coords.longitude,
               };
               setPosition(userLocation);
-              setValue(
-                "coordinates",
-                `${userLocation.lat}, ${userLocation.lng}`
-              );
+              setValue("coordinates", `${userLocation.lat}, ${userLocation.lng}`);
               map.setCenter(userLocation);
 
               map.markers.forEach((marker) => marker.setMap(null));
@@ -112,16 +104,13 @@ const GoogleMaps = () => {
               map.markers.push(marker);
 
               const geocoder = new window.google.maps.Geocoder();
-              geocoder.geocode(
-                { location: userLocation },
-                (results, status) => {
-                  if (status === "OK" && results[0]) {
-                    setValue("searchQuery", results[0].formatted_address);
-                  } else {
-                    setValue("searchQuery", "Adres bulunamadı");
-                  }
+              geocoder.geocode({ location: userLocation }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                  setValue("searchQuery", results[0].formatted_address);
+                } else {
+                  setValue("searchQuery", "Adres bulunamadı");
                 }
-              );
+              });
             },
             () => {
               alert("Konum alınamadı.");
@@ -201,9 +190,7 @@ const GoogleMaps = () => {
     const value = e.target.value;
     setValue("coordinates", value);
 
-    const [lat, lng] = value
-      .split(",")
-      .map((coord) => parseFloat(coord.trim()));
+    const [lat, lng] = value.split(",").map((coord) => parseFloat(coord.trim()));
     if (!isNaN(lat) && !isNaN(lng)) {
       const newPosition = { lat, lng };
       setPosition(newPosition);
@@ -235,26 +222,12 @@ const GoogleMaps = () => {
   return (
     <>
       {position && (
-        <LoadScript
-          googleMapsApiKey="AIzaSyDUqW8OQobjsng1Nm0XJKBs0LNvSgq0yfw"
-          libraries={libraries}
-        >
-          <Autocomplete
-            onLoad={setAutocomplete}
-            onPlaceChanged={onPlaceChanged}
-          >
+        <LoadScript googleMapsApiKey="AIzaSyDUqW8OQobjsng1Nm0XJKBs0LNvSgq0yfw" libraries={libraries}>
+          <Autocomplete onLoad={setAutocomplete} onPlaceChanged={onPlaceChanged}>
             <Controller
               name="searchQuery"
               control={control}
-              render={({ field }) => (
-                <Input.Search
-                  placeholder="Konum giriniz"
-                  enterButton="Ara"
-                  size="large"
-                  {...field}
-                  style={{ marginBottom: "10px" }}
-                />
-              )}
+              render={({ field }) => <Input.Search placeholder="Konum giriniz" enterButton="Ara" size="large" {...field} style={{ marginBottom: "10px" }} />}
             />
           </Autocomplete>
           <Controller
@@ -272,13 +245,7 @@ const GoogleMaps = () => {
               />
             )}
           />
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={position}
-            zoom={10}
-            onLoad={onLoad}
-            onUnmount={onUnmount}
-          ></GoogleMap>
+          <GoogleMap mapContainerStyle={containerStyle} center={position} zoom={10} onLoad={onLoad} onUnmount={onUnmount}></GoogleMap>
         </LoadScript>
       )}
     </>

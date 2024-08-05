@@ -12,12 +12,7 @@ import Textarea from "../../../../components/form/inputs/Textarea";
 import MalzemeTable from "./MalzemeTable";
 import { DeleteUpdatedMaterialReceiptService } from "../../../../../api/services/malzeme/services";
 
-const UpdateMalzemeLists = ({
-  setTableData,
-  tableData,
-  isSuccess,
-  setIsSuccess,
-}) => {
+const UpdateMalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
   const { control, setValue, watch, handleSubmit } = useFormContext();
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsModalOpen] = useState(false);
@@ -44,40 +39,23 @@ const UpdateMalzemeLists = ({
             setEditModal(true);
             setDataSource(record);
             setRecord(record);
-            setValue(
-              "edit_plakaId", record.aracId
-            );
-            setValue(
-              "malzeme_plaka",
-              record.plaka
-            );
-            setValue("edit_indirimOrani", record.indirimOran)
-            setValue("edit_indirimTutari", record.indirimTutar)
+            setValue("edit_plakaId", record.aracId);
+            setValue("malzeme_plaka", record.plaka);
+            setValue("edit_indirimOrani", record.indirimOran);
+            setValue("edit_indirimTutari", record.indirimTutar);
             setValue("edit_malzemeTanimi", record.malezemeTanim);
-            setValue(
-              "edit_miktar",
-              watch("edit_miktar") ? watch("edit_miktar") : 1
-            );
+            setValue("edit_miktar", watch("edit_miktar") ? watch("edit_miktar") : 1);
             setValue("birim", record.birim);
             setValue("edit_birim", record.birimKodId);
             setValue("edit_fiyat", record.fiyat);
-            setValue(
-              "edit_araToplam",
-              watch("edit_miktar")
-                ? watch("edit_miktar") * watch("edit_fiyat")
-                : 1 * watch("edit_fiyat")
-            );
+            setValue("edit_araToplam", watch("edit_miktar") ? watch("edit_miktar") * watch("edit_fiyat") : 1 * watch("edit_fiyat"));
             setValue("edit_kdvOrani", record.kdvOran);
             setValue("edit_toplam", record.toplam);
             setValue("edit_malzemeKod", record.malezemeKod);
             setValue("edit_malzemeTip", record.malzemeTip);
             setValue("edit_aciklama", record.aciklama);
-            setValue(
-              "edit_lokasyonId", record.lokasyonId
-            );
-            setValue(
-              "edit_lokasyon", record.lokasyon
-            );
+            setValue("edit_lokasyonId", record.lokasyonId);
+            setValue("edit_lokasyon", record.lokasyon);
             setValue("edit_kdv", record.kdvDahilHaric ? "Dahil" : "Hariç");
           }}
         >
@@ -112,7 +90,7 @@ const UpdateMalzemeLists = ({
     {
       title: `${t("indirimOrani")} %`,
       dataIndex: "indirimOran",
-      render: text => `${text} %`
+      render: (text) => `${text} %`,
     },
     {
       title: t("indirimTutari"),
@@ -121,7 +99,7 @@ const UpdateMalzemeLists = ({
     {
       title: `${t("kdvOrani")} %`,
       dataIndex: "kdvOran",
-      render: text => `${text} %`
+      render: (text) => `${text} %`,
     },
     {
       title: `${t("kdv")} D/H`,
@@ -152,12 +130,7 @@ const UpdateMalzemeLists = ({
       title: "",
       dataIndex: "delete",
       render: (_, record) => (
-        <Popconfirm
-          title="Silmeye eminmisiniz?"
-          okText={t("ok")}
-          cancelText={t("cancel")}
-          onConfirm={() => handleDelete(record)}
-        >
+        <Popconfirm title="Silmeye eminmisiniz?" okText={t("ok")} cancelText={t("cancel")} onConfirm={() => handleDelete(record)}>
           <DeleteOutlined style={{ color: "#dc3545" }} />
         </Popconfirm>
       ),
@@ -171,9 +144,7 @@ const UpdateMalzemeLists = ({
     setTableData(newData);
     setSelectedRows([...newRows]);
     const deletedRow = dataSource.find((item) => item.key === key.key);
-    DeleteUpdatedMaterialReceiptService(deletedRow.siraNo).then((res) =>
-      console.log(res.data)
-    );
+    DeleteUpdatedMaterialReceiptService(deletedRow.siraNo).then((res) => console.log(res.data));
   };
 
   useEffect(() => {
@@ -215,9 +186,7 @@ const UpdateMalzemeLists = ({
     } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
       if (indirimOrani) {
         kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
-        indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(
-          2
-        );
+        indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(2);
         result = araToplam - kdvTutar - indirimTutar;
         toplam = +result.toFixed(2) + +kdvTutar;
       } else {
@@ -229,14 +198,7 @@ const UpdateMalzemeLists = ({
     setValue("edit_indirimTutari", indirimTutar);
     setValue("edit_kdvTutar", kdvTutar);
     setValue("edit_toplam", toplam);
-  }, [
-    watch("edit_indirimOrani"),
-    watch("edit_araToplam"),
-    watch("edit_kdvOrani"),
-    watch("edit_kdv"),
-    watch("edit_indirimTutari"),
-    watch("edit_toplam"),
-  ]);
+  }, [watch("edit_indirimOrani"), watch("edit_araToplam"), watch("edit_kdvOrani"), watch("edit_kdv"), watch("edit_indirimTutari"), watch("edit_toplam")]);
 
   useEffect(() => {
     if (watch("edit_miktar")) {
@@ -280,20 +242,14 @@ const UpdateMalzemeLists = ({
       mlzAracId: item.mlzAracId,
       lokasyonId: watch("lokasyonId"),
       lokasyon: watch("lokasyon"),
-      kdvTutar: item.kdvDahilHaric
-        ? ((1 * item.fiyat) / (1 + item.kdvOran)).toFixed(2)
-        : (1 * item.fiyat * (item.kdvOran / 100)).toFixed(2),
+      kdvTutar: item.kdvDahilHaric ? ((1 * item.fiyat) / (1 + item.kdvOran)).toFixed(2) : (1 * item.fiyat * (item.kdvOran / 100)).toFixed(2),
       isPriceChanged: false,
     }));
 
     const existingKeys = dataSource.map((item) => item.key);
 
-    const hasDublicate = selectedRowKeys.some((key) =>
-      existingKeys.includes(key)
-    );
-    const filteredNewRows = newRows.filter(
-      (item) => !existingKeys.includes(item.key)
-    );
+    const hasDublicate = selectedRowKeys.some((key) => existingKeys.includes(key));
+    const filteredNewRows = newRows.filter((item) => !existingKeys.includes(item.key));
 
     if (hasDublicate) {
       message.warning(`Seçilen malzeme listede mevcutdur`);
@@ -309,7 +265,7 @@ const UpdateMalzemeLists = ({
     setKeys([]);
     setRows([]);
   };
-console.log(tableData)
+  console.log(tableData);
   const handleEdit = handleSubmit((values) => {
     const key = record.key;
     const index = tableData.findIndex((item) => item.key === key);
@@ -348,11 +304,7 @@ console.log(tableData)
   });
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={handleAdd}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={handleAdd}>
       {t("ekle")}
     </Button>,
     <Button
@@ -370,11 +322,7 @@ console.log(tableData)
   ];
 
   const editModalFooter = [
-    <Button
-      key="submit"
-      className="btn primary-btn km-update"
-      onClick={handleEdit}
-    >
+    <Button key="submit" className="btn primary-btn km-update" onClick={handleEdit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -424,14 +372,7 @@ console.log(tableData)
         size="small"
       />
 
-      <Modal
-        title="Fiş Giriş Detayı"
-        open={isOpen}
-        onCancel={() => setIsModalOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1000}
-      >
+      <Modal title="Fiş Giriş Detayı" open={isOpen} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={1000}>
         <MalzemeTable
           setSelectedRows={setSelectedRows}
           selectedRowKeys={selectedRowKeys}
@@ -443,14 +384,7 @@ console.log(tableData)
         />
       </Modal>
 
-      <Modal
-        title={"Düzenleme"}
-        open={editModal}
-        onCancel={() => setEditModal(false)}
-        maskClosable={false}
-        footer={editModalFooter}
-        width={1000}
-      >
+      <Modal title={"Düzenleme"} open={editModal} onCancel={() => setEditModal(false)} maskClosable={false} footer={editModalFooter} width={1000}>
         <div className="grid gap-1">
           <div className="col-span-4">
             <div className="flex flex-col gap-1">
@@ -559,21 +493,12 @@ console.log(tableData)
                         }
                       } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
                         if (e) {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
-                          indirimTutar = (
-                            ((araToplam - kdvTutar) * e) /
-                            100
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+                          indirimTutar = (((araToplam - kdvTutar) * e) / 100).toFixed(2);
                           result = araToplam - kdvTutar - indirimTutar;
                           toplam = +result.toFixed(2);
                         } else {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
                           toplam = +araToplam.toFixed(2);
                         }
                       }
@@ -614,14 +539,8 @@ console.log(tableData)
                           kdvTutar = (result * kdvOrani) / 100;
                           toplam = +result + +kdvTutar;
                         } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
-                          indirimOran = (
-                            (100 * e) /
-                            (araToplam - kdvTutar)
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+                          indirimOran = ((100 * e) / (araToplam - kdvTutar)).toFixed(2);
                           result = araToplam - kdvTutar - e;
                           toplam = +result.toFixed(2);
                         }

@@ -27,14 +27,8 @@ const Depo = ({ type, required }) => {
             allowClear
             optionFilterProp="children"
             className={fieldState.error ? "input-error" : ""}
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={data.map((item) => ({
               label: item.tanim,
               value: item.siraNo,
@@ -60,9 +54,7 @@ const Depo = ({ type, required }) => {
               }
             }}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />

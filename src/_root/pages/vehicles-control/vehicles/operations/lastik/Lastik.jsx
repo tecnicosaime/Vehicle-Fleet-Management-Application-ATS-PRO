@@ -3,16 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import {
-  Modal,
-  Button,
-  Table,
-  Checkbox,
-  Popconfirm,
-  Input,
-  Popover,
-  Tabs,
-} from "antd";
+import { Modal, Button, Table, Checkbox, Popconfirm, Input, Popover, Tabs } from "antd";
 import { DeleteOutlined, MenuOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
 import DragAndDropContext from "../../../../../components/drag-drop-table/DragAndDropContext";
@@ -49,11 +40,7 @@ const Lastik = ({ visible, onClose, ids }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res = await GetExpeditionsListByVehicleIdService(
-        ids,
-        search,
-        tableParams.pagination.current
-      );
+      const res = await GetExpeditionsListByVehicleIdService(ids, search, tableParams.pagination.current);
       setLoading(false);
       setDataSource(res?.data.list);
       setTableParams({
@@ -205,18 +192,10 @@ const Lastik = ({ visible, onClose, ids }) => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   // get selected rows data
-  if (!localStorage.getItem("selectedRowKeys"))
-    localStorage.setItem("selectedRowKeys", JSON.stringify([]));
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
     if (selected) {
@@ -226,30 +205,21 @@ const Lastik = ({ visible, onClose, ids }) => {
       }
     } else {
       setKeys((prevKeys) => prevKeys.filter((key) => key !== row.aracId));
-      setRows((prevRows) =>
-        prevRows.filter((item) => item.aracId !== row.aracId)
-      );
+      setRows((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
     }
   };
 
-  useEffect(
-    () => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)),
-    [keys]
-  );
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setKeys(storedSelectedKeys);
     }
   }, []);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setSelectedRowKeys(storedSelectedKeys);
     }
@@ -274,17 +244,10 @@ const Lastik = ({ visible, onClose, ids }) => {
   ];
 
   return (
-    <Modal
-      title={`${t("lastikBilgileri")} - ${t("plaka")}: [${plakaData}]`}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={`${t("lastikBilgileri")} - ${t("plaka")}: [${plakaData}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <div className="grid gap-1">
         <div className="col-span-4 border p-20">
-            <Tire />
+          <Tire />
         </div>
         <div className="col-span-8 border p-20">
           <FormProvider {...methods}>

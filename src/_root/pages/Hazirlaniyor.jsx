@@ -13,7 +13,8 @@ export default function NotFound() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-      }}>
+      }}
+    >
       <Result
         status="404"
         title="Hazırlanıyor!"

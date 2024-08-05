@@ -333,6 +333,7 @@ const KmUpdate = () => {
         const item = newData[index];
         newData.splice(index, 1, { ...item, ...row });
         setDataSource(newData);
+
         function formatDate(row) {
           const dateString = row.tarih;
 

@@ -123,9 +123,7 @@ const AddModal = ({ setStatus }) => {
 
   useEffect(() => {
     if (isOpen && isFirstRender.current) {
-      GetModuleCodeByCode("SEFER_NO").then((res) =>
-        setValue("seferNo", res.data)
-      );
+      GetModuleCodeByCode("SEFER_NO").then((res) => setValue("seferNo", res.data));
     }
   }, [isOpen, setValue]);
 
@@ -234,18 +232,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={
-          isValid === "success"
-            ? false
-            : isValid === "error"
-              ? true
-              : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -267,14 +254,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniSeferGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniSeferGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

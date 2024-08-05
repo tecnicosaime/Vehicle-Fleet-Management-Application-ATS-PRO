@@ -3,10 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, Modal, Tabs } from "antd";
-import {
-  GetCapacityByIdService,
-  UpdateCapacityByIdService,
-} from "../../../../../../../api/services/vehicles/vehicles/services";
+import { GetCapacityByIdService, UpdateCapacityByIdService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
 import CodeControl from "../../../../../../components/form/selects/CodeControl";
 
@@ -72,14 +69,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("kapasiteGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={600}
-    >
+    <Modal title={t("kapasiteGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={600}>
       <FormProvider {...methods}>
         <form>
           <div className="flex flex-col gap-1">

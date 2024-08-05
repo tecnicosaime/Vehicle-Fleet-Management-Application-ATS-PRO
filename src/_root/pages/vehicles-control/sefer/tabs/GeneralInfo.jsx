@@ -21,18 +21,13 @@ const GeneralInfo = ({ isValid }) => {
   const [modalKey, setModalKey] = useState(0);
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-          ? "#23b545"
-          : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   const handleOpen = () => {
-    setModalKey(prevKey => prevKey + 1);
+    setModalKey((prevKey) => prevKey + 1);
     setOpen(true);
-  }
+  };
 
   const footer = [
     <Button
@@ -46,11 +41,7 @@ const GeneralInfo = ({ isValid }) => {
     >
       {t("ekle")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setOpen(false)}>
       {t("kapat")}
     </Button>,
   ];
@@ -62,7 +53,9 @@ const GeneralInfo = ({ isValid }) => {
           <div className="grid gap-1">
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("plaka")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("plaka")} <span className="text-danger">*</span>
+                </label>
                 <Plaka required={true} />
               </div>
             </div>
@@ -74,7 +67,9 @@ const GeneralInfo = ({ isValid }) => {
             </div>
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("surucu")} 1  <span className="text-danger">*</span></label>
+                <label>
+                  {t("surucu")} 1 <span className="text-danger">*</span>
+                </label>
                 <Driver name="surucu1" codeName="surucuId1" required={true} />
               </div>
             </div>
@@ -109,7 +104,9 @@ const GeneralInfo = ({ isValid }) => {
           <div className="grid gap-1">
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
-                <label>{t("cikisTarih")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("cikisTarih")} <span className="text-danger">*</span>
+                </label>
                 <DateInput name="cikisTarih" required={true} />
               </div>
             </div>
@@ -158,21 +155,13 @@ const GeneralInfo = ({ isValid }) => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("seferTip")}</label>
-                <CodeControl
-                  name="seferTip"
-                  codeName="seferTipKodId"
-                  id={120}
-                />
+                <CodeControl name="seferTip" codeName="seferTipKodId" id={120} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("seferDurum")}</label>
-                <CodeControl
-                  name="seferDurum"
-                  codeName="seferDurumKodId"
-                  id={121}
-                />
+                <CodeControl name="seferDurum" codeName="seferDurumKodId" id={121} />
               </div>
             </div>
           </div>
@@ -185,14 +174,7 @@ const GeneralInfo = ({ isValid }) => {
         </div>
       </div>
 
-      <Modal
-        title={t("araclar")}
-        open={open}
-        onCancel={() => setOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("araclar")} open={open} onCancel={() => setOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <VehicleList setDorse={setDorse} open={open} key={modalKey} />
       </Modal>
     </>
@@ -200,7 +182,7 @@ const GeneralInfo = ({ isValid }) => {
 };
 
 GeneralInfo.propTypes = {
-  isValid: PropTypes.string
+  isValid: PropTypes.string,
 };
 
 export default GeneralInfo;

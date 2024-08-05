@@ -107,13 +107,7 @@ export default function LokasyonTipiEkle({ workshopSelectedId, onSubmit }) {
   return (
     <div>
       <Button onClick={handleModalToggle}>+</Button>
-      <Modal
-        width="1200px"
-        centered
-        title="Lokasyon Tip Ekle"
-        open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={handleModalToggle}>
+      <Modal width="1200px" centered title="Lokasyon Tip Ekle" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
         <div
           style={{
             display: "flex",
@@ -121,7 +115,8 @@ export default function LokasyonTipiEkle({ workshopSelectedId, onSubmit }) {
             width: "100%",
             marginBottom: "10px",
             justifyContent: "flex-end",
-          }}>
+          }}
+        >
           <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
             <Button type="primary" onClick={handleMarkaEkleModalToggle}>
               + Ekle
@@ -132,12 +127,7 @@ export default function LokasyonTipiEkle({ workshopSelectedId, onSubmit }) {
             </Button>
           </div>
 
-          <Modal
-            title="Lokasyon Tip Ekle"
-            centered
-            open={isMarkaEkleModalVisible}
-            onOk={handleMarkaEkleModalOk}
-            onCancel={handleMarkaEkleModalToggle}>
+          <Modal title="Lokasyon Tip Ekle" centered open={isMarkaEkleModalVisible} onOk={handleMarkaEkleModalOk} onCancel={handleMarkaEkleModalToggle}>
             <Controller name="markaEkle" control={control} render={({ field }) => <Input {...field} />} />
           </Modal>
         </div>

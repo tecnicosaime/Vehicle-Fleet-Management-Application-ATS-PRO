@@ -11,10 +11,7 @@ import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
 import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
 
-const breadcrumb = [
-  { href: "/", title: <HomeOutlined /> },
-  { title: t("malzemeTanimlari") },
-];
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("malzemeTanimlari") }];
 
 const Malzemeler = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -132,9 +129,7 @@ const Malzemeler = () => {
       title: t("aktif"),
       dataIndex: "aktif",
       key: 17,
-      render: (text, record) => (
-        <Checkbox checked={record.ozelKullanim} readOnly />
-      ),
+      render: (text, record) => <Checkbox checked={record.ozelKullanim} readOnly />,
     },
     {
       title: t("kdvOrani"),
@@ -155,9 +150,7 @@ const Malzemeler = () => {
       title: t("yedekParca"),
       dataIndex: "yedekParca",
       key: 21,
-      render: (text, record) => (
-        <Checkbox checked={record.yedekParca} readOnly />
-      ),
+      render: (text, record) => <Checkbox checked={record.yedekParca} readOnly />,
     },
     {
       title: t("sarfMalz"),
@@ -207,11 +200,7 @@ const Malzemeler = () => {
     const fetchData = async () => {
       setLoading(true);
       setIsInitialLoading(true);
-      const res = await GetMaterialListService(
-        search,
-        tableParams.pagination.current,
-        filterData
-      );
+      const res = await GetMaterialListService(search, tableParams.pagination.current, filterData);
       setLoading(false);
       setIsInitialLoading(false);
       setDataSource(res?.data.materialList);
@@ -270,23 +259,13 @@ const Malzemeler = () => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   // get selected rows data
-  if (!localStorage.getItem("selectedRowKeys"))
-    localStorage.setItem("selectedRowKeys", JSON.stringify([]));
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
     if (selected) {
@@ -296,30 +275,21 @@ const Malzemeler = () => {
       }
     } else {
       setKeys((prevKeys) => prevKeys.filter((key) => key !== row.siraNo));
-      setRows((prevRows) =>
-        prevRows.filter((item) => item.siraNo !== row.siraNo)
-      );
+      setRows((prevRows) => prevRows.filter((item) => item.siraNo !== row.siraNo));
     }
   };
 
-  useEffect(
-    () => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)),
-    [keys]
-  );
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setKeys(storedSelectedKeys);
     }
   }, []);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(
-      localStorage.getItem("selectedRowKeys")
-    );
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
     if (storedSelectedKeys.length) {
       setSelectedRowKeys(storedSelectedKeys);
     }
@@ -334,33 +304,19 @@ const Malzemeler = () => {
       <div className="content">
         <div className="flex justify-between align-center">
           <div className="flex align-center gap-1">
-            <Popover
-              content={content}
-              placement="bottom"
-              trigger="click"
-              open={openRowHeader}
-              onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-            >
+            <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
               <Button className="btn primary-btn">
                 <MenuOutlined />
               </Button>
             </Popover>
-            <Input
-              placeholder="Arama"
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <Input placeholder="Arama" onChange={(e) => setSearch(e.target.value)} />
             <AddModal setStatus={setStatus} />
             {/* <Filter filter={filter} clearFilters={clear} /> */}
           </div>
         </div>
       </div>
 
-      <UpdateModal
-        updateModal={updateModal}
-        setUpdateModal={setUpdateModal}
-        setStatus={setStatus}
-        id={id}
-      />
+      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} id={id} />
 
       <div className="content">
         <DragAndDropContext items={columns} setItems={setColumns}>
@@ -371,9 +327,7 @@ const Malzemeler = () => {
               dataSource={dataSource}
               pagination={{
                 ...tableParams.pagination,
-                showTotal: (total) => (
-                  <p className="text-info">[{total} kayıt]</p>
-                ),
+                showTotal: (total) => <p className="text-info">[{total} kayıt]</p>,
                 locale: {
                   items_per_page: `/ ${t("sayfa")}`,
                 },

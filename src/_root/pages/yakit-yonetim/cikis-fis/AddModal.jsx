@@ -5,14 +5,8 @@ import { Button, Modal, Popconfirm } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { t } from "i18next";
-import {
-  AddMaterialReceiptService,
-  GetMaterialCardByIdService,
-} from "../../../../api/services/yakit-yonetimi/services";
-import {
-  CodeItemValidateService,
-  GetModuleCodeByCode,
-} from "../../../../api/services/code/services";
+import { AddMaterialReceiptService, GetMaterialCardByIdService } from "../../../../api/services/yakit-yonetimi/services";
+import { CodeItemValidateService, GetModuleCodeByCode } from "../../../../api/services/code/services";
 import GeneralInfo from "./tabs/GeneralInfo";
 import MalzemeLists from "./tabs/MalzemeLists";
 import EkBilgiler from "./tabs/EkBilgiler";
@@ -68,8 +62,7 @@ const AddModal = ({ setStatus }) => {
         cikisDepoSiraNo: values.girisDepoSiraNo || 0,
         indirimOran: item.indirimOran || 0,
         isPriceChanged: item.isPriceChanged,
-        kdvDahilHaric:
-          item.kdvDH === "Dahil" || item.kdvDH === "dahil" ? true : false,
+        kdvDahilHaric: item.kdvDH === "Dahil" || item.kdvDH === "dahil" ? true : false,
         gc: -1,
       });
     });
@@ -107,9 +100,7 @@ const AddModal = ({ setStatus }) => {
 
   useEffect(() => {
     if (isOpen && isFirstRender.current) {
-      GetModuleCodeByCode("YAKIT_FIS_SATIS").then((res) =>
-        setValue("fisNo", res.data)
-      );
+      GetModuleCodeByCode("YAKIT_FIS_SATIS").then((res) => setValue("fisNo", res.data));
     }
   }, [isOpen, setValue]);
 
@@ -181,14 +172,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={
-          isValid === "success" ? false : isValid === "error" ? true : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -213,24 +197,11 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
         <PlusOutlined /> Ekle
       </Button>
-      <Modal
-        title={t("fisGirisBilgisiEkle")}
-        open={isOpen}
-        onCancel={() => setIsModalOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1300}
-        closeIcon={null}
-      >
+      <Modal title={t("fisGirisBilgisiEkle")} open={isOpen} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={1300} closeIcon={null}>
         <FormProvider {...methods}>
           <form>
             <GeneralInfo isValid={isValid} />
-            <MalzemeLists
-              setTableData={setTableData}
-              tableData={tableData}
-              isSuccess={isSuccess}
-              setIsSuccess={setIsSuccess}
-            />
+            <MalzemeLists setTableData={setTableData} tableData={tableData} isSuccess={isSuccess} setIsSuccess={setIsSuccess} />
             <EkBilgiler />
           </form>
         </FormProvider>

@@ -5,10 +5,7 @@ export const GetSettingByTypeService = async (type) => {
 };
 
 export const UpdateSettingByTypeService = async (type, data) => {
-  return await http.post(
-    `/CommonSettings/UpdateSettingByType?type=${type}`,
-    data
-  );
+  return await http.post(`/CommonSettings/UpdateSettingByType?type=${type}`, data);
 };
 
 export const GetModulesCodesService = async () => {
@@ -16,10 +13,7 @@ export const GetModulesCodesService = async () => {
 };
 
 export const UpdateModuleInfoService = async (data) => {
-  return await http.post(
-    `/Numbering/UpdateModuleInfo`,
-    data
-  );
+  return await http.post(`/Numbering/UpdateModuleInfo`, data);
 };
 
 export const GetCodeGroupsService = async () => {
@@ -31,15 +25,9 @@ export const GetCodeTextByIdService = async (id) => {
 };
 
 export const AddCodeService = async (data) => {
-  return await http.post(
-    `/Code/AddCode`,
-    data
-  );
+  return await http.post(`/Code/AddCode`, data);
 };
 
 export const UpdateCodeService = async (data) => {
-  return await http.post(
-    `/Code/UpdateCode`,
-    data
-  );
+  return await http.post(`/Code/UpdateCode`, data);
 };

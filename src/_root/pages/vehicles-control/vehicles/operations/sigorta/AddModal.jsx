@@ -99,7 +99,7 @@ const AddModal = ({ setStatus }) => {
   ]);
 
   const defaultValues = {
-    aktif: true
+    aktif: true,
   };
   const methods = useForm({
     defaultValues: defaultValues,
@@ -208,11 +208,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
         {t("kaydet")}
       </Button>
     ),
@@ -234,14 +230,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniSigortaGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniSigortaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

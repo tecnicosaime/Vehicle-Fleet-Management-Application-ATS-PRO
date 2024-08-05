@@ -36,7 +36,8 @@ export default function LokasyonTipi() {
         width: "100%",
         flexWrap: "wrap",
         rowGap: "0px",
-      }}>
+      }}
+    >
       <Text style={{ fontSize: "14px" }}>Lokasyon Tipi:</Text>
       <div style={{ display: "flex", alignItems: "center", maxWidth: "300px", width: "100%", gap: "10px" }}>
         <Controller
@@ -50,9 +51,7 @@ export default function LokasyonTipi() {
               allowClear
               placeholder="Seçim Yapınız"
               optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false
-              }
+              filterOption={(input, option) => (option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false)}
               onDropdownVisibleChange={(open) => {
                 if (open) {
                   fetchData(); // Fetch data when the dropdown is opened

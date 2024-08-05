@@ -9,14 +9,8 @@ import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { FaCircle } from "react-icons/fa";
 import { Button, message, Modal, Spin, Tabs } from "antd";
 import { PlakaContext } from "../../../../context/plakaSlice";
-import {
-  GetVehicleByIdService,
-  UpdateVehicleService,
-} from "../../../../api/services/vehicles/vehicles/services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../api/services/upload/services";
+import { GetVehicleByIdService, UpdateVehicleService } from "../../../../api/services/vehicles/vehicles/services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
 import { uploadFile, uploadPhoto } from "../../../../utils/upload";
 import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
 import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
@@ -34,11 +28,7 @@ import GeneralInfo from "./tabs/GeneralInfo";
 import DetailInfo from "./detail-info/DetailInfo";
 import ProfilePhoto from "./tabs/ProfilePhoto";
 
-const breadcrumb = [
-  { href: "/", title: <HomeOutlined /> },
-  { href: "/araclar", title: t("araclar") },
-  { title: t("aracDetayKarti") },
-];
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { href: "/araclar", title: t("araclar") }, { title: t("aracDetayKarti") }];
 
 const DetailUpdate = () => {
   const navigate = useNavigate();
@@ -220,66 +210,26 @@ const DetailUpdate = () => {
       setValue("yedekAnahtarId", res?.data.yedekAnahtarId);
       setValue("yedekAnahtar", res?.data.yedekAnahtar);
       setValue("anahtarKodu", res?.data.anahtarKodu);
-      setValue(
-        "lokasyonId",
-        res?.data.lokasyonId ? res?.data.lokasyonId : null
-      );
+      setValue("lokasyonId", res?.data.lokasyonId ? res?.data.lokasyonId : null);
       setValue("lokasyon", res?.data.lokasyon);
-      setValue(
-        "yakitTipId",
-        res?.data.yakitTipId ? res?.data.yakitTipId : null
-      );
+      setValue("yakitTipId", res?.data.yakitTipId ? res?.data.yakitTipId : null);
       setValue("yakitTip", res?.data.yakitTip);
-      setValue(
-        "aracRenkId",
-        res?.data.aracRenkId ? res?.data.aracRenkId : null
-      );
+      setValue("aracRenkId", res?.data.aracRenkId ? res?.data.aracRenkId : null);
       setValue("renk", res?.data.renk);
       setValue("yil", res?.data.yil);
       setValue("aciklama", res?.data.aciklama);
-      setValue(
-        "aracGrubuId",
-        res?.data.aracGrubuId ? res?.data.aracGrubuId : null
-      );
+      setValue("aracGrubuId", res?.data.aracGrubuId ? res?.data.aracGrubuId : null);
       setValue("grup", res?.data.grup);
-      setValue(
-        "departmanId",
-        res?.data.departmanId ? res?.data.departmanId : null
-      );
+      setValue("departmanId", res?.data.departmanId ? res?.data.departmanId : null);
       setValue("departman", res?.data.departman);
       setValue("havuzGrup", res?.data.havuzGrup);
-      setValue(
-        "durumKodId",
-        res?.data.durumKodId ? res?.data.durumKodId : null
-      );
+      setValue("durumKodId", res?.data.durumKodId ? res?.data.durumKodId : null);
       setValue("durum", res?.data.durum);
       setValue("tts", res?.data.tts);
-      setValue(
-        "muayeneTarih",
-        res?.data.muayeneTarih &&
-          res?.data.muayeneTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.muayeneTarih)
-          : null
-      );
-      setValue(
-        "sozlesmeTarih",
-        res?.data.sozlesmeTarih &&
-          res?.data.sozlesmeTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.sozlesmeTarih)
-          : null
-      );
-      setValue(
-        "vergiTarih",
-        res?.data.vergiTarih && res?.data.vergiTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.vergiTarih)
-          : null
-      );
-      setValue(
-        "egzosTarih",
-        res?.data.egzosTarih && res?.data.egzosTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.egzosTarih)
-          : null
-      );
+      setValue("muayeneTarih", res?.data.muayeneTarih && res?.data.muayeneTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.muayeneTarih) : null);
+      setValue("sozlesmeTarih", res?.data.sozlesmeTarih && res?.data.sozlesmeTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.sozlesmeTarih) : null);
+      setValue("vergiTarih", res?.data.vergiTarih && res?.data.vergiTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.vergiTarih) : null);
+      setValue("egzosTarih", res?.data.egzosTarih && res?.data.egzosTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.egzosTarih) : null);
       setValue("onGorulen", res?.data.onGorulen);
       setValue("onGorulenMin", res?.data.onGorulenMin);
       setValue("gerceklesen", res?.data.gerceklesen.toFixed(2));
@@ -301,12 +251,8 @@ const DetailUpdate = () => {
       setUrls([...urls, res.data.defPhotoInfo]);
     });
 
-    GetPhotosByRefGroupService(id, "Arac").then((res) =>
-      setImageUrls(res.data)
-    );
-    GetDocumentsByRefGroupService(id, "Arac").then((res) =>
-      setFilesUrl(res.data)
-    );
+    GetPhotosByRefGroupService(id, "Arac").then((res) => setImageUrls(res.data));
+    GetDocumentsByRefGroupService(id, "Arac").then((res) => setFilesUrl(res.data));
   }, [id, status, dataStatus]);
 
   const uploadImages = () => {
@@ -352,18 +298,10 @@ const DetailUpdate = () => {
       bagliAracId: values.bagliAracId || 0,
       yedekAnahtarKodId: values.yedekAnahtarKodId || 0,
       hgsNo: values.hgsNo,
-      muayeneTarih: values?.muayeneTarih
-        ? dayjs(values?.muayeneTarih).format("YYYY-MM-DD")
-        : null,
-      egzosTarih: values?.egzosTarih
-        ? dayjs(values?.egzosTarih).format("YYYY-MM-DD")
-        : null,
-      vergiTarih: values?.vergiTarih
-        ? dayjs(values?.vergiTarih).format("YYYY-MM-DD")
-        : null,
-      sozlesmeTarih: values?.sozlesmeTarih
-        ? dayjs(values?.sozlesmeTarih).format("YYYY-MM-DD")
-        : null,
+      muayeneTarih: values?.muayeneTarih ? dayjs(values?.muayeneTarih).format("YYYY-MM-DD") : null,
+      egzosTarih: values?.egzosTarih ? dayjs(values?.egzosTarih).format("YYYY-MM-DD") : null,
+      vergiTarih: values?.vergiTarih ? dayjs(values?.vergiTarih).format("YYYY-MM-DD") : null,
+      sozlesmeTarih: values?.sozlesmeTarih ? dayjs(values?.sozlesmeTarih).format("YYYY-MM-DD") : null,
       yakitTipId: values.yakitTipId || 0,
       tts: values.tts,
       durumKodId: values.durumKodId || 0,
@@ -400,7 +338,7 @@ const DetailUpdate = () => {
     uploadPhoto(id, "ARAC", profile, true);
     setProfile([]);
     setUrls([]);
-    setActiveKey("1")
+    setActiveKey("1");
   });
 
   const personalProps = {
@@ -423,33 +361,17 @@ const DetailUpdate = () => {
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="back"
-      className="btn cancel-btn"
-      onClick={() => setKmHistryModal(false)}
-    >
+    <Button key="back" className="btn cancel-btn" onClick={() => setKmHistryModal(false)}>
       {t("kapat")}
     </Button>,
   ];
@@ -508,16 +430,10 @@ const DetailUpdate = () => {
             <div className="col-span-9">
               <div className="grid p-10 gap-1">
                 <div className="col-span-12 flex gap-1 justify-end mb-10">
-                  <Button
-                    className="btn btn-min primary-btn"
-                    onClick={onSubmit}
-                  >
+                  <Button className="btn btn-min primary-btn" onClick={onSubmit}>
                     {t("guncelle")}
                   </Button>
-                  <Button
-                    className="btn btn-min cancel-btn"
-                    onClick={handleCancel}
-                  >
+                  <Button className="btn btn-min cancel-btn" onClick={handleCancel}>
                     {t("kapat")}
                   </Button>
                 </div>
@@ -532,12 +448,7 @@ const DetailUpdate = () => {
                     <label>
                       {t("aracTip")} <span className="text-danger">*</span>
                     </label>
-                    <CodeControl
-                      name="aracTip"
-                      codeName="aracTipId"
-                      id={100}
-                      required={true}
-                    />
+                    <CodeControl name="aracTip" codeName="aracTipId" id={100} required={true} />
                   </div>
                 </div>
                 <div className="col-span-4">
@@ -545,24 +456,13 @@ const DetailUpdate = () => {
                     <div className="col-span-10">
                       <div className="flex flex-col gap-1">
                         <label className="flex gap-2">
-                          <span>{t("guncelKm")}</span>{" "}
-                          <span className="text-info">
-                            {guncelKmTarih
-                              ? `[ ${dayjs(guncelKmTarih).format(
-                                  "DD.MM.YYYY"
-                                )} ]`
-                              : null}
-                          </span>
+                          <span>{t("guncelKm")}</span> <span className="text-info">{guncelKmTarih ? `[ ${dayjs(guncelKmTarih).format("DD.MM.YYYY")} ]` : null}</span>
                         </label>
                         <TextInput name="guncelKm" readonly={true} />
                       </div>
                     </div>
                     <div className="col-span-2 self-end">
-                      <Button
-                        className="w-full"
-                        style={{ padding: "4px 0" }}
-                        onClick={() => setKmHistryModal(true)}
-                      >
+                      <Button className="w-full" style={{ padding: "4px 0" }} onClick={() => setKmHistryModal(true)}>
                         ...
                       </Button>
                     </div>
@@ -603,12 +503,7 @@ const DetailUpdate = () => {
                     <label htmlFor="yakitTipId">
                       {t("yakitTip")} <span className="text-danger">*</span>
                     </label>
-                    <MaterialType
-                      name="yakitTip"
-                      codeName="yakitTipId"
-                      type="YAKIT"
-                      required={true}
-                    />
+                    <MaterialType name="yakitTip" codeName="yakitTipId" type="YAKIT" required={true} />
                   </div>
                 </div>
                 <div className="col-span-4">

@@ -1,42 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Typography, Spin, Button, Popover, Modal, DatePicker, ConfigProvider, Input } from 'antd';
-import { DownloadOutlined, MoreOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import { Table, Typography, Spin, Button, Popover, Modal, DatePicker, ConfigProvider, Input } from "antd";
+import { DownloadOutlined, MoreOutlined } from "@ant-design/icons";
 
 import http from "../../../../api/http.jsx";
-import trTR from 'antd/lib/locale/tr_TR';
-import { Controller, useFormContext } from 'react-hook-form';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import dayjs from 'dayjs';
-import customFontBase64 from './RobotoBase64.js';
-import { CSVLink } from 'react-csv';
+import trTR from "antd/lib/locale/tr_TR";
+import { Controller, useFormContext } from "react-hook-form";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import dayjs from "dayjs";
+import customFontBase64 from "./RobotoBase64.js";
+import { CSVLink } from "react-csv";
 
 const { Text } = Typography;
 
 // Türkçe karakterleri İngilizce karşılıkları ile değiştiren fonksiyon
 const normalizeText = (text) => {
   return text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/ğ/g, 'g')
-    .replace(/Ğ/g, 'G')
-    .replace(/ü/g, 'u')
-    .replace(/Ü/g, 'U')
-    .replace(/ş/g, 's')
-    .replace(/Ş/g, 'S')
-    .replace(/ı/g, 'i')
-    .replace(/İ/g, 'I')
-    .replace(/ö/g, 'o')
-    .replace(/Ö/g, 'O')
-    .replace(/ç/g, 'c')
-    .replace(/Ç/g, 'C');
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ğ/g, "g")
+    .replace(/Ğ/g, "G")
+    .replace(/ü/g, "u")
+    .replace(/Ü/g, "U")
+    .replace(/ş/g, "s")
+    .replace(/Ş/g, "S")
+    .replace(/ı/g, "i")
+    .replace(/İ/g, "I")
+    .replace(/ö/g, "o")
+    .replace(/Ö/g, "O")
+    .replace(/ç/g, "c")
+    .replace(/Ç/g, "C");
 };
 
 function MakineTiplerineGore(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [loadings, setLoadings] = useState([]);
-  const [searchTerm1, setSearchTerm1] = useState('');
+  const [searchTerm1, setSearchTerm1] = useState("");
   const [filteredData1, setFilteredData1] = useState([]);
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
   const {
@@ -51,14 +51,14 @@ function MakineTiplerineGore(props) {
     const doc = new jsPDF();
 
     // jsPDF içinde kullanım
-    doc.addFileToVFS('Roboto-Regular.ttf', customFontBase64);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+    doc.addFileToVFS("Roboto-Regular.ttf", customFontBase64);
+    doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
 
-    doc.setFont('Roboto');
+    doc.setFont("Roboto");
 
-    const columns = ['Makine Tipi', 'Adet', 'Yüzde'];
+    const columns = ["Makine Tipi", "Adet", "Yüzde"];
     const tableData = data.map((item) => {
-      const Yuzde = item.MAKINE_SAYISI + '%';
+      const Yuzde = item.MAKINE_SAYISI + "%";
       return [item.MAKINE_TIPI, item.MAKINE_SAYISI, Yuzde];
     });
 
@@ -67,25 +67,25 @@ function MakineTiplerineGore(props) {
       body: tableData,
     });
 
-    doc.save('makine_envanter_dagilimi.pdf');
+    doc.save("makine_envanter_dagilimi.pdf");
   };
 
   const columns = [
     {
-      title: 'Makine Tipi',
-      dataIndex: 'MAKINE_TIPI',
+      title: "Makine Tipi",
+      dataIndex: "MAKINE_TIPI",
       width: 200,
       ellipsis: true,
     },
     {
-      title: 'Adet',
-      dataIndex: 'MAKINE_SAYISI',
+      title: "Adet",
+      dataIndex: "MAKINE_SAYISI",
       width: 100,
       ellipsis: true,
     },
     {
-      title: 'Yüzde',
-      dataIndex: 'MAKINE_SAYISI',
+      title: "Yüzde",
+      dataIndex: "MAKINE_SAYISI",
       width: 100,
       ellipsis: true,
       render: (text, record) => {
@@ -106,7 +106,7 @@ function MakineTiplerineGore(props) {
       });
       setData(formattedData);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -117,8 +117,8 @@ function MakineTiplerineGore(props) {
   }, []);
 
   const content = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ cursor: 'pointer' }} onClick={() => setIsExpandedModalVisible(true)}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ cursor: "pointer" }} onClick={() => setIsExpandedModalVisible(true)}>
         Büyüt
       </div>
 
@@ -169,43 +169,43 @@ function MakineTiplerineGore(props) {
     <ConfigProvider locale={trTR}>
       <div
         style={{
-          width: '100%',
-          height: '100%',
-          borderRadius: '5px',
-          backgroundColor: 'white',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
-          border: '1px solid #f0f0f0',
+          width: "100%",
+          height: "100%",
+          borderRadius: "5px",
+          backgroundColor: "white",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          border: "1px solid #f0f0f0",
         }}
       >
         <div
           style={{
-            padding: '10px',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            padding: "10px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontWeight: '500', fontSize: '17px' }}>Makine Tiplerine Göre Envanter Dağılımı</Text>
+          <Text style={{ fontWeight: "500", fontSize: "17px" }}>Makine Tiplerine Göre Envanter Dağılımı</Text>
           <Popover placement="bottom" content={content} trigger="click">
             <Button
               type="text"
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0px 5px',
-                height: '32px',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0px 5px",
+                height: "32px",
                 zIndex: 3,
               }}
             >
               <MoreOutlined
                 style={{
-                  cursor: 'pointer',
-                  fontWeight: '500',
-                  fontSize: '16px',
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  fontSize: "16px",
                 }}
               />
             </Button>
@@ -213,22 +213,22 @@ function MakineTiplerineGore(props) {
         </div>
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '7px',
-            overflow: 'auto',
-            height: '100vh',
-            padding: '0px 10px 0 10px',
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            overflow: "auto",
+            height: "100vh",
+            padding: "0px 10px 0 10px",
           }}
         >
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: '300px' }} />
+            <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px" }} />
 
             {/*csv indirme butonu*/}
             <CSVLink data={data} headers={csvHeaders} filename={`makine_tiplerine_gore_envanter_dagilimi.csv`} className="ant-btn ant-btn-primary">
@@ -245,8 +245,8 @@ function MakineTiplerineGore(props) {
               pagination={{
                 defaultPageSize: 10,
                 showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '50', '100'],
-                position: ['bottomRight'],
+                pageSizeOptions: ["10", "20", "50", "100"],
+                position: ["bottomRight"],
                 showTotal: (total, range) => `Toplam ${total}`,
                 showQuickJumper: true,
               }}
@@ -258,7 +258,7 @@ function MakineTiplerineGore(props) {
         <Modal
           title={
             <div>
-              <Text style={{ fontWeight: '500', fontSize: '17px' }}>Makine Tiplerine Göre Envanter Dağılımı</Text>
+              <Text style={{ fontWeight: "500", fontSize: "17px" }}>Makine Tiplerine Göre Envanter Dağılımı</Text>
             </div>
           }
           centered
@@ -271,13 +271,13 @@ function MakineTiplerineGore(props) {
           <div>
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '15px',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "15px",
               }}
             >
-              <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: '300px' }} />
+              <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px" }} />
 
               {/*csv indirme butonu*/}
               <CSVLink data={data} headers={csvHeaders} filename={`makine_tiplerine_gore_envanter_dagilimi.csv`} className="ant-btn ant-btn-primary">
@@ -293,12 +293,12 @@ function MakineTiplerineGore(props) {
                 pagination={{
                   defaultPageSize: 10,
                   showSizeChanger: true,
-                  pageSizeOptions: ['10', '20', '50', '100'],
-                  position: ['bottomRight'],
+                  pageSizeOptions: ["10", "20", "50", "100"],
+                  position: ["bottomRight"],
                   showTotal: (total, range) => `Toplam ${total}`,
                   showQuickJumper: true,
                 }}
-                scroll={{ y: 'calc(100vh - 380px)' }}
+                scroll={{ y: "calc(100vh - 380px)" }}
               />
             </Spin>
           </div>

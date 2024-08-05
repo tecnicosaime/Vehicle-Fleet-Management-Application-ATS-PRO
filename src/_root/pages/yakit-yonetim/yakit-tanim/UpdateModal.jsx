@@ -4,16 +4,10 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, message, Modal, Tabs } from "antd";
 import { CodeItemValidateService } from "../../../../api/services/code/services";
-import {
-  GetMaterialCardByIdService,
-  UpdateMaterialCardService,
-} from "../../../../api/services/yakit-yonetimi/services";
+import { GetMaterialCardByIdService, UpdateMaterialCardService } from "../../../../api/services/yakit-yonetimi/services";
 import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
 import GeneralInfo from "./tabs/GeneralInfo";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../api/services/upload/services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
 import { uploadFile, uploadPhoto } from "../../../../utils/upload";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 import FileUpload from "../../../components/upload/FileUpload";
@@ -168,13 +162,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     if (updateModal) {
       fetchData();
-      GetPhotosByRefGroupService(id, "YAKIT").then((res) =>
-        setImageUrls(res.data)
-      );
+      GetPhotosByRefGroupService(id, "YAKIT").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "YAKIT").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetDocumentsByRefGroupService(id, "YAKIT").then((res) => setFilesUrl(res.data));
     }
   }, [id, updateModal]);
 
@@ -261,36 +251,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-      disabled={
-        isValid === "success" ? false : isValid === "error" ? true : false
-      }
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -307,14 +278,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("yakitTanimGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("yakitTanimGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

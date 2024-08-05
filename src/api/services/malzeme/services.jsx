@@ -1,10 +1,7 @@
 import http from "../../http";
 
 export const GetMaterialListService = async (search, page, data) => {
-  return await http.post(
-    `/Material/GetMaterialList?page=${page}&parameter=${search}`,
-    data
-  );
+  return await http.post(`/Material/GetMaterialList?page=${page}&parameter=${search}`, data);
 };
 
 export const GetWareHouseListByTipService = async (type) => {
@@ -24,15 +21,8 @@ export const UpdateMaterialCardService = async (data) => {
 };
 
 // giris fis
-export const GetMaterialEntryReceiptListService = async (
-  search,
-  page,
-  data
-) => {
-  return await http.post(
-    `/MaterialReceipt/GetMaterialEntryReceiptList?page=${page}&parameter=${search}`,
-    data
-  );
+export const GetMaterialEntryReceiptListService = async (search, page, data) => {
+  return await http.post(`/MaterialReceipt/GetMaterialEntryReceiptList?page=${page}&parameter=${search}`, data);
 };
 
 export const AddMaterialReceiptService = async (data) => {
@@ -44,9 +34,7 @@ export const UpdateMaterialReceiptService = async (data) => {
 };
 
 export const GetMaterialReceiptByIdService = async (id) => {
-  return await http.get(
-    `/MaterialReceipt/GetMaterialReceiptById?receiptId=${id}`
-  );
+  return await http.get(`/MaterialReceipt/GetMaterialReceiptById?receiptId=${id}`);
 };
 
 export const DeleteUpdatedMaterialReceiptService = async (id) => {
@@ -54,23 +42,13 @@ export const DeleteUpdatedMaterialReceiptService = async (id) => {
 };
 
 // cikis
-export const GetMaterialReleaseReceiptListService = async (
-  search,
-  page,
-  data
-) => {
-  return await http.post(
-    `/MaterialReceipt/GetMaterialReleaseReceiptList?page=${page}&parameter=${search}`,
-    data
-  );
+export const GetMaterialReleaseReceiptListService = async (search, page, data) => {
+  return await http.post(`/MaterialReceipt/GetMaterialReleaseReceiptList?page=${page}&parameter=${search}`, data);
 };
 
 // transfer
 export const GetMaterialTransferReceiptListService = async (search, page, data) => {
-  return await http.post(
-    `/MaterialReceipt/GetMaterialTransferReceiptList?page=${page}&parameter=${search}`,
-    data
-  );
+  return await http.post(`/MaterialReceipt/GetMaterialTransferReceiptList?page=${page}&parameter=${search}`, data);
 };
 
 // hareket

@@ -10,12 +10,7 @@ import Textarea from "../../../../components/form/inputs/Textarea";
 
 const GeneralInfo = ({ isValid }) => {
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   return (
@@ -44,21 +39,13 @@ const GeneralInfo = ({ isValid }) => {
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("departman")}</label>
-                <CodeControl
-                  name="departman"
-                  codeName="departmanKodId"
-                  id={200}
-                />
+                <CodeControl name="departman" codeName="departmanKodId" id={200} />
               </div>
             </div>
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("surucuTip")}</label>
-                <CodeControl
-                  name="surucuTip"
-                  codeName="surucuTipKodId"
-                  id={502}
-                />
+                <CodeControl name="surucuTip" codeName="surucuTipKodId" id={502} />
               </div>
             </div>
             <div className="col-span-3">

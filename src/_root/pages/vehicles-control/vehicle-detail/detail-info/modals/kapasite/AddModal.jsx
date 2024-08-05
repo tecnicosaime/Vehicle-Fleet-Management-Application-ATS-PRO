@@ -42,11 +42,7 @@ const AddModal = ({ setStatus }) => {
     <Button key="submit" className="btn btn-min primary-btn" onClick={handleOk}>
       {t("kaydet")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setIsModalOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsModalOpen(false)}>
       {t("kapat")}
     </Button>,
   ];
@@ -56,14 +52,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={() => setIsModalOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={600}
-      >
+      <Modal open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={600}>
         <FormProvider {...methods}>
           <form>
             <div className="flex flex-col gap-1">

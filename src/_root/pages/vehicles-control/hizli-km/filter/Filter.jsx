@@ -1,88 +1,86 @@
-import { useEffect, useState } from 'react'
-import PropTypes from 'prop-types';
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { t } from "i18next";
-import { SearchOutlined, CarryOutOutlined } from '@ant-design/icons'
-import { IoIosRefresh, IoIosMore } from 'react-icons/io'
-import { Button, Popconfirm, Popover, Select, TreeSelect } from 'antd'
-import { CodeControlByIdService, CodeControlByUrlService } from '../../../../../api/services/code/services';
+import { SearchOutlined, CarryOutOutlined } from "@ant-design/icons";
+import { IoIosRefresh, IoIosMore } from "react-icons/io";
+import { Button, Popconfirm, Popover, Select, TreeSelect } from "antd";
+import { CodeControlByIdService, CodeControlByUrlService } from "../../../../../api/services/code/services";
 
 const convertToFormat = (data, parentId = 0) => {
-  const result = []
+  const result = [];
 
-  data.forEach(item => {
+  data.forEach((item) => {
     if (item.anaLokasyonId === parentId) {
       const newItem = {
         value: item.lokasyonId,
         id: item.lokasyonId,
         title: item.lokasyonTanim,
         icon: <CarryOutOutlined />,
-        children: convertToFormat(data, item.lokasyonId)
+        children: convertToFormat(data, item.lokasyonId),
       };
       result.push(newItem);
     }
   });
 
   return result;
-}
+};
 
 const Filter = ({ content, addKm, errorRows, validatedRows, setFilter, filter, getData, clear }) => {
-  const [plaka, setPlaka] = useState([])
-  const [location, setLocation] = useState([])
-  const [code, setCode] = useState([])
-  const [open, setOpen] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(true)
+  const [plaka, setPlaka] = useState([]);
+  const [location, setLocation] = useState([]);
+  const [code, setCode] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
-  }
+  };
 
   const handleClickPlaka = () => {
-    CodeControlByUrlService("Vehicle/GetVehiclePlates").then(res => {
-      setPlaka(res.data)
-    })
-  }
+    CodeControlByUrlService("Vehicle/GetVehiclePlates").then((res) => {
+      setPlaka(res.data);
+    });
+  };
   const handleClickLocation = () => {
-    CodeControlByUrlService("Location/GetLocationList").then(res => setLocation(res.data))
-  }
+    CodeControlByUrlService("Location/GetLocationList").then((res) => setLocation(res.data));
+  };
   const handleClickCode = (id) => {
-    setCode([])
-    CodeControlByIdService(id).then(res => {
-      setCode(res.data)
-    })
-  }
+    setCode([]);
+    CodeControlByIdService(id).then((res) => {
+      setCode(res.data);
+    });
+  };
 
   useEffect(() => {
     if (errorRows.length > 0 || validatedRows.length === 0) {
-      setIsDisabled(true)
+      setIsDisabled(true);
     } else if (validatedRows.length > 0 && errorRows.length === 0) {
-      setIsDisabled(false)
+      setIsDisabled(false);
     }
-  }, [errorRows, validatedRows])
+  }, [errorRows, validatedRows]);
 
   return (
-    <div className='flex flex-col gap-1'>
+    <div className="flex flex-col gap-1">
       <div className="grid gap-1 align-center">
         <div className="col-span-2">
           <Select
             showSearch
             allowClear
             optionFilterProp="children"
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? '').includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={plaka.map((item) => ({
               label: item.plaka,
               value: item.aracId,
             }))}
             onClick={handleClickPlaka}
-            onChange={e => {
-              const selectedOption = plaka.find(item => item.aracId === e);
-              const selectedLabel = selectedOption ? selectedOption.plaka : '';
+            onChange={(e) => {
+              const selectedOption = plaka.find((item) => item.aracId === e);
+              const selectedLabel = selectedOption ? selectedOption.plaka : "";
               setFilter({ ...filter, plaka: selectedLabel });
             }}
             placeholder={t("plaka")}
-            className='w-full'
+            className="w-full"
           />
         </div>
         <div className="col-span-2">
@@ -90,20 +88,18 @@ const Filter = ({ content, addKm, errorRows, validatedRows, setFilter, filter, g
             showSearch
             allowClear
             optionFilterProp="children"
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? '').includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={code.map((item) => ({
               label: item.codeText,
               value: item.codeText,
             }))}
             onClick={() => handleClickCode("100")}
-            onChange={e => {
-              setFilter({ ...filter, aracTip: e })
+            onChange={(e) => {
+              setFilter({ ...filter, aracTip: e });
             }}
             placeholder={t("aracTip")}
-            className='w-full'
+            className="w-full"
           />
         </div>
         <div className="col-span-2">
@@ -113,15 +109,15 @@ const Filter = ({ content, addKm, errorRows, validatedRows, setFilter, filter, g
             placeholder={t("lokasyon")}
             dropdownStyle={{
               maxHeight: 400,
-              overflow: 'auto',
+              overflow: "auto",
             }}
-            className='w-full'
+            className="w-full"
             treeLine={true}
             treeData={convertToFormat(location)}
             onClick={handleClickLocation}
-            onChange={e => {
-              const selectedOption = location.find(item => item.lokasyonId === e);
-              const selectedLabel = selectedOption ? selectedOption.lokasyonTanim : '';
+            onChange={(e) => {
+              const selectedOption = location.find((item) => item.lokasyonId === e);
+              const selectedLabel = selectedOption ? selectedOption.lokasyonTanim : "";
               setFilter({ ...filter, lokasyon: selectedLabel });
             }}
           />
@@ -131,20 +127,18 @@ const Filter = ({ content, addKm, errorRows, validatedRows, setFilter, filter, g
             showSearch
             allowClear
             optionFilterProp="children"
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? '').includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={code.map((item) => ({
               label: item.codeText,
               value: item.codeText,
             }))}
             onClick={() => handleClickCode("200")}
-            onChange={e => {
-              setFilter({ ...filter, departman: e })
+            onChange={(e) => {
+              setFilter({ ...filter, departman: e });
             }}
             placeholder={t("departman")}
-            className='w-full'
+            className="w-full"
           />
         </div>
         <div className="col-span-2 flex gap-1">
@@ -156,30 +150,22 @@ const Filter = ({ content, addKm, errorRows, validatedRows, setFilter, filter, g
           </Button>
         </div>
         <div className="col-span-2 flex justify-self gap-1">
-          <Popover
-            placement="bottom"
-            content={content}
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
-          >
-            <Button><IoIosMore /></Button>
+          <Popover placement="bottom" content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
+            <Button>
+              <IoIosMore />
+            </Button>
           </Popover>
 
-          <Popconfirm
-            title={t("guncelle")}
-            description={t("hizliKmGuncellemeSoru")}
-            onConfirm={addKm}
-            okText={t("ok")}
-            cancelText={t("cancel")}
-          >
-            <Button className="btn primary-btn km-update" disabled={isDisabled}>{t("guncelle")}</Button>
+          <Popconfirm title={t("guncelle")} description={t("hizliKmGuncellemeSoru")} onConfirm={addKm} okText={t("ok")} cancelText={t("cancel")}>
+            <Button className="btn primary-btn km-update" disabled={isDisabled}>
+              {t("guncelle")}
+            </Button>
           </Popconfirm>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 Filter.propTypes = {
   content: PropTypes.node,
@@ -189,7 +175,7 @@ Filter.propTypes = {
   setFilter: PropTypes.func,
   filter: PropTypes.object,
   getData: PropTypes.func,
-  clear: PropTypes.func
+  clear: PropTypes.func,
 };
 
-export default Filter
+export default Filter;

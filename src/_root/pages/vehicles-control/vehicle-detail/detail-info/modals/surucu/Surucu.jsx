@@ -93,14 +93,10 @@ const Surucu = ({ visible, onClose, id }) => {
     const fetchData = async () => {
       setLoading(true);
       setIsInitialLoading(true);
-      const res = await GetDriverSubstitutionListByVehicleIdService(
-        id,
-        search,
-        tableParams.pagination.current
-      );
+      const res = await GetDriverSubstitutionListByVehicleIdService(id, search, tableParams.pagination.current);
       setLoading(false);
       setIsInitialLoading(false);
-      setDataSource(res?.data.list); 
+      setDataSource(res?.data.list);
       setTableParams((prevTableParams) => ({
         ...prevTableParams,
         pagination: {
@@ -145,14 +141,7 @@ const Surucu = ({ visible, onClose, id }) => {
     setCheckedList(updatedColumns.map((col) => col.key));
   };
 
-  const content = (
-    <Content
-      options={options}
-      checkedList={checkedList}
-      setCheckedList={setCheckedList}
-      moveCheckbox={moveCheckbox}
-    />
-  );
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
   const footer = [
     <Button key="back" className="btn btn-min cancel-btn" onClick={onClose}>
@@ -161,46 +150,22 @@ const Surucu = ({ visible, onClose, id }) => {
   ];
 
   // Custom loading icon
-  const customIcon = (
-    <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />
-  );
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal
-      title={t("surucuBilgiler")}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("surucuBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <div className="flex justify-between align-center">
         <div className="flex align-center gap-1">
-          <Popover
-            content={content}
-            placement="bottom"
-            trigger="click"
-            open={openRowHeader}
-            onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}
-          >
+          <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
             <Button className="btn primary-btn">
               <MenuOutlined />
             </Button>
           </Popover>
-          <Input
-            placeholder={t("arama")}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <Input placeholder={t("arama")} onChange={(e) => setSearch(e.target.value)} />
           <AddModal setStatus={setStatus} />
         </div>
       </div>
-      <UpdateModal
-        updateModal={updateModal}
-        setUpdateModal={setUpdateModal}
-        setStatus={setStatus}
-        status={status}
-        id={accId}
-      />
+      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} status={status} id={accId} />
       <div className="mt-20">
         <DragAndDropContext items={columns} setItems={setColumns}>
           <Spin spinning={loading || isInitialLoading} indicator={customIcon}>

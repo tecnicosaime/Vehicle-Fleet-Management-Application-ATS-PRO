@@ -2,7 +2,6 @@ import { t } from "i18next";
 import Textarea from "../../../../components/form/inputs/Textarea";
 import TextInput from "../../../../components/form/inputs/TextInput";
 
-
 const EkBilgiler = () => {
   return (
     <>

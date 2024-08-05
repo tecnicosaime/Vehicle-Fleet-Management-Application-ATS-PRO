@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { t } from "i18next";
 import { Button, Divider, Select } from "antd";
-import {
-  GetSettingByTypeService,
-  UpdateSettingByTypeService,
-} from "../../../../../api/services/settings/services";
+import { GetSettingByTypeService, UpdateSettingByTypeService } from "../../../../../api/services/settings/services";
 import TextInput from "../../../../components/form/inputs/TextInput";
 import NumberInput from "../../../../components/form/inputs/NumberInput";
 import CheckboxInput from "../../../../components/form/checkbox/CheckboxInput";
@@ -21,14 +18,8 @@ const StokSettings = () => {
     GetSettingByTypeService(3).then((res) => {
       setValue("siraNo", res?.data.siraNo);
       setValue("stokNegatifeDussun", res?.data.stokNegatifeDussun);
-      setValue(
-        "malzemeFiyatiGuncellensin",
-        res?.data.malzemeFiyatiGuncellensin
-      );
-      setValue(
-        "malzemeFiyatGuncellemeTip",
-        res?.data.malzemeFiyatGuncellemeTip
-      );
+      setValue("malzemeFiyatiGuncellensin", res?.data.malzemeFiyatiGuncellensin);
+      setValue("malzemeFiyatGuncellemeTip", res?.data.malzemeFiyatGuncellemeTip);
       setValue("kdv", res?.data.kdv);
       setValue("stokMiktarFormat", res?.data.stokMiktarFormat);
       setValue("stokTutarFormat", res?.data.stokTutarFormat);

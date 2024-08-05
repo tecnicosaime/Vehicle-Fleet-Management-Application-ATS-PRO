@@ -1,10 +1,7 @@
 import http from "../../../http";
 
 export const GetVehiclesListService = async (search, page, pageSize, data) => {
-  return await http.post(
-    `/Vehicle/GetVehicles?parameter=${search}&page=${page}`,
-    data
-  );
+  return await http.post(`/Vehicle/GetVehicles?parameter=${search}&page=${page}`, data);
 };
 
 export const VehiclesReadForFilterService = async (search, data) => {
@@ -24,23 +21,16 @@ export const UpdateVehicleService = async (data) => {
 };
 
 export const GetVehicleDetailsInfoService = async (id, type) => {
-  return await http.get(
-    `/VehicleDetail/GetVehicleDetailsInfo?vehicleId=${id}&type=${type}`
-  );
+  return await http.get(`/VehicleDetail/GetVehicleDetailsInfo?vehicleId=${id}&type=${type}`);
 };
 
 export const UpdateVehicleDetailsInfoService = async (type, data) => {
-  return await http.post(
-    `/VehicleDetail/UpdateVehicleDetailsInfo?type=${type}`,
-    data
-  );
+  return await http.post(`/VehicleDetail/UpdateVehicleDetailsInfo?type=${type}`, data);
 };
 
 // kapasite
 export const GetCapacityListByVehicleIdService = async (id, search, page) => {
-  return await http.get(
-    `/Capacity/GetCapacityListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`
-  );
+  return await http.get(`/Capacity/GetCapacityListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`);
 };
 
 export const AddCapacityByVehicleIdService = async (data) => {
@@ -57,9 +47,7 @@ export const UpdateCapacityByIdService = async (data) => {
 
 // aksesuar
 export const GetAccListByVehicleIdService = async (id, search, page) => {
-  return await http.get(
-    `/Accessories/GetAccListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`
-  );
+  return await http.get(`/Accessories/GetAccListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`);
 };
 
 export const AddAccItemService = async (data) => {
@@ -76,9 +64,7 @@ export const UpdateAccItemService = async (data) => {
 
 // surucu
 export const GetDriverSubstitutionListByVehicleIdService = async (id, search, page) => {
-  return await http.get(
-    `/DriverSubstitution/GetDriverSubstitutionListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`
-  );
+  return await http.get(`/DriverSubstitution/GetDriverSubstitutionListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`);
 };
 
 export const AddDriverSubstitutionItemService = async (data) => {
@@ -92,7 +78,6 @@ export const GetDriverSubstitutionByIdService = async (id) => {
 export const UpdateDriverSubstitutionItemService = async (data) => {
   return await http.post(`DriverSubstitution/UpdateDriverSubstitutionItem`, data);
 };
-
 
 // km
 export const GetKmUpdateListService = async (page, data) => {
@@ -121,9 +106,7 @@ export const GetKmLogListGetService = async (page) => {
 };
 
 export const GetKmLogListByVehicleIdService = async (id, page) => {
-  return await http.get(
-    `/KmLog/GetKmLogListByVehicleId?vehicleId=${id}&page=${page}`
-  );
+  return await http.get(`/KmLog/GetKmLogListByVehicleId?vehicleId=${id}&page=${page}`);
 };
 
 export const DeleteKmLogService = async (data) => {

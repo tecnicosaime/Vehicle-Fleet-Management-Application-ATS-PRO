@@ -11,8 +11,7 @@ import Textarea from "../../../../components/form/inputs/Textarea";
 import TextInput from "../../../../components/form/inputs/TextInput";
 
 const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
-  const { control, setValue, watch, handleSubmit } =
-    useFormContext();
+  const { control, setValue, watch, handleSubmit } = useFormContext();
   const [editModal, setEditModal] = useState(false);
   const [data, setData] = useState(null);
 
@@ -25,45 +24,21 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
           onClick={() => {
             setEditModal(true);
             setData(record);
-            setValue(
-              "edit_plakaId",
-              watch("edit_plakaId") ? watch("edit_plakaId") : watch("aracId")
-            );
-            setValue(
-              "malzeme_plaka",
-              watch("malzeme_plaka") ? watch("malzeme_plaka") : watch("plaka")
-            );
+            setValue("edit_plakaId", watch("edit_plakaId") ? watch("edit_plakaId") : watch("aracId"));
+            setValue("malzeme_plaka", watch("malzeme_plaka") ? watch("malzeme_plaka") : watch("plaka"));
             setValue("edit_malzemeTanimi", record.tanim);
-            setValue(
-              "edit_miktar",
-              watch("edit_miktar") ? watch("edit_miktar") : 1
-            );
+            setValue("edit_miktar", watch("edit_miktar") ? watch("edit_miktar") : 1);
             setValue("birim", record.birim);
             setValue("edit_birim", record.birimKodId);
             setValue("edit_fiyat", record.fiyat);
-            setValue(
-              "edit_araToplam",
-              watch("edit_miktar")
-                ? watch("edit_miktar") * watch("edit_fiyat")
-                : 1 * watch("edit_fiyat")
-            );
+            setValue("edit_araToplam", watch("edit_miktar") ? watch("edit_miktar") * watch("edit_fiyat") : 1 * watch("edit_fiyat"));
             setValue("edit_kdvOrani", record.kdvOran);
             setValue("edit_toplam", record.toplam);
             setValue("edit_malzemeKod", record.malzemeKod);
             setValue("edit_malzemeTip", record.malzemeTipKodText);
             setValue("edit_aciklama", record.aciklama);
-            setValue(
-              "edit_lokasyonId",
-              watch("edit_lokasyonId")
-                ? watch("edit_lokasyonId")
-                : watch("lokasyonId")
-            );
-            setValue(
-              "edit_lokasyon",
-              watch("edit_lokasyon")
-                ? watch("edit_lokasyon")
-                : watch("lokasyon")
-            );
+            setValue("edit_lokasyonId", watch("edit_lokasyonId") ? watch("edit_lokasyonId") : watch("lokasyonId"));
+            setValue("edit_lokasyon", watch("edit_lokasyon") ? watch("edit_lokasyon") : watch("lokasyon"));
 
             if (!data) {
               setValue("edit_kdv", record.kdvDahilHaric ? "Dahil" : "Hariç");
@@ -98,10 +73,7 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
     {
       title: t("araToplam"),
       dataIndex: "araToplam",
-      render: (text, record) =>
-        watch("edit_miktar")
-          ? watch("edit_miktar") * record.fiyat
-          : 1 * record.fiyat,
+      render: (text, record) => (watch("edit_miktar") ? watch("edit_miktar") * record.fiyat : 1 * record.fiyat),
     },
     {
       title: t("indirimOrani"),
@@ -149,19 +121,12 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
           }
         } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
           if (indirimOrani) {
-            kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(
-              2
-            );
-            indirimTutar = (
-              ((araToplam - kdvTutar) * indirimOrani) /
-              100
-            ).toFixed(2);
+            kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+            indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(2);
             result = araToplam - kdvTutar - indirimTutar;
             toplam = +result.toFixed(2) + +kdvTutar;
           } else {
-            kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(
-              2
-            );
+            kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
             toplam = +araToplam.toFixed(2);
           }
         }
@@ -172,14 +137,12 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
     {
       title: t("plaka"),
       dataIndex: "plaka",
-      render: () =>
-        watch("malzeme_plaka") ? watch("malzeme_plaka") : watch("plaka"),
+      render: () => (watch("malzeme_plaka") ? watch("malzeme_plaka") : watch("plaka")),
     },
     {
       title: t("lokasyon"),
       dataIndex: "lokasyon",
-      render: () =>
-        watch("edit_lokasyon") ? watch("edit_lokasyon") : watch("lokasyon"),
+      render: () => (watch("edit_lokasyon") ? watch("edit_lokasyon") : watch("lokasyon")),
     },
     {
       title: t("aciklama"),
@@ -221,9 +184,7 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
     } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
       if (indirimOrani) {
         kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
-        indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(
-          2
-        );
+        indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(2);
         result = araToplam - kdvTutar - indirimTutar;
         toplam = +result.toFixed(2) + +kdvTutar;
       } else {
@@ -235,14 +196,7 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
     setValue("edit_indirimTutari", indirimTutar);
     setValue("edit_kdvTutar", kdvTutar);
     setValue("edit_toplam", toplam);
-  }, [
-    watch("edit_indirimOrani"),
-    watch("edit_araToplam"),
-    watch("edit_kdvOrani"),
-    watch("edit_kdv"),
-    watch("edit_indirimTutari"),
-    watch("edit_toplam"),
-  ]);
+  }, [watch("edit_indirimOrani"), watch("edit_araToplam"), watch("edit_kdvOrani"), watch("edit_kdv"), watch("edit_indirimTutari"), watch("edit_toplam")]);
 
   useEffect(() => {
     if (watch("edit_miktar")) {
@@ -307,11 +261,7 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
   });
 
   const editModalFooter = [
-    <Button
-      key="submit"
-      className="btn primary-btn km-update"
-      onClick={handleEdit}
-    >
+    <Button key="submit" className="btn primary-btn km-update" onClick={handleEdit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -338,14 +288,7 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
         size="small"
       />
 
-      <Modal
-        title={"Düzenleme"}
-        open={editModal}
-        onCancel={() => setEditModal(false)}
-        maskClosable={false}
-        footer={editModalFooter}
-        width={1000}
-      >
+      <Modal title={"Düzenleme"} open={editModal} onCancel={() => setEditModal(false)} maskClosable={false} footer={editModalFooter} width={1000}>
         <div className="grid gap-1">
           <div className="col-span-4">
             <div className="flex flex-col gap-1">
@@ -454,21 +397,12 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
                         }
                       } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
                         if (e) {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
-                          indirimTutar = (
-                            ((araToplam - kdvTutar) * e) /
-                            100
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+                          indirimTutar = (((araToplam - kdvTutar) * e) / 100).toFixed(2);
                           result = araToplam - kdvTutar - indirimTutar;
                           toplam = +result.toFixed(2);
                         } else {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
                           toplam = +araToplam.toFixed(2);
                         }
                       }
@@ -509,14 +443,8 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
                           kdvTutar = (result * kdvOrani) / 100;
                           toplam = +result + +kdvTutar;
                         } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
-                          indirimOran = (
-                            (100 * e) /
-                            (araToplam - kdvTutar)
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+                          indirimOran = ((100 * e) / (araToplam - kdvTutar)).toFixed(2);
                           result = araToplam - kdvTutar - e;
                           toplam = +result.toFixed(2);
                         }

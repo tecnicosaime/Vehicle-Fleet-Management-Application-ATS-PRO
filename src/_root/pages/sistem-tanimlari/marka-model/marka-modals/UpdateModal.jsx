@@ -9,12 +9,7 @@ const UpdateModalModal = ({ isOpen, setIsOpen, setStatus, markaItem }) => {
   const [isValid, setIsValid] = useState("normal");
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   useEffect(() => {
@@ -50,40 +45,18 @@ const UpdateModalModal = ({ isOpen, setIsOpen, setStatus, markaItem }) => {
   };
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-      disabled={
-        isValid === "success" ? false : isValid === "error" ? true : false
-      }
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
       {t("kaydet")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setIsOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsOpen(false)}>
       {t("iptal")}
     </Button>,
   ];
 
   return (
-    <Modal
-      title={t("guncelle")}
-      open={isOpen}
-      onCancel={() => setIsOpen(false)}
-      maskClosable={false}
-      footer={footer}
-      width={500}
-    >
+    <Modal title={t("guncelle")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={500}>
       <label>[{marka}] markası için değiştirilecek değeri giriniz</label>
-      <Input
-        value={marka}
-        onChange={(e) => setMarka(e.target.value)}
-        style={validateStyle}
-      />
+      <Input value={marka} onChange={(e) => setMarka(e.target.value)} style={validateStyle} />
     </Modal>
   );
 };

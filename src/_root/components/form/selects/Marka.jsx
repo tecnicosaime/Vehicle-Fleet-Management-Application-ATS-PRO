@@ -27,14 +27,8 @@ const Marka = ({ required }) => {
             allowClear
             optionFilterProp="children"
             className={fieldState.error ? "input-error" : ""}
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={data.map((item) => ({
               label: item.marka,
               value: item.siraNo,
@@ -45,25 +39,19 @@ const Marka = ({ required }) => {
               field.onChange(e);
               if (e === undefined) {
                 field.onChange("");
-                const selectedOption = data.find(
-                  (option) => option.siraNo === e
-                );
+                const selectedOption = data.find((option) => option.siraNo === e);
                 if (!selectedOption) {
                   setValue("marka", "");
                 }
               } else {
-                const selectedOption = data.find(
-                  (option) => option.siraNo === e
-                );
+                const selectedOption = data.find((option) => option.siraNo === e);
                 if (selectedOption) {
                   setValue("marka", selectedOption.marka);
                 }
               }
             }}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />

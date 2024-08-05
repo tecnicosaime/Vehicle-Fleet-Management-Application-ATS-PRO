@@ -4,10 +4,7 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetExpenseByIdService, UpdateExpenseItemService } from "../../../../api/services/vehicles/operations_services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../api/services/upload/services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
 import { uploadFile, uploadPhoto } from "../../../../utils/upload";
 import { message, Modal, Tabs, Button } from "antd";
 import GeneralInfo from "./tabs/GeneralInfo";
@@ -15,7 +12,6 @@ import PersonalFields from "../../../components/form/personal-fields/PersonalFie
 import FileUpload from "../../../components/upload/FileUpload";
 import dayjs from "dayjs";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
-
 
 const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const { plaka } = useContext(PlakaContext);
@@ -120,7 +116,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("aracId", res?.data.aracId);
         setValue("plaka", res?.data.plaka);
         setValue("tarih", dayjs(res?.data.tarih));
-        setValue("aciklama", res?.data.aciklama); 
+        setValue("aciklama", res?.data.aciklama);
         setValue("lokasyon", res?.data.lokasyon);
         setValue("lokasyonId", res?.data.lokasyonId);
         setValue("surucuId", res?.data.surucuId);
@@ -146,13 +142,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "HARCAMA").then((res) =>
-        setImageUrls(res.data)
-      );
+      GetPhotosByRefGroupService(id, "HARCAMA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "HARCAMA").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetDocumentsByRefGroupService(id, "HARCAMA").then((res) => setFilesUrl(res.data));
     }
   }, [id, updateModal]);
 
@@ -180,7 +172,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   };
 
   const onSubmit = handleSubmit((values) => {
-    console.log(1)
+    console.log(1);
     const body = {
       siraNo: id,
       tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
@@ -203,25 +195,25 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       ozelAlanKodId10: values.ozelAlanKodId10 || 0,
       ozelAlan11: values.ozelAlan11 || 0,
       ozelAlan12: values.ozelAlan12 || 0,
-    }
+    };
 
     UpdateExpenseItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
         if (plaka.length === 1) {
           reset();
         } else {
           reset();
         }
       }
-    })
+    });
 
     uploadFiles();
     uploadImages();
-    setStatus(false)
-  })
+    setStatus(false);
+  });
 
   const personalProps = {
     form: "HARCAMA",
@@ -243,33 +235,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -278,7 +254,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       onClick={() => {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
       }}
     >
       {t("kapat")}
@@ -286,14 +262,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   ];
 
   return (
-    <Modal
-      title={t("harcamaBilgisiGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("harcamaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

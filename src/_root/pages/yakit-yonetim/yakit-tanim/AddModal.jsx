@@ -103,9 +103,7 @@ const AddModal = ({ setStatus }) => {
 
   useEffect(() => {
     if (isOpen && isFirstRender.current) {
-      GetModuleCodeByCode("YAKIT_KOD").then((res) =>
-        setValue("malzemeKod", res.data)
-      );
+      GetModuleCodeByCode("YAKIT_KOD").then((res) => setValue("malzemeKod", res.data));
     }
   }, [isOpen, setValue]);
 
@@ -143,13 +141,13 @@ const AddModal = ({ setStatus }) => {
   const onSubmit = handleSubmit((values) => {
     const body = {
       malzemeKod: values.malzemeKod,
-      "tanim": values.tanim,
-      "aktif": values.aktif,
-      "birimKodId": values.birimKodId || -1,
-      "malzemeTipKodId": values.malzemeTipKodId || -1,
-      "fiyat": values.fiyat || 0,
-      "kdvOran": values.kdvOran || 0,
-      "malzemeTip": "YAKIT",
+      tanim: values.tanim,
+      aktif: values.aktif,
+      birimKodId: values.birimKodId || -1,
+      malzemeTipKodId: values.malzemeTipKodId || -1,
+      fiyat: values.fiyat || 0,
+      kdvOran: values.kdvOran || 0,
+      malzemeTip: "YAKIT",
       ozelAlan1: values.ozelAlan1 || "",
       ozelAlan2: values.ozelAlan2 || "",
       ozelAlan3: values.ozelAlan3 || "",
@@ -183,18 +181,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={
-          isValid === "success"
-            ? false
-            : isValid === "error"
-              ? true
-              : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -203,7 +190,7 @@ const AddModal = ({ setStatus }) => {
       className="btn btn-min cancel-btn"
       onClick={() => {
         setIsModalOpen(false);
-        reset(defaultValues)
+        reset(defaultValues);
         setActiveKey("1");
       }}
     >
@@ -216,14 +203,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniYakitTanimGirisi")}
-        open={isOpen}
-        onCancel={() => setIsModalOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniYakitTanimGirisi")} open={isOpen} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
@@ -235,7 +215,7 @@ const AddModal = ({ setStatus }) => {
 };
 
 AddModal.propTypes = {
-  setStatus: PropTypes.func
+  setStatus: PropTypes.func,
 };
 
 export default AddModal;

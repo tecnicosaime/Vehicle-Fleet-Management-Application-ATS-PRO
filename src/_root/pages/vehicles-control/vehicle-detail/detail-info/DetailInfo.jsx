@@ -102,37 +102,13 @@ const DetailInfo = ({ id }) => {
   const renderModal = () => {
     switch (selectedItem) {
       case "1":
-        return (
-          <Ruhsat
-            visible={selectedItem === "1"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Ruhsat visible={selectedItem === "1"} onClose={() => setSelectedItem(null)} id={id} />;
       case "2":
-        return (
-          <Teknik
-            visible={selectedItem === "2"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Teknik visible={selectedItem === "2"} onClose={() => setSelectedItem(null)} id={id} />;
       case "3":
-        return (
-          <Surucu
-            visible={selectedItem === "3"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Surucu visible={selectedItem === "3"} onClose={() => setSelectedItem(null)} id={id} />;
       case "4":
-        return (
-          <Ekspertiz
-            visible={selectedItem === "4"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Ekspertiz visible={selectedItem === "4"} onClose={() => setSelectedItem(null)} id={id} />;
       // case "5":
       //     return (
       //       <UstYapi
@@ -142,61 +118,19 @@ const DetailInfo = ({ id }) => {
       //       />
       //     );
       case "6":
-        return (
-          <Aksesuar
-            visible={selectedItem === "6"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Aksesuar visible={selectedItem === "6"} onClose={() => setSelectedItem(null)} id={id} />;
       case "7":
-        return (
-          <Satinalma
-            visible={selectedItem === "7"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Satinalma visible={selectedItem === "7"} onClose={() => setSelectedItem(null)} id={id} />;
       case "8":
-        return (
-          <Garanti
-            visible={selectedItem === "8"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Garanti visible={selectedItem === "8"} onClose={() => setSelectedItem(null)} id={id} />;
       case "9":
-        return (
-          <TasitKarti
-            visible={selectedItem === "9"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <TasitKarti visible={selectedItem === "9"} onClose={() => setSelectedItem(null)} id={id} />;
       case "10":
-        return (
-          <Kapasite
-            visible={selectedItem === "10"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Kapasite visible={selectedItem === "10"} onClose={() => setSelectedItem(null)} id={id} />;
       case "11":
-        return (
-          <Lastik
-            visible={selectedItem === "11"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Lastik visible={selectedItem === "11"} onClose={() => setSelectedItem(null)} id={id} />;
       case "12":
-        return (
-          <Satis
-            visible={selectedItem === "12"}
-            onClose={() => setSelectedItem(null)}
-            id={id}
-          />
-        );
+        return <Satis visible={selectedItem === "12"} onClose={() => setSelectedItem(null)} id={id} />;
       // default:
       //     return null;
     }

@@ -9,12 +9,7 @@ const UpdateModelModal = ({ isOpen, setIsOpen, setStatus, modelItem }) => {
   const [isValid, setIsValid] = useState("normal");
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   useEffect(() => {
@@ -49,40 +44,18 @@ const UpdateModelModal = ({ isOpen, setIsOpen, setStatus, modelItem }) => {
   };
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-      disabled={
-        isValid === "success" ? false : isValid === "error" ? true : false
-      }
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
       {t("kaydet")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setIsOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsOpen(false)}>
       {t("iptal")}
     </Button>,
   ];
 
   return (
-    <Modal
-      title={t("MarkaGirisi")}
-      open={isOpen}
-      onCancel={() => setIsOpen(false)}
-      maskClosable={false}
-      footer={footer}
-      width={500}
-    >
+    <Modal title={t("MarkaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={500}>
       <label>[{model}] markası için değiştirilecek değeri giriniz</label>
-      <Input
-        value={model}
-        style={validateStyle}
-        onChange={(e) => setModel(e.target.value)}
-      />
+      <Input value={model} style={validateStyle} onChange={(e) => setModel(e.target.value)} />
     </Modal>
   );
 };

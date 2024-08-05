@@ -73,14 +73,7 @@ const ResimUpload = () => {
           <Spin />
         </div>
       ) : (
-        imageUrls.map((url, index) => (
-          <Image
-            style={{ margin: "10px", height: "150px", width: "150px", objectFit: "cover" }}
-            key={index}
-            src={url}
-            fallback={<UserOutlined />}
-          />
-        ))
+        imageUrls.map((url, index) => <Image style={{ margin: "10px", height: "150px", width: "150px", objectFit: "cover" }} key={index} src={url} fallback={<UserOutlined />} />)
       )}
       <Upload.Dragger {...draggerProps}>
         <p className="ant-upload-drag-icon">
@@ -88,8 +81,7 @@ const ResimUpload = () => {
         </p>
         <p className="ant-upload-text">Tıklayın veya bu alana dosya sürükleyin</p>
         <p className="ant-upload-hint">
-          Tek seferde bir veya birden fazla dosya yüklemeyi destekler. Şirket verileri veya diğer yasaklı dosyaların
-          yüklenmesi kesinlikle yasaktır.
+          Tek seferde bir veya birden fazla dosya yüklemeyi destekler. Şirket verileri veya diğer yasaklı dosyaların yüklenmesi kesinlikle yasaktır.
         </p>
       </Upload.Dragger>
     </div>

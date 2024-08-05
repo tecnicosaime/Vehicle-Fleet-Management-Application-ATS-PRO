@@ -2,10 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { useContext, useEffect } from "react";
 import { t } from "i18next";
 import { PlakaContext } from "../../../../../context/plakaSlice";
-import {
-  CodeControlByUrlService,
-  GetLocationByDepoIdService,
-} from "../../../../../api/services/code/services";
+import { CodeControlByUrlService, GetLocationByDepoIdService } from "../../../../../api/services/code/services";
 import TextInput from "../../../../components/form/inputs/TextInput";
 import DateInput from "../../../../components/form/date/DateInput";
 import TimeInput from "../../../../components/form/date/TimeInput";
@@ -45,12 +42,7 @@ const GeneralInfo = ({ isValid }) => {
   }, [watch("girisDepoSiraNo")]);
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   return (

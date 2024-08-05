@@ -57,7 +57,7 @@ const GeneralInfoUpdate = ({ isValid, setImages, urls }) => {
       message.error("You can only upload JPG/PNG file!");
     }
     const formData = new FormData();
-    formData.append('images', file);
+    formData.append("images", file);
     setImages(formData);
     return isJpgOrPng;
   };
@@ -74,12 +74,7 @@ const GeneralInfoUpdate = ({ isValid, setImages, urls }) => {
   };
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-          ? "#23b545"
-          : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   return (
@@ -108,21 +103,13 @@ const GeneralInfoUpdate = ({ isValid, setImages, urls }) => {
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("departman")}</label>
-                <CodeControl
-                  name="departman"
-                  codeName="departmanKodId"
-                  id={200}
-                />
+                <CodeControl name="departman" codeName="departmanKodId" id={200} />
               </div>
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("surucuTip")}</label>
-                <CodeControl
-                  name="surucuTip"
-                  codeName="surucuTipKodId"
-                  id={502}
-                />
+                <CodeControl name="surucuTip" codeName="surucuTipKodId" id={502} />
               </div>
             </div>
             <div className="col-span-4">
@@ -189,19 +176,9 @@ const GeneralInfoUpdate = ({ isValid, setImages, urls }) => {
         </div>
         <div className="col-span-4">
           <div className="flex flex-col gap-2 align-center justify-evenly h-full">
-            <img
-              src={profileImage || "/default-profile-image.png"}
-              alt="Profile"
-              style={{ width: "60%", height: "60%" }}
-            />
+            <img src={profileImage || "/default-profile-image.png"} alt="Profile" style={{ width: "60%", height: "60%" }} />
             <ImgCrop>
-              <Upload
-                listType="picture-card"
-                fileList={fileList}
-                onChange={onChange}
-                beforeUpload={beforeUpload}
-                showUploadList={false}
-              >
+              <Upload listType="picture-card" fileList={fileList} onChange={onChange} beforeUpload={beforeUpload} showUploadList={false}>
                 Resim yukle
               </Upload>
             </ImgCrop>

@@ -3,11 +3,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
-import { GetAccidentItemByIdService, UpdateAccidentItemService, } from "../../../../../../api/services/vehicles/operations_services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../../../api/services/upload/services";
+import { GetAccidentItemByIdService, UpdateAccidentItemService } from "../../../../../../api/services/vehicles/operations_services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../../../api/services/upload/services";
 import { uploadFile, uploadPhoto } from "../../../../../../utils/upload";
 import { message, Modal, Tabs, Button } from "antd";
 import GeneralInfo from "./tabs/GeneralInfo";
@@ -17,7 +14,6 @@ import dayjs from "dayjs";
 import GeriOdeme from "./tabs/GeriOdeme";
 import SigortaBilgileri from "./tabs/SigortaBilgileri";
 import PhotoUpload from "../../../../../components/upload/PhotoUpload";
-
 
 const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => {
   const { plaka } = useContext(PlakaContext);
@@ -126,15 +122,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
         setValue("bankaHesap", res?.data.bankaHesap);
         setValue("bankaKodId", res?.data.bankaKodId);
         setValue("belgeNo", res?.data.belgeNo);
-        setValue("faturaTarih", res?.data.faturaTarih && res?.data.faturaTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.faturaTarih)
-          : null);
-        setValue("geriOdemeTarih", res?.data.geriOdemeTarih && res?.data.geriOdemeTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.geriOdemeTarih)
-          : null);
-        setValue("kazaTarih", res?.data.kazaTarih && res?.data.kazaTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.kazaTarih)
-          : null);
+        setValue("faturaTarih", res?.data.faturaTarih && res?.data.faturaTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.faturaTarih) : null);
+        setValue("geriOdemeTarih", res?.data.geriOdemeTarih && res?.data.geriOdemeTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.geriOdemeTarih) : null);
+        setValue("kazaTarih", res?.data.kazaTarih && res?.data.kazaTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.kazaTarih) : null);
         setValue("aciklama", res?.data.aciklama);
         setValue("faturaTutar", res?.data.faturaTutar);
         setValue("lokasyonId", res?.data.lokasyonId);
@@ -178,13 +168,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "KAZA").then((res) =>
-        setImageUrls(res.data)
-      );
+      GetPhotosByRefGroupService(id, "KAZA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "KAZA").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetDocumentsByRefGroupService(id, "KAZA").then((res) => setFilesUrl(res.data));
     }
   }, [id, updateModal]);
 
@@ -202,7 +188,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "KAZA", images,  false);
+      const data = uploadPhoto(id, "KAZA", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -253,25 +239,25 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       ozelAlanKodId10: values.ozelAlanKodId10 || 0,
       ozelAlan11: values.ozelAlan11 || 0,
       ozelAlan12: values.ozelAlan12 || 0,
-    }
+    };
 
     UpdateAccidentItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
         if (plaka.length === 1) {
           reset();
         } else {
           reset();
         }
       }
-    })
+    });
 
     uploadFiles();
     uploadImages();
-    setStatus(false)
-  })
+    setStatus(false);
+  });
 
   const personalProps = {
     form: "KAZA",
@@ -303,33 +289,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
     {
       key: "5",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "6",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -338,7 +308,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       onClick={() => {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
       }}
     >
       {t("kapat")}
@@ -346,14 +316,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   ];
 
   return (
-    <Modal
-      title={t("kazaBilgisiGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("kazaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

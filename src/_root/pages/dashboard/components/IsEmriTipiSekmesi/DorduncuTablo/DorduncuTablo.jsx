@@ -1,29 +1,29 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Modal, Input, Typography, Tabs, message, Table } from 'antd';
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Modal, Input, Typography, Tabs, message, Table } from "antd";
 
 import http from "../../../../../../api/http.jsx";
-import { Controller, useForm, FormProvider, useFormContext } from 'react-hook-form';
-import dayjs from 'dayjs';
+import { Controller, useForm, FormProvider, useFormContext } from "react-hook-form";
+import dayjs from "dayjs";
 // import MainTabs from "./MainTabs/MainTabs";
-import EditModal from './EditModal.jsx';
+import EditModal from "./EditModal.jsx";
 
 // Türkçe karakterleri İngilizce karşılıkları ile değiştiren fonksiyon
 const normalizeText = (text) => {
   return text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/ğ/g, 'g')
-    .replace(/Ğ/g, 'G')
-    .replace(/ü/g, 'u')
-    .replace(/Ü/g, 'U')
-    .replace(/ş/g, 's')
-    .replace(/Ş/g, 'S')
-    .replace(/ı/g, 'i')
-    .replace(/İ/g, 'I')
-    .replace(/ö/g, 'o')
-    .replace(/Ö/g, 'O')
-    .replace(/ç/g, 'c')
-    .replace(/Ç/g, 'C');
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ğ/g, "g")
+    .replace(/Ğ/g, "G")
+    .replace(/ü/g, "u")
+    .replace(/Ü/g, "U")
+    .replace(/ş/g, "s")
+    .replace(/Ş/g, "S")
+    .replace(/ı/g, "i")
+    .replace(/İ/g, "I")
+    .replace(/ö/g, "o")
+    .replace(/Ö/g, "O")
+    .replace(/ç/g, "c")
+    .replace(/Ç/g, "C");
 };
 
 export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUcuncuTablo, onModalClose, onRefresh, secilenIsEmriID }) {
@@ -35,7 +35,7 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const [searchTerm1, setSearchTerm1] = useState('');
+  const [searchTerm1, setSearchTerm1] = useState("");
   const [filteredData1, setFilteredData1] = useState([]);
 
   const handleChangeModalVisible = () => {
@@ -47,38 +47,38 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
 
   // Intl.DateTimeFormat kullanarak tarih formatlama
   const formatDate = (date) => {
-    if (!date) return '';
+    if (!date) return "";
 
     // Örnek bir tarih formatla ve ay formatını belirle
     const sampleDate = new Date(2021, 0, 21); // Ocak ayı için örnek bir tarih
     const sampleFormatted = new Intl.DateTimeFormat(navigator.language).format(sampleDate);
 
     let monthFormat;
-    if (sampleFormatted.includes('January')) {
-      monthFormat = 'long'; // Tam ad ("January")
-    } else if (sampleFormatted.includes('Jan')) {
-      monthFormat = 'short'; // Üç harfli kısaltma ("Jan")
+    if (sampleFormatted.includes("January")) {
+      monthFormat = "long"; // Tam ad ("January")
+    } else if (sampleFormatted.includes("Jan")) {
+      monthFormat = "short"; // Üç harfli kısaltma ("Jan")
     } else {
-      monthFormat = '2-digit'; // Sayısal gösterim ("01")
+      monthFormat = "2-digit"; // Sayısal gösterim ("01")
     }
 
     // Kullanıcı için tarihi formatla
     const formatter = new Intl.DateTimeFormat(navigator.language, {
-      year: 'numeric',
+      year: "numeric",
       month: monthFormat,
-      day: '2-digit',
+      day: "2-digit",
     });
     return formatter.format(new Date(date));
   };
 
   const formatTime = (time) => {
-    if (!time || time.trim() === '') return ''; // `trim` metodu ile baştaki ve sondaki boşlukları temizle
+    if (!time || time.trim() === "") return ""; // `trim` metodu ile baştaki ve sondaki boşlukları temizle
 
     try {
       // Saati ve dakikayı parçalara ayır, boşlukları temizle
       const [hours, minutes] = time
         .trim()
-        .split(':')
+        .split(":")
         .map((part) => part.trim());
 
       // Saat ve dakika değerlerinin geçerliliğini kontrol et
@@ -86,9 +86,9 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
       const minutesInt = parseInt(minutes, 10);
       if (isNaN(hoursInt) || isNaN(minutesInt) || hoursInt < 0 || hoursInt > 23 || minutesInt < 0 || minutesInt > 59) {
         // throw new Error("Invalid time format"); // hata fırlatır ve uygulamanın çalışmasını durdurur
-        console.error('Invalid time format:', time);
+        console.error("Invalid time format:", time);
         // return time; // Hatalı formatı olduğu gibi döndür
-        return ''; // Hata durumunda boş bir string döndür
+        return ""; // Hata durumunda boş bir string döndür
       }
 
       // Geçerli tarih ile birlikte bir Date nesnesi oluştur ve sadece saat ve dakika bilgilerini ayarla
@@ -98,16 +98,16 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
       // Kullanıcının lokal ayarlarına uygun olarak saat ve dakikayı formatla
       // `hour12` seçeneğini belirtmeyerek Intl.DateTimeFormat'ın kullanıcının yerel ayarlarına göre otomatik seçim yapmasına izin ver
       const formatter = new Intl.DateTimeFormat(navigator.language, {
-        hour: 'numeric',
-        minute: '2-digit',
+        hour: "numeric",
+        minute: "2-digit",
         // hour12 seçeneği burada belirtilmiyor; böylece otomatik olarak kullanıcının sistem ayarlarına göre belirleniyor
       });
 
       // Formatlanmış saati döndür
       return formatter.format(date);
     } catch (error) {
-      console.error('Error formatting time:', error);
-      return ''; // Hata durumunda boş bir string döndür
+      console.error("Error formatting time:", error);
+      return ""; // Hata durumunda boş bir string döndür
       // return time; // Hatalı formatı olduğu gibi döndür
     }
   };
@@ -116,47 +116,47 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
 
   const columns = [
     {
-      title: 'İş Emri No',
-      dataIndex: 'ISM_ISEMRI_NO',
-      key: 'ISM_ISEMRI_NO',
+      title: "İş Emri No",
+      dataIndex: "ISM_ISEMRI_NO",
+      key: "ISM_ISEMRI_NO",
       width: 200,
       ellipsis: true,
     },
     {
-      title: 'İş Emri Konusu',
-      dataIndex: 'ISM_ACIKLAMA',
-      key: 'ISM_ACIKLAMA',
-      width: 200,
-      ellipsis: true,
-    },
-
-    {
-      title: 'Personel İsim',
-      dataIndex: 'PRS_ISIM',
-      key: 'PRS_ISIM',
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: 'Personel Unvan',
-      dataIndex: 'PRS_UNVAN',
-      key: 'PRS_UNVAN',
+      title: "İş Emri Konusu",
+      dataIndex: "ISM_ACIKLAMA",
+      key: "ISM_ACIKLAMA",
       width: 200,
       ellipsis: true,
     },
 
     {
-      title: 'Toplam Çalışma Süresi (dk.)',
-      dataIndex: 'TOPLAM_CALISMA_SURESI',
-      key: 'TOPLAM_CALISMA_SURESI',
+      title: "Personel İsim",
+      dataIndex: "PRS_ISIM",
+      key: "PRS_ISIM",
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: "Personel Unvan",
+      dataIndex: "PRS_UNVAN",
+      key: "PRS_UNVAN",
       width: 200,
       ellipsis: true,
     },
 
     {
-      title: 'Toplam Maliyet',
-      dataIndex: 'TOPLAM_MALIYET',
-      key: 'TOPLAM_MALIYET',
+      title: "Toplam Çalışma Süresi (dk.)",
+      dataIndex: "TOPLAM_CALISMA_SURESI",
+      key: "TOPLAM_CALISMA_SURESI",
+      width: 200,
+      ellipsis: true,
+    },
+
+    {
+      title: "Toplam Maliyet",
+      dataIndex: "TOPLAM_MALIYET",
+      key: "TOPLAM_MALIYET",
       width: 200,
       ellipsis: true,
     },
@@ -172,7 +172,7 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
       }));
       setData(fetchedData);
     } catch (error) {
-      console.error('API isteği sırasında hata oluştu:', error);
+      console.error("API isteği sırasında hata oluştu:", error);
     } finally {
       setLoading(false);
     }
@@ -214,9 +214,9 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
   return (
     <div>
       <Modal width="1200px" centered title="Personel Analizi" open={isModalVisibleUcuncuTablo} onOk={handleChangeModalVisible} onCancel={onModalClose}>
-        <div style={{ marginBottom: '25px' }}>
+        <div style={{ marginBottom: "25px" }}>
           {/*<CreateModal onRefresh={refreshTable} secilenIsEmriID={secilenIsEmriID} />*/}
-          <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: '300px', marginBottom: '15px' }} />
+          <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px", marginBottom: "15px" }} />
           <Table
             // rowSelection={{
             //   type: "checkbox",
@@ -229,8 +229,8 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
             pagination={{
               defaultPageSize: 10,
               showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50', '100'],
-              position: ['bottomRight'],
+              pageSizeOptions: ["10", "20", "50", "100"],
+              position: ["bottomRight"],
               showTotal: (total, range) => `Toplam ${total}`,
               showQuickJumper: true,
             }}
@@ -239,7 +239,7 @@ export default function DorduncuTablo({ selectedRowUcuncuTablo, isModalVisibleUc
             loading={loading}
             scroll={{
               // x: "auto",
-              y: 'calc(100vh - 390px)',
+              y: "calc(100vh - 390px)",
             }}
           />
           {/*{isModalVisible && (*/}

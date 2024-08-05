@@ -7,7 +7,7 @@ import { Button, message, Modal, Tabs } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { AddAccidentItemService } from "../../../../api/services/vehicles/operations_services";
-import PersonalFields from "../../../components/form/personal-fields/PersonalFields"
+import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
 import GeneralInfo from "./tabs/GeneralInfo";
 import GeriOdeme from "./tabs/GeriOdeme";
 import SigortaBilgileri from "./tabs/SigortaBilgileri";
@@ -184,9 +184,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo />
-      ),
+      children: <GeneralInfo />,
     },
     {
       key: "2",
@@ -219,11 +217,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
         {t("kaydet")}
       </Button>
     ),
@@ -245,14 +239,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniKazaGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniKazaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

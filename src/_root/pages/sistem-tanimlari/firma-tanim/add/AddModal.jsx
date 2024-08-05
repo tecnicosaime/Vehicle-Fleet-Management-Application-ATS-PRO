@@ -6,9 +6,7 @@ import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 import PersonalFields from "../../../../components/form/PersonalFields";
 import GeneralInfo from "./GeneralInfo";
-import {
-  AddCompanyItemService,
-} from "../../../../../api/services/sistem-tanimlari/services";
+import { AddCompanyItemService } from "../../../../../api/services/sistem-tanimlari/services";
 import Iletisim from "./Iletisim";
 import { CodeItemValidateService, GetModuleCodeByCode } from "../../../../../api/services/code/services";
 
@@ -214,14 +212,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={
-          isValid === "success" ? false : isValid === "error" ? true : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -240,23 +231,10 @@ const AddModal = ({ setStatus }) => {
 
   return (
     <>
-      <Button
-        className="btn primary-btn"
-        onClick={() => setopenModal(true)}
-        disabled={
-          isValid === "error" ? true : isValid === "success" ? false : false
-        }
-      >
+      <Button className="btn primary-btn" onClick={() => setopenModal(true)} disabled={isValid === "error" ? true : isValid === "success" ? false : false}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniFirmaTanimiGirisi")}
-        open={openModal}
-        onCancel={() => setopenModal(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniFirmaTanimiGirisi")} open={openModal} onCancel={() => setopenModal(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

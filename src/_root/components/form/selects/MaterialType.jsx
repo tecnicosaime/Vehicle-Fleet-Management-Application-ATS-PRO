@@ -27,14 +27,8 @@ const MaterialType = ({ name, codeName, type, required }) => {
             allowClear
             optionFilterProp="children"
             className={fieldState.error ? "input-error" : ""}
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.label.toLowerCase() ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? "").toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
             options={data.map((item) => ({
               label: item.tanim,
               value: item.malzemeId,
@@ -46,25 +40,19 @@ const MaterialType = ({ name, codeName, type, required }) => {
               setFuelTankId(e);
               if (e === undefined) {
                 field.onChange("");
-                const selectedOption = data.find(
-                  (option) => option.siraNo === e
-                );
+                const selectedOption = data.find((option) => option.siraNo === e);
                 if (!selectedOption) {
                   setValue(name, "");
                 }
               } else {
-                const selectedOption = data.find(
-                  (option) => option.malzemeId === e
-                );
+                const selectedOption = data.find((option) => option.malzemeId === e);
                 if (selectedOption) {
                   setValue(name, selectedOption.tanim);
                 }
               }
             }}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />

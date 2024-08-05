@@ -17,12 +17,7 @@ const GeneralInfo = ({ isValid }) => {
   }, []);
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-          ? "#23b545"
-          : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   return (
@@ -32,7 +27,9 @@ const GeneralInfo = ({ isValid }) => {
           <div className="grid gap-1">
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
-                <label>{t("malzemeKodu")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("malzemeKodu")} <span className="text-danger">*</span>
+                </label>
                 <TextInput name="malzemeKod" style={validateStyle} required={true} />
               </div>
             </div>
@@ -44,42 +41,36 @@ const GeneralInfo = ({ isValid }) => {
             </div>
             <div className="col-span-8">
               <div className="flex flex-col gap-1">
-                <label>{t("tanimi")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("tanimi")} <span className="text-danger">*</span>
+                </label>
                 <TextInput name="tanim" required={true} />
               </div>
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
-                <label>{t("birim")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("birim")} <span className="text-danger">*</span>
+                </label>
                 <CodeControl name="birim" codeName="birimKodId" id={300} required={true} />
               </div>
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("malzemeTipi")}</label>
-                <CodeControl
-                  name="malzemeTipKodText"
-                  codeName="malzemeTipKodId"
-                  id={301}
-                />
+                <CodeControl name="malzemeTipKodText" codeName="malzemeTipKodId" id={301} />
               </div>
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("marka")} -- ?</label>
-                <TextInput
-                  name=""
-                  readonly={true}
-                />
+                <TextInput name="" readonly={true} />
               </div>
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("model")} -- ?</label>
-                <TextInput
-                  name=""
-                  readonly={true}
-                />
+                <TextInput name="" readonly={true} />
               </div>
             </div>
             <div className="col-span-4">
@@ -152,46 +143,19 @@ const GeneralInfo = ({ isValid }) => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("bolum")}</label>
-                <Controller
-                  name="bolum"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  )}
-                />
+                <Controller name="bolum" control={control} render={({ field }) => <Input {...field} onChange={(e) => field.onChange(e.target.value)} />} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("raf")}</label>
-                <Controller
-                  name="raf"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  )}
-                />
+                <Controller name="raf" control={control} render={({ field }) => <Input {...field} onChange={(e) => field.onChange(e.target.value)} />} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("olcu")}</label>
-                <Controller
-                  name="olcu"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  )}
-                />
+                <Controller name="olcu" control={control} render={({ field }) => <Input {...field} onChange={(e) => field.onChange(e.target.value)} />} />
               </div>
             </div>
             <div className="col-span-4">
@@ -200,13 +164,7 @@ const GeneralInfo = ({ isValid }) => {
                 <Controller
                   name="yedekParca"
                   control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      {...field}
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    />
-                  )}
+                  render={({ field }) => <Checkbox {...field} checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
                 />
               </div>
             </div>
@@ -216,13 +174,7 @@ const GeneralInfo = ({ isValid }) => {
                 <Controller
                   name="sarfMlz"
                   control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      {...field}
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    />
-                  )}
+                  render={({ field }) => <Checkbox {...field} checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
                 />
               </div>
             </div>
@@ -232,13 +184,7 @@ const GeneralInfo = ({ isValid }) => {
                 <Controller
                   name="demirBas"
                   control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      {...field}
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    />
-                  )}
+                  render={({ field }) => <Checkbox {...field} checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
                 />
               </div>
             </div>

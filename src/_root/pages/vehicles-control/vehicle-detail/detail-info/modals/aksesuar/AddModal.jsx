@@ -33,8 +33,7 @@ const AddModal = ({ setStatus }) => {
       ureticiKod: values.ureticiKod,
       miktar: values.miktar,
       fiyat: values.fiyat,
-      degistirmeTarih:
-        dayjs(values.degistirmeTarih).format("YYYY-MM-DD") || null,
+      degistirmeTarih: dayjs(values.degistirmeTarih).format("YYYY-MM-DD") || null,
     };
 
     AddAccItemService(body).then((res) => {
@@ -55,8 +54,8 @@ const AddModal = ({ setStatus }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setIsModalOpen(false)
-        reset()
+        setIsModalOpen(false);
+        reset();
       }}
     >
       {t("kapat")}
@@ -68,25 +67,13 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniAksesuarBilgisi")}
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={() => setIsModalOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={600}
-      >
+      <Modal title={t("yeniAksesuarBilgisi")} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={600}>
         <FormProvider {...methods}>
           <form>
             <div className="flex flex-col gap-1">
               <div className="flex flex-col gap-1">
                 <label>{t("tanim")}</label>
-                <CodeControl
-                  name="aksesuar"
-                  codeName="aksesuarKodId"
-                  id={105}
-                />
+                <CodeControl name="aksesuar" codeName="aksesuarKodId" id={105} />
               </div>
               <div className="flex flex-col gap-1">
                 <label>{t("miktar")}</label>
