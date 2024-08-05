@@ -4,16 +4,10 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, message, Modal, Tabs } from "antd";
 import { CodeItemValidateService } from "../../../../api/services/code/services";
-import {
-  GetMaterialCardByIdService,
-  UpdateMaterialCardService,
-} from "../../../../api/services/malzeme/services";
+import { GetMaterialCardByIdService, UpdateMaterialCardService } from "../../../../api/services/malzeme/services";
 import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../api/services/upload/services";
-import GeneralInfo from "./tabs/GeneralInfo";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
+import GeneralInfo from "./tabs/UploadGeneralInfo.jsx";
 import { uploadFile, uploadPhoto } from "../../../../utils/upload";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 import FileUpload from "../../../components/upload/FileUpload";
@@ -87,7 +81,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       type: "select",
       code: 869,
       name2: "ozelAlanKodId9",
-    }, 
+    },
     {
       label: "ozelAlan10",
       key: "OZELALAN_10",
@@ -205,24 +199,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     {
       key: "3",
       label: `[${imageUrls.length}] Resimler`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] Ekli Belgeler`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
@@ -259,10 +241,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       setValue("cikanMiktar", res.data.cikanMiktar);
       setValue("sonMiktar", res.data.sonMiktar);
       setValue("stokMiktar", res.data.girenMiktar - res.data.cikanMiktar);
-      setValue(
-        "sonAlisTarih",
-        dayjs(res.data.sonAlisTarih).format("DD.MM.YYYY")
-      );
+      setValue("sonAlisTarih", dayjs(res.data.sonAlisTarih).format("DD.MM.YYYY"));
       setValue("ozelAlan1", res?.data.ozelAlan1);
       setValue("ozelAlan2", res?.data.ozelAlan2);
       setValue("ozelAlan3", res?.data.ozelAlan3);
@@ -279,13 +258,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       setValue("ozelAlan12", res?.data.ozelAlan12);
     });
 
-    GetPhotosByRefGroupService(id, "MALZEME").then((res) =>
-      setImageUrls(res.data)
-    );
+    GetPhotosByRefGroupService(id, "MALZEME").then((res) => setImageUrls(res.data));
 
-    GetDocumentsByRefGroupService(id, "MALZEME").then((res) =>
-      setFilesUrl(res.data)
-    );
+    GetDocumentsByRefGroupService(id, "MALZEME").then((res) => setFilesUrl(res.data));
   }, [id, updateModal]);
 
   const onSubmit = handleSubmit((values) => {
@@ -313,8 +288,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       sarfMlz: values.sarfMlz,
       demirBas: values.demirBas,
       olcu: values.olcu,
-      kdvDahilHaric:
-        values.kdvDH === "dahil" || values.kdvDH === "Dahil" ? true : false,
+      kdvDahilHaric: values.kdvDH === "dahil" || values.kdvDH === "Dahil" ? true : false,
       ozelAlan1: values.ozelAlan1 || "",
       ozelAlan2: values.ozelAlan2 || "",
       ozelAlan3: values.ozelAlan3 || "",
@@ -344,14 +318,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   });
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-      disabled={
-        isValid === "success" ? false : isValid === "error" ? true : false
-      }
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -369,14 +336,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
   return (
     <>
-      <Modal
-        title={t("malzemeBilgisiGuncelle")}
-        open={updateModal}
-        onCancel={() => setUpdateModal(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("malzemeBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
