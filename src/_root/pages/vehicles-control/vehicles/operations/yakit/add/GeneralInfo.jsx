@@ -4,17 +4,7 @@ import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import tr_TR from "antd/lib/locale/tr_TR";
 import { t } from "i18next";
-import {
-  Button,
-  Checkbox,
-  ConfigProvider,
-  DatePicker,
-  Divider,
-  InputNumber,
-  message,
-  Modal,
-  TimePicker,
-} from "antd";
+import { Button, Checkbox, ConfigProvider, DatePicker, Divider, InputNumber, message, Modal, TimePicker } from "antd";
 import { ArrowUpOutlined, CheckOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
 import { SelectContext } from "../../../../../../../context/selectSlice";
@@ -98,14 +88,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               <Controller
                 name="depoYakitMiktar"
                 control={control}
-                render={({ field }) => (
-                  <InputNumber
-                    {...field}
-                    value={watch("yakitHacmi") - watch("miktar")}
-                    onChange={(e) => field.onChange(e)}
-                    readOnly
-                  />
-                )}
+                render={({ field }) => <InputNumber {...field} value={watch("yakitHacmi") - watch("miktar")} onChange={(e) => field.onChange(e)} readOnly />}
               />
               &nbsp; lt (Depo {watch("fullDepo") ? "fullendi" : "fullenmedi"})
             </div>
@@ -150,18 +133,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
             <div className="col-span-6">
               <div className="text-info">
-                <Controller
-                  name="depoYakitMiktar"
-                  control={control}
-                  render={({ field }) => (
-                    <InputNumber
-                      {...field}
-                      onChange={(e) => field.onChange(e)}
-                    />
-                  )}
-                />
-                &nbsp; lt (Depo{" "}
-                {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
+                <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(e) => field.onChange(e)} />} />
+                &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
               </div>
             </div>
             <div className="col-span-12">
@@ -179,9 +152,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setContent(content);
       } else {
         if (farkKm > 0 && miktar > 0) {
-          yakitHacmi !== null
-            ? (tktm = (yakitHacmi / farkKm).toFixed(2))
-            : (tktm = 0);
+          yakitHacmi !== null ? (tktm = (yakitHacmi / farkKm).toFixed(2)) : (tktm = 0);
 
           const content = (
             <div className="grid detail-tuketim">
@@ -208,18 +179,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               </div>
               <div className="col-span-6">
                 <div className="text-info">
-                  <Controller
-                    name="depoYakitMiktar"
-                    control={control}
-                    render={({ field }) => (
-                      <InputNumber
-                        {...field}
-                        onChange={(e) => field.onChange(e)}
-                      />
-                    )}
-                  />
-                  &nbsp; lt (Depo{" "}
-                  {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
+                  <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(e) => field.onChange(e)} />} />
+                  &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
                 </div>
               </div>
               <div className="col-span-12">
@@ -241,12 +202,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       }
     }
     setValue("tuketim", tktm);
-  }, [
-    watch("fullDepo"),
-    watch("farkKm"),
-    watch("miktar"),
-    watch("yakitHacmi"),
-  ]);
+  }, [watch("fullDepo"), watch("farkKm"), watch("miktar"), watch("yakitHacmi")]);
 
   const validateLog = () => {
     const body = {
@@ -269,9 +225,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
     ValidateFuelInfoInsertionService(body).then((res) => {
       if (res?.data.statusCode === 400) {
         setResponse("error");
-        if (
-          res?.data.message === " Invalid Km range for both KmLog and FuelKm !"
-        ) {
+        if (res?.data.message === " Invalid Km range for both KmLog and FuelKm !") {
           setErrorMessage("Alınan Km Yakıt ve Km Log-a girilemez!");
           setIsValid(true);
         } else if (res?.data.message === " Invalid FuelKm Range !") {
@@ -300,14 +254,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setErrorMessage("Alınan Km Km Log-a girilemez!");
       }
     }
-
   }, [watch("engelle"), logError]);
 
   useEffect(() => {
     if (watch("depoYakitMiktar") + history[0]?.miktar > watch("yakitHacmi")) {
-      message.warning(
-        "Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!"
-      );
+      message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
       setIsValid(true);
     } else {
       setIsValid(false);
@@ -327,7 +278,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       tyakitHacmi: watch("yakitHacmi"),
     };
 
-    UpdateVehicleDetailsInfoService(1,body).then((res) => {
+    UpdateVehicleDetailsInfoService(1, body).then((res) => {
       if (res?.data.statusCode === 202) {
         setIsOpen(false);
       }
@@ -341,25 +292,14 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       saat: dayjs(watch("saat")).format("HH:mm:ss"),
     };
     GetKmRangeBeforeDateService(body).then((res) => {
-      res.data === -1
-        ? setValue("sonAlinanKm", 0)
-        : setValue("sonAlinanKm", res.data);
-      if (watch("farkKm") > 0 && watch("alinanKm"))
-        setValue("farkKm", watch("alinanKm") - watch("sonAlinanKm"));
+      res.data === -1 ? setValue("sonAlinanKm", 0) : setValue("sonAlinanKm", res.data);
+      if (watch("farkKm") > 0 && watch("alinanKm")) setValue("farkKm", watch("alinanKm") - watch("sonAlinanKm"));
     });
-    GetLastThreeFuelRecordService(
-      data.aracId,
-      dayjs(watch("tarih")).format("YYYY-MM-DD"),
-      dayjs(watch("saat")).format("HH:mm:ss")
-    ).then((res) => setHistory(res.data));
+    GetLastThreeFuelRecordService(data.aracId, dayjs(watch("tarih")).format("YYYY-MM-DD"), dayjs(watch("saat")).format("HH:mm:ss")).then((res) => setHistory(res.data));
   };
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={updateDepoHacmi}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={updateDepoHacmi}>
       {t("kaydet")}
     </Button>,
     <Button
@@ -433,11 +373,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           }}
                         />
                       </ConfigProvider>
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>
-                          {fieldState.error.message}
-                        </span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -467,11 +403,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           if (watch("alinanKm")) validateLog();
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>
-                          {fieldState.error.message}
-                        </span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -484,11 +416,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
                 <label>{t("yakitTip")}</label>
-                <MaterialType
-                  name="yakitTip"
-                  codeName="yakitTipId"
-                  type="YAKIT"
-                />
+                <MaterialType name="yakitTip" codeName="yakitTipId" type="YAKIT" />
               </div>
             </div>
             <div className="col-span-6 flex flex-col">
@@ -521,9 +449,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <>
                       <InputNumber
                         {...field}
-                        className={
-                          fieldState.error ? "input-error w-full" : "w-full"
-                        }
+                        className={fieldState.error ? "input-error w-full" : "w-full"}
                         readOnly={data.sonAlinanKm !== 0}
                         onPressEnter={(e) => {
                           validateLog();
@@ -540,11 +466,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           }
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>
-                          {fieldState.error.message}
-                        </span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -553,8 +475,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
-                  {t("yakitinAlindigiKm")}{" "}
-                  <span className="text-danger">*</span>
+                  {t("yakitinAlindigiKm")} <span className="text-danger">*</span>
                 </label>
                 <Controller
                   name="alinanKm"
@@ -562,18 +483,9 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                   rules={{ required: "Bu alan boş bırakılamaz!" }}
                   render={({ field, fieldState }) => (
                     <>
-
                       <InputNumber
-                        className={
-                          fieldState.error ? "input-error w-full" : "w-full"
-                        }
-                        style={
-                          response === "error"
-                            ? { borderColor: "#dc3545" }
-                            : response === "success"
-                              ? { borderColor: "#23b545" }
-                              : { color: "#000" }
-                        }
+                        className={fieldState.error ? "input-error w-full" : "w-full"}
+                        style={response === "error" ? { borderColor: "#dc3545" } : response === "success" ? { borderColor: "#23b545" } : { color: "#000" }}
                         {...field}
                         onPressEnter={(e) => {
                           validateLog();
@@ -591,11 +503,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           }
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>
-                          {fieldState.error.message}
-                        </span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -656,10 +564,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <div className="flex align-baseline gap-1">
-                  <label htmlFor="miktar">{t("miktar")} (lt) <span className="text-danger">*</span></label>
+                  <label htmlFor="miktar">
+                    {t("miktar")} (lt) <span className="text-danger">*</span>
+                  </label>
                   <Button className="depo" onClick={() => setIsOpen(true)}>
-                    {t("depoHacmi")}: {watch("yakitHacmi")}{" "}
-                    {(watch("birim") === "LITRE" && "lt") || "lt"}
+                    {t("depoHacmi")}: {watch("yakitHacmi")} {(watch("birim") === "LITRE" && "lt") || "lt"}
                   </Button>
                 </div>
                 <Controller
@@ -669,23 +578,13 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                   render={({ field, fieldState }) => (
                     <>
                       <InputNumber
-                        className={
-                          fieldState.error ? "input-error w-full" : "w-full"
-                        }
+                        className={fieldState.error ? "input-error w-full" : "w-full"}
                         {...field}
                         onPressEnter={(e) => {
-                          if (watch("yakitHacmi") === 0 && !watch("fullDepo"))
-                            message.warning(
-                              "Depo Hacmi sıfırdır. Depo hacmi giriniz!"
-                            );
+                          if (watch("yakitHacmi") === 0 && !watch("fullDepo")) message.warning("Depo Hacmi sıfırdır. Depo hacmi giriniz!");
 
-                          if (
-                            watch("yakitHacmi") <
-                            +e.target.value + +watch("depoYakitMiktar")
-                          ) {
-                            message.warning(
-                              "Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!"
-                            );
+                          if (watch("yakitHacmi") < +e.target.value + +watch("depoYakitMiktar")) {
+                            message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
                             setIsValid(true);
                           } else {
                             setIsValid(false);
@@ -702,11 +601,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           }
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>
-                          {fieldState.error.message}
-                        </span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -723,18 +618,13 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <div className="col-span-10">
                       <div className="flex flex-col gap-1">
                         <label>
-                          {t("ortalamaTuketim")}{" "}
-                          <ArrowUpOutlined style={{ color: "red" }} />
+                          {t("ortalamaTuketim")} <ArrowUpOutlined style={{ color: "red" }} />
                         </label>
                         <TextInput name="tuketim" readonly={true} />
                       </div>
                     </div>
                     <div className="col-span-2 self-end">
-                      <Button
-                        className="w-full text-center"
-                        style={{ padding: "4px" }}
-                        onClick={() => setOpenDetail(true)}
-                      >
+                      <Button className="w-full text-center" style={{ padding: "4px" }} onClick={() => setOpenDetail(true)}>
                         ...
                       </Button>
                     </div>
@@ -781,9 +671,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <>
                       <InputNumber
                         {...field}
-                        className={
-                          fieldState.error ? "input-error w-full" : "w-full"
-                        }
+                        className={fieldState.error ? "input-error w-full" : "w-full"}
                         onChange={(e) => {
                           field.onChange(e);
 
@@ -795,11 +683,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           }
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>
-                          {fieldState.error.message}
-                        </span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -809,23 +693,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         </div>
       </div>
 
-      <Modal
-        open={isOpen}
-        maskClosable={false}
-        title={t("depoHacmiGirisi")}
-        footer={footer}
-        onCancel={() => setIsOpen(false)}
-      >
+      <Modal open={isOpen} maskClosable={false} title={t("depoHacmiGirisi")} footer={footer} onCancel={() => setIsOpen(false)}>
         <TextInput name="yakitHacmi" />
       </Modal>
 
-      <Modal
-        open={openDetail}
-        maskClosable={false}
-        title={t("ortalamaYakitTuketimi")}
-        footer={detailModalFooter}
-        onCancel={() => setOpenDetail(false)}
-      >
+      <Modal open={openDetail} maskClosable={false} title={t("ortalamaYakitTuketimi")} footer={detailModalFooter} onCancel={() => setOpenDetail(false)}>
         {content}
       </Modal>
 
@@ -833,84 +705,46 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         <div className="grid gap-1 border p-10 mt-10">
           <div className="col-span-12">
             <div className="grid">
-              <div
-                className="col-span-2 flex flex-col"
-                style={{ textAlign: "center" }}
-              >
-                <p style={{ fontSize: "14px" }}>
-                  {dayjs(history[2]?.tarih).format("DD.MM.YYYY")}
-                </p>
+              <div className="col-span-2 flex flex-col" style={{ textAlign: "center" }}>
+                <p style={{ fontSize: "14px" }}>{dayjs(history[2]?.tarih).format("DD.MM.YYYY")}</p>
                 <div>
-                  <img
-                    src="/images/kirmizi.svg"
-                    alt=""
-                    style={{ width: "20%" }}
-                  />
+                  <img src="/images/kirmizi.svg" alt="" style={{ width: "20%" }} />
                 </div>
                 <p style={{ fontSize: "14px" }}>{history[2]?.sonAlinanKm} km</p>
                 <p style={{ fontSize: "14px" }}>
-                  {history[2]?.miktar} Lt.{" "}
-                  {history[2]?.fullDepo && (
-                    <CheckOutlined className="text-success" />
-                  )}
+                  {history[2]?.miktar} Lt. {history[2]?.fullDepo && <CheckOutlined className="text-success" />}
                 </p>
-                <p style={{ fontSize: "14px" }}>
-                  {history[2]?.tuketim} Lt.Km..
-                </p>
+                <p style={{ fontSize: "14px" }}>{history[2]?.tuketim} Lt.Km..</p>
               </div>
               <div className="col-span-1 mt-20" style={{ textAlign: "center" }}>
                 <img src="/images/yol.svg" alt="" style={{ width: "70%" }} />
                 <p>{history[2]?.farkKm} km</p>
               </div>
-              <div
-                className="col-span-2 flex flex-col"
-                style={{ textAlign: "center" }}
-              >
-                <p style={{ fontSize: "14px" }}>
-                  {dayjs(history[1]?.tarih).format("DD.MM.YYYY")}
-                </p>
+              <div className="col-span-2 flex flex-col" style={{ textAlign: "center" }}>
+                <p style={{ fontSize: "14px" }}>{dayjs(history[1]?.tarih).format("DD.MM.YYYY")}</p>
                 <div>
-                  <img
-                    src="/images/kirmizi.svg"
-                    alt=""
-                    style={{ width: "20%" }}
-                  />
+                  <img src="/images/kirmizi.svg" alt="" style={{ width: "20%" }} />
                 </div>
                 <p style={{ fontSize: "14px" }}>{history[1]?.sonAlinanKm} km</p>
                 <p style={{ fontSize: "14px" }}>
-                  {history[1]?.miktar} Lt.{" "}
-                  {history[1]?.fullDepo && (
-                    <CheckOutlined className="text-success" />
-                  )}
+                  {history[1]?.miktar} Lt. {history[1]?.fullDepo && <CheckOutlined className="text-success" />}
                 </p>
-                <p style={{ fontSize: "14px" }}>
-                  {history[1]?.tuketim} Lt.Km..
-                </p>
+                <p style={{ fontSize: "14px" }}>{history[1]?.tuketim} Lt.Km..</p>
               </div>
               <div className="col-span-1 mt-20" style={{ textAlign: "center" }}>
                 <img src="/images/yol.svg" alt="" style={{ width: "70%" }} />
                 <p>{history[1]?.farkKm} km</p>
               </div>
-              <div
-                className="col-span-2 flex flex-col"
-                style={{ textAlign: "center" }}
-              >
-                <p style={{ fontSize: "14px" }}>
-                  {dayjs(history[0]?.tarih).format("DD.MM.YYYY")}
-                </p>
+              <div className="col-span-2 flex flex-col" style={{ textAlign: "center" }}>
+                <p style={{ fontSize: "14px" }}>{dayjs(history[0]?.tarih).format("DD.MM.YYYY")}</p>
                 <div>
                   <img src="/images/Mor.svg" alt="" style={{ width: "20%" }} />
                 </div>
                 <p style={{ fontSize: "14px" }}>{history[0]?.sonAlinanKm} km</p>
                 <p style={{ fontSize: "14px" }}>
-                  {history[0]?.miktar} Lt.{" "}
-                  {history[0]?.fullDepo && (
-                    <CheckOutlined className="text-success" />
-                  )}
+                  {history[0]?.miktar} Lt. {history[0]?.fullDepo && <CheckOutlined className="text-success" />}
                 </p>
-                <p style={{ fontSize: "14px" }}>
-                  {history[0]?.tuketim} Lt.Km..
-                </p>
+                <p style={{ fontSize: "14px" }}>{history[0]?.tuketim} Lt.Km..</p>
               </div>
               <div className="col-span-1 mt-20" style={{ textAlign: "center" }}>
                 <img src="/images/yol.svg" alt="" style={{ width: "70%" }} />
@@ -918,11 +752,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               </div>
               <div className="col-span-2 mt-20" style={{ textAlign: "center" }}>
                 <div>
-                  <img
-                    src="/images/Araba.svg"
-                    alt=""
-                    style={{ width: "40%" }}
-                  />
+                  <img src="/images/Araba.svg" alt="" style={{ width: "40%" }} />
                 </div>
               </div>
             </div>

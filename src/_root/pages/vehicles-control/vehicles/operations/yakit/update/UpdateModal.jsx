@@ -6,15 +6,8 @@ import { t } from "i18next";
 import { Button, message, Modal, Tabs } from "antd";
 import { uploadPhoto, uploadFile } from "../../../../../../../utils/upload";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
-import {
-  GetFuelCardContentByIdService,
-  GetFuelCardInfoByFuelIdService,
-  UpdateFuelService,
-} from "../../../../../../../api/services/vehicles/operations_services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../../../../api/services/upload/services";
+import { GetFuelCardContentByIdService, GetFuelCardInfoByFuelIdService, UpdateFuelService } from "../../../../../../../api/services/vehicles/operations_services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../../../../api/services/upload/services";
 import GeneralInfo from "./GeneralInfo";
 import PersonalFields from "../../../../../../components/form/personal-fields/PersonalFields";
 import PhotoUpload from "../../../../../../components/upload/PhotoUpload";
@@ -169,19 +162,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
         setValue("fullDepo", res?.data.fullDepo);
         setValue("stokKullanimi", res?.data.stokKullanimi);
         setValue("aciklama", res?.data.aciklama);
-        setValue(
-          "faturaTarih",
-          res?.data.faturaTarih &&
-            res?.data.faturaTarih !== "0001-01-01T00:00:00"
-            ? dayjs(res?.data.faturaTarih)
-            : null
-        );
-        setValue(
-          "tarih",
-          res?.data.tarih && res?.data.tarih !== "0001-01-01T00:00:00"
-            ? dayjs(res?.data.tarih)
-            : null
-        );
+        setValue("faturaTarih", res?.data.faturaTarih && res?.data.faturaTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.faturaTarih) : null);
+        setValue("tarih", res?.data.tarih && res?.data.tarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.tarih) : null);
         setValue("saat", dayjs(res?.data.saat, "HH:mm:ss"));
         setValue("ozelAlan1", res?.data.ozelAlan1);
         setValue("ozelAlan2", res?.data.ozelAlan2);
@@ -204,14 +186,10 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
         setValue("yakitHacmi", res?.data.yakitHacmi);
       });
 
-      GetPhotosByRefGroupService(id, "YAKIT").then((res) =>
-        setImageUrls(res.data)
-      );
-      GetDocumentsByRefGroupService(id, "YAKIT").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetPhotosByRefGroupService(id, "YAKIT").then((res) => setImageUrls(res.data));
+      GetDocumentsByRefGroupService(id, "YAKIT").then((res) => setFilesUrl(res.data));
 
-      setImages([])
+      setImages([]);
     }
   }, [id, updateModal]);
 
@@ -259,9 +237,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
       aracId: aracId,
       plaka: values.plaka,
       tarih: values.tarih ? dayjs(values.tarih).format("YYYY-MM-DD") : null,
-      faturaTarih: values.faturaTarih
-        ? dayjs(values.faturaTarih).format("YYYY-MM-DD")
-        : null,
+      faturaTarih: values.faturaTarih ? dayjs(values.faturaTarih).format("YYYY-MM-DD") : null,
       saat: values.saat ? dayjs(values.saat).format("HH:mm:ss") : null,
       aciklama: values.aciklama,
       faturaNo: values.faturaNo,
@@ -355,13 +331,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo
-          setIsValid={setIsValid}
-          response={response}
-          setResponse={setResponse}
-        />
-      ),
+      children: <GeneralInfo setIsValid={setIsValid} response={response} setResponse={setResponse} />,
     },
     {
       key: "2",
@@ -371,34 +341,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-      disabled={isValid}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -417,14 +370,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
 
   return (
     <>
-      <Modal
-        title={t("yakitBilgisiGuncelle")}
-        open={updateModal}
-        onCancel={() => setUpdateModal(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yakitBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

@@ -3,21 +3,10 @@ import { useFormContext, Controller } from "react-hook-form";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import {
-  Button,
-  Checkbox,
-  Divider,
-  InputNumber,
-  message,
-  Modal,
-} from "antd";
+import { Button, Checkbox, Divider, InputNumber, message, Modal } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
-import {
-  GetKmRangeBeforeDateService,
-  GetMaterialPriceService,
-  ValidateFuelInfoInsertionService,
-} from "../../../../../../../api/services/vehicles/operations_services";
+import { GetKmRangeBeforeDateService, GetMaterialPriceService, ValidateFuelInfoInsertionService } from "../../../../../../../api/services/vehicles/operations_services";
 import { UpdateVehicleDetailsInfoService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import HiddenInput from "../../../../../../components/form/inputs/HiddenInput";
 import Driver from "../../../../../../components/form/selects/Driver";
@@ -80,14 +69,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               <Controller
                 name="depoYakitMiktar"
                 control={control}
-                render={({ field }) => (
-                  <InputNumber
-                    {...field}
-                    value={watch("yakitHacmi") - watch("miktar")}
-                    onChange={(e) => field.onChange(e)}
-                    readOnly
-                  />
-                )}
+                render={({ field }) => <InputNumber {...field} value={watch("yakitHacmi") - watch("miktar")} onChange={(e) => field.onChange(e)} readOnly />}
               />
               &nbsp; lt (Depo {watch("fullDepo") ? "fullendi" : "fullenmedi"})
             </div>
@@ -132,18 +114,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
             <div className="col-span-6">
               <div className="text-info">
-                <Controller
-                  name="depoYakitMiktar"
-                  control={control}
-                  render={({ field }) => (
-                    <InputNumber
-                      {...field}
-                      onChange={(e) => field.onChange(e)}
-                    />
-                  )}
-                />
-                &nbsp; lt (Depo{" "}
-                {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
+                <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(e) => field.onChange(e)} />} />
+                &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
               </div>
             </div>
             <div className="col-span-12">
@@ -161,9 +133,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setContent(content);
       } else {
         if (farkKm > 0 && miktar > 0) {
-          yakitHacmi !== null
-            ? (tktm = (yakitHacmi / farkKm).toFixed(2))
-            : (tktm = 0);
+          yakitHacmi !== null ? (tktm = (yakitHacmi / farkKm).toFixed(2)) : (tktm = 0);
 
           const content = (
             <div className="grid detail-tuketim">
@@ -190,18 +160,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               </div>
               <div className="col-span-6">
                 <div className="text-info">
-                  <Controller
-                    name="depoYakitMiktar"
-                    control={control}
-                    render={({ field }) => (
-                      <InputNumber
-                        {...field}
-                        onChange={(e) => field.onChange(e)}
-                      />
-                    )}
-                  />
-                  &nbsp; lt (Depo{" "}
-                  {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
+                  <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(e) => field.onChange(e)} />} />
+                  &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
                 </div>
               </div>
               <div className="col-span-12">
@@ -227,9 +187,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
 
   useEffect(() => {
     if (watch("depoYakitMiktar") + history[0]?.miktar > watch("yakitHacmi")) {
-      message.warning(
-        "Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!"
-      );
+      message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
       setIsValid(true);
     } else {
       setIsValid(false);
@@ -254,11 +212,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   }, [watch("litreFiyat")]);
 
   useEffect(() => {
-    GetKmRangeBeforeDateService(
-      data.aracId,
-      dayjs(watch("tarih")).format("YYYY-MM-DD"),
-      dayjs(watch("saat")).format("HH:mm:ss")
-    ).then((res) => setHistory(res.data));
+    GetKmRangeBeforeDateService(data.aracId, dayjs(watch("tarih")).format("YYYY-MM-DD"), dayjs(watch("saat")).format("HH:mm:ss")).then((res) => setHistory(res.data));
   }, [data]);
 
   const validateLog = () => {
@@ -290,9 +244,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
     ValidateFuelInfoInsertionService(body).then((res) => {
       if (res?.data.statusCode === 400) {
         setResponse("error");
-        if (
-          res?.data.message === " Invalid Km range for both KmLog and FuelKm !"
-        ) {
+        if (res?.data.message === " Invalid Km range for both KmLog and FuelKm !") {
           setErrorMessage("Alınan Km Yakıt ve Km Log-a girilemez!");
           setIsValid(true);
         } else if (res?.data.message === " Invalid FuelKm Range !") {
@@ -343,11 +295,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   };
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={updateDepoHacmi}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={updateDepoHacmi}>
       {t("kaydet")}
     </Button>,
     <Button
@@ -417,11 +365,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
                 <label htmlFor="yakitId">{t("yakitTip")}</label>
-                <MaterialType
-                  name="yakitTip"
-                  codeName="yakitTipId"
-                  type="YAKIT"
-                />
+                <MaterialType name="yakitTip" codeName="yakitTipId" type="YAKIT" />
               </div>
             </div>
             <div className="col-span-6">
@@ -454,7 +398,9 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label className="text-info">{t("yakitinAlindigiKm")} <span className="text-danger">*</span></label>
+                <label className="text-info">
+                  {t("yakitinAlindigiKm")} <span className="text-danger">*</span>
+                </label>
                 <Controller
                   name="alinanKm"
                   control={control}
@@ -464,13 +410,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                       <InputNumber
                         className={fieldState.error ? "input-error w-full" : "w-full"}
                         {...field}
-                        style={
-                          response === "error"
-                            ? { borderColor: "#dc3545" }
-                            : response === "success"
-                              ? { borderColor: "#23b545" }
-                              : { color: "#000" }
-                        }
+                        style={response === "error" ? { borderColor: "#dc3545" } : response === "success" ? { borderColor: "#23b545" } : { color: "#000" }}
                         {...field}
                         onPressEnter={(e) => {
                           validateLog();
@@ -489,9 +429,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           calculateTuketim();
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>{fieldState.error.message}</span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -553,44 +491,46 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <div className="flex align-baseline gap-1">
-                  <label className='text-info'>{t("miktar")} (lt) <span className="text-danger">*</span></label>
-                  <Button className="depo" onClick={() => setOpen(true)}>Depo Hacmi: {watch("yakitHacmi")} {watch("birim") === "LITRE" && "lt" || "lt"}</Button>
+                  <label className="text-info">
+                    {t("miktar")} (lt) <span className="text-danger">*</span>
+                  </label>
+                  <Button className="depo" onClick={() => setOpen(true)}>
+                    Depo Hacmi: {watch("yakitHacmi")} {(watch("birim") === "LITRE" && "lt") || "lt"}
+                  </Button>
                 </div>
                 <Controller
                   name="miktar"
                   control={control}
                   rules={{ required: "Bu alan boş bırakılamaz!" }}
-                  render={({ field, fieldState }) => <>
-                    <InputNumber
-                      className={fieldState.error ? "input-error w-full" : "w-full"}
-                      {...field}
-                      onPressEnter={e => {
-                        if (watch("yakitHacmi") === 0 && !watch("fullDepo")) message.warning("Depo Hacmi sıfırdır. Depo hacmi giriniz!")
+                  render={({ field, fieldState }) => (
+                    <>
+                      <InputNumber
+                        className={fieldState.error ? "input-error w-full" : "w-full"}
+                        {...field}
+                        onPressEnter={(e) => {
+                          if (watch("yakitHacmi") === 0 && !watch("fullDepo")) message.warning("Depo Hacmi sıfırdır. Depo hacmi giriniz!");
 
-                        if (watch("yakitHacmi") < (+e.target.value + +watch("depoYakitMiktar"))) {
-                          message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!")
-                          setIsValid(true)
-                        } else {
-                          setIsValid(false)
-                        }
-                      }}
-                      onChange={(e => {
-                        field.onChange(e)
-                        if (watch("litreFiyat") === null) {
-                          setValue("tutar", 0)
-                        } else {
-                          const tutar = +e * watch("litreFiyat")
-                          setValue("tutar", tutar)
-                        }
-                        calculateTuketim()
-
-                      })}
-                    />
-                    {fieldState.error && (
-                      <span style={{ color: "red" }}>{fieldState.error.message}</span>
-                    )}
-                  </>
-                  }
+                          if (watch("yakitHacmi") < +e.target.value + +watch("depoYakitMiktar")) {
+                            message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
+                            setIsValid(true);
+                          } else {
+                            setIsValid(false);
+                          }
+                        }}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (watch("litreFiyat") === null) {
+                            setValue("tutar", 0);
+                          } else {
+                            const tutar = +e * watch("litreFiyat");
+                            setValue("tutar", tutar);
+                          }
+                          calculateTuketim();
+                        }}
+                      />
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
+                    </>
+                  )}
                 />
               </div>
             </div>
@@ -618,18 +558,13 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <div className="col-span-10">
                       <div className="flex flex-col gap-1">
                         <label className="text-danger">
-                          {t("ortalamaTuketim")}{" "}
-                          <ArrowUpOutlined style={{ color: "red" }} />
+                          {t("ortalamaTuketim")} <ArrowUpOutlined style={{ color: "red" }} />
                         </label>
                         <TextInput name="tuketim" readonly={true} />
                       </div>
                     </div>
                     <div className="col-span-2 self-end">
-                      <Button
-                        className="w-full text-center"
-                        style={{ padding: "4px" }}
-                        onClick={() => setOpenDetail(true)}
-                      >
+                      <Button className="w-full text-center" style={{ padding: "4px" }} onClick={() => setOpenDetail(true)}>
                         ...
                       </Button>
                     </div>
@@ -666,7 +601,9 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
-                <label className="text-info">{t("tutar")} <span className="text-danger">*</span></label>
+                <label className="text-info">
+                  {t("tutar")} <span className="text-danger">*</span>
+                </label>
                 <Controller
                   name="tutar"
                   control={control}
@@ -687,9 +624,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                           calculateTuketim();
                         }}
                       />
-                      {fieldState.error && (
-                        <span style={{ color: "red" }}>{fieldState.error.message}</span>
-                      )}
+                      {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
                     </>
                   )}
                 />
@@ -766,11 +701,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("istasyon")}</label>
-                <CodeControl
-                  name="istasyon"
-                  codeName="istasyonKodId"
-                  id={203}
-                />
+                <CodeControl name="istasyon" codeName="istasyonKodId" id={203} />
               </div>
             </div>
           </div>
@@ -786,23 +717,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         </div>
       </div>
 
-      <Modal
-        open={open}
-        maskClosable={false}
-        title={t("depoHacmiGirisi")}
-        footer={footer}
-        onCancel={() => setOpen(false)}
-      >
+      <Modal open={open} maskClosable={false} title={t("depoHacmiGirisi")} footer={footer} onCancel={() => setOpen(false)}>
         <TextInput name="yakitHacmi" />
       </Modal>
 
-      <Modal
-        open={openDetail}
-        maskClosable={false}
-        title={t("ortalamaYakitTuketimi")}
-        footer={detailModalFooter}
-        onCancel={() => setOpenDetail(false)}
-      >
+      <Modal open={openDetail} maskClosable={false} title={t("ortalamaYakitTuketimi")} footer={detailModalFooter} onCancel={() => setOpenDetail(false)}>
         {content}
       </Modal>
     </>
