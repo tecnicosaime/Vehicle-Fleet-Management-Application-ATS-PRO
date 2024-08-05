@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
@@ -7,7 +7,7 @@ import { Button, message, Modal, Tabs } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { AddExpenseItemService } from "../../../../api/services/vehicles/operations_services";
-import PersonalFields from "../../../components/form/personal-fields/PersonalFields"
+import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
 import GeneralInfo from "./tabs/GeneralInfo";
 
 const AddModal = ({ setStatus }) => {
@@ -99,7 +99,19 @@ const AddModal = ({ setStatus }) => {
   const methods = useForm({
     defaultValues: defaultValues,
   });
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, setValue, watch } = methods;
+
+  const currentDate = dayjs().format("YYYY-MM-DD");
+
+  useEffect(() => {
+    setValue("plaka", data.plaka);
+    setValue("lokasyon", data.lokasyon);
+    setValue("lokasyonId", data.lokasyonId);
+    setValue("surucu", data.surucuAdi);
+    setValue("surucuId", data.surucuId);
+    setValue("tarih", dayjs(currentDate));
+    setValue("maliyet", true);
+  }, [plaka, data]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -154,9 +166,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo />
-      ),
+      children: <GeneralInfo />,
     },
     {
       key: "2",
@@ -179,11 +189,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
         {t("kaydet")}
       </Button>
     ),
@@ -205,14 +211,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniHarcamaGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniHarcamaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

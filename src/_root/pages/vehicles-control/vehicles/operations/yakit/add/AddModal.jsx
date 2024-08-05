@@ -180,7 +180,7 @@ const AddModal = ({ setStatus }) => {
       kmLog: kmLog,
       depoYakitMiktar: values.depoYakitMiktar,
       yakitTanki: values.yakitTanki,
-      lokasyonId: values.lokasyonId,
+      lokasyonId: data.lokasyonId,
       ozelAlan1: values.ozelAlan1 || "",
       ozelAlan2: values.ozelAlan2 || "",
       ozelAlan3: values.ozelAlan3 || "",
