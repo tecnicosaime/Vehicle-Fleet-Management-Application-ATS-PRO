@@ -78,7 +78,8 @@ export default function MainTabs() {
           maxWidth: "400px",
           justifyContent: "space-between",
           marginBottom: "10px",
-        }}>
+        }}
+      >
         <Text style={{ fontWeight: "600" }}>Belge Tipi</Text>
         <Controller
           name="tipTanim"
@@ -93,7 +94,8 @@ export default function MainTabs() {
                 width: "100%",
                 maxWidth: "300px",
                 minWidth: "300px",
-              }}>
+              }}
+            >
               <Input {...field} status={error ? "error" : ""} style={{ flex: 1 }} />
               {error && <div style={{ color: "red" }}>{error.message}</div>}
             </div>
@@ -109,7 +111,8 @@ export default function MainTabs() {
           maxWidth: "400px",
           justifyContent: "space-between",
           marginBottom: "10px",
-        }}>
+        }}
+      >
         <Text>Açıklama</Text>
         <Controller
           name="tipAciklama"

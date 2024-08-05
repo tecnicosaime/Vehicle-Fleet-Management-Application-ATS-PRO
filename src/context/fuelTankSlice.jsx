@@ -1,13 +1,9 @@
-import { createContext, useState } from 'react'
+import { createContext, useState } from "react";
 
-export const FuelTankContext = createContext()
+export const FuelTankContext = createContext();
 
 export const FuelTankProvider = ({ children }) => {
-    const [id, setId] = useState([]);
+  const [id, setId] = useState([]);
 
-    return (
-        <FuelTankContext.Provider value={{ id, setId }}>
-            {children}
-        </FuelTankContext.Provider>
-    );
-}
+  return <FuelTankContext.Provider value={{ id, setId }}>{children}</FuelTankContext.Provider>;
+};

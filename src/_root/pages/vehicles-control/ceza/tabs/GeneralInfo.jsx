@@ -25,20 +25,20 @@ const GeneralInfo = () => {
 
   useEffect(() => {
     if (watch("tutar") && watch("indirimOran")) {
-      const toplam = watch("tutar") - watch("indirimOran")
-      setValue("toplamTutar", toplam)
+      const toplam = watch("tutar") - watch("indirimOran");
+      setValue("toplamTutar", toplam);
     }
 
     if (watch("tutar") && watch("gecikmeTutar")) {
-      const toplam = watch("tutar") + watch("gecikmeTutar")
-      setValue("toplamTutar", toplam)
+      const toplam = watch("tutar") + watch("gecikmeTutar");
+      setValue("toplamTutar", toplam);
     }
-  }, [watch("tutar"), watch("gecikmeTutar"), watch("indirimOran")])
+  }, [watch("tutar"), watch("gecikmeTutar"), watch("indirimOran")]);
 
   const handleOpen = () => {
-    setModalKey(prevKey => prevKey + 1);
+    setModalKey((prevKey) => prevKey + 1);
     setOpen(true);
-  }
+  };
 
   const footer = [
     <Button
@@ -52,11 +52,7 @@ const GeneralInfo = () => {
     >
       {t("ekle")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setOpen(false)}>
       {t("kapat")}
     </Button>,
   ];
@@ -68,19 +64,25 @@ const GeneralInfo = () => {
           <div className="grid gap-1">
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("plaka")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("plaka")} <span className="text-danger">*</span>
+                </label>
                 <Plaka required={true} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("surucu")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("surucu")} <span className="text-danger">*</span>
+                </label>
                 <Driver required={true} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("cezaTarihi")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("cezaTarihi")} <span className="text-danger">*</span>
+                </label>
                 <DateInput name="tarih" required={true} />
               </div>
             </div>
@@ -122,11 +124,7 @@ const GeneralInfo = () => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("cezaTuru")}</label>
-                <CodeControl
-                  name="cezaTuru"
-                  codeName="cezaTuruKodId"
-                  id={400}
-                />
+                <CodeControl name="cezaTuru" codeName="cezaTuruKodId" id={400} />
               </div>
             </div>
             <div className="col-span-6">
@@ -213,15 +211,7 @@ const GeneralInfo = () => {
         </div>
       </div>
 
-      <Modal
-        title={t("cezaMaddeleri")}
-        open={open}
-        onCancel={() => setOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-        key={modalKey}
-      >
+      <Modal title={t("cezaMaddeleri")} open={open} onCancel={() => setOpen(false)} maskClosable={false} footer={footer} width={1200} key={modalKey}>
         <CezaMaddesiTable setMadde={setMadde} open={open} key={modalKey} />
       </Modal>
     </>

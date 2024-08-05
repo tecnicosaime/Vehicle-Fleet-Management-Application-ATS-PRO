@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { t } from "i18next";
 import { Button, Divider, Select } from "antd";
-import {
-  GetSettingByTypeService,
-  UpdateSettingByTypeService,
-} from "../../../../../api/services/settings/services";
+import { GetSettingByTypeService, UpdateSettingByTypeService } from "../../../../../api/services/settings/services";
 import TextInput from "../../../../components/form/inputs/TextInput";
 import NumberInput from "../../../../components/form/inputs/NumberInput";
 import CheckboxInput from "../../../../components/form/checkbox/CheckboxInput";
@@ -20,18 +17,9 @@ const YakitSettings = () => {
   useEffect(() => {
     GetSettingByTypeService(4).then((res) => {
       setValue("siraNo", res?.data.siraNo);
-      setValue(
-        "yakitTankKapasiteAsimIslem",
-        res?.data.yakitTankKapasiteAsimIslem
-      );
-      setValue(
-        "yakitMinTuketimDusukIslem",
-        res?.data.yakitMinTuketimDusukIslem
-      );
-      setValue(
-        "yakitMaxTuketimFazlaIslem",
-        res?.data.yakitMaxTuketimFazlaIslem
-      );
+      setValue("yakitTankKapasiteAsimIslem", res?.data.yakitTankKapasiteAsimIslem);
+      setValue("yakitMinTuketimDusukIslem", res?.data.yakitMinTuketimDusukIslem);
+      setValue("yakitMaxTuketimFazlaIslem", res?.data.yakitMaxTuketimFazlaIslem);
       setValue("yakitOrtalamaFormat", res?.data.yakitOrtalamaFormat);
       setValue("yakitTutarFormat", res?.data.yakitTutarFormat);
       setValue("yakitMiktarFormat", res?.data.yakitMiktarFormat);
@@ -47,10 +35,7 @@ const YakitSettings = () => {
       setValue("yakitGidilenMesafeIslem", res?.data.yakitGidilenMesafeIslem);
       setValue("yakitGidilenMesafeMax", res?.data.yakitGidilenMesafeMax);
       setValue("yakitGidilenMesafeMin", res?.data.yakitGidilenMesafeMin);
-      setValue(
-        "yakitGidilenMesafeKontrol",
-        res?.data.yakitGidilenMesafeKontrol
-      );
+      setValue("yakitGidilenMesafeKontrol", res?.data.yakitGidilenMesafeKontrol);
       setValue("yakitKilometreKontrol", res?.data.yakitKilometreKontrol);
     });
   }, []);
@@ -108,19 +93,13 @@ const YakitSettings = () => {
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("min")}</label>
-                <NumberInput
-                  name="yakitGidilenMesafeMin"
-                  checked={!watch("yakitGidilenMesafeKontrol")}
-                />
+                <NumberInput name="yakitGidilenMesafeMin" checked={!watch("yakitGidilenMesafeKontrol")} />
               </div>
             </div>
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("max")}</label>
-                <NumberInput
-                  name="yakitGidilenMesafeMax"
-                  checked={!watch("yakitGidilenMesafeKontrol")}
-                />
+                <NumberInput name="yakitGidilenMesafeMax" checked={!watch("yakitGidilenMesafeKontrol")} />
               </div>
             </div>
             <div className="col-span-3 self-end">
@@ -156,19 +135,13 @@ const YakitSettings = () => {
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("min")}</label>
-                <NumberInput
-                  name="yakitMiktarMin"
-                  checked={!watch("yakitMiktarKontrol")}
-                />
+                <NumberInput name="yakitMiktarMin" checked={!watch("yakitMiktarKontrol")} />
               </div>
             </div>
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("max")}</label>
-                <NumberInput
-                  name="yakitMiktarMax"
-                  checked={!watch("yakitMiktarKontrol")}
-                />
+                <NumberInput name="yakitMiktarMax" checked={!watch("yakitMiktarKontrol")} />
               </div>
             </div>
             <div className="col-span-3 self-end">
@@ -204,19 +177,13 @@ const YakitSettings = () => {
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("min")}</label>
-                <NumberInput
-                  name="yakitTutarMin"
-                  checked={!watch("yakitTutarKontrol")}
-                />
+                <NumberInput name="yakitTutarMin" checked={!watch("yakitTutarKontrol")} />
               </div>
             </div>
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
                 <label>{t("max")}</label>
-                <NumberInput
-                  name="yakitTutarMax"
-                  checked={!watch("yakitTutarKontrol")}
-                />
+                <NumberInput name="yakitTutarMax" checked={!watch("yakitTutarKontrol")} />
               </div>
             </div>
             <div className="col-span-3 self-end">

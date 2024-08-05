@@ -11,7 +11,7 @@ import CodeControl from "../../../../../../components/form/selects/CodeControl";
 import { Divider } from "antd";
 import Location from "../../../../../../components/form/tree/Location";
 
-const GeneralInfo = () => { 
+const GeneralInfo = () => {
   return (
     <>
       <div className="grid gap-1">
@@ -19,19 +19,25 @@ const GeneralInfo = () => {
           <div className="grid gap-1">
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("plaka")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("plaka")} <span className="text-danger">*</span>
+                </label>
                 <Plaka required={true} />
               </div>
             </div>
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("surucu")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("surucu")} <span className="text-danger">*</span>
+                </label>
                 <Driver required={true} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("kazaTarih")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("kazaTarih")} <span className="text-danger">*</span>
+                </label>
                 <DateInput name="kazaTarih" required={true} />
               </div>
             </div>

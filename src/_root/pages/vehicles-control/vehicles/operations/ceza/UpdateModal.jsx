@@ -5,10 +5,7 @@ import { t } from "i18next";
 import dayjs from "dayjs";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
 import { GetVehicleFineItemService, UpdateVehicleFineItemService } from "../../../../../../api/services/vehicles/operations_services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../../../api/services/upload/services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../../../api/services/upload/services";
 import { uploadFile, uploadPhoto } from "../../../../../../utils/upload";
 import { message, Modal, Tabs, Button } from "antd";
 import GeneralInfo from "./tabs/GeneralInfo";
@@ -118,9 +115,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       GetVehicleFineItemService(id).then((res) => {
         setValue("aracId", res?.data.aracId);
         setValue("plaka", res?.data.plaka);
-        setValue("tarih", res?.data.tarih && res?.data.tarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.tarih)
-          : null);
+        setValue("tarih", res?.data.tarih && res?.data.tarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.tarih) : null);
         setValue("saat", dayjs(res?.data.saat, "HH:mm:ss"));
         setValue("aciklama", res?.data.aciklama);
         setValue("aracKm", res?.data.aracKm);
@@ -135,12 +130,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
         setValue("lokasyon", res?.data.lokasyon);
         setValue("lokasyonId", res?.data.lokasyonId);
         setValue("odeme", res?.data.odeme);
-        setValue("odemeTarih", res?.data.odemeTarih && res?.data.odemeTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.odemeTarih)
-          : null);
-        setValue("tebligTarih", res?.data.tebligTarih && res?.data.tebligTarih !== "0001-01-01T00:00:00"
-          ? dayjs(res?.data.tebligTarih)
-          : null);
+        setValue("odemeTarih", res?.data.odemeTarih && res?.data.odemeTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.odemeTarih) : null);
+        setValue("tebligTarih", res?.data.tebligTarih && res?.data.tebligTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.tebligTarih) : null);
         setValue("surucuId", res?.data.surucuId);
         setValue("surucu", res?.data.surucuIsim);
         setValue("surucuOder", res?.data.surucuOder);
@@ -162,13 +153,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "CEZA").then((res) =>
-        setImageUrls(res.data)
-      );
+      GetPhotosByRefGroupService(id, "CEZA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "CEZA").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetDocumentsByRefGroupService(id, "CEZA").then((res) => setFilesUrl(res.data));
     }
   }, [id, updateModal]);
 
@@ -230,25 +217,25 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       ozelAlanKodId10: values.ozelAlanKodId10 || 0,
       ozelAlan11: values.ozelAlan11 || 0,
       ozelAlan12: values.ozelAlan12 || 0,
-    }
+    };
 
     UpdateVehicleFineItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
         if (plaka.length === 1) {
           reset();
         } else {
           reset();
         }
       }
-    })
+    });
 
     uploadFiles();
     uploadImages();
-    setStatus(false)
-  })
+    setStatus(false);
+  });
 
   const personalProps = {
     form: "CEZA",
@@ -270,33 +257,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -305,7 +276,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       onClick={() => {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
       }}
     >
       {t("kapat")}
@@ -313,18 +284,11 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   ];
 
   return (
-    <Modal
-      title={t("cezaBilgisiGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("cezaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
-        </form> 
+        </form>
       </FormProvider>
     </Modal>
   );

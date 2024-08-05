@@ -1,17 +1,11 @@
 import { useContext, useState, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
-import { t } from "i18next"; 
+import { t } from "i18next";
 import dayjs from "dayjs";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
-import {
-  GetInsuranceItemByIdService,
-  UpdateInsuranceItemService,
-} from "../../../../../../api/services/vehicles/operations_services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../../../api/services/upload/services";
+import { GetInsuranceItemByIdService, UpdateInsuranceItemService } from "../../../../../../api/services/vehicles/operations_services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../../../api/services/upload/services";
 import { uploadFile, uploadPhoto } from "../../../../../../utils/upload";
 import { message, Modal, Tabs, Button } from "antd";
 import GeneralInfo from "./tabs/GeneralInfo";
@@ -129,19 +123,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       GetInsuranceItemByIdService(id).then((res) => {
         setValue("acenta", res?.data.acenta);
         setValue("acentaKodId", res?.data.acentaKodId);
-        setValue(
-          "baslangicTarih",
-          res?.data.baslangicTarih &&
-            res?.data.baslangicTarih !== "0001-01-01T00:00:00"
-            ? dayjs(res?.data.baslangicTarih)
-            : null
-        );
-        setValue(
-          "bitisTarih",
-          res?.data.bitisTarih && res?.data.bitisTarih !== "0001-01-01T00:00:00"
-            ? dayjs(res?.data.bitisTarih)
-            : null
-        );
+        setValue("baslangicTarih", res?.data.baslangicTarih && res?.data.baslangicTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.baslangicTarih) : null);
+        setValue("bitisTarih", res?.data.bitisTarih && res?.data.bitisTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.bitisTarih) : null);
         setValue("aciklama", res?.data.aciklama);
         setValue("adres", res?.data.adres);
         setValue("aktif", !res?.data.aktif);
@@ -176,13 +159,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "SIGORTA").then((res) =>
-        setImageUrls(res.data)
-      );
+      GetPhotosByRefGroupService(id, "SIGORTA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "SIGORTA").then((res) =>
-        setFilesUrl(res.data)
-      );
+      GetDocumentsByRefGroupService(id, "SIGORTA").then((res) => setFilesUrl(res.data));
     }
   }, [id, updateModal]);
 
@@ -207,10 +186,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
     } finally {
       setLoadingImages(false);
     }
-  }; 
+  };
 
   const onSubmit = handleSubmit((values) => {
-
     const body = {
       siraNo: id,
       aracId: aracId,
@@ -250,7 +228,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       if (res.data.statusCode === 202) {
         setUpdateModal(false);
         setStatus(true);
-        setActiveKey("1")
+        setActiveKey("1");
         if (plaka.length === 1) {
           reset();
         } else {
@@ -285,24 +263,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
@@ -324,14 +290,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   ];
 
   return (
-    <Modal
-      title={t("sigortaBilgisiGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("sigortaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

@@ -9,12 +9,7 @@ import Location from "../../../../components/form/tree/Location";
 import Textarea from "../../../../components/form/inputs/Textarea";
 import TextInput from "../../../../components/form/inputs/TextInput";
 
-const UpdateMalzemeLists = ({
-  setTableData,
-  tableData,
-  isSuccess,
-  setIsSuccess,
-}) => {
+const UpdateMalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
   const { control, setValue, watch, handleSubmit } = useFormContext();
   const [editModal, setEditModal] = useState(false);
   const [record, setRecord] = useState(null);
@@ -38,10 +33,7 @@ const UpdateMalzemeLists = ({
             setValue("birim", record.birim);
             setValue("edit_birim", record.birimKodId);
             setValue("edit_fiyat", record.fiyat);
-            setValue(
-              "edit_araToplam",
-              record.miktar ? record.miktar : 1 * record.fiyat
-            );
+            setValue("edit_araToplam", record.miktar ? record.miktar : 1 * record.fiyat);
             setValue("edit_kdvOrani", record.kdvOran);
             setValue("edit_kdvTutar", record.kdvTutar);
             setValue("edit_toplam", record.toplam);
@@ -153,9 +145,7 @@ const UpdateMalzemeLists = ({
     } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
       if (indirimOrani) {
         kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
-        indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(
-          2
-        );
+        indirimTutar = (((araToplam - kdvTutar) * indirimOrani) / 100).toFixed(2);
         result = araToplam - kdvTutar - indirimTutar;
         toplam = +result.toFixed(2) + +kdvTutar;
       } else {
@@ -167,14 +157,7 @@ const UpdateMalzemeLists = ({
     setValue("edit_indirimTutari", indirimTutar);
     setValue("edit_kdvTutar", kdvTutar);
     setValue("edit_toplam", toplam);
-  }, [
-    watch("edit_indirimOrani"),
-    watch("edit_araToplam"),
-    watch("edit_kdvOrani"),
-    watch("edit_kdv"),
-    watch("edit_indirimTutari"),
-    watch("edit_toplam"),
-  ]);
+  }, [watch("edit_indirimOrani"), watch("edit_araToplam"), watch("edit_kdvOrani"), watch("edit_kdv"), watch("edit_indirimTutari"), watch("edit_toplam")]);
 
   useEffect(() => {
     if (watch("edit_miktar")) {
@@ -213,9 +196,7 @@ const UpdateMalzemeLists = ({
         tanim: values.edit_malzemeTanimi,
         miktar: values.edit_miktar,
         birim: values.birim,
-        birimId: values.edit_birim
-          ? values.edit_birim
-          : selectedRows.birimKodId,
+        birimId: values.edit_birim ? values.edit_birim : selectedRows.birimKodId,
         fiyat: values.edit_fiyat,
         araToplam: values.edit_araToplam,
         kdvOran: values.edit_kdvOrani,
@@ -239,11 +220,7 @@ const UpdateMalzemeLists = ({
   });
 
   const editModalFooter = [
-    <Button
-      key="submit"
-      className="btn primary-btn km-update"
-      onClick={handleEdit}
-    >
+    <Button key="submit" className="btn primary-btn km-update" onClick={handleEdit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -274,14 +251,7 @@ const UpdateMalzemeLists = ({
         size="small"
       />
 
-      <Modal
-        title={"Düzenleme"}
-        open={editModal}
-        onCancel={() => setEditModal(false)}
-        maskClosable={false}
-        footer={editModalFooter}
-        width={1000}
-      >
+      <Modal title={"Düzenleme"} open={editModal} onCancel={() => setEditModal(false)} maskClosable={false} footer={editModalFooter} width={1000}>
         <div className="grid gap-1">
           <div className="col-span-4">
             <div className="flex flex-col gap-1">
@@ -390,21 +360,12 @@ const UpdateMalzemeLists = ({
                         }
                       } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
                         if (e) {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
-                          indirimTutar = (
-                            ((araToplam - kdvTutar) * e) /
-                            100
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+                          indirimTutar = (((araToplam - kdvTutar) * e) / 100).toFixed(2);
                           result = araToplam - kdvTutar - indirimTutar;
                           toplam = +result.toFixed(2);
                         } else {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
                           toplam = +araToplam.toFixed(2);
                         }
                       }
@@ -445,14 +406,8 @@ const UpdateMalzemeLists = ({
                           kdvTutar = (result * kdvOrani) / 100;
                           toplam = +result + +kdvTutar;
                         } else if (kdvDH === "dahil" || kdvDH == "Dahil") {
-                          kdvTutar = (
-                            araToplam -
-                            araToplam / (1 + kdvOrani / 100)
-                          ).toFixed(2);
-                          indirimOran = (
-                            (100 * e) /
-                            (araToplam - kdvTutar)
-                          ).toFixed(2);
+                          kdvTutar = (araToplam - araToplam / (1 + kdvOrani / 100)).toFixed(2);
+                          indirimOran = ((100 * e) / (araToplam - kdvTutar)).toFixed(2);
                           result = araToplam - kdvTutar - e;
                           toplam = +result.toFixed(2);
                         }

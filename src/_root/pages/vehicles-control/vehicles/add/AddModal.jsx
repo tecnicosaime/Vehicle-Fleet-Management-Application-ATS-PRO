@@ -169,18 +169,10 @@ const AddModal = ({ setStatus }) => {
       aracTipId: value.aracTipId || 0,
       aracTipId: value.aracTipId || 0,
       guncelKm: value.guncelKm || 0,
-      muayeneTarih: value.muayeneTarih
-        ? dayjs(value.muayeneTarih).format("YYYY-MM-DD")
-        : null,
-      egzosTarih: value.egzosTarih
-        ? dayjs(value.egzosTarih).format("YYYY-MM-DD")
-        : null,
-      vergiTarih: value.vergiTarih
-        ? dayjs(value.vergiTarih).format("YYYY-MM-DD")
-        : null,
-      sozlesmeTarih: value.sozlesmeTarih
-        ? dayjs(value.sozlesmeTarih).format("YYYY-MM-DD")
-        : null,
+      muayeneTarih: value.muayeneTarih ? dayjs(value.muayeneTarih).format("YYYY-MM-DD") : null,
+      egzosTarih: value.egzosTarih ? dayjs(value.egzosTarih).format("YYYY-MM-DD") : null,
+      vergiTarih: value.vergiTarih ? dayjs(value.vergiTarih).format("YYYY-MM-DD") : null,
+      sozlesmeTarih: value.sozlesmeTarih ? dayjs(value.sozlesmeTarih).format("YYYY-MM-DD") : null,
       yakitTipId: value.yakitTipId || 0,
       kmLog: kmLog,
       ozelAlan1: value.ozelAlan1 || "",
@@ -236,14 +228,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={handleOk}
-        disabled={
-          isValid === "error" ? true : isValid === "success" ? false : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={handleOk} disabled={isValid === "error" ? true : isValid === "success" ? false : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -261,7 +246,7 @@ const AddModal = ({ setStatus }) => {
     </Button>,
   ];
 
-  return ( 
+  return (
     <div>
       <Button
         className="btn primary-btn"

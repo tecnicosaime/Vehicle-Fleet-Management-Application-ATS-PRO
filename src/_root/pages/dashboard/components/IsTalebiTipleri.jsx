@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
+import React, { useEffect, useState, useRef } from "react";
+import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
 
 import http from "../../../../api/http.jsx";
-import { Spin, Typography, Popover, Button, Modal, Tour } from 'antd';
-import chroma from 'chroma-js';
-import styled from 'styled-components';
-import { MoreOutlined, PrinterOutlined } from '@ant-design/icons';
-import html2pdf from 'html2pdf.js';
+import { Spin, Typography, Popover, Button, Modal, Tour } from "antd";
+import chroma from "chroma-js";
+import styled from "styled-components";
+import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
+import html2pdf from "html2pdf.js";
 
 const { Text } = Typography;
 
 // Generate colors for the pie chart
 const generateColors = (dataLength) => {
-  const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#bd2400', '#131842'];
-  return chroma.scale(colors).mode('lch').colors(dataLength);
+  const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#bd2400", "#131842"];
+  return chroma.scale(colors).mode("lch").colors(dataLength);
 };
 
 // Styled component for the pie chart container
@@ -31,7 +31,7 @@ const IsTalebiTipleri = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [colors, setColors] = useState([]);
   const [visibleSeries, setVisibleSeries] = useState({});
-  const [chartHeader, setChartHeader] = useState('İş Talebi Tipleri');
+  const [chartHeader, setChartHeader] = useState("İş Talebi Tipleri");
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const ref1 = useRef(null);
@@ -53,7 +53,7 @@ const IsTalebiTipleri = () => {
       }, {});
       setVisibleSeries(initialVisibleSeries);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -62,19 +62,19 @@ const IsTalebiTipleri = () => {
   const statusTag = (statusId) => {
     switch (statusId) {
       case 0:
-        return { text: 'Açık' };
+        return { text: "Açık" };
       case 1:
-        return { text: 'Bekliyor' };
+        return { text: "Bekliyor" };
       case 2:
-        return { text: 'Planlandı' };
+        return { text: "Planlandı" };
       case 3:
-        return { text: 'Devam Ediyor' };
+        return { text: "Devam Ediyor" };
       case 4:
-        return { text: 'Kapandı' };
+        return { text: "Kapandı" };
       case 5:
-        return { text: 'İptal Edildi' };
+        return { text: "İptal Edildi" };
       default:
-        return { text: '' };
+        return { text: "" };
     }
   };
 
@@ -95,7 +95,7 @@ const IsTalebiTipleri = () => {
       }, {});
       setVisibleSeries(initialVisibleSeries);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -107,13 +107,13 @@ const IsTalebiTipleri = () => {
 
   // Handle PDF download
   const downloadPDF = () => {
-    const element = document.getElementById('is-talebi-tipleri');
+    const element = document.getElementById("is-talebi-tipleri");
     const opt = {
       margin: 10,
-      filename: 'is_talebi_tipleri.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
+      filename: "is_talebi_tipleri.pdf",
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
     };
     html2pdf().set(opt).from(element).save();
   };
@@ -125,7 +125,7 @@ const IsTalebiTipleri = () => {
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
     return (
-      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? "start" : "end"} dominantBaseline="central">
         {`${(percent * 100).toFixed(0)}%`}
       </text>
     );
@@ -133,7 +133,7 @@ const IsTalebiTipleri = () => {
 
   // Format numbers with dots
   const formatNumber = (value) => {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   // Custom Tooltip function
@@ -143,9 +143,9 @@ const IsTalebiTipleri = () => {
       return (
         <div
           style={{
-            backgroundColor: '#fff',
-            padding: '5px',
-            border: '1px solid #ccc',
+            backgroundColor: "#fff",
+            padding: "5px",
+            border: "1px solid #ccc",
           }}
         >
           <p>{`${payload[0].name} : ${formattedValue}`}</p>
@@ -186,19 +186,19 @@ const IsTalebiTipleri = () => {
     return (
       <ul
         style={{
-          listStyle: 'none',
+          listStyle: "none",
           padding: 0,
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '15px',
-          justifyContent: 'center',
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "15px",
+          justifyContent: "center",
           margin: 0,
         }}
       >
         <li
           style={{
-            cursor: 'pointer',
-            color: Object.values(visibleSeries).every((value) => value) ? 'black' : 'gray',
+            cursor: "pointer",
+            color: Object.values(visibleSeries).every((value) => value) ? "black" : "gray",
           }}
           onClick={handleToggleAll}
         >
@@ -208,18 +208,18 @@ const IsTalebiTipleri = () => {
           <li
             key={`item-${index}`}
             style={{
-              cursor: 'pointer',
-              color: visibleSeries[entry.value] ? colors[index % colors.length] : 'gray',
+              cursor: "pointer",
+              color: visibleSeries[entry.value] ? colors[index % colors.length] : "gray",
             }}
             onClick={() => handleLegendClick(entry.value)}
           >
             <span
               style={{
-                display: 'inline-block',
-                width: '10px',
-                height: '10px',
-                backgroundColor: visibleSeries[entry.value] ? colors[index % colors.length] : 'gray',
-                marginRight: '5px',
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                backgroundColor: visibleSeries[entry.value] ? colors[index % colors.length] : "gray",
+                marginRight: "5px",
               }}
             ></span>
             {entry.value}
@@ -231,29 +231,29 @@ const IsTalebiTipleri = () => {
 
   // Content for the popover menu
   const content = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ cursor: 'pointer' }} onClick={() => setIsExpandedModalVisible(true)}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ cursor: "pointer" }} onClick={() => setIsExpandedModalVisible(true)}>
         Büyüt
       </div>
       <div
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         onClick={() => {
           fetchData();
-          setChartHeader('İş Talebi Tipleri');
+          setChartHeader("İş Talebi Tipleri");
         }}
       >
         İş Talebi Tipleri
       </div>
       <div
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         onClick={() => {
           fetchData1();
-          setChartHeader('İş Talebi Durumları');
+          setChartHeader("İş Talebi Durumları");
         }}
       >
         İş Talebi Durumları
       </div>
-      <div style={{ cursor: 'pointer' }} onClick={() => setOpen(true)}>
+      <div style={{ cursor: "pointer" }} onClick={() => setOpen(true)}>
         Bilgi
       </div>
     </div>
@@ -261,7 +261,7 @@ const IsTalebiTipleri = () => {
 
   const steps = [
     {
-      title: 'Bilgi',
+      title: "Bilgi",
       description: (
         <div>
           <p>İş Taleplerinin Tiplerinine/Durumlarına göre sayılarını gösterir.</p>
@@ -280,34 +280,34 @@ const IsTalebiTipleri = () => {
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
-        borderRadius: '5px',
-        backgroundColor: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        border: '1px solid #f0f0f0',
+        width: "100%",
+        height: "100%",
+        borderRadius: "5px",
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        border: "1px solid #f0f0f0",
       }}
     >
       <div
         style={{
-          padding: '10px',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          padding: "10px",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Text
           title={`Toplam Harcanan İş Gücü`}
           style={{
-            fontWeight: '500',
-            fontSize: '17px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: 'calc(100% - 50px)',
+            fontWeight: "500",
+            fontSize: "17px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "calc(100% - 50px)",
           }}
         >
           {chartHeader}
@@ -316,15 +316,15 @@ const IsTalebiTipleri = () => {
           <Button
             type="text"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0px 5px',
-              height: '32px',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0px 5px",
+              height: "32px",
               zIndex: 3,
             }}
           >
-            <MoreOutlined style={{ cursor: 'pointer', fontWeight: '500', fontSize: '16px' }} />
+            <MoreOutlined style={{ cursor: "pointer", fontWeight: "500", fontSize: "16px" }} />
           </Button>
         </Popover>
       </div>
@@ -333,14 +333,14 @@ const IsTalebiTipleri = () => {
       ) : (
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '7px',
-            overflow: 'auto',
-            height: '100vh',
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            overflow: "auto",
+            height: "100vh",
           }}
         >
-          <div style={{ width: '100%', height: 'calc(100% - 5px)' }}>
+          <div style={{ width: "100%", height: "calc(100% - 5px)" }}>
             <StyledResponsiveContainer ref={ref1} width="100%" height="100%">
               <PieChart width={400} height={400}>
                 <Pie
@@ -370,26 +370,26 @@ const IsTalebiTipleri = () => {
         title={
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '98%',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "98%",
             }}
           >
             <div
               style={{
-                fontWeight: '500',
-                fontSize: '17px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: 'calc(100% - 50px)',
+                fontWeight: "500",
+                fontSize: "17px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "calc(100% - 50px)",
               }}
               title={`Toplam Harcanan İş Gücü `}
             >
               {chartHeader}
             </div>
-            <PrinterOutlined style={{ cursor: 'pointer', fontSize: '20px' }} onClick={downloadPDF} />
+            <PrinterOutlined style={{ cursor: "pointer", fontSize: "20px" }} onClick={downloadPDF} />
           </div>
         }
         centered
@@ -401,10 +401,10 @@ const IsTalebiTipleri = () => {
       >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '7px',
-            height: 'calc(100vh - 180px)',
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            height: "calc(100vh - 180px)",
           }}
         >
           <StyledResponsiveContainer id="is-talebi-tipleri" width="100%" height="100%">

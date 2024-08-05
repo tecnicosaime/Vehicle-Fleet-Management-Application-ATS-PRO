@@ -3,10 +3,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, Modal, Select } from "antd";
-import {
-  GetVehicleDetailsInfoService,
-  UpdateVehicleDetailsInfoService,
-} from "../../../../../../../api/services/vehicles/vehicles/services";
+import { GetVehicleDetailsInfoService, UpdateVehicleDetailsInfoService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
 import NumberInput from "../../../../../../components/form/inputs/NumberInput";
 import Textarea from "../../../../../../components/form/inputs/Textarea";
@@ -130,14 +127,7 @@ const Teknik = ({ visible, onClose, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("teknikBilgiler")}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("teknikBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <div className="mt-14">
           <h2>{t("motorBilgileri")}</h2>

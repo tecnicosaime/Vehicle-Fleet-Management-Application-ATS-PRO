@@ -26,9 +26,7 @@ const KMLogListGetService = async (page) => {
 };
 
 const KMLogListGetByIdService = async (id, page) => {
-  return await http.get(
-    `/KmLog/GetKmLogListByVehicleId?vehicleId=${id}&page=${page}`
-  );
+  return await http.get(`/KmLog/GetKmLogListByVehicleId?vehicleId=${id}&page=${page}`);
 };
 
 const KMLogListDeleteService = async (data) => {

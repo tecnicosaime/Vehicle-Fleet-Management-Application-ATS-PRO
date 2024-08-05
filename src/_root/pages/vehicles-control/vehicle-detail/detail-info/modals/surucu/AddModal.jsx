@@ -7,10 +7,7 @@ import { Button, Modal } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
 import { AddDriverSubstitutionItemService } from "../../../../../../../api/services/vehicles/vehicles/services";
-import {
-  CodeItemValidateService,
-  GetModuleCodeByCode,
-} from "../../../../../../../api/services/code/services";
+import { CodeItemValidateService, GetModuleCodeByCode } from "../../../../../../../api/services/code/services";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
 import NumberInput from "../../../../../../components/form/inputs/NumberInput";
 import Textarea from "../../../../../../components/form/inputs/Textarea";
@@ -39,9 +36,7 @@ const AddModal = ({ setStatus }) => {
 
   useEffect(() => {
     if (isModalOpen && isFirstRender.current) {
-      GetModuleCodeByCode("ARAC_TESTLIM").then((res) =>
-        setValue("tutanakNo", res.data)
-      );
+      GetModuleCodeByCode("ARAC_TESTLIM").then((res) => setValue("tutanakNo", res.data));
     }
   }, [isModalOpen, setValue]);
 
@@ -95,19 +90,10 @@ const AddModal = ({ setStatus }) => {
     };
 
     setData(data);
-  }, [
-    watch("teslimTarih"),
-    watch("surucuTeslimEden"),
-    watch("surucuTeslimAlan"),
-    watch("km"),
-    printData,
-  ]);
+  }, [watch("teslimTarih"), watch("surucuTeslimEden"), watch("surucuTeslimAlan"), watch("km"), printData]);
 
   useEffect(() => {
-    !watch("surucuTeslimAlanId") ||
-    watch("surucuTeslimAlanId") === watch("surucuTeslimEdenId")
-      ? setSurucuIsValid(true)
-      : setSurucuIsValid(false);
+    !watch("surucuTeslimAlanId") || watch("surucuTeslimAlanId") === watch("surucuTeslimEdenId") ? setSurucuIsValid(true) : setSurucuIsValid(false);
   }, [watch("surucuTeslimEdenId"), watch("surucuTeslimAlanId")]);
 
   const footer = [
@@ -115,13 +101,7 @@ const AddModal = ({ setStatus }) => {
       key="submit"
       className="btn btn-min primary-btn"
       onClick={handleOk}
-      disabled={
-        isValid === "success" && !surucuIsValid
-          ? false
-          : isValid === "error" || surucuIsValid
-          ? true
-          : false
-      }
+      disabled={isValid === "success" && !surucuIsValid ? false : isValid === "error" || surucuIsValid ? true : false}
     >
       {t("kaydet")}
     </Button>,
@@ -138,12 +118,7 @@ const AddModal = ({ setStatus }) => {
   ];
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   return (
@@ -151,15 +126,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniSurucuBilgi")}
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={() => setIsModalOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={600}
-      >
+      <Modal title={t("yeniSurucuBilgi")} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={600}>
         <FormProvider {...methods}>
           <form>
             <div className="grid gap-1">
@@ -184,19 +151,13 @@ const AddModal = ({ setStatus }) => {
               <div className="col-span-12">
                 <div className="flex flex-col gap-1">
                   <label>{t("teslimEden")}</label>
-                  <Driver
-                    name="surucuTeslimEden"
-                    codeName="surucuTeslimEdenId"
-                  />
+                  <Driver name="surucuTeslimEden" codeName="surucuTeslimEdenId" />
                 </div>
               </div>
               <div className="col-span-12">
                 <div className="flex flex-col gap-1">
                   <label className="text-info">{t("teslimAlan")}</label>
-                  <Driver
-                    name="surucuTeslimAlan"
-                    codeName="surucuTeslimAlanId"
-                  />
+                  <Driver name="surucuTeslimAlan" codeName="surucuTeslimAlanId" />
                 </div>
               </div>
               <div className="col-span-12">

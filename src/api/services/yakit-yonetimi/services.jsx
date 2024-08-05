@@ -1,10 +1,7 @@
 import http from "../../http";
 
 export const GetFuelMaterialListService = async (search, page, data) => {
-  return await http.post(
-    `/Material/GetFuelMaterialList?page=${page}&parameter=${search}`,
-    data
-  );
+  return await http.post(`/Material/GetFuelMaterialList?page=${page}&parameter=${search}`, data);
 };
 
 export const AddMaterialService = async (data) => {
@@ -21,10 +18,7 @@ export const UpdateMaterialCardService = async (data) => {
 
 // giris fis
 export const GetFuelEntryReceiptListService = async (search, page, data) => {
-  return await http.post(
-    `/MaterialReceipt/GetFuelEntryReceiptList?page=${page}&parameter=${search}`,
-    data
-  );
+  return await http.post(`/MaterialReceipt/GetFuelEntryReceiptList?page=${page}&parameter=${search}`, data);
 };
 
 export const AddMaterialReceiptService = async (data) => {
@@ -32,9 +26,7 @@ export const AddMaterialReceiptService = async (data) => {
 };
 
 export const GetMaterialReceiptByIdService = async (id) => {
-  return await http.get(
-    `/MaterialReceipt/GetMaterialReceiptById?receiptId=${id}`
-  );
+  return await http.get(`/MaterialReceipt/GetMaterialReceiptById?receiptId=${id}`);
 };
 
 export const UpdateMaterialReceiptService = async (data) => {
@@ -43,15 +35,10 @@ export const UpdateMaterialReceiptService = async (data) => {
 
 // cikis fis
 export const GetFuelReleaseReceiptListService = async (search, page, data) => {
-  return await http.post(
-    `/MaterialReceipt/GetFuelReleaseReceiptList?page=${page}&parameter=${search}`,
-    data
-  );
+  return await http.post(`/MaterialReceipt/GetFuelReleaseReceiptList?page=${page}&parameter=${search}`, data);
 };
 
 // transfer
 export const GetFuelTransferReceiptListService = async (search, page, data) => {
-  return await http.post(
-    `/MaterialReceipt/GetFuelTransferReceiptList?page=${page}&parameter=${search}`, data
-  );
+  return await http.post(`/MaterialReceipt/GetFuelTransferReceiptList?page=${page}&parameter=${search}`, data);
 };

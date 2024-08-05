@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Popover,
-  Typography,
-  Modal,
-  Input,
-  Popconfirm,
-  Checkbox,
-} from "antd";
+import { Button, Popover, Typography, Modal, Input, Popconfirm, Checkbox } from "antd";
 import { CaretDownOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
 
@@ -30,10 +22,8 @@ function CustomDashboards(props) {
 
   // Set the default value for selectedDashboard when the component mounts
   useEffect(() => {
-    const loadedDashboards =
-      JSON.parse(localStorage.getItem("customDashboard")) || [];
-    const savedDefaultDashboard =
-      localStorage.getItem("defaultDashboard") || "Dashboard";
+    const loadedDashboards = JSON.parse(localStorage.getItem("customDashboard")) || [];
+    const savedDefaultDashboard = localStorage.getItem("defaultDashboard") || "Dashboard";
     setDashboards(loadedDashboards);
     setDefaultDashboard(savedDefaultDashboard);
 
@@ -75,9 +65,7 @@ function CustomDashboards(props) {
       setValue("selectedDashboard", "Dashboard", { shouldValidate: true });
       setHeader("Dashboard");
     }
-    const updatedDashboards = dashboards.filter(
-      (dashboard) => dashboard !== dashboardName
-    );
+    const updatedDashboards = dashboards.filter((dashboard) => dashboard !== dashboardName);
     localStorage.setItem("customDashboard", JSON.stringify(updatedDashboards));
     setDashboards(updatedDashboards);
 
@@ -109,23 +97,12 @@ function CustomDashboards(props) {
           alignItems: "center",
           justifyContent: "space-between",
           borderRadius: "5px",
-          backgroundColor:
-            getValues("selectedDashboard") === "Dashboard"
-              ? "#0086ff5c"
-              : "white",
-          border:
-            getValues("selectedDashboard") === "Dashboard"
-              ? "1px solid #0097ff"
-              : "none",
+          backgroundColor: getValues("selectedDashboard") === "Dashboard" ? "#0086ff5c" : "white",
+          border: getValues("selectedDashboard") === "Dashboard" ? "1px solid #0097ff" : "none",
         }}
         onClick={() => handleDashboardClick("Dashboard")}
       >
-        <span>Dashboard</span>{" "}
-        <Checkbox
-          style={{ marginRight: "5px" }}
-          checked={defaultDashboard === "Dashboard"}
-          onChange={(e) => handleCheckboxChange(e, "Dashboard")}
-        />
+        <span>Dashboard</span> <Checkbox style={{ marginRight: "5px" }} checked={defaultDashboard === "Dashboard"} onChange={(e) => handleCheckboxChange(e, "Dashboard")} />
       </div>
       {dashboards.map((dashboard) => (
         <div
@@ -137,37 +114,18 @@ function CustomDashboards(props) {
             padding: "0px 10px",
             borderRadius: "5px",
             cursor: "pointer",
-            backgroundColor:
-              getValues("selectedDashboard") === dashboard
-                ? "#0086ff5c"
-                : "white",
-            border:
-              getValues("selectedDashboard") === dashboard
-                ? "1px solid #0097ff"
-                : "none",
+            backgroundColor: getValues("selectedDashboard") === dashboard ? "#0086ff5c" : "white",
+            border: getValues("selectedDashboard") === dashboard ? "1px solid #0097ff" : "none",
           }}
         >
-          <div
-            onClick={() => handleDashboardClick(dashboard)}
-            style={{ display: "flex", alignItems: "center" }}
-          >
+          <div onClick={() => handleDashboardClick(dashboard)} style={{ display: "flex", alignItems: "center" }}>
             <span>{dashboard}</span>
           </div>
           <div>
-            <Popconfirm
-              title="Silmek istediğinize emin misiniz?"
-              onConfirm={() => handleDeleteDashboard(dashboard)}
-              onCancel={() => ""}
-              okText="Evet"
-              cancelText="Hayır"
-            >
+            <Popconfirm title="Silmek istediğinize emin misiniz?" onConfirm={() => handleDeleteDashboard(dashboard)} onCancel={() => ""} okText="Evet" cancelText="Hayır">
               <Button type="text" icon={<DeleteOutlined />} danger></Button>{" "}
             </Popconfirm>{" "}
-            <Checkbox
-              style={{ marginRight: "5px" }}
-              checked={defaultDashboard === dashboard}
-              onChange={(e) => handleCheckboxChange(e, dashboard)}
-            />
+            <Checkbox style={{ marginRight: "5px" }} checked={defaultDashboard === dashboard} onChange={(e) => handleCheckboxChange(e, dashboard)} />
           </div>
         </div>
       ))}
@@ -179,29 +137,14 @@ function CustomDashboards(props) {
 
   return (
     <div style={{ cursor: "pointer" }}>
-      <Popover
-        content={content}
-        title="Özel Dashboardlar"
-        trigger="click"
-        placement="bottomLeft"
-      >
+      <Popover content={content} title="Özel Dashboardlar" trigger="click" placement="bottomLeft">
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
           <Text style={{ fontWeight: "600", fontSize: "24px" }}>{header}</Text>
           <CaretDownOutlined />
         </div>
       </Popover>
-      <Modal
-        title="Yeni Özel Dashboard Ekle"
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        centered
-      >
-        <Input
-          value={newDashboardName}
-          onChange={(e) => setNewDashboardName(e.target.value)}
-          placeholder="Dashboard İsmi"
-        />
+      <Modal title="Yeni Özel Dashboard Ekle" open={isModalVisible} onOk={handleOk} onCancel={handleCancel} centered>
+        <Input value={newDashboardName} onChange={(e) => setNewDashboardName(e.target.value)} placeholder="Dashboard İsmi" />
       </Modal>
     </div>
   );

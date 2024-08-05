@@ -4,14 +4,8 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, message, Modal, Tabs } from "antd";
 import { CodeItemValidateService } from "../../../../../api/services/code/services";
-import {
-  GetDocumentsByRefGroupService,
-  GetPhotosByRefGroupService,
-} from "../../../../../api/services/upload/services";
-import {
-  UpdateCompanyItemService,
-  GetCompanyByIdService,
-} from "../../../../../api/services/sistem-tanimlari/services";
+import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../../api/services/upload/services";
+import { UpdateCompanyItemService, GetCompanyByIdService } from "../../../../../api/services/sistem-tanimlari/services";
 import GeneralInfo from "./GeneralInfo";
 import Iletisim from "./Iletisim";
 import PersonalFields from "../../../../components/form/PersonalFields";
@@ -307,31 +301,17 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     {
       key: "5",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: (
-        <PhotoUpload
-          imageUrls={imageUrls}
-          loadingImages={loadingImages}
-          setImages={setImages}
-        />
-      ),
+      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
     },
     {
       key: "6",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: (
-        <FileUpload
-          filesUrl={filesUrl}
-          loadingFiles={loadingFiles}
-          setFiles={setFiles}
-        />
-      ),
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
     },
   ];
 
   const footer = [
-    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={
-      isValid === "success" ? false : isValid === "error" ? true : false
-    }>
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -348,14 +328,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("firmaTanimBilgileriniGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("firmaTanimBilgileriniGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

@@ -4,10 +4,7 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
 import { Button, Modal } from "antd";
-import {
-  GetAccItemByIdService,
-  UpdateAccItemService,
-} from "../../../../../../../api/services/vehicles/vehicles/services";
+import { GetAccItemByIdService, UpdateAccItemService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
 import CodeControl from "../../../../../../components/form/selects/CodeControl";
 import NumberInput from "../../../../../../components/form/inputs/NumberInput";
@@ -47,8 +44,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       ureticiKod: values.ureticiKod,
       miktar: values.miktar,
       fiyat: values.fiyat,
-      degistirmeTarih:
-        dayjs(values.degistirmeTarih).format("YYYY-MM-DD") || null,
+      degistirmeTarih: dayjs(values.degistirmeTarih).format("YYYY-MM-DD") || null,
     };
 
     UpdateAccItemService(body).then((res) => {
@@ -80,14 +76,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("aksesuarGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={600}
-    >
+    <Modal title={t("aksesuarGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={600}>
       <FormProvider {...methods}>
         <form>
           <div className="flex flex-col gap-1">

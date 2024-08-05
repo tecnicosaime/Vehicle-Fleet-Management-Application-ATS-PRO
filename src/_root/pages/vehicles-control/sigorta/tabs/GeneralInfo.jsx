@@ -19,7 +19,9 @@ const GeneralInfo = () => {
               <div className="grid gap-1">
                 <div className="col-span-9">
                   <div className="flex flex-col gap-1">
-                    <label>{t("plaka")} <span className="text-danger">*</span></label>
+                    <label>
+                      {t("plaka")} <span className="text-danger">*</span>
+                    </label>
                     <Plaka required={true} />
                   </div>
                 </div>
@@ -33,24 +35,25 @@ const GeneralInfo = () => {
             </div>
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("sigortaTanim")} <span className="text-danger">*</span></label>
-                <CodeControl
-                  name="sigorta"
-                  codeName="sigortaKodId"
-                  id={405}
-                  required={true}
-                />
+                <label>
+                  {t("sigortaTanim")} <span className="text-danger">*</span>
+                </label>
+                <CodeControl name="sigorta" codeName="sigortaKodId" id={405} required={true} />
               </div>
             </div>
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("baslangicTarih")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("baslangicTarih")} <span className="text-danger">*</span>
+                </label>
                 <DateInput name="baslangicTarih" required={true} />
               </div>
             </div>
             <div className="col-span-12">
               <div className="flex flex-col gap-1">
-                <label>{t("bitisTarih")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("bitisTarih")} <span className="text-danger">*</span>
+                </label>
                 <DateInput name="bitisTarih" required={true} />
               </div>
             </div>
@@ -121,11 +124,7 @@ const GeneralInfo = () => {
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("acenta")}</label>
-                <CodeControl
-                  name="acenta"
-                  codeName="acentaKodId"
-                  id={406}
-                />
+                <CodeControl name="acenta" codeName="acentaKodId" id={406} />
               </div>
             </div>
             <div className="col-span-6">

@@ -19,7 +19,8 @@ export default function MasrafMerkeziTablo({ workshopSelectedId, onSubmit }) {
         <div
           style={{
             marginTop: "6px",
-          }}>
+          }}
+        >
           {text}
         </div>
       ),
@@ -34,7 +35,8 @@ export default function MasrafMerkeziTablo({ workshopSelectedId, onSubmit }) {
         <div
           style={{
             marginTop: "6px",
-          }}>
+          }}
+        >
           {text}
         </div>
       ),
@@ -49,7 +51,8 @@ export default function MasrafMerkeziTablo({ workshopSelectedId, onSubmit }) {
         <div
           style={{
             marginTop: "6px",
-          }}>
+          }}
+        >
           {text}
         </div>
       ),
@@ -64,7 +67,8 @@ export default function MasrafMerkeziTablo({ workshopSelectedId, onSubmit }) {
         <div
           style={{
             marginTop: "6px",
-          }}>
+          }}
+        >
           {text}
         </div>
       ),
@@ -79,7 +83,8 @@ export default function MasrafMerkeziTablo({ workshopSelectedId, onSubmit }) {
         <div
           style={{
             marginTop: "6px",
-          }}>
+          }}
+        >
           {text}
         </div>
       ),
@@ -167,12 +172,7 @@ export default function MasrafMerkeziTablo({ workshopSelectedId, onSubmit }) {
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
-      <Modal
-        width="1200px"
-        title="Masraf Merkezi"
-        open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={handleModalToggle}>
+      <Modal width="1200px" title="Masraf Merkezi" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
         <Table
           rowSelection={rowSelection}
           columns={columns}

@@ -193,7 +193,8 @@ export default function MainTabs() {
             maxWidth: "350px",
             gap: "10px",
             rowGap: "0px",
-          }}>
+          }}
+        >
           <Text style={{ fontSize: "14px", fontWeight: "600" }}>İş Tanımı:</Text>
           <div
             style={{
@@ -204,7 +205,8 @@ export default function MainTabs() {
               minWidth: "250px",
               gap: "10px",
               width: "100%",
-            }}>
+            }}
+          >
             <Controller
               name="isTanimi"
               control={control}
@@ -227,7 +229,8 @@ export default function MainTabs() {
             gap: "10px",
             width: "100%",
             justifyContent: "space-between",
-          }}>
+          }}
+        >
           <Text style={{ fontSize: "14px" }}>Tarih:</Text>
           <div
             style={{
@@ -238,25 +241,20 @@ export default function MainTabs() {
               minWidth: "180px",
               gap: "10px",
               width: "100%",
-            }}>
+            }}
+          >
             <Controller
               name="tarih"
               control={control}
-              render={({ field }) => (
-                <DatePicker
-                  {...field}
-                  style={{ width: "180px" }}
-                  format={localeDateFormat}
-                  placeholder="Tarih seçiniz"
-                />
-              )}
+              render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
             />
           </div>
         </div>
         <div
           style={{
             width: "105px",
-          }}>
+          }}
+        >
           <Controller
             name="aktifBelge"
             control={control}
@@ -276,7 +274,8 @@ export default function MainTabs() {
           width: "100%",
           maxWidth: "395px",
           marginBottom: "10px",
-        }}>
+        }}
+      >
         <BelgeTipiSelect />
         <BelgeTipiEkle />
       </div>
@@ -288,12 +287,14 @@ export default function MainTabs() {
           marginBottom: "10px",
           border: "1px solid #8080804d",
           padding: "10px",
-        }}>
+        }}
+      >
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", width: "260px" }}>
           <div
             style={{
               width: "110px",
-            }}>
+            }}
+          >
             <Controller
               name="sureliBelge"
               control={control}
@@ -313,7 +314,8 @@ export default function MainTabs() {
               gap: "10px",
               width: "100%",
               justifyContent: "space-between",
-            }}>
+            }}
+          >
             <Text style={{ fontSize: "14px" }}>Bitiş Tarih:</Text>
             <div
               style={{
@@ -324,19 +326,12 @@ export default function MainTabs() {
                 minWidth: "180px",
                 gap: "10px",
                 width: "100%",
-              }}>
+              }}
+            >
               <Controller
                 name="bitisTarih"
                 control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    disabled={!sureliBelge}
-                    style={{ width: "180px" }}
-                    format={localeDateFormat}
-                    placeholder="Tarih seçiniz"
-                  />
-                )}
+                render={({ field }) => <DatePicker {...field} disabled={!sureliBelge} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
               />
             </div>
           </div>
@@ -345,7 +340,8 @@ export default function MainTabs() {
           <div
             style={{
               width: "110px",
-            }}>
+            }}
+          >
             <Controller
               name="hatirlat"
               control={control}
@@ -365,7 +361,8 @@ export default function MainTabs() {
               gap: "10px",
               width: "100%",
               justifyContent: "space-between",
-            }}>
+            }}
+          >
             <Text style={{ fontSize: "14px" }}>Hatırlatma Tarih:</Text>
             <div
               style={{
@@ -376,19 +373,12 @@ export default function MainTabs() {
                 minWidth: "180px",
                 gap: "10px",
                 width: "100%",
-              }}>
+              }}
+            >
               <Controller
                 name="hatirlatmaTarih"
                 control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    disabled={!hatirlat}
-                    style={{ width: "180px" }}
-                    format={localeDateFormat}
-                    placeholder="Tarih seçiniz"
-                  />
-                )}
+                render={({ field }) => <DatePicker {...field} disabled={!hatirlat} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
               />
             </div>
           </div>
@@ -405,7 +395,8 @@ export default function MainTabs() {
           width: "100%",
           justifyContent: "space-between",
           marginBottom: "10px",
-        }}>
+        }}
+      >
         <Text style={{ fontSize: "14px" }}>Açıklama:</Text>
         <div
           style={{
@@ -416,7 +407,8 @@ export default function MainTabs() {
             minWidth: "180px",
             gap: "10px",
             width: "100%",
-          }}>
+          }}
+        >
           <Controller name="aciklama" control={control} render={({ field }) => <TextArea {...field} rows={4} />} />
         </div>
       </div>
@@ -429,7 +421,8 @@ export default function MainTabs() {
           gap: "10px",
           width: "100%",
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         <Text style={{ fontSize: "14px" }}>Etiketler:</Text>
         <div
           style={{
@@ -440,12 +433,9 @@ export default function MainTabs() {
             minWidth: "180px",
             gap: "10px",
             width: "100%",
-          }}>
-          <Controller
-            name="etiketler"
-            control={control}
-            render={({ field }) => <Input {...field} style={{ flex: 1 }} />}
-          />
+          }}
+        >
+          <Controller name="etiketler" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
         </div>
       </div>
     </div>

@@ -9,12 +9,7 @@ const AddModal = ({ isOpen, setIsOpen, setStatus }) => {
   const [isValid, setIsValid] = useState("normal");
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   const onSubmit = () => {
@@ -41,40 +36,18 @@ const AddModal = ({ isOpen, setIsOpen, setStatus }) => {
   }, [marka]);
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={onSubmit}
-      disabled={
-        isValid === "success" ? false : isValid === "error" ? true : false
-      }
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
       {t("kaydet")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setIsOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsOpen(false)}>
       {t("iptal")}
     </Button>,
-  ]; 
+  ];
 
   return (
-    <Modal
-      title={t("yeniMarkaGirisi")}
-      open={isOpen}
-      onCancel={() => setIsOpen(false)}
-      maskClosable={false}
-      footer={footer}
-      width={500}
-    >
+    <Modal title={t("yeniMarkaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={500}>
       <label>Marka tanımını giriniz</label>
-      <Input
-        value={marka}
-        style={validateStyle}
-        onChange={(e) => setMarka(e.target.value)}
-      />
+      <Input value={marka} style={validateStyle} onChange={(e) => setMarka(e.target.value)} />
     </Modal>
   );
 };

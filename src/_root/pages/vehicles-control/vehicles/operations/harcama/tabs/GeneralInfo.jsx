@@ -16,19 +16,18 @@ const GeneralInfo = () => {
           <div className="grid gap-1">
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("plaka")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("plaka")} <span className="text-danger">*</span>
+                </label>
                 <Plaka required={true} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("harcama")} <span className="text-danger">*</span></label>
-                <CodeControl
-                  name="harcama"
-                  codeName="harcamaKodId"
-                  id={204}
-                  required={true}
-                />
+                <label>
+                  {t("harcama")} <span className="text-danger">*</span>
+                </label>
+                <CodeControl name="harcama" codeName="harcamaKodId" id={204} required={true} />
               </div>
             </div>
             <div className="col-span-6">
@@ -49,13 +48,17 @@ const GeneralInfo = () => {
           <div className="grid gap-1">
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("tarih")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("tarih")} <span className="text-danger">*</span>
+                </label>
                 <DateInput name="tarih" required={true} />
               </div>
             </div>
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
-                <label>{t("tutar")} <span className="text-danger">*</span></label>
+                <label>
+                  {t("tutar")} <span className="text-danger">*</span>
+                </label>
                 <NumberInput name="tutar" required={true} />
               </div>
             </div>

@@ -51,7 +51,7 @@ const CezaMaddesiTable = ({ setMadde, open, key }) => {
       title: t("belgeNo"),
       dataIndex: "belgeNo",
       key: 5,
-    }
+    },
   ];
 
   useEffect(() => {
@@ -64,10 +64,7 @@ const CezaMaddesiTable = ({ setMadde, open, key }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const res = await GetPenaltyDefListService(
-        search,
-        tableParams.pagination.current
-      );
+      const res = await GetPenaltyDefListService(search, tableParams.pagination.current);
       setLoading(false);
       setData(res?.data.list);
       setTableParams({
@@ -104,11 +101,7 @@ const CezaMaddesiTable = ({ setMadde, open, key }) => {
 
   return (
     <>
-      <Input
-        placeholder={t("arama")}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{ width: "30%" }}
-      />
+      <Input placeholder={t("arama")} onChange={(e) => setSearch(e.target.value)} style={{ width: "30%" }} />
       <div className="mt-10">
         <Table
           rowSelection={rowSelection}

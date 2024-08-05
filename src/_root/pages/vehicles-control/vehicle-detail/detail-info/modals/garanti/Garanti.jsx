@@ -4,10 +4,7 @@ import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
 import { Button, Modal, Select } from "antd";
-import {
-  GetVehicleDetailsInfoService,
-  UpdateVehicleDetailsInfoService,
-} from "../../../../../../../api/services/vehicles/vehicles/services";
+import { GetVehicleDetailsInfoService, UpdateVehicleDetailsInfoService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import NumberInput from "../../../../../../components/form/inputs/NumberInput";
 import DateInput from "../../../../../../components/form/date/DateInput";
 
@@ -28,16 +25,8 @@ const Garanti = ({ visible, onClose, id }) => {
       setValue("garantiBaslamaKm", res.data.garantiBaslamaKm);
       setValue("garantiBitisKm", res.data.garantiBitisKm);
       setValue("garantiPeriyod", res.data.garantiPeriyod);
-      setValue(
-        "garantiBaslamaTarih",
-        res.data.garantiBaslamaTarih !== "0001-01-01T00:00:00" &&
-          dayjs(res.data.garantiBaslamaTarih)
-      );
-      setValue(
-        "garantiBitisTarih",
-        res.data.garantiBitisTarih !== "0001-01-01T00:00:00" &&
-          dayjs(res.data.garantiBitisTarih)
-      );
+      setValue("garantiBaslamaTarih", res.data.garantiBaslamaTarih !== "0001-01-01T00:00:00" && dayjs(res.data.garantiBaslamaTarih));
+      setValue("garantiBitisTarih", res.data.garantiBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.garantiBitisTarih));
     });
   }, [id, status, setValue]);
 
@@ -46,22 +35,13 @@ const Garanti = ({ visible, onClose, id }) => {
       let newDate;
       switch (garantiPeriyod) {
         case "gun":
-          newDate = dayjs(garantiBaslamaTarih).add(
-            methods.getValues("garantiSure"),
-            "day"
-          );
+          newDate = dayjs(garantiBaslamaTarih).add(methods.getValues("garantiSure"), "day");
           break;
         case "ay":
-          newDate = dayjs(garantiBaslamaTarih).add(
-            methods.getValues("garantiSure"),
-            "month"
-          );
+          newDate = dayjs(garantiBaslamaTarih).add(methods.getValues("garantiSure"), "month");
           break;
         case "yil":
-          newDate = dayjs(garantiBaslamaTarih).add(
-            methods.getValues("garantiSure"),
-            "year"
-          );
+          newDate = dayjs(garantiBaslamaTarih).add(methods.getValues("garantiSure"), "year");
           break;
         default:
           newDate = garantiBaslamaTarih;
@@ -81,10 +61,8 @@ const Garanti = ({ visible, onClose, id }) => {
     const body = {
       dtyAracId: +id,
       garantiPeriyod: values.garantiPeriyod,
-      garantiBaslamaTarih:
-        dayjs(values.garantiBaslamaTarih).format("YYYY-MM-DD") || null,
-      garantiBitisTarih:
-        dayjs(values.garantiBitisTarih).format("YYYY-MM-DD") || null,
+      garantiBaslamaTarih: dayjs(values.garantiBaslamaTarih).format("YYYY-MM-DD") || null,
+      garantiBitisTarih: dayjs(values.garantiBitisTarih).format("YYYY-MM-DD") || null,
       garantiSure: values.garantiSure || 0,
       garantiKm: values.garantiKm || 0,
       garantiBaslamaKm: values.garantiBaslamaKm || 0,
@@ -109,14 +87,7 @@ const Garanti = ({ visible, onClose, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("garantiBilgiler")}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={600}
-    >
+    <Modal title={t("garantiBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={600}>
       <FormProvider {...methods}>
         <div className="grid gap-1 mt-10">
           <div className="col-span-6">

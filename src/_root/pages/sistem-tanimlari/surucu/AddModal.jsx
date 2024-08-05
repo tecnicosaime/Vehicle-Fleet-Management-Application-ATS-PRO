@@ -107,9 +107,7 @@ const AddModal = ({ setStatus }) => {
 
   useEffect(() => {
     if (openModal && isFirstRender.current) {
-      GetModuleCodeByCode("SURUCU_KOD").then((res) =>
-        setValue("surucuKod", res.data)
-      );
+      GetModuleCodeByCode("SURUCU_KOD").then((res) => setValue("surucuKod", res.data));
     }
   }, [openModal, setValue]);
 
@@ -169,9 +167,7 @@ const AddModal = ({ setStatus }) => {
       kimlikSiraNo: values.kimlikSiraNo,
       kimlikVerildigiYer: values.kimlikVerildigiYer,
       kimlikVerilisNedeni: values.kimlikVerilisNedeni,
-      kimlikVerilisTarihi: dayjs(values.kimlikVerilisTarihi).format(
-        "YYYY-MM-DD"
-      ),
+      kimlikVerilisTarihi: dayjs(values.kimlikVerilisTarihi).format("YYYY-MM-DD"),
       myb: values.myb,
       mybVerilisTarih: dayjs(values.mybVerilisTarih).format("YYYY-MM-DD"),
       mybBelgeNo: values.mybBelgeNo,
@@ -179,13 +175,9 @@ const AddModal = ({ setStatus }) => {
       mybTuru: values.mybTuru,
       mybBitisTarih: dayjs(values.mybBitisTarih).format("YYYY-MM-DD"),
       srcPiskoteknik: values.srcPiskoteknik,
-      srcPiskoteknikVerilisTarihi: dayjs(
-        values.srcPiskoteknikVerilisTarihi
-      ).format("YYYY-MM-DD"),
+      srcPiskoteknikVerilisTarihi: dayjs(values.srcPiskoteknikVerilisTarihi).format("YYYY-MM-DD"),
       srcPiskoteknikBelgeNo: values.srcPiskoteknikBelgeNo,
-      srcPiskoteknikBitisTarihi: dayjs(values.srcPiskoteknikBitisTarihi).format(
-        "YYYY-MM-DD"
-      ),
+      srcPiskoteknikBitisTarihi: dayjs(values.srcPiskoteknikBitisTarihi).format("YYYY-MM-DD"),
       aciklama: values.aciklama,
       sinif: values.sinif,
       ehliyetVerildigiIlIlce: values.ehliyetVerildigiIlIlce,
@@ -229,9 +221,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo isValid={isValid} />
-      ),
+      children: <GeneralInfo isValid={isValid} />,
     },
     {
       key: "2",
@@ -266,14 +256,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-        disabled={
-          isValid === "success" ? false : isValid === "error" ? true : false
-        }
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={isValid === "success" ? false : isValid === "error" ? true : false}>
         {t("kaydet")}
       </Button>
     ),
@@ -292,23 +275,10 @@ const AddModal = ({ setStatus }) => {
 
   return (
     <>
-      <Button
-        className="btn primary-btn"
-        onClick={() => setopenModal(true)}
-        disabled={
-          isValid === "error" ? true : isValid === "success" ? false : false
-        }
-      >
+      <Button className="btn primary-btn" onClick={() => setopenModal(true)} disabled={isValid === "error" ? true : isValid === "success" ? false : false}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniSurucuGirisi")}
-        open={openModal}
-        onCancel={() => setopenModal(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniSurucuGirisi")} open={openModal} onCancel={() => setopenModal(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

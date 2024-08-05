@@ -4,9 +4,7 @@ import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { t } from "i18next";
 import { Button, Modal } from "antd";
-import {
-  CodeItemValidateService,
-} from "../../../../api/services/code/services";
+import { CodeItemValidateService } from "../../../../api/services/code/services";
 import GeneralInfo from "./tabs/GeneralInfo";
 import UpdateMalzemeLists from "./tabs/UpdateMalzemeLists";
 import EkBilgiler from "./tabs/EkBilgiler";
@@ -23,7 +21,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
     fisNo: record.fisNo,
     tarih: dayjs(record.tarih),
     saat: dayjs(record.saat, "HH:mm:ss"),
-    girisDepoSiraNo: record.girisDepoSiraNo, 
+    girisDepoSiraNo: record.girisDepoSiraNo,
     girisDepo: record.girisDepo,
     firmaId: record.firmaId,
     lokasyonId: record.lokasyonId,
@@ -72,9 +70,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
     });
   }, [id, updateModal]);
 
-  useEffect(() => {
-    
-  }, [watch("lokasyonId"), watch("lokasyon")])
+  useEffect(() => {}, [watch("lokasyonId"), watch("lokasyon")]);
 
   useEffect(() => {
     if (code !== watch("fisNo")) {
@@ -85,7 +81,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       CodeItemValidateService(body).then((res) => {
         !res.data.status ? setIsValid("success") : setIsValid("error");
       });
-    }else {
+    } else {
       setIsValid("normal");
     }
   }, [watch("fisNo"), code]);
@@ -138,8 +134,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         girisDepoSiraNo: values.girisDepoSiraNo || 0,
         indirimOran: item.indirimOran || 0,
         isPriceChanged: item.isPriceChanged,
-        kdvDahilHaric:
-          item.kdvDH === "Dahil" || item.kdvDH === "dahil" ? true : false,
+        kdvDahilHaric: item.kdvDH === "Dahil" || item.kdvDH === "dahil" ? true : false,
       });
     });
 
@@ -174,14 +169,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   });
 
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      disabled={
-        isValid === "success" ? false : isValid === "error" ? true : false
-      }
-      onClick={onSubmit}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" disabled={isValid === "success" ? false : isValid === "error" ? true : false} onClick={onSubmit}>
       {t("guncelle")}
     </Button>,
     <Button
@@ -200,23 +188,11 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
   return (
     <>
-      <Modal
-        title={t("fisGirisBilgisiGuncelle")}
-        open={updateModal}
-        onCancel={() => setUpdateModal(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("fisGirisBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <GeneralInfo isValid={isValid} />
-            <UpdateMalzemeLists
-              setTableData={setTableData}
-              tableData={tableData}
-              isSuccess={isSuccess}
-              setIsSuccess={setIsSuccess}
-            />
+            <UpdateMalzemeLists setTableData={setTableData} tableData={tableData} isSuccess={isSuccess} setIsSuccess={setIsSuccess} />
             <EkBilgiler />
           </form>
         </FormProvider>

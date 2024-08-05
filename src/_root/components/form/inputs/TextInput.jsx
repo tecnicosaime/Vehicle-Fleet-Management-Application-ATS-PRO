@@ -23,9 +23,7 @@ const TextInput = ({ name, length, style, readonly, required }) => {
               field.onChange(e.target.value);
             }}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />

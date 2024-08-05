@@ -4,19 +4,8 @@ import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import tr_TR from "antd/lib/locale/tr_TR";
 import { t } from "i18next";
-import {
-  Button,
-  Checkbox,
-  ConfigProvider,
-  DatePicker,
-  Divider,
-  Input,
-  Modal,
-} from "antd";
-import {
-  GetVehicleDetailsInfoService,
-  UpdateVehicleDetailsInfoService,
-} from "../../../../../../../api/services/vehicles/vehicles/services";
+import { Button, Checkbox, ConfigProvider, DatePicker, Divider, Input, Modal } from "antd";
+import { GetVehicleDetailsInfoService, UpdateVehicleDetailsInfoService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import CodeControl from "../../../../../../components/form/selects/CodeControl";
 import Towns from "../../../../../../components/form/selects/Towns";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
@@ -90,13 +79,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
       setHakMahrumiyetChecked(res?.data.hakMahrumiyet);
       setValue("hakMahrumiyetAciklama", res?.data.hakMahrumiyetAciklama);
       setValue("hakMahrumiyetDurum", res?.data.hakMahrumiyetDurum);
-      setValue(
-        "hakMahrumiyettarih",
-        res?.data.hakMahrumiyettarih &&
-          res?.data.hakMahrumiyettarih !== "1970-01-01T00:00:00"
-          ? dayjs(res?.data.hakMahrumiyettarih)
-          : null
-      );
+      setValue("hakMahrumiyettarih", res?.data.hakMahrumiyettarih && res?.data.hakMahrumiyettarih !== "1970-01-01T00:00:00" ? dayjs(res?.data.hakMahrumiyettarih) : null);
       setValue("hususi", res?.data.hususi);
       setValue("il", res?.data.il);
       setValue("ilSehirId", res?.data.ilSehirId);
@@ -108,10 +91,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
       setValue("kullanimAmaci", res?.data.rKullanimAmaci);
       setValue("kullanimAmaciKodId", res?.data.rKullanimAmaciKodId);
       setValue("rAzamiIstiapHaddiBirim", res?.data.rAzamiIstiapHaddiBirim);
-      setValue(
-        "rAzamiIstiapHaddiBirimKodId",
-        res?.data.rAzamiIstiapHaddiBirimKodId
-      );
+      setValue("rAzamiIstiapHaddiBirimKodId", res?.data.rAzamiIstiapHaddiBirimKodId);
       setValue("rAzamiYuklu", res?.data.rAzamiYuklu);
       setValue("azamiYukluAgirligi", res?.data.azamiYukluAgirligi);
       setValue("onayNo", res?.data.onayNo);
@@ -121,22 +101,11 @@ const Ruhsat = ({ visible, onClose, id }) => {
       setValue("ruhsatSahibiKodId", res?.data.ruhsatSahibiKodId);
       setValue("taksiMetre", res?.data.taksiMetre);
       setValue("tescilNo", res?.data.tescilNo);
-      setValue(
-        "tescilTarih",
-        res?.data.tescilTarih && res?.data.tescilTarih !== "1970-01-01T00:00:00"
-          ? dayjs(res?.data.tescilTarih)
-          : null
-      );
+      setValue("tescilTarih", res?.data.tescilTarih && res?.data.tescilTarih !== "1970-01-01T00:00:00" ? dayjs(res?.data.tescilTarih) : null);
       setValue("ticari", res?.data.ticari);
       setValue("ticariAdi", res?.data.ticariAdi);
       setValue("tokograf", res?.data.tokograf);
-      setValue(
-        "trafikciktarih",
-        res?.data.trafikciktarih &&
-          res?.data.trafikciktarih !== "1970-01-01T00:00:00"
-          ? dayjs(res?.data.trafikciktarih)
-          : null
-      );
+      setValue("trafikciktarih", res?.data.trafikciktarih && res?.data.trafikciktarih !== "1970-01-01T00:00:00" ? dayjs(res?.data.trafikciktarih) : null);
       setValue("vergiDaire", res?.data.vergiDaire);
       setValue("vergiNo", res?.data.vergiNo);
       setValue("yolcuNakli", res?.data.yolcuNakli);
@@ -200,14 +169,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("ruhsatBilgileri")}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("ruhsatBilgileri")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <div className="grid gap-1 mt-14">
           <div className="col-span-9 border p-10">
@@ -215,11 +177,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
               <div className="col-span-3">
                 <div className="flex flex-col gap-1">
                   <label>{t("ruhsatSahibi")}</label>
-                  <CodeControl
-                    name="ruhsatSahibi"
-                    codeName="ruhsatSahibiKodId"
-                    id={115}
-                  />
+                  <CodeControl name="ruhsatSahibi" codeName="ruhsatSahibiKodId" id={115} />
                 </div>
               </div>
               <div className="col-span-3">
@@ -267,11 +225,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
               <div className="col-span-3">
                 <div className="flex flex-col gap-1">
                   <label>{t("aracCinsi")}</label>
-                  <CodeControl
-                    name="aracCinsi"
-                    codeName="aracCinsiKodId"
-                    id={107}
-                  />
+                  <CodeControl name="aracCinsi" codeName="aracCinsiKodId" id={107} />
                 </div>
               </div>
               <div className="col-span-3">
@@ -319,11 +273,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
               <div className="col-span-3">
                 <div className="flex flex-col gap-1">
                   <label>{t("kullanimAmaci")}</label>
-                  <CodeControl
-                    name="kullanimAmaci"
-                    codeName="kullanimAmaciKodId"
-                    id={887}
-                  />
+                  <CodeControl name="kullanimAmaci" codeName="kullanimAmaciKodId" id={887} />
                 </div>
               </div>
               <div className="col-span-3">
@@ -336,11 +286,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
                   </div>
                   <div className="col-span-6 self-end">
                     <div className="flex flex-col gap-1">
-                      <CodeControl
-                        name="istiapHaddiBirim"
-                        codeName="istiapHaddiBirimKodId"
-                        id={109}
-                      />
+                      <CodeControl name="istiapHaddiBirim" codeName="istiapHaddiBirimKodId" id={109} />
                     </div>
                   </div>
                 </div>
@@ -357,11 +303,7 @@ const Ruhsat = ({ visible, onClose, id }) => {
                   </div>
                   <div className="col-span-6 self-end">
                     <div className="flex flex-col gap-1">
-                      <CodeControl
-                        name="rAzamiIstiapHaddiBirim"
-                        codeName="rAzamiIstiapHaddiBirimKodId"
-                        id={109}
-                      />
+                      <CodeControl name="rAzamiIstiapHaddiBirim" codeName="rAzamiIstiapHaddiBirimKodId" id={109} />
                     </div>
                   </div>
                 </div>

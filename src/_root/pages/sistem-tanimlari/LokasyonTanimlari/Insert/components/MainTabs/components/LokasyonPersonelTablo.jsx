@@ -21,10 +21,7 @@ const normalizeText = (text) => {
     .replace(/Ç/g, "C");
 };
 
-export default function LokasyonPersonelTablo({
-  workshopSelectedId,
-  onSubmit,
-}) {
+export default function LokasyonPersonelTablo({ workshopSelectedId, onSubmit }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
@@ -128,13 +125,7 @@ export default function LokasyonPersonelTablo({
     const normalizedSearchTerm = normalizeText(value);
     if (value) {
       const filtered = data.filter((item) =>
-        Object.keys(item).some(
-          (key) =>
-            item[key] &&
-            normalizeText(item[key].toString())
-              .toLowerCase()
-              .includes(normalizedSearchTerm.toLowerCase())
-        )
+        Object.keys(item).some((key) => item[key] && normalizeText(item[key].toString()).toLowerCase().includes(normalizedSearchTerm.toLowerCase()))
       );
       setFilteredData1(filtered);
     } else {
@@ -145,20 +136,8 @@ export default function LokasyonPersonelTablo({
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
-      <Modal
-        width={1200}
-        centered
-        title="Personel"
-        open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={handleModalToggle}
-      >
-        <Input
-          placeholder="Arama..."
-          value={searchTerm1}
-          onChange={handleSearch1}
-          style={{ width: "300px", marginBottom: "15px" }}
-        />
+      <Modal width={1200} centered title="Personel" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
+        <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px", marginBottom: "15px" }} />
         <Table
           rowSelection={{
             type: "radio",
@@ -166,9 +145,7 @@ export default function LokasyonPersonelTablo({
             onChange: onRowSelectChange,
           }}
           columns={columns}
-          dataSource={
-            filteredData1.length > 0 || searchTerm1 ? filteredData1 : data
-          }
+          dataSource={filteredData1.length > 0 || searchTerm1 ? filteredData1 : data}
           loading={loading}
           scroll={{
             // x: "auto",

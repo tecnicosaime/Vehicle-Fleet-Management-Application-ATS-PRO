@@ -68,22 +68,14 @@ const ConditionFilter = ({ onSubmit }) => {
 
   const menu = (
     <Menu style={{ width: "300px" }}>
-      <div
-        style={{ borderBottom: "1px solid #ccc", padding: "10px", display: "flex", justifyContent: "space-between" }}>
+      <div style={{ borderBottom: "1px solid #ccc", padding: "10px", display: "flex", justifyContent: "space-between" }}>
         <Button onClick={handleCancelClick}>İptal</Button>
         <Button type="primary" onClick={handleSubmit}>
           Uygula
         </Button>
       </div>
       <div style={{ padding: "10px" }}>
-        <Select
-          mode="multiple"
-          style={{ width: "100%" }}
-          placeholder="Ara..."
-          value={Object.values(filters)}
-          onChange={handleChange}
-          allowClear
-          showArrow={false}>
+        <Select mode="multiple" style={{ width: "100%" }} placeholder="Ara..." value={Object.values(filters)} onChange={handleChange} allowClear showArrow={false}>
           {/* Seçenekleri elle ekleyin */}
           {options.map((option) => (
             <Option key={option.key} value={option.value}>
@@ -96,12 +88,7 @@ const ConditionFilter = ({ onSubmit }) => {
   );
 
   return (
-    <Dropdown
-      overlay={menu}
-      placement="bottomLeft"
-      trigger={["click"]}
-      visible={visible}
-      onVisibleChange={(v) => setVisible(v)}>
+    <Dropdown overlay={menu} placement="bottomLeft" trigger={["click"]} visible={visible} onVisibleChange={(v) => setVisible(v)}>
       <Button style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
         Durum
         <span
@@ -115,7 +102,8 @@ const ConditionFilter = ({ onSubmit }) => {
             justifyContent: "center",
             alignItems: "center",
             color: "white",
-          }}>
+          }}
+        >
           {Object.keys(filters).length}{" "}
         </span>
       </Button>

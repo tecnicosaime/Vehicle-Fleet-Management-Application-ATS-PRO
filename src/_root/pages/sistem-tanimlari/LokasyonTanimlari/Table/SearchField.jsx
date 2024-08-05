@@ -12,12 +12,6 @@ export default function SearchField({ onChange }) {
   }, [debouncedValue, onChange]);
 
   return (
-    <Input
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      placeholder="Ara..."
-      prefix={<SearchOutlined style={{ color: "#1890ff" }} />}
-      style={{ width: "200px" }}
-    />
+    <Input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Ara..." prefix={<SearchOutlined style={{ color: "#1890ff" }} />} style={{ width: "200px" }} />
   );
 }

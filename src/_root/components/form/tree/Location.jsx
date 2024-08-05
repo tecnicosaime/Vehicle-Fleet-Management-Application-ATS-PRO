@@ -29,9 +29,7 @@ const Location = ({ name, codeName, required }) => {
   const { watch, setValue, control } = useFormContext();
 
   const handleClickTree = () => {
-    CodeControlByUrlService("Location/GetLocationList").then((res) =>
-      setData(res.data)
-    );
+    CodeControlByUrlService("Location/GetLocationList").then((res) => setData(res.data));
   };
 
   return (
@@ -49,7 +47,7 @@ const Location = ({ name, codeName, required }) => {
               maxHeight: 400,
               overflow: "auto",
             }}
-            className={`w-full ${fieldState.error && !watch("lokasyonId") ? 'input-error' : ''}`}
+            className={`w-full ${fieldState.error && !watch("lokasyonId") ? "input-error" : ""}`}
             treeLine={true}
             treeData={convertToLocationFormat(data)}
             value={name ? watch(name) : watch("lokasyon")}
@@ -57,31 +55,21 @@ const Location = ({ name, codeName, required }) => {
             onChange={(e) => {
               field.onChange(e);
               if (e === undefined) {
-                const selectedOption = data.find(
-                  (option) => option.lokasyonId === e
-                );
+                const selectedOption = data.find((option) => option.lokasyonId === e);
                 if (!selectedOption) {
                   name ? setValue(name, "") : setValue("lokasyon", null);
-                  codeName
-                    ? setValue(codeName, 0)
-                    : setValue("lokasyonId", null);
+                  codeName ? setValue(codeName, 0) : setValue("lokasyonId", null);
                 }
               } else {
-                const selectedOption = data.find(
-                  (option) => option.lokasyonId === e
-                );
+                const selectedOption = data.find((option) => option.lokasyonId === e);
 
                 if (selectedOption) {
-                  name
-                    ? setValue(name, selectedOption.lokasyonTanim)
-                    : setValue("lokasyon", selectedOption.lokasyonTanim);
+                  name ? setValue(name, selectedOption.lokasyonTanim) : setValue("lokasyon", selectedOption.lokasyonTanim);
                 }
               }
             }}
           />
-          {fieldState.error && (
-            <span style={{ color: "red" }}>{fieldState.error.message}</span>
-          )}
+          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
         </>
       )}
     />
@@ -89,7 +77,7 @@ const Location = ({ name, codeName, required }) => {
 };
 
 Location.propTypes = {
-  required: PropTypes.bool
+  required: PropTypes.bool,
 };
 
 export default Location;

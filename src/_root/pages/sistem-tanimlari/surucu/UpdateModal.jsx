@@ -5,10 +5,7 @@ import { t } from "i18next";
 import dayjs from "dayjs";
 import { Button, Modal, Tabs } from "antd";
 import { CodeItemValidateService } from "../../../../api/services/code/services";
-import {
-  GetDriverByIdService,
-  UpdateDriverService,
-} from "../../../../api/services/sistem-tanimlari/surucu_services";
+import { GetDriverByIdService, UpdateDriverService } from "../../../../api/services/sistem-tanimlari/surucu_services";
 import { uploadPhoto } from "../../../../utils/upload";
 import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
 import GeneralInfoUpdate from "./tabs/GeneralInfoUpdate";
@@ -177,14 +174,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
         setValue("mybTuru", res.data.mybTuru);
         setValue("mybVerilisTarih", dayjs(res.data.mybVerilisTarih));
         setValue("mybBitisTarih", dayjs(res.data.mybBitisTarih));
-        setValue(
-          "srcPiskoteknikVerilisTarihi",
-          dayjs(res.data.srcPiskoteknikVerilisTarihi)
-        );
-        setValue(
-          "srcPiskoteknikBitisTarihi",
-          dayjs(res.data.srcPiskoteknikBitisTarihi)
-        );
+        setValue("srcPiskoteknikVerilisTarihi", dayjs(res.data.srcPiskoteknikVerilisTarihi));
+        setValue("srcPiskoteknikBitisTarihi", dayjs(res.data.srcPiskoteknikBitisTarihi));
         setValue("srcPiskoteknik", res.data.srcPiskoteknik);
         setValue("srcPiskoteknikBelgeNo", res.data.srcPiskoteknikBelgeNo);
         setValue("aciklama", res.data.aciklama);
@@ -192,10 +183,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
         setValue("ehliyetVerildigiIlIlce", res.data.ehliyetVerildigiIlIlce);
         setValue("ehliyetBelgeTarihi", dayjs(res.data.ehliyetBelgeTarihi));
         setValue("ehliyetSeriNo", res.data.ehliyetSeriNo);
-        setValue(
-          "ehliyetKullandigiChiazProtez",
-          res.data.ehliyetKullandigiChiazProtez
-        );
+        setValue("ehliyetKullandigiChiazProtez", res.data.ehliyetKullandigiChiazProtez);
         setValue("ehliyetNo", res.data.ehliyetNo);
         setValue("isim", res.data.isim);
         setSurucuId(res.data.surucuId);
@@ -223,7 +211,6 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     if (updateModal) {
       fetchData();
     }
-
   }, [id, updateModal]);
 
   const onSubmit = handleSubmit((values) => {
@@ -271,9 +258,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       kimlikSiraNo: values.kimlikSiraNo,
       kimlikVerildigiYer: values.kimlikVerildigiYer,
       kimlikVerilisNedeni: values.kimlikVerilisNedeni,
-      kimlikVerilisTarihi: dayjs(values.kimlikVerilisTarihi).format(
-        "YYYY-MM-DD"
-      ),
+      kimlikVerilisTarihi: dayjs(values.kimlikVerilisTarihi).format("YYYY-MM-DD"),
       myb: values.myb,
       mybVerilisTarih: dayjs(values.mybVerilisTarih).format("YYYY-MM-DD"),
       mybBelgeNo: values.mybBelgeNo,
@@ -281,13 +266,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       mybTuru: values.mybTuru,
       mybBitisTarih: dayjs(values.mybBitisTarih).format("YYYY-MM-DD"),
       srcPiskoteknik: values.srcPiskoteknik,
-      srcPiskoteknikVerilisTarihi: dayjs(
-        values.srcPiskoteknikVerilisTarihi
-      ).format("YYYY-MM-DD"),
+      srcPiskoteknikVerilisTarihi: dayjs(values.srcPiskoteknikVerilisTarihi).format("YYYY-MM-DD"),
       srcPiskoteknikBelgeNo: values.srcPiskoteknikBelgeNo,
-      srcPiskoteknikBitisTarihi: dayjs(values.srcPiskoteknikBitisTarihi).format(
-        "YYYY-MM-DD"
-      ),
+      srcPiskoteknikBitisTarihi: dayjs(values.srcPiskoteknikBitisTarihi).format("YYYY-MM-DD"),
       aciklama: values.aciklama,
       sinif: values.sinif,
       ehliyetVerildigiIlIlce: values.ehliyetVerildigiIlIlce,
@@ -318,8 +299,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     });
 
     uploadPhoto(surucuId, "SURUCU", images, true);
-    setImages([])
-    setImagesURL([])
+    setImages([]);
+    setImagesURL([]);
     setStatus(false);
   });
 
@@ -372,8 +353,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       onClick={() => {
         setUpdateModal(false);
         reset(defaultValues);
-        setImages([])
-        setImagesURL([])
+        setImages([]);
+        setImagesURL([]);
       }}
     >
       {t("iptal")}
@@ -381,14 +362,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("surucuGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("surucuGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs defaultActiveKey="1" items={items} />

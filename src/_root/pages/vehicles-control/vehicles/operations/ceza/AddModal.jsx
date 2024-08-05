@@ -173,9 +173,7 @@ const AddModal = ({ setStatus }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo />
-      ),
+      children: <GeneralInfo />,
     },
     {
       key: "2",
@@ -198,11 +196,7 @@ const AddModal = ({ setStatus }) => {
         <LoadingOutlined />
       </Button>
     ) : (
-      <Button
-        key="submit"
-        className="btn btn-min primary-btn"
-        onClick={onSubmit}
-      >
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
         {t("kaydet")}
       </Button>
     ),
@@ -224,14 +218,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal
-        title={t("yeniCezaGirisi")}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        maskClosable={false}
-        footer={footer}
-        width={1200}
-      >
+      <Modal title={t("yeniCezaGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

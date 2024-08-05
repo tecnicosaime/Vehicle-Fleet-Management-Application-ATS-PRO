@@ -7,10 +7,7 @@ import { CodeItemValidateService } from "../../../../../api/service";
 import GeneralInfo from "./GeneralInfo";
 import Iletisim from "./Iletisim";
 import PersonalFields from "../../../../components/form/PersonalFields";
-import {
-  GetEmployeeByIdService,
-  UpdateEmployeeService,
-} from "../../../../../api/services/personel_services";
+import { GetEmployeeByIdService, UpdateEmployeeService } from "../../../../../api/services/personel_services";
 import dayjs from "dayjs";
 import KisiselBilgiler from "../add/KisiselBilgiler";
 import { uploadPhoto } from "../../../../../utils/upload";
@@ -208,9 +205,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       gsm: values.gsm,
       aktif: values.aktif,
       iseBaslamaTarihi: dayjs(values.iseBaslamaTarihi).format("YYYY-MM-DD"),
-      isetenAyrilmaTarihi: dayjs(values.isetenAyrilmaTarihi).format(
-        "YYYY-MM-DD"
-      ),
+      isetenAyrilmaTarihi: dayjs(values.isetenAyrilmaTarihi).format("YYYY-MM-DD"),
       ozelAlan1: values.ozelAlan1 || "",
       ozelAlan2: values.ozelAlan2 || "",
       ozelAlan3: values.ozelAlan3 || "",
@@ -234,8 +229,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     });
 
     uploadPhoto(personelId, "PERSONEL", images, true);
-    setImages([])
-    setImagesURL([])
+    setImages([]);
+    setImagesURL([]);
     setStatus(false);
   });
 
@@ -249,9 +244,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     {
       key: "1",
       label: t("genelBilgiler"),
-      children: (
-        <GeneralInfo isValid={isValid} setImages={setImages} urls={imagesURL} />
-      ),
+      children: <GeneralInfo isValid={isValid} setImages={setImages} urls={imagesURL} />,
     },
     {
       key: "2",
@@ -280,8 +273,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       onClick={() => {
         setUpdateModal(false);
         reset(defaultValues);
-        setImages([])
-        setImagesURL([])
+        setImages([]);
+        setImagesURL([]);
       }}
     >
       {t("iptal")}
@@ -289,14 +282,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("servisGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("servisGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs defaultActiveKey="1" items={items} />

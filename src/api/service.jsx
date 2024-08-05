@@ -1,11 +1,5 @@
 import http from "./http";
-import {
-  CodeControlService,
-  CustomCodeControlService,
-  MaterialListSelectService,
-  GetLocationByDepoIdService,
-  CodeItemValidateService,
-} from "./services/select_services";
+import { CodeControlService, CustomCodeControlService, MaterialListSelectService, GetLocationByDepoIdService, CodeItemValidateService } from "./services/select_services";
 
 import {
   KMGetService,
@@ -36,9 +30,7 @@ export const CustomInputsReadService = (form) => {
 };
 
 export const CustomInputsUpdateService = (form, topic, field) => {
-  return http.post(
-    `/CustomField/AddCustomFieldTopic?form=${form}&topic=${topic}&field=${field}`
-  );
+  return http.post(`/CustomField/AddCustomFieldTopic?form=${form}&topic=${topic}&field=${field}`);
 };
 
 // personal fields --> ozel alanlar
@@ -46,9 +38,7 @@ export const PersonalFieldsReadService = (form) => {
   return http.get(`/CustomField/GetCustomFields?form=${form}`);
 };
 export const PersonalFieldsUpdateService = (form, topic, field) => {
-  return http.post(
-    `/CustomField/AddCustomFieldTopic?form=${form}&topic=${topic}&field=${field}`
-  );
+  return http.post(`/CustomField/AddCustomFieldTopic?form=${form}&topic=${topic}&field=${field}`);
 };
 
 export {

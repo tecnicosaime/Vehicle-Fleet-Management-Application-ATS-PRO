@@ -1,16 +1,12 @@
-import PropTypes from 'prop-types'
-import { Breadcrumb } from 'antd'
+import PropTypes from "prop-types";
+import { Breadcrumb } from "antd";
 
 const BreadcrumbComp = ({ items }) => {
-    return (
-        <Breadcrumb
-            items={items}
-        />
-    )
-}
+  return <Breadcrumb items={items} />;
+};
 
-BreadcrumbComp.propTypes ={
-    items: PropTypes.array
-}
+BreadcrumbComp.propTypes = {
+  items: PropTypes.array,
+};
 
-export default BreadcrumbComp
+export default BreadcrumbComp;

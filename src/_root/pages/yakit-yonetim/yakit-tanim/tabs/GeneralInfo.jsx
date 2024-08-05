@@ -7,12 +7,7 @@ import CheckboxInput from "../../../../components/form/checkbox/CheckboxInput";
 
 const GeneralInfo = ({ isValid }) => {
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-          ? "#23b545"
-          : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   return (
@@ -41,21 +36,13 @@ const GeneralInfo = ({ isValid }) => {
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("birim")}</label>
-                <CodeControl
-                  name="birim"
-                  codeName="birimKodId"
-                  id={300}
-                />
+                <CodeControl name="birim" codeName="birimKodId" id={300} />
               </div>
             </div>
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("yakitTip")}</label>
-                <CodeControl
-                  name="malzemeTipKodText"
-                  codeName="malzemeTipKodId"
-                  id={102}
-                />
+                <CodeControl name="malzemeTipKodText" codeName="malzemeTipKodId" id={102} />
               </div>
             </div>
             <div className="col-span-4">

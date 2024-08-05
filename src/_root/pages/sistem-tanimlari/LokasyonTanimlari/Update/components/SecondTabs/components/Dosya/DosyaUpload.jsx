@@ -173,12 +173,7 @@ const DosyaUpload = () => {
       key: "action",
       render: (_, record) =>
         record.downloadURL ? (
-          <a
-            href={record.downloadURL}
-            download={record.DSY_DOSYA_AD}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}>
+          <a href={record.downloadURL} download={record.DSY_DOSYA_AD} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
             Dosyayı İndir
           </a>
         ) : (
@@ -242,7 +237,8 @@ const DosyaUpload = () => {
             justifyContent: "center",
             alignItems: "center",
             marginBottom: "20px",
-          }}>
+          }}
+        >
           <Spin />
         </div>
       ) : (

@@ -3,11 +3,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import {
-  Button,
-  Modal,
-} from "antd";
-import { GetVehicleDetailsInfoService, UpdateVehicleDetailsInfoService } from '../../../../../../../api/services/vehicles/vehicles/services'
+import { Button, Modal } from "antd";
+import { GetVehicleDetailsInfoService, UpdateVehicleDetailsInfoService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
 import Textarea from "../../../../../../components/form/inputs/Textarea";
 import DateInput from "../../../../../../components/form/date/DateInput";
@@ -17,32 +14,32 @@ import CodeControl from "../../../../../../components/form/selects/CodeControl";
 const TasitKarti = ({ visible, onClose, id }) => {
   const [status, setStatus] = useState(false);
 
-  const defaultValues = {}
+  const defaultValues = {};
   const methods = useForm({
-    defaultValues: defaultValues
-  })
-  const { handleSubmit, setValue, watch } = methods
+    defaultValues: defaultValues,
+  });
+  const { handleSubmit, setValue, watch } = methods;
 
   useEffect(() => {
     GetVehicleDetailsInfoService(id, 6).then((res) => {
-      setValue("dtyTasitKarti", res.data.dtyTasitKarti)
-      setValue("tkIptal", res.data.tkIptal)
-      setValue("dtyYetkiBelgesi", res.data.dtyYetkiBelgesi)
-      setValue("ybIptal", res.data.ybIptal)
-      setValue("tkIptalNeden", res.data.tkIptalNeden)
-      setValue("tkIptalYaziSayiNo", res.data.tkIptalYaziSayiNo)
-      setValue("ybIptalNeden", res.data.ybIptalNeden)
-      setValue("ybIptalYaziSayiNo", res.data.ybIptalYaziSayiNo)
-      setValue("tkAciklama", res.data.tkAciklama)
-      setValue("tkYbNo", res.data.tkYbNo)
-      setValue("ykTuruKodId", res.data.ykTuruKodId)
-      setValue("tkYkturu", res.data.tkYkturu)
-      setValue("tkVerilisTarih", res.data.tkVerilisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkVerilisTarih))
-      setValue("tkBitisTarih", res.data.tkBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkBitisTarih))
-      setValue("tkIptalTarih", res.data.tkIptalTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkIptalTarih))
-      setValue("tkYbVerilisTarih", res.data.tkYbVerilisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkYbVerilisTarih))
-      setValue("tkYbBitisTarih", res.data.tkYbBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkYbBitisTarih))
-      setValue("ybIptalTarih", res.data.ybIptalTarih !== "0001-01-01T00:00:00" && dayjs(res.data.ybIptalTarih))
+      setValue("dtyTasitKarti", res.data.dtyTasitKarti);
+      setValue("tkIptal", res.data.tkIptal);
+      setValue("dtyYetkiBelgesi", res.data.dtyYetkiBelgesi);
+      setValue("ybIptal", res.data.ybIptal);
+      setValue("tkIptalNeden", res.data.tkIptalNeden);
+      setValue("tkIptalYaziSayiNo", res.data.tkIptalYaziSayiNo);
+      setValue("ybIptalNeden", res.data.ybIptalNeden);
+      setValue("ybIptalYaziSayiNo", res.data.ybIptalYaziSayiNo);
+      setValue("tkAciklama", res.data.tkAciklama);
+      setValue("tkYbNo", res.data.tkYbNo);
+      setValue("ykTuruKodId", res.data.ykTuruKodId);
+      setValue("tkYkturu", res.data.tkYkturu);
+      setValue("tkVerilisTarih", res.data.tkVerilisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkVerilisTarih));
+      setValue("tkBitisTarih", res.data.tkBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkBitisTarih));
+      setValue("tkIptalTarih", res.data.tkIptalTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkIptalTarih));
+      setValue("tkYbVerilisTarih", res.data.tkYbVerilisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkYbVerilisTarih));
+      setValue("tkYbBitisTarih", res.data.tkYbBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkYbBitisTarih));
+      setValue("ybIptalTarih", res.data.ybIptalTarih !== "0001-01-01T00:00:00" && dayjs(res.data.ybIptalTarih));
     });
   }, [id, status]);
 
@@ -66,40 +63,33 @@ const TasitKarti = ({ visible, onClose, id }) => {
       dtyTasitKarti: values.dtyTasitKarti,
       dtyYetkiBelgesi: values.dtyYetkiBelgesi,
       ybIptal: values.ybIptal,
-    }
+    };
 
-    UpdateVehicleDetailsInfoService(6, body).then(res => {
+    UpdateVehicleDetailsInfoService(6, body).then((res) => {
       if (res.data.statusCode === 202) {
-        setStatus(true)
-        onClose()
+        setStatus(true);
+        onClose();
       }
-    })
-  })
+    });
+  });
 
-  const footer = (
-    [
-      <Button key="submit" className="btn btn-min primary-btn" onClick={onSumbit}>
-        {t("kaydet")}
-      </Button>,
-      <Button key="back" className="btn btn-min cancel-btn" onClick={onClose}>
-        {t("iptal")}
-      </Button>
-    ]
-  )
+  const footer = [
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSumbit}>
+      {t("kaydet")}
+    </Button>,
+    <Button key="back" className="btn btn-min cancel-btn" onClick={onClose}>
+      {t("iptal")}
+    </Button>,
+  ];
 
   return (
-    <Modal
-      title={t("satisBilgiler")}
-      open={visible}
-      onCancel={onClose}
-      maskClosable={false}
-      footer={footer}
-      width={1200}
-    >
+    <Modal title={t("satisBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <div className="grid gap-1">
           <div className="col-span-6">
-            <h2><CheckboxInput name="dtyTasitKarti" /> {t("tasitKarti")}</h2>
+            <h2>
+              <CheckboxInput name="dtyTasitKarti" /> {t("tasitKarti")}
+            </h2>
             <div className="grid gap-1 border p-20 mt-10">
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
@@ -116,7 +106,9 @@ const TasitKarti = ({ visible, onClose, id }) => {
             </div>
           </div>
           <div className="col-span-6">
-            <h2><CheckboxInput name="dtyYetkiBelgesi" /> {t("yetkiBelgesi")}</h2>
+            <h2>
+              <CheckboxInput name="dtyYetkiBelgesi" /> {t("yetkiBelgesi")}
+            </h2>
             <div className="grid gap-1 border p-20 mt-10">
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
@@ -145,7 +137,9 @@ const TasitKarti = ({ visible, onClose, id }) => {
             </div>
           </div>
           <div className="col-span-6">
-            <h2><CheckboxInput name="tkIptal" /> {t("tasitKarti")}</h2>
+            <h2>
+              <CheckboxInput name="tkIptal" /> {t("tasitKarti")}
+            </h2>
             <div className="grid gap-1 border p-20 mt-10">
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
@@ -168,7 +162,9 @@ const TasitKarti = ({ visible, onClose, id }) => {
             </div>
           </div>
           <div className="col-span-6">
-            <h2><CheckboxInput name="ybIptal" /> {t("yetkiBelgesiIptal")}</h2>
+            <h2>
+              <CheckboxInput name="ybIptal" /> {t("yetkiBelgesiIptal")}
+            </h2>
             <div className="grid gap-1 border p-20 mt-10">
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
@@ -199,13 +195,13 @@ const TasitKarti = ({ visible, onClose, id }) => {
         </div>
       </FormProvider>
     </Modal>
-  )
+  );
 };
 
 TasitKarti.propTypes = {
   id: PropTypes.number,
   visible: PropTypes.bool,
   onClose: PropTypes.func,
-}
+};
 
 export default TasitKarti;

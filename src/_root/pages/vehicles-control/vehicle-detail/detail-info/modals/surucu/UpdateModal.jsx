@@ -5,10 +5,7 @@ import { t } from "i18next";
 import dayjs from "dayjs";
 import { Button, Modal } from "antd";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
-import {
-  GetDriverSubstitutionByIdService,
-  UpdateDriverSubstitutionItemService,
-} from "../../../../../../../api/services/vehicles/vehicles/services";
+import { GetDriverSubstitutionByIdService, UpdateDriverSubstitutionItemService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import { CodeItemValidateService } from "../../../../../../../api/services/code/services";
 import TextInput from "../../../../../../components/form/inputs/TextInput";
 import NumberInput from "../../../../../../components/form/inputs/NumberInput";
@@ -85,13 +82,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     };
 
     setData(data);
-  }, [
-    watch("teslimTarih"),
-    watch("surucuTeslimEden"),
-    watch("surucuTeslimAlan"),
-    watch("km"),
-    printData,
-  ]);
+  }, [watch("teslimTarih"), watch("surucuTeslimEden"), watch("surucuTeslimAlan"), watch("km"), printData]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -116,19 +107,11 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   });
 
   useEffect(() => {
-    !watch("surucuTeslimAlanId") ||
-    watch("surucuTeslimAlanId") === watch("surucuTeslimEdenId")
-      ? setSurucuIsValid(true)
-      : setSurucuIsValid(false);
+    !watch("surucuTeslimAlanId") || watch("surucuTeslimAlanId") === watch("surucuTeslimEdenId") ? setSurucuIsValid(true) : setSurucuIsValid(false);
   }, [watch("surucuTeslimEdenId"), watch("surucuTeslimAlanId")]);
 
   const validateStyle = {
-    borderColor:
-      isValid === "error"
-        ? "#dc3545"
-        : isValid === "success"
-        ? "#23b545"
-        : "#000",
+    borderColor: isValid === "error" ? "#dc3545" : isValid === "success" ? "#23b545" : "#000",
   };
 
   const footer = [
@@ -136,13 +119,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="submit"
       className="btn btn-min primary-btn"
       onClick={onSubmit}
-      disabled={
-        isValid === "success" && !surucuIsValid
-          ? false
-          : isValid === "error" || surucuIsValid
-          ? true
-          : false
-      }
+      disabled={isValid === "success" && !surucuIsValid ? false : isValid === "error" || surucuIsValid ? true : false}
     >
       {t("guncelle")}
     </Button>,
@@ -159,14 +136,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal
-      title={t("surucuGuncelle")}
-      open={updateModal}
-      onCancel={() => setUpdateModal(false)}
-      maskClosable={false}
-      footer={footer}
-      width={600}
-    >
+    <Modal title={t("surucuGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={600}>
       <FormProvider {...methods}>
         <form>
           <div className="grid gap-1">

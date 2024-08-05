@@ -79,16 +79,9 @@ const ProfilePhoto = ({ urls, setImages }) => {
 
   return (
     <ConfigProvider locale={customLocale}>
-      <div
-        className="profile border"
-        style={{ height: "90%", position: "relative" }}
-      >
+      <div className="profile border" style={{ height: "90%", position: "relative" }}>
         {fileList[fileList.length - 1]?.name || urls[0]?.tbResimId ? (
-          <img
-            src={profileImage}
-            alt="Profile"
-            style={{ width: "100%", height: "100%" }}
-          />
+          <img src={profileImage} alt="Profile" style={{ width: "100%", height: "100%" }} />
         ) : (
           <div
             style={{
@@ -103,13 +96,7 @@ const ProfilePhoto = ({ urls, setImages }) => {
           </div>
         )}
         <ImgCrop modalTitle="Resmi Düzenle" aspect={16 / 9}>
-          <Upload
-            listType="picture-card"
-            fileList={fileList}
-            onChange={onChange}
-            beforeUpload={beforeUpload}
-            showUploadList={false}
-          >
+          <Upload listType="picture-card" fileList={fileList} onChange={onChange} beforeUpload={beforeUpload} showUploadList={false}>
             <FaDownload />
           </Upload>
         </ImgCrop>

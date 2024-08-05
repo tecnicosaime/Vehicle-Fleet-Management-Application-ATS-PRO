@@ -1,10 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import PropTypes from "prop-types";
-import {
-  PersonalFieldsReadService,
-  PersonalFieldsUpdateService,
-} from "../../../../api/service";
+import { PersonalFieldsReadService, PersonalFieldsUpdateService } from "../../../../api/service";
 import { Input, InputNumber, Select } from "antd";
 import UpdateConfirmModal from "../../confirm/UpdateConfirmModal";
 import { CodeControlByIdService } from "../../../../api/services/code/services";
@@ -47,9 +44,7 @@ const PersonalFields = ({ personalProps }) => {
   }, [form, setFields]);
 
   const handleInputChange = (field, value) => {
-    const updatedFields = fields.map((fld) =>
-      fld.key === field.key ? { ...fld, value } : fld
-    );
+    const updatedFields = fields.map((fld) => (fld.key === field.key ? { ...fld, value } : fld));
     setFields(updatedFields);
 
     if (debounceTimers.current[field.key]) {
@@ -89,37 +84,15 @@ const PersonalFields = ({ personalProps }) => {
           return (
             <div key={item.label} className="col-span-3 mt-10">
               <div className="flex flex-col gap-1">
-                <input
-                  id={item.label}
-                  onChange={(e) => handleInputChange(item, e.target.value)}
-                  value={item.value}
-                  className="personal-input"
-                />
-                <Controller
-                  name={item.label}
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  )}
-                />
+                <input id={item.label} onChange={(e) => handleInputChange(item, e.target.value)} value={item.value} className="personal-input" />
+                <Controller name={item.label} control={control} render={({ field }) => <Input {...field} onChange={(e) => field.onChange(e.target.value)} />} />
               </div>
             </div>
           );
         } else if (item.type === "select") {
           return (
-            <div
-              key={item.label}
-              className="col-span-3 mt-10 flex flex-col gap-1"
-            >
-              <input
-                id={item.label}
-                onChange={(e) => handleInputChange(item, e.target.value)}
-                value={item.value}
-                className="personal-input"
-              />
+            <div key={item.label} className="col-span-3 mt-10 flex flex-col gap-1">
+              <input id={item.label} onChange={(e) => handleInputChange(item, e.target.value)} value={item.value} className="personal-input" />
               <Controller
                 name={item.name2}
                 control={control}
@@ -129,14 +102,8 @@ const PersonalFields = ({ personalProps }) => {
                     showSearch
                     allowClear
                     optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label.toLowerCase() ?? "").includes(input)
-                    }
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label.toLowerCase() ?? "")
-                        .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
-                    }
+                    filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input)}
+                    filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
                     options={data.map((item) => ({
                       label: item.codeText,
                       value: item.siraNo,
@@ -157,36 +124,15 @@ const PersonalFields = ({ personalProps }) => {
                   />
                 )}
               />
-              <Controller
-                name={item.name2}
-                control={control}
-                render={({ field }) => (
-                  <Input {...field} style={{ display: "none" }} />
-                )}
-              />
+              <Controller name={item.name2} control={control} render={({ field }) => <Input {...field} style={{ display: "none" }} />} />
             </div>
           );
         } else if (item.type === "number") {
           return (
             <div key={item.label} className="col-span-3 mt-10">
               <div className="flex flex-col gap-1">
-                <input
-                  id={item.label}
-                  onChange={(e) => handleInputChange(item, e.target.value)}
-                  value={item.value}
-                  className="personal-input"
-                />
-                <Controller
-                  name={item.label}
-                  control={control}
-                  render={({ field }) => (
-                    <InputNumber
-                      {...field}
-                      className="w-full"
-                      onChange={(e) => field.onChange(e)}
-                    />
-                  )}
-                />
+                <input id={item.label} onChange={(e) => handleInputChange(item, e.target.value)} value={item.value} className="personal-input" />
+                <Controller name={item.label} control={control} render={({ field }) => <InputNumber {...field} className="w-full" onChange={(e) => field.onChange(e)} />} />
               </div>
             </div>
           );

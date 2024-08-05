@@ -36,12 +36,7 @@ const GeneralInfo = () => {
       egzos: egzosDate.isValid() && egzosDate.diff(current, "day") < 0 && egzosDate.diff(current, "day") > -3,
       vergi: vergiDate.isValid() && vergiDate.diff(current, "day") < 0 && vergiDate.diff(current, "day") > -3,
     });
-  }, [
-    watch("muayeneTarih"),
-    watch("sozlesmeTarih"),
-    watch("egzosTarih"),
-    watch("vergiTarih"),
-  ]);
+  }, [watch("muayeneTarih"), watch("sozlesmeTarih"), watch("egzosTarih"), watch("vergiTarih")]);
 
   const footer = [
     <Button
@@ -55,11 +50,7 @@ const GeneralInfo = () => {
     >
       {t("ekle")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => setOpen(false)}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setOpen(false)}>
       {t("iptal")}
     </Button>,
   ];
@@ -86,11 +77,7 @@ const GeneralInfo = () => {
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label>{t("aracCinsi")}</label>
-                  <CodeControl
-                    name="aracCinsi"
-                    codeName="aracCinsiKodId"
-                    id={107}
-                  />
+                  <CodeControl name="aracCinsi" codeName="aracCinsiKodId" id={107} />
                 </div>
               </div>
               <div className="col-span-4">
@@ -102,11 +89,7 @@ const GeneralInfo = () => {
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label htmlFor="departmanId">{t("departman")}</label>
-                  <CodeControl
-                    name="departman"
-                    codeName="departmanId"
-                    id={200}
-                  />
+                  <CodeControl name="departman" codeName="departmanId" id={200} />
                 </div>
               </div>
               <div className="col-span-4">
@@ -130,11 +113,7 @@ const GeneralInfo = () => {
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label>{t("kullanimAmaci")}</label>
-                  <CodeControl
-                    name="kullanimAmaci"
-                    codeName="kullanimAmaciKodId"
-                    id={887}
-                  />
+                  <CodeControl name="kullanimAmaci" codeName="kullanimAmaciKodId" id={887} />
                 </div>
               </div>
               <div className="col-span-4">
@@ -183,11 +162,7 @@ const GeneralInfo = () => {
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label>{t("yedekAnahtar")}</label>
-                  <CodeControl
-                    name="yedekAnahtar"
-                    codeName="yedekAnahtarKodId"
-                    id={888}
-                  />
+                  <CodeControl name="yedekAnahtar" codeName="yedekAnahtarKodId" id={888} />
                 </div>
               </div>
             </div>
@@ -201,11 +176,7 @@ const GeneralInfo = () => {
                 <div className="flex flex-col gap-1">
                   <label className="text-info flex gap-2">
                     <span>{t("muayeneTarihi")} </span>
-                    <span
-                      className={`warning-icon ${
-                        warning.muayene ? "show" : "hide"
-                      }`}
-                    >
+                    <span className={`warning-icon ${warning.muayene ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
                     </span>
                   </label>
@@ -216,11 +187,7 @@ const GeneralInfo = () => {
                 <div className="flex flex-col gap-1">
                   <label className="text-info flex gap-2">
                     <span>{t("sozlesmeTarihi")} </span>
-                    <span
-                      className={`warning-icon ${
-                        warning.sozlesme ? "show" : "hide"
-                      }`}
-                    >
+                    <span className={`warning-icon ${warning.sozlesme ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
                     </span>
                   </label>
@@ -231,11 +198,7 @@ const GeneralInfo = () => {
                 <div className="flex flex-col gap-1">
                   <label className="text-info flex gap-2">
                     <span>{t("egzozEmisyon")} </span>
-                    <span
-                      className={`warning-icon ${
-                        warning.egzos ? "show" : "hide"
-                      }`}
-                    >
+                    <span className={`warning-icon ${warning.egzos ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
                     </span>
                   </label>
@@ -246,11 +209,7 @@ const GeneralInfo = () => {
                 <div className="flex flex-col gap-1">
                   <label className="text-info flex gap-2">
                     <span>{t("vergi")} </span>
-                    <span
-                      className={`warning-icon ${
-                        warning.vergi ? "show" : "hide"
-                      }`}
-                    >
+                    <span className={`warning-icon ${warning.vergi ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
                     </span>
                   </label>
@@ -305,14 +264,7 @@ const GeneralInfo = () => {
           </div>
         </div>
 
-        <Modal
-          title={t("araclar")}
-          open={open}
-          onCancel={() => setOpen(false)}
-          maskClosable={false}
-          footer={footer}
-          width={1200}
-        >
+        <Modal title={t("araclar")} open={open} onCancel={() => setOpen(false)} maskClosable={false} footer={footer} width={1200}>
           <VehicleList setVehicle={setVehicle} open={open} />
         </Modal>
       </div>

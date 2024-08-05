@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { PieChart, Pie, Sector, ResponsiveContainer, Cell, Legend } from 'recharts';
+import React, { useEffect, useRef, useState } from "react";
+import { PieChart, Pie, Sector, ResponsiveContainer, Cell, Legend } from "recharts";
 
 import http from "../../../../api/http.jsx";
-import { Spin, Typography, Tooltip, Popover, Button, Modal, Tour } from 'antd';
-import chroma from 'chroma-js';
-import styled from 'styled-components';
-import { MoreOutlined, PrinterOutlined } from '@ant-design/icons';
-import html2pdf from 'html2pdf.js';
+import { Spin, Typography, Tooltip, Popover, Button, Modal, Tour } from "antd";
+import chroma from "chroma-js";
+import styled from "styled-components";
+import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
+import html2pdf from "html2pdf.js";
 
 const { Text } = Typography;
 
 const generateColors = (dataLength) => {
-  const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#bd2400', '#131842'];
-  return chroma.scale(colors).mode('lch').colors(dataLength);
+  const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#bd2400", "#131842"];
+  return chroma.scale(colors).mode("lch").colors(dataLength);
 };
 
 // Styled component for the pie chart container
@@ -34,7 +34,7 @@ function IsEmriTipleri(props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [colors, setColors] = useState([]);
   const [visibleSeries, setVisibleSeries] = useState({});
-  const [chartHeader, setChartHeader] = useState('İş Emri Tipleri');
+  const [chartHeader, setChartHeader] = useState("İş Emri Tipleri");
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
   const [open, setOpen] = useState(false);
   const ref1 = useRef(null);
@@ -56,7 +56,7 @@ function IsEmriTipleri(props) {
       }, {});
       setVisibleSeries(initialVisibleSeries);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +79,7 @@ function IsEmriTipleri(props) {
       }, {});
       setVisibleSeries(initialVisibleSeries);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -90,13 +90,13 @@ function IsEmriTipleri(props) {
   }, []);
 
   const downloadPDF = () => {
-    const element = document.getElementById('is-emri-tipleri');
+    const element = document.getElementById("is-emri-tipleri");
     const opt = {
       margin: 10,
-      filename: 'is_emri_tipleri.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
+      filename: "is_emri_tipleri.pdf",
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
     };
 
     html2pdf().set(opt).from(element).save();
@@ -113,7 +113,7 @@ function IsEmriTipleri(props) {
     const my = cy + (outerRadius + 30) * sin;
     const ex = mx + (cos >= 0 ? 1 : -1) * 22;
     const ey = my;
-    const textAnchor = cos >= 0 ? 'start' : 'end';
+    const textAnchor = cos >= 0 ? "start" : "end";
 
     return (
       <g>
@@ -170,19 +170,19 @@ function IsEmriTipleri(props) {
     return (
       <ul
         style={{
-          listStyle: 'none',
+          listStyle: "none",
           padding: 0,
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '15px',
-          justifyContent: 'center',
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "15px",
+          justifyContent: "center",
           margin: 0,
         }}
       >
         <li
           style={{
-            cursor: 'pointer',
-            color: Object.values(visibleSeries).every((value) => value) ? 'black' : 'gray',
+            cursor: "pointer",
+            color: Object.values(visibleSeries).every((value) => value) ? "black" : "gray",
           }}
           onClick={handleToggleAll}
         >
@@ -192,18 +192,18 @@ function IsEmriTipleri(props) {
           <li
             key={`item-${index}`}
             style={{
-              cursor: 'pointer',
-              color: visibleSeries[entry.value] ? colors[index % colors.length] : 'gray',
+              cursor: "pointer",
+              color: visibleSeries[entry.value] ? colors[index % colors.length] : "gray",
             }}
             onClick={() => handleLegendClick(entry.value)}
           >
             <span
               style={{
-                display: 'inline-block',
-                width: '10px',
-                height: '10px',
-                backgroundColor: visibleSeries[entry.value] ? colors[index % colors.length] : 'gray',
-                marginRight: '5px',
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                backgroundColor: visibleSeries[entry.value] ? colors[index % colors.length] : "gray",
+                marginRight: "5px",
               }}
             ></span>
             {entry.value}
@@ -214,29 +214,29 @@ function IsEmriTipleri(props) {
   };
 
   const content = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ cursor: 'pointer' }} onClick={() => setIsExpandedModalVisible(true)}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ cursor: "pointer" }} onClick={() => setIsExpandedModalVisible(true)}>
         Büyüt
       </div>
       <div
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         onClick={() => {
           fetchData();
-          setChartHeader('İş Emri Tipleri');
+          setChartHeader("İş Emri Tipleri");
         }}
       >
         İş Emri Tipleri
       </div>
       <div
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         onClick={() => {
           fetchData1();
-          setChartHeader('İş Emri Durumları');
+          setChartHeader("İş Emri Durumları");
         }}
       >
         İş Emri Durumları
       </div>
-      <div style={{ cursor: 'pointer' }} onClick={() => setOpen(true)}>
+      <div style={{ cursor: "pointer" }} onClick={() => setOpen(true)}>
         Bilgi
       </div>
     </div>
@@ -244,7 +244,7 @@ function IsEmriTipleri(props) {
 
   const steps = [
     {
-      title: 'Bilgi',
+      title: "Bilgi",
       description: (
         <div>
           <p>
@@ -266,34 +266,34 @@ function IsEmriTipleri(props) {
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
-        borderRadius: '5px',
-        backgroundColor: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        border: '1px solid #f0f0f0',
+        width: "100%",
+        height: "100%",
+        borderRadius: "5px",
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        border: "1px solid #f0f0f0",
       }}
     >
       <div
         style={{
-          padding: '10px',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          padding: "10px",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Text
           title={`Toplam Harcanan İş Gücü`}
           style={{
-            fontWeight: '500',
-            fontSize: '17px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: 'calc(100% - 50px)',
+            fontWeight: "500",
+            fontSize: "17px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "calc(100% - 50px)",
           }}
         >
           {chartHeader}
@@ -302,15 +302,15 @@ function IsEmriTipleri(props) {
           <Button
             type="text"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0px 5px',
-              height: '32px',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0px 5px",
+              height: "32px",
               zIndex: 3,
             }}
           >
-            <MoreOutlined style={{ cursor: 'pointer', fontWeight: '500', fontSize: '16px' }} />
+            <MoreOutlined style={{ cursor: "pointer", fontWeight: "500", fontSize: "16px" }} />
           </Button>
         </Popover>
       </div>
@@ -319,14 +319,14 @@ function IsEmriTipleri(props) {
       ) : (
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '7px',
-            overflow: 'auto',
-            height: '100vh',
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            overflow: "auto",
+            height: "100vh",
           }}
         >
-          <div style={{ width: '100%', height: 'calc(100% - 5px)' }}>
+          <div style={{ width: "100%", height: "calc(100% - 5px)" }}>
             <StyledResponsiveContainer ref={ref1} width="100%" height="100%">
               <PieChart width="100%" height="100%">
                 <Pie
@@ -355,26 +355,26 @@ function IsEmriTipleri(props) {
         title={
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '98%',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "98%",
             }}
           >
             <div
               style={{
-                fontWeight: '500',
-                fontSize: '17px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: 'calc(100% - 50px)',
+                fontWeight: "500",
+                fontSize: "17px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "calc(100% - 50px)",
               }}
               title={`Toplam Harcanan İş Gücü `}
             >
               {chartHeader}
             </div>
-            <PrinterOutlined style={{ cursor: 'pointer', fontSize: '20px' }} onClick={downloadPDF} />
+            <PrinterOutlined style={{ cursor: "pointer", fontSize: "20px" }} onClick={downloadPDF} />
           </div>
         }
         centered
@@ -386,10 +386,10 @@ function IsEmriTipleri(props) {
       >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '7px',
-            height: 'calc(100vh - 180px)',
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            height: "calc(100vh - 180px)",
           }}
         >
           <StyledResponsiveContainer id="is-emri-tipleri" width="100%" height="100%">
