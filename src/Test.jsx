@@ -1,105 +1,270 @@
 import { useContext, useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
-import { Select } from "antd";
-import { PlakaContext } from "../../../../context/plakaSlice";
-import { GetFuelCardContentByIdService } from "../../../../api/services/vehicles/yakit/services";
-import { CodeControlByUrlService } from "../../../../api/services/code/services";
+import dayjs from "dayjs";
+import { t } from "i18next";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, message, Modal, Tabs } from "antd";
+import { PlakaContext } from "../../../../../../../context/plakaSlice";
+import { AddFuelService, GetFuelCardContentByIdService } from "../../../../../../../api/services/vehicles/operations_services";
+import GeneralInfo from "./GeneralInfo";
+import PersonalFields from "../../../../../../components/form/personal-fields/PersonalFields";
 
-const Plaka = ({ name, codeName, required }) => {
-  const { plaka, setData } = useContext(PlakaContext);
-  const { setValue, control, watch } = useFormContext();
-  const [plateList, setPlateList] = useState([]);
+const AddModal = ({ setStatus }) => {
+  const { data, plaka, setData, setHistory } = useContext(PlakaContext);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [response, setResponse] = useState("normal");
+  const [activeKey, setActiveKey] = useState("1");
+  const [loading, setLoading] = useState(false);
+
+  const [fields, setFields] = useState([
+    // fields definition...
+  ]);
+
+  const defaultValues = {
+    sonAlinanKm: null,
+    plaka: "",
+    yakitTipId: null,
+    yakitTanki: "",
+    surucuId: null,
+    surucu: "",
+    litreFiyat: null,
+    yakitHacmi: null,
+    tarih: dayjs(new Date()),
+    saat: dayjs(new Date()),
+    alinanKm: null,
+    farkKm: null,
+    miktar: null,
+    fullDepo: false,
+    tutar: null,
+    tuketim: null,
+    engelle: false,
+  };
+
+  const methods = useForm({
+    defaultValues: defaultValues,
+  });
+
+  const { handleSubmit, reset, setValue, watch } = methods;
 
   useEffect(() => {
+    setValue("surucuId", data.surucuId);
+    setValue("surucu", data.surucuAdi);
+    setValue("tarih", dayjs(new Date()));
+    setValue("saat", dayjs(new Date()));
+    setValue("sonAlinanKm", data.sonAlinanKm);
+    setValue("litreFiyat", data.litreFiyat);
+    setValue("yakitHacmi", data.yakitHacmi);
+    setValue("yakitTip", data.yakitTip);
+    setValue("yakitTipId", data.yakitTipId);
+    setValue("yakitTanki", data.yakitTanki);
+    setValue("birim", data.birim);
+    setValue("depoYakitMiktar", data.depoYakitMiktar);
+    setValue("guncelKmLog", data.guncelKmLog);
+
     if (plaka.length === 1) {
-      GetFuelCardContentByIdService(plaka[0].id).then((res) => {
-        setData(res.data);
-      });
+      setValue("plaka", plaka[0].id);
     }
-  }, [plaka]);
 
-  const handleChange = (e) => {
-    GetFuelCardContentByIdService(e).then((res) => setData(res.data));
-  };
+    if (watch("farkKm") < 0 && !watch("alinanKm")) setValue("farkKm", null);
+  }, [data, plaka, setValue, watch]);
 
-  const handleClick = async () => {
-    if (plaka.length === 0) {
-      const res = await CodeControlByUrlService("Vehicle/GetVehiclePlates");
-      const updatedData = res.data.map((item) => {
-        if ("aracId" in item && "plaka" in item) {
-          return {
-            ...item,
-            id: item.aracId,
-          };
+  const onSubmit = handleSubmit((values) => {
+    const kmLog = {
+      kmAracId: data.aracId,
+      plaka: data.plaka,
+      tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
+      saat: dayjs(values.saat).format("HH:mm:ss"),
+      eskiKm: data.sonAlinanKm,
+      yeniKm: values.alinanKm,
+      kaynak: "YAKIT",
+      dorse: true,
+      lokasyon: data.lokasyon,
+      lokasyonId: data.lokasyonId,
+      aciklama: "",
+    };
+
+    const body = {
+      aracId: data.aracId,
+      plaka: data.plaka,
+      tarih: dayjs(values.tarih).format("YYYY-MM-DD") || null,
+      saat: dayjs(values.saat).format("HH:mm:ss") || null,
+      surucuId: values.surucuId,
+      yakitTipId: values.yakitTipId,
+      sonAlinanKm: values.sonAlinanKm,
+      farkKm: values.farkKm,
+      tuketim: values.tuketim,
+      alinanKm: values.alinanKm,
+      miktar: values.miktar ? values.miktar : 0.0,
+      fullDepo: values.fullDepo,
+      stokKullanimi: values.stokKullanimi,
+      litreFiyat: values.litreFiyat,
+      tutar: values.tutar ? values.tutar : 0,
+      birim: data.birim,
+      ozelKullanim: false,
+      kmLog: kmLog,
+      depoYakitMiktar: values.depoYakitMiktar,
+      yakitTanki: values.yakitTanki,
+      lokasyonId: data.lokasyonId, // Add lokasyonId here
+      ozelAlan1: values.ozelAlan1 || "",
+      ozelAlan2: values.ozelAlan2 || "",
+      ozelAlan3: values.ozelAlan3 || "",
+      ozelAlan4: values.ozelAlan4 || "",
+      ozelAlan5: values.ozelAlan5 || "",
+      ozelAlan6: values.ozelAlan6 || "",
+      ozelAlan7: values.ozelAlan7 || "",
+      ozelAlan8: values.ozelAlan8 || "",
+      ozelAlanKodId9: values.ozelAlanKodId9 || -1,
+      ozelAlanKodId10: values.ozelAlanKodId10 || -1,
+      ozelAlan11: values.ozelAlan11 || 0,
+      ozelAlan12: values.ozelAlan12 || 0,
+      hasToInsertKmLog: values.engelle ? values.engelle : false,
+    };
+
+    setLoading(true);
+    AddFuelService(body)
+      .then((res) => {
+        if (res?.data.statusCode === 200) {
+          setStatus(true);
+          setResponse("normal");
+          setIsOpen(false);
+          if (plaka.length === 1) {
+            reset({
+              plaka: data.plaka,
+              sonAlinanKm: data.sonAlinanKm,
+              litreFiyat: data.litreFiyat,
+              tarih: dayjs(new Date()),
+              saat: dayjs(new Date()),
+              alinanKm: null,
+              farkKm: null,
+              miktar: null,
+              fullDepo: false,
+              tutar: null,
+              tuketim: null,
+              engelle: false,
+              surucuId: data.surucuId,
+              yakitTipId: data.yakitTipId,
+              yakitTip: data.yakitTip,
+              surucu: data.surucuAdi,
+              stokKullanimi: data.stokKullanimi,
+              yakitHacmi: data.yakitHacmi,
+            });
+          } else {
+            reset();
+          }
+          setHistory([]);
+          setLoading(false);
+          setActiveKey("1");
+          if (plaka.length === 1) {
+            GetFuelCardContentByIdService(plaka[0].id).then((res) => {
+              setData(res.data);
+            });
+          }
+        } else {
+          message.error("Bir sorun oluştu! Tekrar deneyiniz.");
+          setLoading(false);
         }
-        return item;
+      })
+      .catch(() => {
+        message.error("Bir sorun oluştu! Tekrar deneyiniz.");
+        setLoading(false);
       });
-      setPlateList(updatedData);
+    setStatus(false);
+  });
+
+  const personalProps = {
+    form: "YAKIT",
+    fields,
+    setFields,
+  };
+
+  const items = [
+    {
+      key: "1",
+      label: t("genelBilgiler"),
+      children: <GeneralInfo setIsValid={setIsValid} response={response} setResponse={setResponse} />,
+    },
+    {
+      key: "2",
+      label: t("ozelAlanlar"),
+      children: <PersonalFields personalProps={personalProps} />,
+    },
+  ];
+
+  const resetForm = (plaka, data, reset) => {
+    if (plaka.length === 1) {
+      reset({
+        plaka: data.plaka,
+        sonAlinanKm: data.sonAlinanKm,
+        litreFiyat: data.litreFiyat,
+        tarih: dayjs(new Date()),
+        saat: dayjs(new Date()),
+        alinanKm: null,
+        farkKm: null,
+        miktar: null,
+        fullDepo: false,
+        tutar: null,
+        tuketim: null,
+        engelle: false,
+        yakitHacmi: data.yakitHacmi,
+        surucuId: data.surucuId,
+        yakitTipId: data.yakitTipId,
+        yakitTip: data.yakitTip,
+        surucu: data.surucuAdi,
+        stokKullanimi: data.stokKullanimi,
+      });
+    } else {
+      reset();
     }
   };
+
+  const footer = [
+    loading ? (
+      <Button className="btn btn-min primary-btn" key="loading">
+        <LoadingOutlined />
+      </Button>
+    ) : (
+      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={!isValid}>
+        {t("kaydet")}
+      </Button>
+    ),
+    <Button
+      key="back"
+      className="btn btn-min cancel-btn"
+      onClick={() => {
+        setIsOpen(false);
+        resetForm(plaka, data, reset);
+        setResponse("normal");
+        setHistory([]);
+        setActiveKey("1");
+      }}
+    >
+      {t("kapat")}
+    </Button>,
+  ];
 
   return (
-    <Controller
-      name={codeName ? codeName : "plaka"}
-      control={control}
-      rules={{ required: required ? "Bu alan boş bırakılamaz!" : false }}
-      render={({ field, fieldState }) => (
-        <>
-          <Select
-            {...field}
-            showSearch
-            allowClear
-            optionFilterProp="children"
-            className={fieldState.error ? "input-error" : ""}
-            value={name ? watch(name) : watch("plaka")}
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-            options={
-              plaka.length === 0
-                ? plateList.map((item) => ({
-                    label: item.plaka,
-                    value: item.id,
-                  }))
-                : plaka.map((item) => ({
-                    label: item.plaka,
-                    value: item.id,
-                  }))
-            }
-            onClick={handleClick}
-            onChange={(e) => {
-              field.onChange(e);
-              handleChange(e);
-              if (e === undefined) {
-                const selectedOption = plaka.find((option) => option.id === e);
-                if (!selectedOption) {
-                  name ? setValue(name, "") : setValue("plaka", "");
-                  setData([]);
-                }
-              } else {
-                const selectedOption = plaka.find((option) => option.id === e);
-                if (selectedOption) {
-                  name ? setValue(name, selectedOption.plaka) : setValue("plaka", selectedOption.plaka);
-                }
-                const selectedPlate = plateList.find((option) => option.id === e);
-                if (selectedPlate && "lokasyonId" in selectedPlate) {
-                  setValue("lokasyonIdFromPlaka", selectedPlate.lokasyonId);
-                }
-              }
-            }}
-            disabled={plaka.length === 1}
-          />
-          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
-        </>
-      )}
-    />
+    <>
+      <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
+        <PlusOutlined /> {t("ekle")}
+      </Button>
+      <Modal title={t("yeniYakitGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
+        <p className="count">
+          {t("guncelKm")}: [ {watch("guncelKmLog")} km ]
+        </p>
+        <FormProvider {...methods}>
+          <form>
+            <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
+          </form>
+        </FormProvider>
+      </Modal>
+    </>
   );
 };
 
-Plaka.propTypes = {
-  name: PropTypes.string,
-  codeName: PropTypes.string,
-  required: PropTypes.bool,
+AddModal.propTypes = {
+  setStatus: PropTypes.func.isRequired,
 };
 
-export default Plaka;
+export default AddModal;

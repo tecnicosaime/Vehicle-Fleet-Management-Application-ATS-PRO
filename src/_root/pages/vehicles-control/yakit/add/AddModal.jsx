@@ -101,6 +101,7 @@ const AddModal = ({ setStatus }) => {
   const defaultValues = {
     sonAlinanKm: null,
     plaka: "",
+    lokasyonIdFromPlaka: "",
     yakitTipId: null,
     yakitTanki: "",
     surucuId: null,
