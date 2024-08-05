@@ -14,12 +14,12 @@ import { t } from "i18next";
 const items = [
   {
     key: "1",
-    icon: <PieChartOutlined />,
+    icon: <PieChartOutlined style={{ color: "#0096dd" }} />,
     label: <Link to={"/"}>{t("dashboard")}</Link>,
   },
   {
     key: "2",
-    icon: <CarOutlined />,
+    icon: <CarOutlined style={{ color: "#0096dd" }} />,
     label: t("aracYonetimi"),
     children: [
       {
@@ -71,7 +71,7 @@ const items = [
 
   {
     key: "19",
-    icon: <GiAutoRepair />,
+    icon: <GiAutoRepair style={{ color: "#0096dd" }} />,
     label: "Bakım ve Onarım İşlemleri",
     children: [
       {
@@ -98,7 +98,7 @@ const items = [
   },
   {
     key: "31",
-    icon: <LuWarehouse />,
+    icon: <LuWarehouse style={{ color: "#0096dd" }} />,
     label: t("malzemeDepo"),
     children: [
       {
@@ -133,7 +133,7 @@ const items = [
   },
   {
     key: "13",
-    icon: <BsFuelPump />,
+    icon: <BsFuelPump style={{ color: "#0096dd" }} />,
     label: t("yakitYonetimi"),
     children: [
       {
@@ -164,7 +164,7 @@ const items = [
   },
   {
     key: "338",
-    icon: <HiOutlineDocumentReport />,
+    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
     label: t("finansYonetim"),
     children: [
       {
@@ -179,7 +179,7 @@ const items = [
   },
   {
     key: "348",
-    icon: <HiOutlineDocumentReport />,
+    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
     label: t("satinAlmaYonetim"),
     children: [
       {
@@ -198,17 +198,17 @@ const items = [
   },
   {
     key: "368",
-    icon: <HiOutlineDocumentReport />,
+    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
     label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
   },
   {
     key: "38",
-    icon: <HiOutlineDocumentReport />,
+    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
     label: <Link to={"/raporlar"}>{t("raporlarAnalizler")}</Link>,
   },
   {
     key: "39",
-    icon: <MdOutlineSystemUpdateAlt />,
+    icon: <MdOutlineSystemUpdateAlt style={{ color: "#0096dd" }} />,
     label: t("sistemTanimlari"),
     children: [
       {
@@ -260,7 +260,7 @@ const items = [
 
   {
     key: "50",
-    icon: <FaGears />,
+    icon: <FaGears style={{ color: "#0096dd" }} />,
     label: "Sistem Ayarları",
     children: [
       {
