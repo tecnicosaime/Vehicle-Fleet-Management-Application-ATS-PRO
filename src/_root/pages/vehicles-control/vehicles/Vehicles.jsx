@@ -179,7 +179,7 @@ const Vehicles = () => {
     },
     {
       title: t("sigortaTarih"),
-      dataIndex: "SigortaBitisTarih",
+      dataIndex: "sigortaBitisTarih",
       key: 15,
       ellipsis: true,
       width: 160,
