@@ -57,6 +57,16 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
 
   useEffect(() => {
     const fullDepo = watch("fullDepo");
+    const miktar = watch("miktar");
+    const yakitHacmi = watch("yakitHacmi");
+
+    if (fullDepo && (!miktar || miktar === 0 || miktar === null || miktar === undefined)) {
+      setValue("miktar", yakitHacmi);
+    }
+  }, [watch("fullDepo"), watch("miktar"), watch("yakitHacmi")]);
+
+  useEffect(() => {
+    const fullDepo = watch("fullDepo");
     const farkKm = watch("farkKm");
     const miktar = watch("miktar");
     const yakitHacmi = watch("yakitHacmi");
@@ -714,7 +724,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         {content}
       </Modal>
 
-      {history.length >= 3 && (
+      {watch("plaka") && history.length >= 3 && (
         <div className="grid gap-1 border p-10 mt-10">
           <div className="col-span-12">
             <div className="grid">
