@@ -2,10 +2,6 @@ import { useEffect, useState } from "react";
 import { Layout, Menu, List, Button, Modal, Input, Popconfirm } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { t } from "i18next";
-// import AddModal from './marka-modals/AddModal';
-// import UpdateModalModal from './marka-modals/UpdateModal';
-// import AddModelModal from './model-modals/AddModelModal';
-// import UpdateModelModal from './model-modals/UpdateModelModal';
 import BreadcrumbComp from "../../components/breadcrumb/Breadcrumb";
 import { AddCodeService, GetCodeGroupsService, GetCodeTextByIdService, UpdateCodeService, DeleteCodeService } from "../../../api/services/settings/services";
 
@@ -39,7 +35,13 @@ const KodYonetimi = () => {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   useEffect(() => {
-    GetCodeGroupsService().then((res) => setCodeList(res.data));
+    GetCodeGroupsService().then((res) => {
+      const modifiedData = res.data.map((item) => ({
+        ...item,
+        typeDescription: item.codeType, // codeType yerine typeDescription kullanılıyor
+      }));
+      setCodeList(modifiedData);
+    });
   }, [status]);
 
   useEffect(() => {
@@ -51,18 +53,18 @@ const KodYonetimi = () => {
   const handleCodeClick = (id) => {
     setSelectedCode(id);
     const item = codeList.find((item) => item.siraNo === +id);
-    setCode(item.codeType);
+    setCode(item.typeDescription); // Alternatif veri adı kullanılıyor
     setSelectedCodeText(null);
   };
 
-  const filteredCodeList = codeList.filter((item) => item.codeType.toLowerCase().includes(searchCode.toLowerCase()));
+  const filteredCodeList = codeList.filter((item) => item.typeDescription.toLowerCase().includes(searchCode.toLowerCase()));
 
   const filteredCodeTextList = codeTextList.filter((item) => item.codeText.toLowerCase().includes(searchCodeText.toLowerCase()));
 
   const updatedList = filteredCodeList.map((item) => {
     return {
       key: item.codeId,
-      label: item.codeType,
+      label: item.typeDescription,
     };
   });
 
@@ -139,7 +141,7 @@ const KodYonetimi = () => {
   const deleteCodeItem = () => {
     if (selectedCodeText) {
       DeleteCodeService(selectedCodeText.siraNo).then((res) => {
-        if (res.data.statusCode === 200) {
+        if (res.data.statusCode === 202) {
           setStatus(true);
           setSelectedCodeText(null);
         }
@@ -164,7 +166,6 @@ const KodYonetimi = () => {
             <Content style={{ padding: 24, margin: 0, minHeight: 280, overflow: "auto" }}>
               {selectedCode && (
                 <>
-                  {/* <div className='title'>{code}</div> */}
                   <div className="m-20">
                     <Input value={searchCodeText} onChange={(e) => setSearchCodeText(e.target.value)} placeholder={t("arama")} />
                   </div>
@@ -197,7 +198,6 @@ const KodYonetimi = () => {
                     {t("sil")}
                   </Button>
                 </Popconfirm>
-                {/* <Button className='btn primary-btn' onClick={handleModelDelete}>{t("sil")}</Button> */}
               </div>
             </Content>
           </Layout>
