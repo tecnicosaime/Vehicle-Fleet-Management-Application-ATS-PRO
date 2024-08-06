@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Layout, Menu, List, Button, Modal, Input } from "antd";
+import { Layout, Menu, List, Button, Modal, Input, Popconfirm } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 // import AddModal from './marka-modals/AddModal';
@@ -7,7 +7,7 @@ import { t } from "i18next";
 // import AddModelModal from './model-modals/AddModelModal';
 // import UpdateModelModal from './model-modals/UpdateModelModal';
 import BreadcrumbComp from "../../components/breadcrumb/Breadcrumb";
-import { AddCodeService, GetCodeGroupsService, GetCodeTextByIdService, UpdateCodeService } from "../../../api/services/settings/services";
+import { AddCodeService, GetCodeGroupsService, GetCodeTextByIdService, UpdateCodeService, DeleteCodeService } from "../../../api/services/settings/services";
 
 const { Sider, Content } = Layout;
 
@@ -136,6 +136,18 @@ const KodYonetimi = () => {
     setIsOpen(true);
   };
 
+  const deleteCodeItem = () => {
+    if (selectedCodeText) {
+      DeleteCodeService(selectedCodeText.siraNo).then((res) => {
+        if (res.data.statusCode === 202) {
+          setStatus(true);
+          setSelectedCodeText(null);
+        }
+      });
+      setStatus(false);
+    }
+  };
+
   return (
     <>
       <div className="content">
@@ -177,9 +189,14 @@ const KodYonetimi = () => {
                 <Button className="btn primary-btn" onClick={openAddModal} style={{ marginRight: "8px" }}>
                   {t("ekle")}
                 </Button>
-                <Button className="btn primary-btn" onClick={() => setIsUpdateOpen(true)} style={{ marginRight: "8px" }}>
+                <Button className="btn primary-btn" onClick={() => setIsUpdateOpen(true)} style={{ marginRight: "8px" }} disabled={!selectedCodeText}>
                   {t("duzenle")}
                 </Button>
+                <Popconfirm title={t("silmek istediğinize emin misiniz?")} onConfirm={deleteCodeItem} onCancel={() => {}} okText={t("evet")} cancelText={t("hayır")}>
+                  <Button className="btn primary-btn" style={{ marginRight: "8px" }} disabled={!selectedCodeText}>
+                    {t("sil")}
+                  </Button>
+                </Popconfirm>
                 {/* <Button className='btn primary-btn' onClick={handleModelDelete}>{t("sil")}</Button> */}
               </div>
             </Content>

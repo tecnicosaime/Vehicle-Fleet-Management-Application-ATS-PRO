@@ -150,7 +150,7 @@ const Vehicles = () => {
 
         return (
           <Tooltip title={`Gerçekleşen: ${gerceklesen}`}>
-            <span>
+            <span style={{ display: "flex", justifyContent: "flex-end" }}>
               {gerceklesen}
               {icon}
             </span>

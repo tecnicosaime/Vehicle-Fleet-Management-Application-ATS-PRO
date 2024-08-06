@@ -24,6 +24,10 @@ export const GetCodeTextByIdService = async (id) => {
   return await http.get(`/Code/GetCodeTextById?codeNumber=${id}`);
 };
 
+export const DeleteCodeService = async (id) => {
+  return await http.get(`/Code/DeleteCodeItem?id=${id}`);
+};
+
 export const AddCodeService = async (data) => {
   return await http.post(`/Code/AddCode`, data);
 };

@@ -1,270 +1,220 @@
-import { useContext, useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import PropTypes from "prop-types";
-import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Layout, Menu, List, Button, Modal, Input, Popconfirm } from "antd";
+import { HomeOutlined } from "@ant-design/icons";
 import { t } from "i18next";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, message, Modal, Tabs } from "antd";
-import { PlakaContext } from "../../../../../../../context/plakaSlice";
-import { AddFuelService, GetFuelCardContentByIdService } from "../../../../../../../api/services/vehicles/operations_services";
-import GeneralInfo from "./GeneralInfo";
-import PersonalFields from "../../../../../../components/form/personal-fields/PersonalFields";
+// import AddModal from './marka-modals/AddModal';
+// import UpdateModalModal from './marka-modals/UpdateModal';
+// import AddModelModal from './model-modals/AddModelModal';
+// import UpdateModelModal from './model-modals/UpdateModelModal';
+import BreadcrumbComp from "../../components/breadcrumb/Breadcrumb";
+import { AddCodeService, GetCodeGroupsService, GetCodeTextByIdService, UpdateCodeService, DeleteCodeService } from "../../../api/services/settings/services";
 
-const AddModal = ({ setStatus }) => {
-  const { data, plaka, setData, setHistory } = useContext(PlakaContext);
+const { Sider, Content } = Layout;
+
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("kodYonetimi") }];
+
+const codeTitle = {
+  background: "#fff",
+  textAlign: "center",
+  padding: "10px",
+  fontWeight: "600",
+  fontSize: "24px",
+  color: "#f6970e",
+};
+
+const KodYonetimi = () => {
+  // code
+  const [selectedCode, setSelectedCode] = useState(null);
+  const [codeList, setCodeList] = useState([]);
+  const [searchCode, setSearchCode] = useState("");
+  const [code, setCode] = useState([]);
+
+  // codetext
+  const [codeTextList, setCodeTextList] = useState([]);
+  const [searchCodeText, setSearchCodeText] = useState("");
+  const [selectedCodeText, setSelectedCodeText] = useState(null);
+  const [status, setStatus] = useState(false);
+  const [codeTextValue, setCodeTextValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [isValid, setIsValid] = useState(false);
-  const [response, setResponse] = useState("normal");
-  const [activeKey, setActiveKey] = useState("1");
-  const [loading, setLoading] = useState(false);
-
-  const [fields, setFields] = useState([
-    // fields definition...
-  ]);
-
-  const defaultValues = {
-    sonAlinanKm: null,
-    plaka: "",
-    yakitTipId: null,
-    yakitTanki: "",
-    surucuId: null,
-    surucu: "",
-    litreFiyat: null,
-    yakitHacmi: null,
-    tarih: dayjs(new Date()),
-    saat: dayjs(new Date()),
-    alinanKm: null,
-    farkKm: null,
-    miktar: null,
-    fullDepo: false,
-    tutar: null,
-    tuketim: null,
-    engelle: false,
-  };
-
-  const methods = useForm({
-    defaultValues: defaultValues,
-  });
-
-  const { handleSubmit, reset, setValue, watch } = methods;
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   useEffect(() => {
-    setValue("surucuId", data.surucuId);
-    setValue("surucu", data.surucuAdi);
-    setValue("tarih", dayjs(new Date()));
-    setValue("saat", dayjs(new Date()));
-    setValue("sonAlinanKm", data.sonAlinanKm);
-    setValue("litreFiyat", data.litreFiyat);
-    setValue("yakitHacmi", data.yakitHacmi);
-    setValue("yakitTip", data.yakitTip);
-    setValue("yakitTipId", data.yakitTipId);
-    setValue("yakitTanki", data.yakitTanki);
-    setValue("birim", data.birim);
-    setValue("depoYakitMiktar", data.depoYakitMiktar);
-    setValue("guncelKmLog", data.guncelKmLog);
+    GetCodeGroupsService().then((res) => setCodeList(res.data));
+  }, [status]);
 
-    if (plaka.length === 1) {
-      setValue("plaka", plaka[0].id);
+  useEffect(() => {
+    if (selectedCode) {
+      GetCodeTextByIdService(selectedCode).then((res) => setCodeTextList(res.data));
     }
+  }, [selectedCode, status]);
 
-    if (watch("farkKm") < 0 && !watch("alinanKm")) setValue("farkKm", null);
-  }, [data, plaka, setValue, watch]);
-
-  const onSubmit = handleSubmit((values) => {
-    const kmLog = {
-      kmAracId: data.aracId,
-      plaka: data.plaka,
-      tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
-      saat: dayjs(values.saat).format("HH:mm:ss"),
-      eskiKm: data.sonAlinanKm,
-      yeniKm: values.alinanKm,
-      kaynak: "YAKIT",
-      dorse: true,
-      lokasyon: data.lokasyon,
-      lokasyonId: data.lokasyonId,
-      aciklama: "",
-    };
-
-    const body = {
-      aracId: data.aracId,
-      plaka: data.plaka,
-      tarih: dayjs(values.tarih).format("YYYY-MM-DD") || null,
-      saat: dayjs(values.saat).format("HH:mm:ss") || null,
-      surucuId: values.surucuId,
-      yakitTipId: values.yakitTipId,
-      sonAlinanKm: values.sonAlinanKm,
-      farkKm: values.farkKm,
-      tuketim: values.tuketim,
-      alinanKm: values.alinanKm,
-      miktar: values.miktar ? values.miktar : 0.0,
-      fullDepo: values.fullDepo,
-      stokKullanimi: values.stokKullanimi,
-      litreFiyat: values.litreFiyat,
-      tutar: values.tutar ? values.tutar : 0,
-      birim: data.birim,
-      ozelKullanim: false,
-      kmLog: kmLog,
-      depoYakitMiktar: values.depoYakitMiktar,
-      yakitTanki: values.yakitTanki,
-      lokasyonId: data.lokasyonId, // Add lokasyonId here
-      ozelAlan1: values.ozelAlan1 || "",
-      ozelAlan2: values.ozelAlan2 || "",
-      ozelAlan3: values.ozelAlan3 || "",
-      ozelAlan4: values.ozelAlan4 || "",
-      ozelAlan5: values.ozelAlan5 || "",
-      ozelAlan6: values.ozelAlan6 || "",
-      ozelAlan7: values.ozelAlan7 || "",
-      ozelAlan8: values.ozelAlan8 || "",
-      ozelAlanKodId9: values.ozelAlanKodId9 || -1,
-      ozelAlanKodId10: values.ozelAlanKodId10 || -1,
-      ozelAlan11: values.ozelAlan11 || 0,
-      ozelAlan12: values.ozelAlan12 || 0,
-      hasToInsertKmLog: values.engelle ? values.engelle : false,
-    };
-
-    setLoading(true);
-    AddFuelService(body)
-      .then((res) => {
-        if (res?.data.statusCode === 200) {
-          setStatus(true);
-          setResponse("normal");
-          setIsOpen(false);
-          if (plaka.length === 1) {
-            reset({
-              plaka: data.plaka,
-              sonAlinanKm: data.sonAlinanKm,
-              litreFiyat: data.litreFiyat,
-              tarih: dayjs(new Date()),
-              saat: dayjs(new Date()),
-              alinanKm: null,
-              farkKm: null,
-              miktar: null,
-              fullDepo: false,
-              tutar: null,
-              tuketim: null,
-              engelle: false,
-              surucuId: data.surucuId,
-              yakitTipId: data.yakitTipId,
-              yakitTip: data.yakitTip,
-              surucu: data.surucuAdi,
-              stokKullanimi: data.stokKullanimi,
-              yakitHacmi: data.yakitHacmi,
-            });
-          } else {
-            reset();
-          }
-          setHistory([]);
-          setLoading(false);
-          setActiveKey("1");
-          if (plaka.length === 1) {
-            GetFuelCardContentByIdService(plaka[0].id).then((res) => {
-              setData(res.data);
-            });
-          }
-        } else {
-          message.error("Bir sorun oluştu! Tekrar deneyiniz.");
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        message.error("Bir sorun oluştu! Tekrar deneyiniz.");
-        setLoading(false);
-      });
-    setStatus(false);
-  });
-
-  const personalProps = {
-    form: "YAKIT",
-    fields,
-    setFields,
+  const handleCodeClick = (id) => {
+    setSelectedCode(id);
+    const item = codeList.find((item) => item.siraNo === +id);
+    setCode(item.codeType);
+    setSelectedCodeText(null);
   };
 
-  const items = [
-    {
-      key: "1",
-      label: t("genelBilgiler"),
-      children: <GeneralInfo setIsValid={setIsValid} response={response} setResponse={setResponse} />,
-    },
-    {
-      key: "2",
-      label: t("ozelAlanlar"),
-      children: <PersonalFields personalProps={personalProps} />,
-    },
-  ];
+  const filteredCodeList = codeList.filter((item) => item.codeType.toLowerCase().includes(searchCode.toLowerCase()));
 
-  const resetForm = (plaka, data, reset) => {
-    if (plaka.length === 1) {
-      reset({
-        plaka: data.plaka,
-        sonAlinanKm: data.sonAlinanKm,
-        litreFiyat: data.litreFiyat,
-        tarih: dayjs(new Date()),
-        saat: dayjs(new Date()),
-        alinanKm: null,
-        farkKm: null,
-        miktar: null,
-        fullDepo: false,
-        tutar: null,
-        tuketim: null,
-        engelle: false,
-        yakitHacmi: data.yakitHacmi,
-        surucuId: data.surucuId,
-        yakitTipId: data.yakitTipId,
-        yakitTip: data.yakitTip,
-        surucu: data.surucuAdi,
-        stokKullanimi: data.stokKullanimi,
-      });
-    } else {
-      reset();
-    }
+  const filteredCodeTextList = codeTextList.filter((item) => item.codeText.toLowerCase().includes(searchCodeText.toLowerCase()));
+
+  const updatedList = filteredCodeList.map((item) => {
+    return {
+      key: item.codeId,
+      label: item.codeType,
+    };
+  });
+
+  const onSubmit = () => {
+    const body = {
+      codeId: selectedCode,
+      codeText: codeTextValue,
+    };
+
+    AddCodeService(body).then((res) => {
+      if (res.data.statusCode === 201) {
+        setCode("");
+        setStatus(true);
+        setIsOpen(false);
+      }
+    });
+    setStatus(false);
   };
 
   const footer = [
-    loading ? (
-      <Button className="btn btn-min primary-btn" key="loading">
-        <LoadingOutlined />
-      </Button>
-    ) : (
-      <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit} disabled={!isValid}>
-        {t("kaydet")}
-      </Button>
-    ),
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => {
-        setIsOpen(false);
-        resetForm(plaka, data, reset);
-        setResponse("normal");
-        setHistory([]);
-        setActiveKey("1");
-      }}
-    >
+    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
+      {t("kaydet")}
+    </Button>,
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsOpen(false)}>
       {t("kapat")}
     </Button>,
   ];
 
+  const update = () => {
+    const body = {
+      siraNo: selectedCodeText.siraNo,
+      codeText: codeTextValue,
+    };
+
+    UpdateCodeService(body).then((res) => {
+      if (res.data.statusCode === 202) {
+        setCodeTextValue("");
+        setIsUpdateOpen(false);
+        setStatus(true);
+      }
+    });
+    setStatus(false);
+  };
+
+  const updateFooter = [
+    <Button key="submit" className="btn btn-min primary-btn" onClick={update}>
+      {t("kaydet")}
+    </Button>,
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsUpdateOpen(false)}>
+      {t("kapat")}
+    </Button>,
+  ];
+
+  const resetModalValues = () => {
+    setCodeTextValue("");
+    setSelectedCodeText(null);
+  };
+
+  const onCloseAddModal = () => {
+    setIsOpen(false);
+    resetModalValues();
+  };
+
+  const onCloseUpdateModal = () => {
+    setIsUpdateOpen(false);
+    resetModalValues();
+  };
+
+  const openAddModal = () => {
+    resetModalValues();
+    setIsOpen(true);
+  };
+
+  const deleteCodeItem = () => {
+    if (selectedCodeText) {
+      DeleteCodeService(selectedCodeText.siraNo).then((res) => {
+        if (res.data.statusCode === 200) {
+          setStatus(true);
+          setSelectedCodeText(null);
+        }
+      });
+      setStatus(false);
+    }
+  };
+
   return (
     <>
-      <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
-        <PlusOutlined /> {t("ekle")}
-      </Button>
-      <Modal title={t("yeniYakitGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
-        <p className="count">
-          {t("guncelKm")}: [ {watch("guncelKmLog")} km ]
-        </p>
-        <FormProvider {...methods}>
-          <form>
-            <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
-          </form>
-        </FormProvider>
-      </Modal>
+      <div className="content">
+        <BreadcrumbComp items={breadcrumb} />
+      </div>
+      <div className="sistem">
+        <Layout style={{ height: "90vh" }}>
+          <Sider width={200} style={{ padding: "10px" }}>
+            <div style={codeTitle}>{t("kodGruplari")}</div>
+            <Input value={searchCode} onChange={(e) => setSearchCode(e.target.value)} placeholder={t("arama")} />
+            <Menu mode="inline" style={{ height: "90%", borderRight: 0, overflow: "auto", marginTop: 10 }} onClick={({ key }) => handleCodeClick(key)} items={updatedList} />
+          </Sider>
+          <Layout style={{ padding: "0 24px 24px" }}>
+            <Content style={{ padding: 24, margin: 0, minHeight: 280, overflow: "auto" }}>
+              {selectedCode && (
+                <>
+                  {/* <div className='title'>{code}</div> */}
+                  <div className="m-20">
+                    <Input value={searchCodeText} onChange={(e) => setSearchCodeText(e.target.value)} placeholder={t("arama")} />
+                  </div>
+                  <List
+                    dataSource={filteredCodeTextList}
+                    renderItem={(item) => (
+                      <List.Item
+                        onClick={() => {
+                          setSelectedCodeText(item);
+                          setCodeTextValue(item.codeText);
+                        }}
+                        style={{ backgroundColor: selectedCodeText && selectedCodeText.siraNo === item.siraNo ? "#e6f7ff" : "#fff" }}
+                      >
+                        {item.codeText}
+                      </List.Item>
+                    )}
+                    style={{ backgroundColor: "#fff", padding: "10px", borderRadius: "5px" }}
+                  />
+                </>
+              )}
+              <div className="model-buttons">
+                <Button className="btn primary-btn" onClick={openAddModal} style={{ marginRight: "8px" }}>
+                  {t("ekle")}
+                </Button>
+                <Button className="btn primary-btn" onClick={() => setIsUpdateOpen(true)} style={{ marginRight: "8px" }} disabled={!selectedCodeText}>
+                  {t("duzenle")}
+                </Button>
+                <Popconfirm title={t("silmek istediğinize emin misiniz?")} onConfirm={deleteCodeItem} onCancel={() => {}} okText={t("evet")} cancelText={t("hayır")}>
+                  <Button className="btn primary-btn" style={{ marginRight: "8px" }} disabled={!selectedCodeText}>
+                    {t("sil")}
+                  </Button>
+                </Popconfirm>
+                {/* <Button className='btn primary-btn' onClick={handleModelDelete}>{t("sil")}</Button> */}
+              </div>
+            </Content>
+          </Layout>
+        </Layout>
+
+        <Modal title={t("yeniAracTipiGirisi")} open={isOpen} onCancel={onCloseAddModal} maskClosable={false} footer={footer} width={500}>
+          <label>Araç tipi tanımını giriniz</label>
+          <Input value={codeTextValue} onChange={(e) => setCodeTextValue(e.target.value)} />
+        </Modal>
+
+        <Modal title={t("KodGirisi")} open={isUpdateOpen} onCancel={onCloseUpdateModal} maskClosable={false} footer={updateFooter} width={500}>
+          <label>[{codeTextValue}] kodu için değiştirilecek değeri giriniz</label>
+          <Input value={codeTextValue} onChange={(e) => setCodeTextValue(e.target.value)} />
+        </Modal>
+      </div>
     </>
   );
 };
 
-AddModal.propTypes = {
-  setStatus: PropTypes.func.isRequired,
-};
-
-export default AddModal;
+export default KodYonetimi;
