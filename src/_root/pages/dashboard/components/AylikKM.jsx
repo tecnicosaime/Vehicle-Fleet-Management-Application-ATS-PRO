@@ -62,7 +62,7 @@ function AylikKM(props = {}) {
       // Transform the data
       const transformedData = Object.keys(apiResponse).map((month) => ({
         AY: monthNames[parseInt(month)],
-        AYLIK_BAKIM_ISEMRI_MALIYET: Math.round(apiResponse[month]), // Noktadan sonrası yuvarlanıyor
+        AYLIK_BAKIM_ISEMRI_MALIYET: parseFloat(apiResponse[month].toFixed(2)), // Noktadan sonrası 2 rakam kalacak şekilde yuvarlanıyor
       }));
 
       setData(transformedData);
@@ -101,7 +101,7 @@ function AylikKM(props = {}) {
 
   const CustomLegend = ({ payload }) => {
     const customNames = {
-      AYLIK_BAKIM_ISEMRI_MALIYET: "Aylık KM",
+      AYLIK_BAKIM_ISEMRI_MALIYET: "Kilometre Başına Maliyet",
     };
 
     const handleToggleAll = () => {
@@ -172,7 +172,7 @@ function AylikKM(props = {}) {
         >
           <p className="label">{`Ay: ${label}`}</p>
           {payload.map((entry, index) => (
-            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value}  km`}</p>
+            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value}  ₺`}</p>
           ))}
         </div>
       );
@@ -281,7 +281,7 @@ function AylikKM(props = {}) {
             maxWidth: "calc(100% - 50px)",
           }}
         >
-          Aylık KM
+          Kilometre Başına Maliyet
           {baslamaTarihi && ` (${baslamaTarihi})`}
         </Text>
         <Popover placement="bottom" content={content} trigger="click">
@@ -328,10 +328,10 @@ function AylikKM(props = {}) {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="AY" name="Ay" />
-                <YAxis unit=" km" width={80} />
+                <YAxis unit=" ₺" width={80} />
                 <Tooltip content={<CustomTooltip />} />
                 {/*<Legend content={<CustomLegend />} />*/}
-                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#173B45" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Aylık KM" unit=" km">
+                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#173B45" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Kilometre Başına Maliyet" unit=" ₺">
                   <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
                 </Bar>
               </BarChart>
@@ -381,7 +381,7 @@ function AylikKM(props = {}) {
                 maxWidth: "calc(100% - 50px)",
               }}
             >
-              Aylık KM
+              Kilometre Başına Maliyet
               {baslamaTarihi && ` (${baslamaTarihi})`}
             </Text>
             <PrinterOutlined style={{ cursor: "pointer", fontSize: "20px" }} onClick={downloadPDF} />
@@ -426,10 +426,10 @@ function AylikKM(props = {}) {
                 //   dy: 10, // Etiketleri aşağı kaydırın
                 // }}
               />
-              <YAxis unit=" km" width={80} />
+              <YAxis unit=" ₺" width={80} />
               <Tooltip content={<CustomTooltip />} />
               <Legend content={<CustomLegend />} />
-              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#173B45" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Aylık KM" unit=" km">
+              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#173B45" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Kilometre Başına Maliyet" unit=" ₺">
                 <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
               </Bar>
             </BarChart>
