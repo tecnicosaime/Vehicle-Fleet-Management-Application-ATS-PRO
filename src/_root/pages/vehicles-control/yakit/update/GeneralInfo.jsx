@@ -21,6 +21,7 @@ import Firma from "../../../../components/form/selects/Firma";
 import CodeControl from "../../../../components/form/selects/CodeControl";
 import Textarea from "../../../../components/form/inputs/Textarea";
 import TimeInput from "../../../../components/form/date/TimeInput";
+import { ValidateFuelInfoUpdateService } from "../../../../../api/services/vehicles/operations_services.jsx";
 
 dayjs.locale("tr");
 
@@ -241,7 +242,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       },
     };
 
-    ValidateFuelInfoInsertionService(body).then((res) => {
+    ValidateFuelInfoUpdateService(body).then((res) => {
       if (res?.data.statusCode === 400) {
         setResponse("error");
         if (res?.data.message === " Invalid Km range for both KmLog and FuelKm !") {
@@ -284,7 +285,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   const updateDepoHacmi = () => {
     const body = {
       dtyAracId: watch("aracId"),
-      yakitHacmi: watch("yakitHacmi"),
+      tyakitHacmi: watch("yakitHacmi"),
     };
 
     UpdateVehicleDetailsInfoService(1, body).then((res) => {

@@ -25,6 +25,10 @@ export const ValidateFuelInfoInsertionService = async (data) => {
   return await http.post(`/Fuel/ValidateFuelInfoInsertion`, data);
 };
 
+export const ValidateFuelInfoUpdateService = async (data) => {
+  return await http.post(`/Fuel/ValidateFuelInfoUpdate`, data);
+};
+
 export const GetKmRangeBeforeDateService = async (data) => {
   return await http.post(`/Fuel/GetKmRangeBeforeDate`, data);
 };

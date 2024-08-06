@@ -379,7 +379,7 @@
   "yakitTuketimKontrol": "Yakıt Tüketim Kontrol",
   "minYakitTuketimi": "Min. Yakıt Tüketimi",
   "maxYakitTuketimi": "Maks. Yakıt Tüketimi",
-  "gercekYakitTuketimi": "Gerçek Yakıt Tüketimi",
+  "gercekYakitTuketimi": "Gerçekleşen Yakıt Tüketimi",
   "tts": "TTS",
   "proje": "Proje",
   "durum": "Durum",
@@ -504,7 +504,7 @@
   "malzemeTalepleri": "Malzeme Talepleri",
   "teklifler": "Teklifler",
   "siparisler": "Siparişler",
-  "": "",
+
   "": "",
   "": "",
   "": "",
