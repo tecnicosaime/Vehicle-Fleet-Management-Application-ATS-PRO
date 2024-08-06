@@ -126,7 +126,7 @@ const Yakit = () => {
 
         return (
           <Tooltip title={`Gerçekleşen: ${tuketim}`}>
-            <span>
+            <span style={{ display: "flex", justifyContent: "flex-end" }}>
               {tuketim}
               {icon}
             </span>
