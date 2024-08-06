@@ -297,7 +297,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   const updateDepoHacmi = () => {
     const body = {
       dtyAracId: data.aracId,
-      yakitHacmi: watch("yakitHacmi"),
+      tyakitHacmi: watch("yakitHacmi"),
     };
 
     UpdateVehicleDetailsInfoService(1, body).then((res) => {

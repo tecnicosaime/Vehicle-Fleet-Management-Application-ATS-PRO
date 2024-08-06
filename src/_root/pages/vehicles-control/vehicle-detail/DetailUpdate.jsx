@@ -247,6 +247,11 @@ const DetailUpdate = () => {
       setValue("ozelAlan10", res?.data.ozelAlan10);
       setValue("ozelAlan11", res?.data.ozelAlan11);
       setValue("ozelAlan12", res?.data.ozelAlan12);
+      if (res?.data.aktif) {
+        setValue("aracDurum", 1);
+      } else {
+        setValue("aracDurum", 2);
+      }
 
       setUrls([...urls, res.data.defPhotoInfo]);
     });
@@ -305,7 +310,7 @@ const DetailUpdate = () => {
       yakitTipId: values.yakitTipId || 0,
       tts: values.tts,
       durumKodId: values.durumKodId || 0,
-      aktif: true,
+      aktif: values.aracDurum === 1 ? true : false,
       havuzGrup: values.havuzGrup,
       onGorulenMin: values.onGorulenMin,
       onGorulen: values.onGorulen,

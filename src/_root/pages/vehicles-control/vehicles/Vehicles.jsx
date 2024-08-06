@@ -2,8 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { t } from "i18next";
 import axios from "axios";
-import { Table, Popover, Button, Input, Spin, Typography } from "antd";
-import { MenuOutlined, HomeOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Table, Popover, Button, Input, Spin, Typography, Tooltip } from "antd";
+import { MenuOutlined, HomeOutlined, LoadingOutlined, ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetVehiclesListService } from "../../../../api/services/vehicles/vehicles/services";
 import { DemoService } from "../../../../api/service";
@@ -90,12 +90,13 @@ const Vehicles = () => {
       width: 160,
     },
     {
-      title: t("aracGrup"),
-      dataIndex: "grup",
-      key: 5,
+      title: t("aracLokasyon"),
+      dataIndex: "lokasyon",
+      key: 10,
       ellipsis: true,
       width: 160,
     },
+
     {
       title: t("guncelKm"),
       dataIndex: "guncelKm",
@@ -103,13 +104,7 @@ const Vehicles = () => {
       ellipsis: true,
       width: 160,
     },
-    {
-      title: t("renk"),
-      dataIndex: "renk",
-      key: 7,
-      ellipsis: true,
-      width: 160,
-    },
+
     {
       title: t("yil"),
       dataIndex: "yil",
@@ -122,12 +117,51 @@ const Vehicles = () => {
       dataIndex: "yakitTip",
       key: 9,
       ellipsis: true,
-      width: 160,
+      width: 100,
     },
     {
-      title: t("aracLokasyon"),
-      dataIndex: "lokasyon",
-      key: 10,
+      title: t("yakitTuketimi"),
+      dataIndex: "ortalamaTuketim",
+      key: "ortalamaTuketim",
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        const { onGorulen, onGorulenMin, gerceklesen } = record;
+
+        // Eğer gerceklesen değeri 0 veya undefined ise hiçbir şey gösterme
+        if (gerceklesen === 0 || gerceklesen === undefined) {
+          return null;
+        }
+
+        let icon = null;
+        if (onGorulenMin !== null && onGorulenMin !== 0) {
+          if (gerceklesen < onGorulenMin) {
+            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
+          } else if (gerceklesen > onGorulen) {
+            icon = <ArrowUpOutlined style={{ color: "red", marginLeft: 4 }} />;
+          } else if (gerceklesen >= onGorulenMin && gerceklesen <= onGorulen) {
+            icon = <span style={{ marginLeft: 4 }}>~</span>;
+          }
+        } else if (onGorulen !== null && onGorulen !== 0) {
+          if (gerceklesen < onGorulen) {
+            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
+          }
+        }
+
+        return (
+          <Tooltip title={`Gerçekleşen: ${gerceklesen}`}>
+            <span>
+              {gerceklesen}
+              {icon}
+            </span>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: t("aracGrup"),
+      dataIndex: "grup",
+      key: 5,
       ellipsis: true,
       width: 160,
     },

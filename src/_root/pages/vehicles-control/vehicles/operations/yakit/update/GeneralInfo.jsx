@@ -6,7 +6,12 @@ import dayjs from "dayjs";
 import { Button, Checkbox, Divider, InputNumber, message, Modal } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../../context/plakaSlice";
-import { GetKmRangeBeforeDateService, GetMaterialPriceService, ValidateFuelInfoInsertionService } from "../../../../../../../api/services/vehicles/operations_services";
+import {
+  GetKmRangeBeforeDateService,
+  GetMaterialPriceService,
+  ValidateFuelInfoInsertionService,
+  ValidateFuelInfoUpdateService,
+} from "../../../../../../../api/services/vehicles/operations_services";
 import { UpdateVehicleDetailsInfoService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import HiddenInput from "../../../../../../components/form/inputs/HiddenInput";
 import Driver from "../../../../../../components/form/selects/Driver";
@@ -241,7 +246,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       },
     };
 
-    ValidateFuelInfoInsertionService(body).then((res) => {
+    ValidateFuelInfoUpdateService(body).then((res) => {
       if (res?.data.statusCode === 400) {
         setResponse("error");
         if (res?.data.message === " Invalid Km range for both KmLog and FuelKm !") {

@@ -9,11 +9,11 @@ import TextInput from "../../../../components/form/inputs/TextInput";
 import CheckboxInput from "../../../../components/form/checkbox/CheckboxInput";
 import DateInput from "../../../../components/form/date/DateInput";
 import VehicleList from "./VehiclesList";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import Textarea from "../../../../components/form/inputs/Textarea";
 
 const GeneralInfo = () => {
-  const { setValue, watch } = useFormContext();
+  const { setValue, watch, control } = useFormContext();
   const [open, setOpen] = useState(false);
   const [vehicle, setVehicle] = useState(false);
   const [warning, setWarning] = useState({
@@ -219,7 +219,7 @@ const GeneralInfo = () => {
             </div>
           </div>
           <div className="border p-10 mt-10">
-            <h3 className="sub-title">{t("yakitTuketimKontrol")}</h3>
+            <h3 className="sub-title">{t("yakitTuketimKontrol")} (lt/100 km)</h3>
             <div className="grid gap-2">
               <div className="col-span-6 mt-10">
                 <div className="flex flex-col gap-1">
@@ -248,11 +248,17 @@ const GeneralInfo = () => {
             </div>
           </div>
           <div className="border p-10 mt-10">
-            <Radio.Group style={{ width: 16 }} className="flex">
-              <Radio value={1}>{t("aktif")}</Radio>
-              <Radio value={2}>{t("pasif")}</Radio>
-              <Radio value={3}>{t("arsiv")}</Radio>
-            </Radio.Group>
+            <Controller
+              name="aracDurum"
+              control={control}
+              render={({ field }) => (
+                <Radio.Group {...field} style={{ width: 16 }} className="flex">
+                  <Radio value={1}>{t("aktif")}</Radio>
+                  <Radio value={2}>{t("pasif")}</Radio>
+                  <Radio value={3}>{t("arsiv")}</Radio>
+                </Radio.Group>
+              )}
+            />
           </div>
         </div>
         <div className="col-span-12">
