@@ -7,27 +7,26 @@
 @import url(./components/form.css);
 @import url(./components/table.css);
 
-
 @import url(./layout/login.css);
 @import url(./layout/root.css);
 
 @import url(./components/antd.css);
 
 @font-face {
-  font-family: Roboto;
-  src: url("/fonts/Roboto/Roboto-Regular.ttf");
+    font-family: Roboto;
+    src: url("/fonts/Roboto/Roboto-Regular.ttf");
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  box-sizing: border-box;
-  text-decoration: none;
-  font-family: Roboto;
-  font-size: 14px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: Roboto;
+    font-size: 14px;
 }
 
 img,
@@ -36,20 +35,20 @@ input,
 label,
 select,
 textarea {
-  display: inline-block;
+    display: inline-block;
 }
 
 button,
 input,
 a {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 textarea {
-  resize: unset !important;
-  height: 80px !important;
+    resize: unset !important;
+    height: 80px !important;
 }
 
 ul {
-  list-style-type: none;
+    list-style-type: none;
 }
