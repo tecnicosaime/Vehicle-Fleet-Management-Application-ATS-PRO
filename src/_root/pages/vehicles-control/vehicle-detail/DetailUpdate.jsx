@@ -252,7 +252,7 @@ const DetailUpdate = () => {
       } else {
         setValue("aracDurum", 2);
       }
-
+      setValue("uyari", res?.data.yakitUyari);
       setUrls([...urls, res.data.defPhotoInfo]);
     });
 
@@ -310,6 +310,7 @@ const DetailUpdate = () => {
       yakitTipId: values.yakitTipId || 0,
       tts: values.tts,
       durumKodId: values.durumKodId || 0,
+      yakitUyari: values.uyari,
       aktif: values.aracDurum === 1 ? true : false,
       havuzGrup: values.havuzGrup,
       onGorulenMin: values.onGorulenMin,

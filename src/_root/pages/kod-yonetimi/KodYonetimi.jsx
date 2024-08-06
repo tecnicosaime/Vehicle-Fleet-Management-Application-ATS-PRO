@@ -116,6 +116,26 @@ const KodYonetimi = () => {
     </Button>,
   ];
 
+  const resetModalValues = () => {
+    setCodeTextValue("");
+    setSelectedCodeText(null);
+  };
+
+  const onCloseAddModal = () => {
+    setIsOpen(false);
+    resetModalValues();
+  };
+
+  const onCloseUpdateModal = () => {
+    setIsUpdateOpen(false);
+    resetModalValues();
+  };
+
+  const openAddModal = () => {
+    resetModalValues();
+    setIsOpen(true);
+  };
+
   return (
     <>
       <div className="content">
@@ -154,7 +174,7 @@ const KodYonetimi = () => {
                 </>
               )}
               <div className="model-buttons">
-                <Button className="btn primary-btn" onClick={() => setIsOpen(true)} style={{ marginRight: "8px" }}>
+                <Button className="btn primary-btn" onClick={openAddModal} style={{ marginRight: "8px" }}>
                   {t("ekle")}
                 </Button>
                 <Button className="btn primary-btn" onClick={() => setIsUpdateOpen(true)} style={{ marginRight: "8px" }}>
@@ -166,12 +186,12 @@ const KodYonetimi = () => {
           </Layout>
         </Layout>
 
-        <Modal title={t("yeniAracTipiGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={500}>
+        <Modal title={t("yeniAracTipiGirisi")} open={isOpen} onCancel={onCloseAddModal} maskClosable={false} footer={footer} width={500}>
           <label>Araç tipi tanımını giriniz</label>
           <Input value={codeTextValue} onChange={(e) => setCodeTextValue(e.target.value)} />
         </Modal>
 
-        <Modal title={t("KodGirisi")} open={isUpdateOpen} onCancel={() => setIsUpdateOpen(false)} maskClosable={false} footer={updateFooter} width={500}>
+        <Modal title={t("KodGirisi")} open={isUpdateOpen} onCancel={onCloseUpdateModal} maskClosable={false} footer={updateFooter} width={500}>
           <label>[{codeTextValue}] kodu için değiştirilecek değeri giriniz</label>
           <Input value={codeTextValue} onChange={(e) => setCodeTextValue(e.target.value)} />
         </Modal>

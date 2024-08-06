@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import dayjs from "dayjs";
-import { Modal, Button, Table, Checkbox, Popconfirm, Input, Popover, Spin } from "antd";
-import { DeleteOutlined, MenuOutlined, ArrowUpOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Modal, Button, Table, Checkbox, Popconfirm, Input, Popover, Spin, Tooltip } from "antd";
+import { DeleteOutlined, MenuOutlined, ArrowUpOutlined, LoadingOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../../../context/plakaSlice";
 import { DeleteFuelCardService, GetFuelListByVehicleIdService } from "../../../../../../api/services/vehicles/operations_services";
 import DragAndDropContext from "../../../../../components/drag-drop-table/DragAndDropContext";
@@ -73,6 +73,8 @@ const Yakit = ({ visible, onClose, ids }) => {
       title: t("plaka"),
       dataIndex: "plaka",
       key: 1,
+      ellipsis: true,
+      width: 140,
       render: (text, record) => (
         <Button
           onClick={() => {
@@ -89,28 +91,31 @@ const Yakit = ({ visible, onClose, ids }) => {
       title: t("tarih"),
       dataIndex: "tarih",
       key: 2,
+      ellipsis: true,
+      width: 100,
       render: (text) => dayjs(text).format("DD.MM.YYYY"),
     },
     {
       title: t("yakitTip"),
       dataIndex: "yakitTip",
       key: 3,
+      ellipsis: true,
+      width: 100,
     },
     {
       title: t("alinanKm"),
       dataIndex: "sonAlinanKm",
       key: 4,
+      ellipsis: true,
+      width: 100,
     },
-    {
-      title: t("kullanim"),
-      dataIndex: "ozelKullanim",
-      key: 5,
-      render: (text, record) => <Checkbox checked={record.ozelKullanim} readOnly />,
-    },
+
     {
       title: t("miktar"),
       dataIndex: "miktar",
       key: 6,
+      ellipsis: true,
+      width: 100,
       render: (text, record) => (
         <div className="">
           <span>{text} </span>
@@ -122,53 +127,98 @@ const Yakit = ({ visible, onClose, ids }) => {
       title: t("tutar"),
       dataIndex: "tutar",
       key: 7,
+      ellipsis: true,
+      width: 100,
     },
     {
-      title: "Ortalama Tüketim",
-      dataIndex: "tuketim",
-      key: 8,
-      render: (text) => (
-        <p>
-          {text} <ArrowUpOutlined style={{ color: "red" }} />
-        </p>
-      ),
+      title: t("ortalamaTuketim"),
+      dataIndex: "ortalamaTuketim",
+      key: "ortalamaTuketim",
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        const { aracOnGorulenYakit, aracOnGorulenMinYakit, tuketim } = record;
+
+        // Eğer tuketim değeri 0 veya undefined ise hiçbir şey gösterme
+        if (tuketim === 0 || tuketim === undefined) {
+          return null;
+        }
+
+        let icon = null;
+        if (aracOnGorulenMinYakit !== null && aracOnGorulenMinYakit !== 0) {
+          if (tuketim < aracOnGorulenMinYakit) {
+            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
+          } else if (tuketim > aracOnGorulenYakit) {
+            icon = <ArrowUpOutlined style={{ color: "red", marginLeft: 4 }} />;
+          } else if (tuketim >= aracOnGorulenMinYakit && tuketim <= aracOnGorulenYakit) {
+            icon = <span style={{ marginLeft: 4 }}>~</span>;
+          }
+        } else if (aracOnGorulenYakit !== null && aracOnGorulenYakit !== 0) {
+          if (tuketim < aracOnGorulenYakit) {
+            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
+          }
+        }
+
+        return (
+          <Tooltip title={`Gerçekleşen: ${tuketim}`}>
+            <span>
+              {tuketim}
+              {icon}
+            </span>
+          </Tooltip>
+        );
+      },
     },
     {
       title: `${t("kmBasinaMaliyet")} --?`,
       dataIndex: "",
       key: 9,
+      ellipsis: true,
+      width: 100,
     },
     {
       title: "Full Depo",
       dataIndex: "fullDepo",
       key: 10,
+      ellipsis: true,
+      width: 100,
       render: (text, record) => <Checkbox checked={record.fullDepo} readOnly />,
     },
     {
       title: "Stoktan Kullanım",
       dataIndex: "stokKullanimi",
       key: 11,
+      ellipsis: true,
+      width: 100,
       render: (text, record) => <Checkbox checked={record.stokKullanimi} readOnly />,
     },
     {
       title: t("surucu"),
       dataIndex: "surucuAdi",
       key: 12,
+      ellipsis: true,
+      width: 100,
     },
     {
       title: t("lokasyon"),
       dataIndex: "lokasyon",
       key: 13,
+      ellipsis: true,
+      width: 100,
     },
     {
       title: "İstasyon",
       dataIndex: "istasyon",
       key: 14,
+      ellipsis: true,
+      width: 100,
     },
     {
       title: "Açıklama",
       dataIndex: "aciklama",
       key: 15,
+      ellipsis: true,
+      width: 100,
     },
     {
       title: "",
