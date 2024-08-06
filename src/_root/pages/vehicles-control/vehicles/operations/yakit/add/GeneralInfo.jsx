@@ -36,7 +36,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   const [logError, setLogError] = useState(false);
 
   useEffect(() => {
-    if (data.length === 0) return;
+    if (data.length === 0)
     else {
       setFuelTankId(data.yakitTipId);
       fetchData();
