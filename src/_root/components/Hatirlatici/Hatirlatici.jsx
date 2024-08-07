@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Popover, Typography, Spin, Badge, Modal } from "antd";
+import { Button, Popover, Typography, Spin, Badge, Modal, Divider } from "antd";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import styled from "styled-components";
 import Sigorta from "./components/Sigorta";
@@ -30,7 +30,7 @@ const Indicator = styled.div`
   border-radius: 50%;
 `;
 
-const Hatirlatici = ({ data, getHatirlatici, loading }) => {
+const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) => {
   const [open, setOpen] = useState(false);
   const [requested, setRequested] = useState(false); // Bayrak
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,9 +42,10 @@ const Hatirlatici = ({ data, getHatirlatici, loading }) => {
   useEffect(() => {
     if (open && !requested) {
       getHatirlatici();
+      getHatirlatici1();
       setRequested(true); // Bayrağı ayarla
     }
-  }, [open, requested, getHatirlatici]);
+  }, [open, requested, getHatirlatici, getHatirlatici1]);
 
   const handleOpenChange = (newOpen) => {
     if (!newOpen) {
@@ -59,7 +60,8 @@ const Hatirlatici = ({ data, getHatirlatici, loading }) => {
     setModalVisible(true);
   };
 
-  const totalReminders = data ? Object.values(data).reduce((acc, currentValue) => acc + currentValue, 0) : 0;
+  const totalReminders =
+    (data ? Object.values(data).reduce((acc, currentValue) => acc + currentValue, 0) : 0) + (data1 ? Object.values(data1).reduce((acc, currentValue) => acc + currentValue, 0) : 0);
 
   const content = (
     <ContentWrapper>
@@ -68,6 +70,55 @@ const Hatirlatici = ({ data, getHatirlatici, loading }) => {
       </Text>
       <CustomSpin spinning={loading}>
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <Row onClick={() => handleRowClick("Süresi Yaklaşan", <div>Süresi Yaklaşan İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#008000" }} />
+              <Text>Süresi Yaklaşan</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(0,128,0,0.37)",
+                color: "#008000",
+              }}
+            >
+              {data1?.yaklasanSure}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Kritik Süre", <div>Kritik Süre İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#ffad00" }} />
+              <Text>Kritik Süre</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(255,173,0,0.24)",
+                color: "#e68901",
+              }}
+            >
+              {data1?.kritikSure}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Süresi Geçen", <div>Süresi Geçen İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#ff0000" }} />
+              <Text>Süresi Geçen</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(255,0,0,0.38)",
+                color: "#ff0000",
+              }}
+            >
+              {data1?.gecenSure}
+            </Text>
+          </Row>
+          <Divider />
           <Row onClick={() => handleRowClick("Sigorta", <Sigorta />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "red" }} />
@@ -178,6 +229,70 @@ const Hatirlatici = ({ data, getHatirlatici, loading }) => {
               }}
             >
               {data?.surucuHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Vergi", <div>Vergi İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#921A40" }} />
+              <Text>Vergi</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(146,26,64,0.48)",
+                color: "#921A40",
+              }}
+            >
+              {data?.aracVergiHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Muayene", <div>Muayene İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#987D9A" }} />
+              <Text>Muayene</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(152,125,154,0.43)",
+                color: "#987D9A",
+              }}
+            >
+              {data?.aracMuayeneHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Sözleşme", <div>Sözleşme İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#EF5A6F" }} />
+              <Text>Sözleşme</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(239,90,111,0.44)",
+                color: "#EF5A6F",
+              }}
+            >
+              {data?.aracSozlesmeHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Egzoz", <div>Egzoz İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#134B70" }} />
+              <Text>Egzoz</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(19,75,112,0.47)",
+                color: "#134B70",
+              }}
+            >
+              {data?.aracEgzozHatiraticiSayisi}
             </Text>
           </Row>
         </div>
