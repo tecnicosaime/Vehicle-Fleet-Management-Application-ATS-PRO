@@ -10,6 +10,7 @@ import Component2 from "./components/Component2.jsx";
 import Component1 from "./components/Component1.jsx";
 import Component4 from "./components/Component4.jsx";
 import Component5 from "./components/Component5.jsx";
+import Component6 from "./components/Component6.jsx";
 import LokasyonBazindaIsTalepleri from "./components/LokasyonBazindaIsTalepleri.jsx";
 import IsEmirleriOzetTablosu from "./components/IsEmirleriOzetTablosu.jsx";
 import ArizaliMakineler from "./components/ArizaliMakineler.jsx";
@@ -39,6 +40,7 @@ const widgetTitles = {
   widget3: "Toplam Katedilen Mesafe",
   widget4: "KM Başına Maliyetler",
   widget5: "Filo Araç Durumları",
+  widget6: "Hatırlatıcı",
   widget11: "Aylık Bakım Maliyetleri",
   widget14: "Araç Filosu (Araç Tipleri)",
   widget18: "Araç Bakım Maliyetleri",
@@ -59,6 +61,7 @@ const defaultItems = [
   { id: "widget11", x: 0, y: 8, width: 12, height: 3, minW: 3, minH: 2 },
   { id: "widget20", x: 0, y: 11, width: 6, height: 3, minW: 3, minH: 2 },
   { id: "widget21", x: 6, y: 11, width: 6, height: 3, minW: 3, minH: 2 },
+  { id: "widget6", x: 0, y: 14, width: 4, height: 3, minW: 3, minH: 2 },
 ];
 
 function MainDashboard() {
@@ -70,6 +73,7 @@ function MainDashboard() {
     widget3: false,
     widget4: false,
     widget5: false,
+    widget6: false,
     widget11: false,
     widget14: false,
     widget18: false,
@@ -224,6 +228,15 @@ function MainDashboard() {
               </FormProvider>
             );
             break;
+          case "widget6":
+            root.render(
+              <FormProvider {...methods}>
+                <ConfigProvider locale={trTR}>
+                  <Component6 />
+                </ConfigProvider>
+              </FormProvider>
+            );
+            break;
 
           case "widget11":
             root.render(
@@ -294,6 +307,7 @@ function MainDashboard() {
         widget3: false,
         widget4: false,
         widget5: false,
+        widget6: false,
         widget11: false,
         widget14: false,
         widget18: false,
@@ -324,6 +338,7 @@ function MainDashboard() {
         widget3: false,
         widget4: false,
         widget5: false,
+        widget6: false,
         widget11: false,
         widget14: false,
         widget18: false,
@@ -509,6 +524,9 @@ function MainDashboard() {
       <Checkbox name="widget5" onChange={handleCheckboxChange} checked={checkedWidgets.widget5}>
         Filo Araç Durumları
       </Checkbox>
+      <Checkbox name="widget6" onChange={handleCheckboxChange} checked={checkedWidgets.widget6}>
+        Hatırlatıcı
+      </Checkbox>
       <Checkbox name="widget11" onChange={handleCheckboxChange} checked={checkedWidgets.widget11}>
         Aylık Bakım Maliyetleri
       </Checkbox>
@@ -644,6 +662,12 @@ function MainDashboard() {
                 <div className="grid-stack-item-content">
                   <div className="widget-header">{widgetTitles.widget5}</div>
                   <Component5 />
+                </div>
+              </div>{" "}
+              <div className="grid-stack-item border-dark" id="widget6">
+                <div className="grid-stack-item-content">
+                  <div className="widget-header">{widgetTitles.widget6}</div>
+                  <Component6 />
                 </div>
               </div>
               <div className="grid-stack-item border-dark" id="widget11">
