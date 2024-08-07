@@ -1,451 +1,320 @@
-import React, { useState, useEffect, useRef } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from "recharts";
-import { Button, Popover, Spin, Typography, Modal, DatePicker, Tour } from "antd";
-import http from "../../../../api/http.jsx";
-import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
-import { Controller, useFormContext } from "react-hook-form";
-import dayjs from "dayjs";
-import html2pdf from "html2pdf.js";
+import React, { useEffect, useState } from "react";
+import { Button, Popover, Typography, Spin, Badge, Modal, Divider } from "antd";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import styled from "styled-components";
+import Sigorta from "./components/Sigorta";
+import { FormProvider, useForm } from "react-hook-form";
 
 const { Text } = Typography;
 
-const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+const CustomSpin = styled(Spin)`
+  .ant-spin-dot-item {
+    background-color: #0091ff !important; /* Blue color */
+  }
+`;
 
-function KatedilenMesafeler(props = {}) {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState("");
-  const [baslamaTarihi, setBaslamaTarihi] = useState();
+const ContentWrapper = styled.div`
+  width: 200px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: pointer;
+`;
+
+const Indicator = styled.div`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+`;
+
+const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) => {
   const [open, setOpen] = useState(false);
-  const ref1 = useRef(null);
-  const [visibleSeries, setVisibleSeries] = useState({
-    AYLIK_BAKIM_ISEMRI_MALIYET: true,
-  });
-  const {
-    control,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useFormContext();
+  const [requested, setRequested] = useState(false); // Bayrak
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalContent, setModalContent] = useState(null);
+
+  const methods = useForm(); // Initialize form methods
 
   useEffect(() => {
-    const yilSecimiValue = watch("yilSecimiKatedilenMesafe");
-    if (!yilSecimiValue) {
-      // Eğer baslamaTarihi değeri undefined ise, sistem saatinden o senenin yıl hanesini alıp setBaslamaTarihi'ye atar
-      const currentYear = dayjs().format("YYYY");
-      setBaslamaTarihi(currentYear);
-    } else if (yilSecimiValue) {
-      // Ant Design DatePicker returns a moment object when a date is picked.
-      // To extract only the year and set it as the state, use the format method of the moment object.
-      const yearOnly = yilSecimiValue.format("YYYY");
-      setBaslamaTarihi(yearOnly);
+    if (open && !requested) {
+      getHatirlatici();
+      getHatirlatici1();
+      setRequested(true); // Bayrağı ayarla
     }
-  }, [watch("yilSecimiKatedilenMesafe")]);
+  }, [open, requested, getHatirlatici, getHatirlatici1]);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const body = {
-      startYear: baslamaTarihi || dayjs().year(),
-    };
-    try {
-      const response = await http.post("Graphs/GetGraphInfoByType?type=9", body);
-
-      // Sort the response by month number
-      const sortedResponse = response.data.sort((a, b) => a.AY - b.AY);
-
-      // Transform the data
-      const transformedData = sortedResponse.map((item) => ({
-        AY: monthNames[item.ay],
-        AYLIK_BAKIM_ISEMRI_MALIYET: Math.round(item.deger),
-      }));
-
-      setData(transformedData);
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-    } finally {
-      setIsLoading(false);
+  const handleOpenChange = (newOpen) => {
+    if (!newOpen) {
+      setRequested(false); // Popover kapandığında bayrağı sıfırla
     }
+    setOpen(newOpen);
   };
 
-  useEffect(() => {
-    if (baslamaTarihi) {
-      fetchData();
-    }
-  }, [baslamaTarihi]);
-
-  const downloadPDF = () => {
-    const element = document.getElementById("aylik-bakim");
-    const opt = {
-      margin: 10,
-      filename: "aylik_bakim.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
-    };
-
-    html2pdf().set(opt).from(element).save();
-  };
-
-  const handleLegendClick = (dataKey) => {
-    setVisibleSeries((prev) => ({
-      ...prev,
-      [dataKey]: !prev[dataKey],
-    }));
-  };
-
-  const CustomLegend = ({ payload }) => {
-    const customNames = {
-      AYLIK_BAKIM_ISEMRI_MALIYET: "Katedilen Mesafe",
-    };
-
-    const handleToggleAll = () => {
-      const allVisible = Object.values(visibleSeries).every((value) => value);
-      setVisibleSeries({
-        AYLIK_BAKIM_ISEMRI_MALIYET: !allVisible,
-      });
-    };
-
-    return (
-      <ul
-        style={{
-          listStyle: "none",
-          padding: 0,
-          display: "flex",
-          gap: "15px",
-          justifyContent: "center",
-          margin: 0,
-        }}
-      >
-        <li
-          style={{
-            cursor: "pointer",
-            color: Object.values(visibleSeries).every((value) => value) ? "black" : "gray",
-          }}
-          onClick={handleToggleAll}
-        >
-          Tümü
-        </li>
-        {payload.map((entry, index) => (
-          <li
-            key={`item-${index}`}
-            style={{
-              cursor: "pointer",
-              color: visibleSeries[entry.dataKey] ? entry.color : "gray",
-            }}
-            onClick={() => handleLegendClick(entry.dataKey)}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                width: "10px",
-                height: "10px",
-                backgroundColor: visibleSeries[entry.dataKey] ? entry.color : "gray",
-                marginRight: "5px",
-              }}
-            ></span>
-            {customNames[entry.dataKey] || entry.value}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div
-          className="custom-tooltip"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "5px",
-            backgroundColor: "#fff",
-            padding: "10px",
-            border: "1px solid #ccc",
-          }}
-        >
-          <p className="label">{`Ay: ${label}`}</p>
-          {payload.map((entry, index) => (
-            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value.toLocaleString("tr-TR")} km`}</p>
-          ))}
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  const CustomLabel = (props) => {
-    const { x, y, value } = props;
-    const formattedValue = value.toLocaleString("tr-TR");
-
-    return (
-      <text x={x} y={y - 10} fill="white" textAnchor="middle" dominantBaseline="middle">
-        {formattedValue}
-      </text>
-    );
-  };
-
-  const showModal = (content) => {
+  const handleRowClick = (title, content) => {
+    setModalTitle(title);
     setModalContent(content);
-    setIsModalVisible(true);
+    setModalVisible(true);
+    setOpen(false); // Modal açıldığında popover'ı kapat
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    // reset();
-  };
-
-  useEffect(() => {
-    if (isModalVisible === true) {
-      setValue("yilSecimiKatedilenMesafe", null);
-      // reset({
-      //   yilSecimiKatedilenMesafe: undefined,
-      // });
-    }
-  }, [isModalVisible]);
-
-  const content1 = (
-    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      <div style={{ cursor: "pointer" }} onClick={() => showModal("Yıl Seç")}>
-        Yıl Seç
-      </div>
-    </div>
-  );
+  const totalReminders =
+    (data ? Object.values(data).reduce((acc, currentValue) => acc + currentValue, 0) : 0) + (data1 ? Object.values(data1).reduce((acc, currentValue) => acc + currentValue, 0) : 0);
 
   const content = (
-    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      <div style={{ cursor: "pointer" }} onClick={() => setIsExpandedModalVisible(true)}>
-        Büyüt
-      </div>
-      <Popover placement="right" content={content1} trigger="click">
-        <div style={{ cursor: "pointer" }}>Süre Seçimi</div>
-      </Popover>
-      <div style={{ cursor: "pointer" }} onClick={() => setOpen(true)}>
-        Bilgi
-      </div>
-    </div>
-  );
-
-  const steps = [
-    {
-      title: "Bilgi",
-      description: (
-        <div
-          style={{
-            overflow: "auto",
-            height: "100%",
-            maxHeight: "400px",
-          }}
-        >
-          <p>
-            Bu grafik ile aylık bakım maliyetlerini daha kapsamlı bir şekilde analiz etmek ve raporlamak mümkündür. Bu bilgiler, bakım bütçesinin yönetimi, maliyet optimizasyonu ve
-            gelecekteki planlama için önemli bir temel oluşturur.
-          </p>
+    <ContentWrapper>
+      <Text strong style={{ fontSize: "16px" }}>
+        Hatırlatıcılar
+      </Text>
+      <CustomSpin spinning={loading}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <Row onClick={() => handleRowClick("Süresi Yaklaşan", <div>Süresi Yaklaşan İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#008000" }} />
+              <Text>Süresi Yaklaşan</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(0,128,0,0.37)",
+                color: "#008000",
+              }}
+            >
+              {data1?.yaklasanSure}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Kritik Süre", <div>Kritik Süre İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#ffad00" }} />
+              <Text>Kritik Süre</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(255,173,0,0.24)",
+                color: "#e68901",
+              }}
+            >
+              {data1?.kritikSure}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Süresi Geçen", <div>Süresi Geçen İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#ff0000" }} />
+              <Text>Süresi Geçen</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(255,0,0,0.38)",
+                color: "#ff0000",
+              }}
+            >
+              {data1?.gecenSure}
+            </Text>
+          </Row>
+          <Divider />
+          <Row onClick={() => handleRowClick("Sigorta", <Sigorta />)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "red" }} />
+              <Text>Sigorta</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "#ff000066",
+                color: "red",
+              }}
+            >
+              {data?.sigortaHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Taşıt Kartı", <div>Taşıt Kartı İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#009b84" }} />
+              <Text>Taşıt Kartı</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgb(0 155 132 / 35%)",
+                color: "#009b84",
+              }}
+            >
+              {data?.aracKartiHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Ceza Ödeme", <div>Ceza Ödeme İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "rgb(106,14,168)" }} />
+              <Text>Ceza Ödeme</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgb(106 14 168 / 35%)",
+                color: "rgb(106,14,168)",
+              }}
+            >
+              {data?.cezaHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Yakit Tüketimi", <div>Yakit Tüketimi İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "rgb(202,108,0)" }} />
+              <Text>Yakit Tüketimi</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgb(202,108,0,0.35)",
+                color: "rgb(202,108,0)",
+              }}
+            >
+              {data?.yakitTuketimiHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Kiralama", <div>Kiralama İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "rgba(0,196,255,0.88)" }} />
+              <Text>Kiralama</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgb(0,196,255,0.35)",
+                color: "rgb(0,161,207)",
+              }}
+            >
+              {data?.kiralamaHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Stok", <div>Stok İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "rgba(0,59,209,0.88)" }} />
+              <Text>Stok</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgb(0,59,209,0.20)",
+                color: "rgb(0,59,209,0.88)",
+              }}
+            >
+              {data?.stokHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Sürücü", <div>Sürücü İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "rgba(255,117,31,0.88)" }} />
+              <Text>Sürücü</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgb(255,117,31,0.20)",
+                color: "rgb(255,117,31,0.88)",
+              }}
+            >
+              {data?.surucuHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Vergi", <div>Vergi İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#921A40" }} />
+              <Text>Vergi</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(146,26,64,0.48)",
+                color: "#921A40",
+              }}
+            >
+              {data?.aracVergiHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Muayene", <div>Muayene İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#987D9A" }} />
+              <Text>Muayene</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(152,125,154,0.43)",
+                color: "#987D9A",
+              }}
+            >
+              {data?.aracMuayeneHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Sözleşme", <div>Sözleşme İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#EF5A6F" }} />
+              <Text>Sözleşme</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(239,90,111,0.44)",
+                color: "#EF5A6F",
+              }}
+            >
+              {data?.aracSozlesmeHatirlaticiSayisi}
+            </Text>
+          </Row>
+          <Row onClick={() => handleRowClick("Egzoz", <div>Egzoz İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#134B70" }} />
+              <Text>Egzoz</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(19,75,112,0.47)",
+                color: "#134B70",
+              }}
+            >
+              {data?.aracEgzozHatiraticiSayisi}
+            </Text>
+          </Row>
         </div>
-      ),
-
-      target: () => ref1.current,
-    },
-  ];
+      </CustomSpin>
+    </ContentWrapper>
+  );
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        borderRadius: "5px",
-        backgroundColor: "white",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-        border: "1px solid #f0f0f0",
-      }}
-    >
-      <div
-        style={{
-          padding: "10px",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text
-          title={`Aylık Bakım Maliyetleri${baslamaTarihi ? ` (${baslamaTarihi})` : ""}`}
-          style={{
-            fontWeight: "500",
-            fontSize: "17px",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: "calc(100% - 50px)",
-          }}
-        >
-          Katedilen Mesafe
-          {baslamaTarihi && ` (${baslamaTarihi})`}
-        </Text>
-        <Popover placement="bottom" content={content} trigger="click">
-          <Button
-            type="text"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0px 5px",
-              height: "32px",
-              zIndex: 3,
-            }}
-          >
-            <MoreOutlined style={{ cursor: "pointer", fontWeight: "500", fontSize: "16px" }} />
-          </Button>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <FormProvider {...methods}>
+        <Popover content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
+          <Badge count={totalReminders} offset={[-3, 3]}>
+            <Button type="succes" shape="circle" icon={<FaRegCalendarAlt style={{ fontSize: "20px" }} />}></Button>
+          </Badge>
         </Popover>
-      </div>
-      {isLoading ? (
-        <Spin />
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "7px",
-            overflow: "auto",
-            height: "100vh",
-            padding: "10px",
-          }}
-        >
-          <div style={{ width: "100%", height: "calc(100% - 5px)" }}>
-            <ResponsiveContainer ref={ref1} width="100%" height="100%">
-              <BarChart
-                width="100%"
-                height="100%"
-                data={data}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="AY" name="Ay" />
-                <YAxis unit="km" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
-                <Tooltip content={<CustomTooltip />} />
-                {/*<Legend content={<CustomLegend />} />*/}
-                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
-                  <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-      <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
-      <Modal title="Tarih Seçimi" centered open={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose>
-        {modalContent === "Yıl Seç" && (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <div>Yıl Seç:</div>
-            <Controller
-              name="yilSecimiKatedilenMesafe"
-              control={control}
-              render={({ field }) => <DatePicker {...field} picker="year" style={{ width: "130px" }} placeholder="Tarih seçiniz" />}
-            />
-          </div>
-        )}
-      </Modal>
-      {/* Expanded Modal */}
-      <Modal
-        title={
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "98%",
-            }}
-          >
-            <Text
-              title={`Aylık Bakım Maliyetleri${baslamaTarihi ? ` (${baslamaTarihi})` : ""}`}
-              style={{
-                fontWeight: "500",
-                fontSize: "17px",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                maxWidth: "calc(100% - 50px)",
-              }}
-            >
-              Katedilen Mesafe
-              {baslamaTarihi && ` (${baslamaTarihi})`}
-            </Text>
-            <PrinterOutlined style={{ cursor: "pointer", fontSize: "20px" }} onClick={downloadPDF} />
-          </div>
-        }
-        centered
-        open={isExpandedModalVisible}
-        onOk={() => setIsExpandedModalVisible(false)}
-        onCancel={() => setIsExpandedModalVisible(false)}
-        width="90%"
-        destroyOnClose
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "7px",
-            overflow: "auto",
-            height: "calc(100vh - 180px)",
-          }}
-        >
-          <ResponsiveContainer id="aylik-bakim" width="100%" height="100%">
-            <BarChart
-              width="100%"
-              height="100%"
-              data={data}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="AY"
-                // interval={0}
-                // angle={-90}
-                // textAnchor="end"
-                // height={70} // X ekseni yüksekliğini artırın
-                // tick={{
-                //   dy: 10, // Etiketleri aşağı kaydırın
-                // }}
-              />
-              <YAxis unit="km" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
-              <Tooltip content={<CustomTooltip />} />
-              {/*<Legend content={<CustomLegend />} />*/}
-              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
-                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Modal>
+        <Modal title={modalTitle} destroyOnClose open={modalVisible} onCancel={() => setModalVisible(false)} footer={null} width="90%">
+          {modalContent}
+        </Modal>
+      </FormProvider>
     </div>
   );
-}
+};
 
-export default KatedilenMesafeler;
+export default Hatirlatici;

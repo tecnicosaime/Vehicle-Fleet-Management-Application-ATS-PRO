@@ -48,7 +48,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
 
     if (fullDepo) {
       if (farkKm > 0 && miktar > 0) {
-        tktm = (miktar / farkKm).toFixed(2);
+        tktm = miktar / farkKm;
       } else {
         tktm = 0;
       }
@@ -95,7 +95,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
     } else {
       if (history[0]?.fullDepo) {
         if (farkKm > 0 && miktar > 0) {
-          tktm = (history[0]?.miktar / farkKm).toFixed(2);
+          tktm = history[0]?.miktar / farkKm;
         } else {
           tktm = 0;
         }
@@ -138,7 +138,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setContent(content);
       } else {
         if (farkKm > 0 && miktar > 0) {
-          yakitHacmi !== null ? (tktm = (yakitHacmi / farkKm).toFixed(2)) : (tktm = 0);
+          yakitHacmi !== null ? (tktm = yakitHacmi / farkKm) : (tktm = 0);
 
           const content = (
             <div className="grid detail-tuketim">
@@ -187,7 +187,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         }
       }
     }
-    setValue("tuketim", tktm);
+    setValue("tuketim", (tktm * 100).toFixed(2));
   };
 
   useEffect(() => {
