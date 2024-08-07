@@ -16,6 +16,7 @@ import Sigorta from "./sigorta/Sigorta";
 import Lastik from "./lastik/Lastik";
 import Bakim from "./bakim/Bakim";
 import KmTakibi from "./KmTakibi/KmTakibi.jsx";
+import PeryodikBakimlar from "./PeryodikBakimlar/PeryodikBakimlar.jsx";
 
 const OperationsInfo = ({ ids }) => {
   const { setPlaka } = useContext(PlakaContext);
@@ -77,6 +78,11 @@ const OperationsInfo = ({ ids }) => {
       key: "11",
       icon: <MdSettingsInputComponent className="text-info" />,
     },
+    {
+      label: t("peryodikBakimlar"),
+      key: "12",
+      icon: <MdSettingsInputComponent className="text-info" />,
+    },
   ];
 
   const menuProps = {
@@ -92,6 +98,17 @@ const OperationsInfo = ({ ids }) => {
         return (
           <Bakim
             visible={selectedItem === "1"}
+            onClose={() => {
+              setSelectedItem(null);
+              setPlaka([]);
+            }}
+            ids={ids}
+          />
+        );
+      case "12":
+        return (
+          <PeryodikBakimlar
+            visible={selectedItem === "12"}
             onClose={() => {
               setSelectedItem(null);
               setPlaka([]);
