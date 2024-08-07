@@ -58,6 +58,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
     setModalTitle(title);
     setModalContent(content);
     setModalVisible(true);
+    setOpen(false); // Modal açıldığında popover'ı kapat
   };
 
   const totalReminders =
