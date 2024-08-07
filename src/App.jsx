@@ -43,6 +43,8 @@ import Raporlar from "./_root/pages/raporlar/RaporYonetimi.jsx";
 import KodYonetimi from "./_root/pages/kod-yonetimi/KodYonetimi";
 import Hazirlaniyor from "./_root/pages/Hazirlaniyor";
 
+import ServisIslemleri from "./_root/pages/vehicles-control/ServisIslemleri/ServisIslemleri";
+
 const App = () => {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ const App = () => {
         <Route path="/harcama-islemleri" element={<Harcama />} />
         <Route path="/kaza-islemleri" element={<Kaza />} />
         <Route path="/sefer-islemleri" element={<Sefer />} />
+        <Route path="/servis-islemleri" element={<ServisIslemleri />} />
         {/* yakit yonetimi */}
         <Route path="/yakit-tanimlari" element={<YakitTanimlar />} />
         <Route path="/yakit-giris-fisleri" element={<YakitGirisFisleri />} />
