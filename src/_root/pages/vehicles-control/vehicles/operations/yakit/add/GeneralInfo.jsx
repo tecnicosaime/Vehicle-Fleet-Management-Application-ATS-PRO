@@ -630,7 +630,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <div className="col-span-10">
                       <div className="flex flex-col gap-1">
                         <label>
-                          {t("ortalamaTuketim")} <ArrowUpOutlined style={{ color: "red" }} />
+                          {t("ortalamaTuketim")} (lt/100 km) <ArrowUpOutlined style={{ color: "red" }} />
                         </label>
                         <TextInput name="tuketim" readonly={true} />
                       </div>
