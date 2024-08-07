@@ -153,6 +153,32 @@ function AylikAracBakimMaliyetleri(props = {}) {
       </ul>
     );
   };
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <p className="label">{`Ay: ${label}`}</p>
+          {payload.map((entry, index) => (
+            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value.toLocaleString("tr-TR")} ₺`}</p>
+          ))}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   const CustomLabel = (props) => {
     const { x, y, width, value } = props;
     const formattedValue = value.toLocaleString("tr-TR");
@@ -311,7 +337,7 @@ function AylikAracBakimMaliyetleri(props = {}) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="AY" />
                 <YAxis unit=" ₺" tickFormatter={(value) => value.toLocaleString("tr-TR")} />
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
                 {/*<Legend content={<CustomLegend />} />*/}
                 <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Araç Bakım Maliyeti" unit=" ₺">
                   <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
@@ -409,7 +435,7 @@ function AylikAracBakimMaliyetleri(props = {}) {
                 // }}
               />
               <YAxis unit=" ₺" tickFormatter={(value) => value.toLocaleString("tr-TR")} />
-              <Tooltip />
+              <Tooltip content={<CustomTooltip />} />
               {/*<Legend content={<CustomLegend />} />*/}
               <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Araç Bakım Maliyeti" unit=" ₺">
                 <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />

@@ -154,6 +154,42 @@ function AylikBakimMaliyetleri(props = {}) {
     );
   };
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <p className="label">{`Ay: ${label}`}</p>
+          {payload.map((entry, index) => (
+            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value.toLocaleString("tr-TR")} L`}</p>
+          ))}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const CustomLabel = (props) => {
+    const { x, y, width, value } = props;
+    const formattedValue = value.toLocaleString("tr-TR");
+
+    return (
+      <text x={x + width / 2} y={y - 10} fill="gray" textAnchor="middle" dominantBaseline="middle">
+        {formattedValue}
+      </text>
+    );
+  };
+
   const showModal = (content) => {
     setModalContent(content);
     setIsModalVisible(true);
@@ -300,11 +336,11 @@ function AylikBakimMaliyetleri(props = {}) {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="AY" />
-                <YAxis />
-                <Tooltip />
+                <YAxis unit="L" tickFormatter={(value) => value.toLocaleString("tr-TR")} />
+                <Tooltip content={<CustomTooltip />} />
                 {/*<Legend content={<CustomLegend />} />*/}
-                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Yakıt Tüketimi">
-                  <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Yakıt Tüketimi" unit=" L">
+                  <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -398,11 +434,11 @@ function AylikBakimMaliyetleri(props = {}) {
                 //   dy: 10, // Etiketleri aşağı kaydırın
                 // }}
               />
-              <YAxis />
-              <Tooltip />
+              <YAxis unit="L" tickFormatter={(value) => value.toLocaleString("tr-TR")} />
+              <Tooltip content={<CustomTooltip />} />
               {/*<Legend content={<CustomLegend />} />*/}
-              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Yakıt Tüketimi">
-                <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Yakıt Tüketimi" unit=" L">
+                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
