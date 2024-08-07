@@ -14,12 +14,12 @@ import { t } from "i18next";
 const items = [
   {
     key: "1",
-    icon: <PieChartOutlined Hatırlatıcı />,
+    icon: <PieChartOutlined />,
     label: <Link to={"/"}>{t("dashboard")}</Link>,
   },
   {
     key: "2",
-    icon: <CarOutlined Hatırlatıcı />,
+    icon: <CarOutlined />,
     label: t("aracYonetimi"),
     children: [
       {
@@ -71,7 +71,7 @@ const items = [
 
   {
     key: "19",
-    icon: <GiAutoRepair Hatırlatıcı />,
+    icon: <GiAutoRepair />,
     label: "Bakım ve Onarım İşlemleri",
     children: [
       {
@@ -98,7 +98,7 @@ const items = [
   },
   {
     key: "31",
-    icon: <LuWarehouse Hatırlatıcı />,
+    icon: <LuWarehouse />,
     label: t("malzemeDepo"),
     children: [
       {
@@ -133,7 +133,7 @@ const items = [
   },
   {
     key: "13",
-    icon: <BsFuelPump Hatırlatıcı />,
+    icon: <BsFuelPump />,
     label: t("yakitYonetimi"),
     children: [
       {
@@ -164,7 +164,7 @@ const items = [
   },
   {
     key: "338",
-    icon: <HiOutlineDocumentReport Hatırlatıcı />,
+    icon: <HiOutlineDocumentReport />,
     label: t("finansYonetim"),
     children: [
       {
@@ -179,7 +179,7 @@ const items = [
   },
   {
     key: "348",
-    icon: <HiOutlineDocumentReport Hatırlatıcı />,
+    icon: <HiOutlineDocumentReport />,
     label: t("satinAlmaYonetim"),
     children: [
       {
@@ -198,17 +198,17 @@ const items = [
   },
   {
     key: "368",
-    icon: <HiOutlineDocumentReport Hatırlatıcı />,
+    icon: <HiOutlineDocumentReport />,
     label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
   },
   {
     key: "38",
-    icon: <HiOutlineDocumentReport Hatırlatıcı />,
+    icon: <HiOutlineDocumentReport />,
     label: <Link to={"/raporlar"}>{t("raporlarAnalizler")}</Link>,
   },
   {
     key: "39",
-    icon: <MdOutlineSystemUpdateAlt Hatırlatıcı />,
+    icon: <MdOutlineSystemUpdateAlt />,
     label: t("sistemTanimlari"),
     children: [
       {
@@ -260,7 +260,7 @@ const items = [
 
   {
     key: "50",
-    icon: <FaGears Hatırlatıcı />,
+    icon: <FaGears />,
     label: "Sistem Ayarları",
     children: [
       {
