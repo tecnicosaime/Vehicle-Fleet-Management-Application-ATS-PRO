@@ -56,11 +56,11 @@ const items = [
       },
       {
         key: "11",
-        label: <Link to={"/"}>{t("lastikler")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("lastikler")}</Link>,
       },
       {
         key: "121",
-        label: <Link to={"/"}>{t("ekspertizler")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("ekspertizler")}</Link>,
       },
       {
         key: "12",
@@ -75,24 +75,24 @@ const items = [
     label: "Bakım ve Onarım İşlemleri",
     children: [
       {
-        key: "20",
-        label: <Link to={"/"}>{t("periyodikBakimlar")}</Link>,
+        key: "21",
+        label: <Link to={"/hazirlaniyor"}>{t("servisIslemleri")}</Link>,
       },
       {
-        key: "21",
-        label: <Link to={"/"}>{t("girişFişleri")}</Link>,
+        key: "20",
+        label: <Link to={"/hazirlaniyor"}>{t("periyodikBakimlar")}</Link>,
       },
       {
         key: "22",
-        label: <Link to={"/"}>{t("randevuTakibi")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("randevuTakibi")}</Link>,
       },
       {
         key: "23",
-        label: <Link to={"/"}>{t("servısFaturalari")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("servısFaturalari")}</Link>,
       },
       {
         key: "24",
-        label: <Link to={"/"}>{t("atolyeTanimlari")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("atolyeTanimlari")}</Link>,
       },
     ],
   },
