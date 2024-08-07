@@ -14,12 +14,12 @@ import { t } from "i18next";
 const items = [
   {
     key: "1",
-    icon: <PieChartOutlined style={{ color: "#0096dd" }} />,
+    icon: <PieChartOutlined Hatırlatıcı />,
     label: <Link to={"/"}>{t("dashboard")}</Link>,
   },
   {
     key: "2",
-    icon: <CarOutlined style={{ color: "#0096dd" }} />,
+    icon: <CarOutlined Hatırlatıcı />,
     label: t("aracYonetimi"),
     children: [
       {
@@ -71,7 +71,7 @@ const items = [
 
   {
     key: "19",
-    icon: <GiAutoRepair style={{ color: "#0096dd" }} />,
+    icon: <GiAutoRepair Hatırlatıcı />,
     label: "Bakım ve Onarım İşlemleri",
     children: [
       {
@@ -98,7 +98,7 @@ const items = [
   },
   {
     key: "31",
-    icon: <LuWarehouse style={{ color: "#0096dd" }} />,
+    icon: <LuWarehouse Hatırlatıcı />,
     label: t("malzemeDepo"),
     children: [
       {
@@ -133,7 +133,7 @@ const items = [
   },
   {
     key: "13",
-    icon: <BsFuelPump style={{ color: "#0096dd" }} />,
+    icon: <BsFuelPump Hatırlatıcı />,
     label: t("yakitYonetimi"),
     children: [
       {
@@ -164,7 +164,7 @@ const items = [
   },
   {
     key: "338",
-    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
+    icon: <HiOutlineDocumentReport Hatırlatıcı />,
     label: t("finansYonetim"),
     children: [
       {
@@ -179,7 +179,7 @@ const items = [
   },
   {
     key: "348",
-    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
+    icon: <HiOutlineDocumentReport Hatırlatıcı />,
     label: t("satinAlmaYonetim"),
     children: [
       {
@@ -198,17 +198,17 @@ const items = [
   },
   {
     key: "368",
-    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
+    icon: <HiOutlineDocumentReport Hatırlatıcı />,
     label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
   },
   {
     key: "38",
-    icon: <HiOutlineDocumentReport style={{ color: "#0096dd" }} />,
+    icon: <HiOutlineDocumentReport Hatırlatıcı />,
     label: <Link to={"/raporlar"}>{t("raporlarAnalizler")}</Link>,
   },
   {
     key: "39",
-    icon: <MdOutlineSystemUpdateAlt style={{ color: "#0096dd" }} />,
+    icon: <MdOutlineSystemUpdateAlt Hatırlatıcı />,
     label: t("sistemTanimlari"),
     children: [
       {
@@ -260,7 +260,7 @@ const items = [
 
   {
     key: "50",
-    icon: <FaGears style={{ color: "#0096dd" }} />,
+    icon: <FaGears Hatırlatıcı />,
     label: "Sistem Ayarları",
     children: [
       {
