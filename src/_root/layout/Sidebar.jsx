@@ -32,7 +32,7 @@ const items = [
       },
       {
         key: "5",
-        label: <Link to={"/"}>{t("servisIslemleri")}</Link>,
+        label: <Link to={"/servis-islemleri"}>{t("servisIslemleri")}</Link>,
       },
       {
         key: "6",
