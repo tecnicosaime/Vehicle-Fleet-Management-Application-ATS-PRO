@@ -19,6 +19,7 @@ const CustomSpin = styled(Spin)`
 
 const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
   const [data, setData] = useState(null);
+  const [data1, setData1] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const getHatirlatici = async () => {
@@ -38,8 +39,26 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
     }
   };
 
+  const getHatirlatici1 = async () => {
+    try {
+      setLoading(true);
+      const response = await AxiosInstance.post("/Graphs/GetGraphInfoByType?type=12");
+      if (response.data) {
+        setData1(response.data);
+        setLoading(false);
+      } else {
+        console.error("API response is not in expected format");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getHatirlatici();
+    getHatirlatici1();
   }, []);
 
   return (
@@ -65,7 +84,7 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
         </div>
         <div style={{ gap: "10px" }} className="flex gap-1 justify-between align-center">
           <CustomSpin spinning={loading}>
-            <Hatirlatici data={data} getHatirlatici={getHatirlatici} loading={loading} />
+            <Hatirlatici data={data} getHatirlatici={getHatirlatici} data1={data1} getHatirlatici1={getHatirlatici1} loading={loading} />
           </CustomSpin>
           <Bildirim />
           <Input className="search-input" placeholder={t("arama")} allowClear />
