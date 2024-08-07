@@ -172,13 +172,24 @@ function AylikKM(props = {}) {
         >
           <p className="label">{`Ay: ${label}`}</p>
           {payload.map((entry, index) => (
-            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value}  ₺`}</p>
+            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value.toLocaleString("tr-TR")}  ₺`}</p>
           ))}
         </div>
       );
     }
 
     return null;
+  };
+
+  const CustomLabel = (props) => {
+    const { x, y, width, value } = props;
+    const formattedValue = value.toLocaleString("tr-TR");
+
+    return (
+      <text x={x + width / 2} y={y - 10} fill="gray" textAnchor="middle" dominantBaseline="middle">
+        {formattedValue}
+      </text>
+    );
   };
 
   const showModal = (content) => {
@@ -328,11 +339,11 @@ function AylikKM(props = {}) {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="AY" name="Ay" />
-                <YAxis unit=" ₺" width={80} />
+                <YAxis unit=" ₺" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
                 <Tooltip content={<CustomTooltip />} />
                 {/*<Legend content={<CustomLegend />} />*/}
                 <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#173B45" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Kilometre Başına Maliyet" unit=" ₺">
-                  <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                  <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -426,11 +437,11 @@ function AylikKM(props = {}) {
                 //   dy: 10, // Etiketleri aşağı kaydırın
                 // }}
               />
-              <YAxis unit=" ₺" width={80} />
+              <YAxis unit=" ₺" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
               <Tooltip content={<CustomTooltip />} />
-              <Legend content={<CustomLegend />} />
+              {/*<Legend content={<CustomLegend />} />*/}
               <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#173B45" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Kilometre Başına Maliyet" unit=" ₺">
-                <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

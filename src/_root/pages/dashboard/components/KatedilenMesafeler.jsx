@@ -438,7 +438,7 @@ function KatedilenMesafeler(props = {}) {
               <Tooltip content={<CustomTooltip />} />
               {/*<Legend content={<CustomLegend />} />*/}
               <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
-                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
