@@ -109,6 +109,9 @@ const Yakit = () => {
           return null;
         }
 
+        // Ondalıklı sayıyı 2 basamağa yuvarla ve 2 basamaklı hale getir
+        const formattedGerceklesen = tuketim.toFixed(2);
+
         let icon = null;
         if (aracOnGorulenMinYakit !== null && aracOnGorulenMinYakit !== 0) {
           if (tuketim < aracOnGorulenMinYakit) {
@@ -125,9 +128,9 @@ const Yakit = () => {
         }
 
         return (
-          <Tooltip title={`Gerçekleşen: ${tuketim}`}>
+          <Tooltip title={`Gerçekleşen: ${formattedGerceklesen}`}>
             <span style={{ display: "flex", justifyContent: "flex-end" }}>
-              {tuketim}
+              {formattedGerceklesen}
               {icon}
             </span>
           </Tooltip>

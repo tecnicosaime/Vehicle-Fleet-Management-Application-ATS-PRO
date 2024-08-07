@@ -133,6 +133,9 @@ const Vehicles = () => {
           return null;
         }
 
+        // Ondalıklı sayıyı 2 basamağa yuvarla ve 2 basamaklı hale getir
+        const formattedGerceklesen = gerceklesen.toFixed(2);
+
         let icon = null;
         if (onGorulenMin !== null && onGorulenMin !== 0) {
           if (gerceklesen < onGorulenMin) {
@@ -149,9 +152,9 @@ const Vehicles = () => {
         }
 
         return (
-          <Tooltip title={`Gerçekleşen: ${gerceklesen}`}>
+          <Tooltip title={`Gerçekleşen: ${formattedGerceklesen}`}>
             <span style={{ display: "flex", justifyContent: "flex-end" }}>
-              {gerceklesen}
+              {formattedGerceklesen}
               {icon}
             </span>
           </Tooltip>

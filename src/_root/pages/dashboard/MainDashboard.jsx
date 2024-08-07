@@ -58,10 +58,10 @@ const defaultItems = [
   { id: "widget19", x: 4, y: 1, width: 8, height: 3, minW: 3, minH: 2 },
   { id: "widget14", x: 0, y: 4, width: 5, height: 4, minW: 3, minH: 2 },
   { id: "widget18", x: 5, y: 4, width: 7, height: 4, minW: 3, minH: 2 },
-  { id: "widget11", x: 0, y: 8, width: 12, height: 3, minW: 3, minH: 2 },
+  { id: "widget6", x: 0, y: 8, width: 5, height: 3, minW: 3, minH: 2 },
+  { id: "widget11", x: 5, y: 8, width: 7, height: 3, minW: 3, minH: 2 },
   { id: "widget20", x: 0, y: 11, width: 6, height: 3, minW: 3, minH: 2 },
   { id: "widget21", x: 6, y: 11, width: 6, height: 3, minW: 3, minH: 2 },
-  { id: "widget6", x: 0, y: 14, width: 4, height: 3, minW: 3, minH: 2 },
 ];
 
 function MainDashboard() {
