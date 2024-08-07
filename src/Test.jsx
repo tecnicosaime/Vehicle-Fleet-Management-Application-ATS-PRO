@@ -1,220 +1,451 @@
-import { useEffect, useState } from "react";
-import { Layout, Menu, List, Button, Modal, Input, Popconfirm } from "antd";
-import { HomeOutlined } from "@ant-design/icons";
-import { t } from "i18next";
-import BreadcrumbComp from "../../components/breadcrumb/Breadcrumb";
-import { AddCodeService, GetCodeGroupsService, GetCodeTextByIdService, UpdateCodeService, DeleteCodeService } from "../../../api/services/settings/services";
+import React, { useState, useEffect, useRef } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from "recharts";
+import { Button, Popover, Spin, Typography, Modal, DatePicker, Tour } from "antd";
+import http from "../../../../api/http.jsx";
+import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
+import { Controller, useFormContext } from "react-hook-form";
+import dayjs from "dayjs";
+import html2pdf from "html2pdf.js";
 
-const { Sider, Content } = Layout;
+const { Text } = Typography;
 
-const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("kodYonetimi") }];
+const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-const codeTitle = {
-  background: "#fff",
-  textAlign: "center",
-  padding: "10px",
-  fontWeight: "600",
-  fontSize: "24px",
-  color: "#f6970e",
-};
-
-const KodYonetimi = () => {
-  // code
-  const [selectedCode, setSelectedCode] = useState(null);
-  const [codeList, setCodeList] = useState([]);
-  const [searchCode, setSearchCode] = useState("");
-  const [code, setCode] = useState([]);
-
-  // codetext
-  const [codeTextList, setCodeTextList] = useState([]);
-  const [searchCodeText, setSearchCodeText] = useState("");
-  const [selectedCodeText, setSelectedCodeText] = useState(null);
-  const [status, setStatus] = useState(false);
-  const [codeTextValue, setCodeTextValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
-
-  useEffect(() => {
-    GetCodeGroupsService().then((res) => {
-      const modifiedData = res.data.map((item) => ({
-        ...item,
-        typeDescription: item.codeType, // codeType yerine typeDescription kullanılıyor
-      }));
-      setCodeList(modifiedData);
-    });
-  }, [status]);
-
-  useEffect(() => {
-    if (selectedCode) {
-      GetCodeTextByIdService(selectedCode).then((res) => setCodeTextList(res.data));
-    }
-  }, [selectedCode, status]);
-
-  const handleCodeClick = (id) => {
-    setSelectedCode(id);
-    const item = codeList.find((item) => item.siraNo === +id);
-    setCode(item.typeDescription); // Alternatif veri adı kullanılıyor
-    setSelectedCodeText(null);
-  };
-
-  const filteredCodeList = codeList.filter((item) => item.typeDescription.toLowerCase().includes(searchCode.toLowerCase()));
-
-  const filteredCodeTextList = codeTextList.filter((item) => item.codeText.toLowerCase().includes(searchCodeText.toLowerCase()));
-
-  const updatedList = filteredCodeList.map((item) => {
-    return {
-      key: item.codeId,
-      label: item.typeDescription,
-    };
+function KatedilenMesafeler(props = {}) {
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+  const [baslamaTarihi, setBaslamaTarihi] = useState();
+  const [open, setOpen] = useState(false);
+  const ref1 = useRef(null);
+  const [visibleSeries, setVisibleSeries] = useState({
+    AYLIK_BAKIM_ISEMRI_MALIYET: true,
   });
+  const {
+    control,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useFormContext();
 
-  const onSubmit = () => {
+  useEffect(() => {
+    const yilSecimiValue = watch("yilSecimiKatedilenMesafe");
+    if (!yilSecimiValue) {
+      // Eğer baslamaTarihi değeri undefined ise, sistem saatinden o senenin yıl hanesini alıp setBaslamaTarihi'ye atar
+      const currentYear = dayjs().format("YYYY");
+      setBaslamaTarihi(currentYear);
+    } else if (yilSecimiValue) {
+      // Ant Design DatePicker returns a moment object when a date is picked.
+      // To extract only the year and set it as the state, use the format method of the moment object.
+      const yearOnly = yilSecimiValue.format("YYYY");
+      setBaslamaTarihi(yearOnly);
+    }
+  }, [watch("yilSecimiKatedilenMesafe")]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
     const body = {
-      codeId: selectedCode,
-      codeText: codeTextValue,
+      startYear: baslamaTarihi || dayjs().year(),
     };
+    try {
+      const response = await http.post("Graphs/GetGraphInfoByType?type=9", body);
 
-    AddCodeService(body).then((res) => {
-      if (res.data.statusCode === 201) {
-        setCode("");
-        setStatus(true);
-        setIsOpen(false);
-      }
-    });
-    setStatus(false);
-  };
+      // Sort the response by month number
+      const sortedResponse = response.data.sort((a, b) => a.AY - b.AY);
 
-  const footer = [
-    <Button key="submit" className="btn btn-min primary-btn" onClick={onSubmit}>
-      {t("kaydet")}
-    </Button>,
-    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsOpen(false)}>
-      {t("kapat")}
-    </Button>,
-  ];
+      // Transform the data
+      const transformedData = sortedResponse.map((item) => ({
+        AY: monthNames[item.ay],
+        AYLIK_BAKIM_ISEMRI_MALIYET: Math.round(item.deger),
+      }));
 
-  const update = () => {
-    const body = {
-      siraNo: selectedCodeText.siraNo,
-      codeText: codeTextValue,
-    };
-
-    UpdateCodeService(body).then((res) => {
-      if (res.data.statusCode === 202) {
-        setCodeTextValue("");
-        setIsUpdateOpen(false);
-        setStatus(true);
-      }
-    });
-    setStatus(false);
-  };
-
-  const updateFooter = [
-    <Button key="submit" className="btn btn-min primary-btn" onClick={update}>
-      {t("kaydet")}
-    </Button>,
-    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setIsUpdateOpen(false)}>
-      {t("kapat")}
-    </Button>,
-  ];
-
-  const resetModalValues = () => {
-    setCodeTextValue("");
-    setSelectedCodeText(null);
-  };
-
-  const onCloseAddModal = () => {
-    setIsOpen(false);
-    resetModalValues();
-  };
-
-  const onCloseUpdateModal = () => {
-    setIsUpdateOpen(false);
-    resetModalValues();
-  };
-
-  const openAddModal = () => {
-    resetModalValues();
-    setIsOpen(true);
-  };
-
-  const deleteCodeItem = () => {
-    if (selectedCodeText) {
-      DeleteCodeService(selectedCodeText.siraNo).then((res) => {
-        if (res.data.statusCode === 202) {
-          setStatus(true);
-          setSelectedCodeText(null);
-        }
-      });
-      setStatus(false);
+      setData(transformedData);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (baslamaTarihi) {
+      fetchData();
+    }
+  }, [baslamaTarihi]);
+
+  const downloadPDF = () => {
+    const element = document.getElementById("aylik-bakim");
+    const opt = {
+      margin: 10,
+      filename: "aylik_bakim.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
+
+  const handleLegendClick = (dataKey) => {
+    setVisibleSeries((prev) => ({
+      ...prev,
+      [dataKey]: !prev[dataKey],
+    }));
+  };
+
+  const CustomLegend = ({ payload }) => {
+    const customNames = {
+      AYLIK_BAKIM_ISEMRI_MALIYET: "Katedilen Mesafe",
+    };
+
+    const handleToggleAll = () => {
+      const allVisible = Object.values(visibleSeries).every((value) => value);
+      setVisibleSeries({
+        AYLIK_BAKIM_ISEMRI_MALIYET: !allVisible,
+      });
+    };
+
+    return (
+      <ul
+        style={{
+          listStyle: "none",
+          padding: 0,
+          display: "flex",
+          gap: "15px",
+          justifyContent: "center",
+          margin: 0,
+        }}
+      >
+        <li
+          style={{
+            cursor: "pointer",
+            color: Object.values(visibleSeries).every((value) => value) ? "black" : "gray",
+          }}
+          onClick={handleToggleAll}
+        >
+          Tümü
+        </li>
+        {payload.map((entry, index) => (
+          <li
+            key={`item-${index}`}
+            style={{
+              cursor: "pointer",
+              color: visibleSeries[entry.dataKey] ? entry.color : "gray",
+            }}
+            onClick={() => handleLegendClick(entry.dataKey)}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                backgroundColor: visibleSeries[entry.dataKey] ? entry.color : "gray",
+                marginRight: "5px",
+              }}
+            ></span>
+            {customNames[entry.dataKey] || entry.value}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <p className="label">{`Ay: ${label}`}</p>
+          {payload.map((entry, index) => (
+            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value.toLocaleString("tr-TR")} km`}</p>
+          ))}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const CustomLabel = (props) => {
+    const { x, y, value } = props;
+    const formattedValue = value.toLocaleString("tr-TR");
+
+    return (
+      <text x={x} y={y - 10} fill="white" textAnchor="middle" dominantBaseline="middle">
+        {formattedValue}
+      </text>
+    );
+  };
+
+  const showModal = (content) => {
+    setModalContent(content);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    // reset();
+  };
+
+  useEffect(() => {
+    if (isModalVisible === true) {
+      setValue("yilSecimiKatedilenMesafe", null);
+      // reset({
+      //   yilSecimiKatedilenMesafe: undefined,
+      // });
+    }
+  }, [isModalVisible]);
+
+  const content1 = (
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ cursor: "pointer" }} onClick={() => showModal("Yıl Seç")}>
+        Yıl Seç
+      </div>
+    </div>
+  );
+
+  const content = (
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ cursor: "pointer" }} onClick={() => setIsExpandedModalVisible(true)}>
+        Büyüt
+      </div>
+      <Popover placement="right" content={content1} trigger="click">
+        <div style={{ cursor: "pointer" }}>Süre Seçimi</div>
+      </Popover>
+      <div style={{ cursor: "pointer" }} onClick={() => setOpen(true)}>
+        Bilgi
+      </div>
+    </div>
+  );
+
+  const steps = [
+    {
+      title: "Bilgi",
+      description: (
+        <div
+          style={{
+            overflow: "auto",
+            height: "100%",
+            maxHeight: "400px",
+          }}
+        >
+          <p>
+            Bu grafik ile aylık bakım maliyetlerini daha kapsamlı bir şekilde analiz etmek ve raporlamak mümkündür. Bu bilgiler, bakım bütçesinin yönetimi, maliyet optimizasyonu ve
+            gelecekteki planlama için önemli bir temel oluşturur.
+          </p>
+        </div>
+      ),
+
+      target: () => ref1.current,
+    },
+  ];
 
   return (
-    <>
-      <div className="content">
-        <BreadcrumbComp items={breadcrumb} />
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        borderRadius: "5px",
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        border: "1px solid #f0f0f0",
+      }}
+    >
+      <div
+        style={{
+          padding: "10px",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text
+          title={`Aylık Bakım Maliyetleri${baslamaTarihi ? ` (${baslamaTarihi})` : ""}`}
+          style={{
+            fontWeight: "500",
+            fontSize: "17px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "calc(100% - 50px)",
+          }}
+        >
+          Katedilen Mesafe
+          {baslamaTarihi && ` (${baslamaTarihi})`}
+        </Text>
+        <Popover placement="bottom" content={content} trigger="click">
+          <Button
+            type="text"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0px 5px",
+              height: "32px",
+              zIndex: 3,
+            }}
+          >
+            <MoreOutlined style={{ cursor: "pointer", fontWeight: "500", fontSize: "16px" }} />
+          </Button>
+        </Popover>
       </div>
-      <div className="sistem">
-        <Layout style={{ height: "90vh" }}>
-          <Sider width={200} style={{ padding: "10px" }}>
-            <div style={codeTitle}>{t("kodGruplari")}</div>
-            <Input value={searchCode} onChange={(e) => setSearchCode(e.target.value)} placeholder={t("arama")} />
-            <Menu mode="inline" style={{ height: "90%", borderRight: 0, overflow: "auto", marginTop: 10 }} onClick={({ key }) => handleCodeClick(key)} items={updatedList} />
-          </Sider>
-          <Layout style={{ padding: "0 24px 24px" }}>
-            <Content style={{ padding: 24, margin: 0, minHeight: 280, overflow: "auto" }}>
-              {selectedCode && (
-                <>
-                  <div className="m-20">
-                    <Input value={searchCodeText} onChange={(e) => setSearchCodeText(e.target.value)} placeholder={t("arama")} />
-                  </div>
-                  <List
-                    dataSource={filteredCodeTextList}
-                    renderItem={(item) => (
-                      <List.Item
-                        onClick={() => {
-                          setSelectedCodeText(item);
-                          setCodeTextValue(item.codeText);
-                        }}
-                        style={{ backgroundColor: selectedCodeText && selectedCodeText.siraNo === item.siraNo ? "#e6f7ff" : "#fff" }}
-                      >
-                        {item.codeText}
-                      </List.Item>
-                    )}
-                    style={{ backgroundColor: "#fff", padding: "10px", borderRadius: "5px" }}
-                  />
-                </>
-              )}
-              <div className="model-buttons">
-                <Button className="btn primary-btn" onClick={openAddModal} style={{ marginRight: "8px" }}>
-                  {t("ekle")}
-                </Button>
-                <Button className="btn primary-btn" onClick={() => setIsUpdateOpen(true)} style={{ marginRight: "8px" }} disabled={!selectedCodeText}>
-                  {t("duzenle")}
-                </Button>
-                <Popconfirm title={t("silmek istediğinize emin misiniz?")} onConfirm={deleteCodeItem} onCancel={() => {}} okText={t("evet")} cancelText={t("hayır")}>
-                  <Button className="btn primary-btn" style={{ marginRight: "8px" }} disabled={!selectedCodeText}>
-                    {t("sil")}
-                  </Button>
-                </Popconfirm>
-              </div>
-            </Content>
-          </Layout>
-        </Layout>
-
-        <Modal title={t("yeniAracTipiGirisi")} open={isOpen} onCancel={onCloseAddModal} maskClosable={false} footer={footer} width={500}>
-          <label>Araç tipi tanımını giriniz</label>
-          <Input value={codeTextValue} onChange={(e) => setCodeTextValue(e.target.value)} />
-        </Modal>
-
-        <Modal title={t("KodGirisi")} open={isUpdateOpen} onCancel={onCloseUpdateModal} maskClosable={false} footer={updateFooter} width={500}>
-          <label>[{codeTextValue}] kodu için değiştirilecek değeri giriniz</label>
-          <Input value={codeTextValue} onChange={(e) => setCodeTextValue(e.target.value)} />
-        </Modal>
-      </div>
-    </>
+      {isLoading ? (
+        <Spin />
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            overflow: "auto",
+            height: "100vh",
+            padding: "10px",
+          }}
+        >
+          <div style={{ width: "100%", height: "calc(100% - 5px)" }}>
+            <ResponsiveContainer ref={ref1} width="100%" height="100%">
+              <BarChart
+                width="100%"
+                height="100%"
+                data={data}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="AY" name="Ay" />
+                <YAxis unit="km" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
+                <Tooltip content={<CustomTooltip />} />
+                {/*<Legend content={<CustomLegend />} />*/}
+                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
+                  <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+      <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      <Modal title="Tarih Seçimi" centered open={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose>
+        {modalContent === "Yıl Seç" && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <div>Yıl Seç:</div>
+            <Controller
+              name="yilSecimiKatedilenMesafe"
+              control={control}
+              render={({ field }) => <DatePicker {...field} picker="year" style={{ width: "130px" }} placeholder="Tarih seçiniz" />}
+            />
+          </div>
+        )}
+      </Modal>
+      {/* Expanded Modal */}
+      <Modal
+        title={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "98%",
+            }}
+          >
+            <Text
+              title={`Aylık Bakım Maliyetleri${baslamaTarihi ? ` (${baslamaTarihi})` : ""}`}
+              style={{
+                fontWeight: "500",
+                fontSize: "17px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "calc(100% - 50px)",
+              }}
+            >
+              Katedilen Mesafe
+              {baslamaTarihi && ` (${baslamaTarihi})`}
+            </Text>
+            <PrinterOutlined style={{ cursor: "pointer", fontSize: "20px" }} onClick={downloadPDF} />
+          </div>
+        }
+        centered
+        open={isExpandedModalVisible}
+        onOk={() => setIsExpandedModalVisible(false)}
+        onCancel={() => setIsExpandedModalVisible(false)}
+        width="90%"
+        destroyOnClose
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            overflow: "auto",
+            height: "calc(100vh - 180px)",
+          }}
+        >
+          <ResponsiveContainer id="aylik-bakim" width="100%" height="100%">
+            <BarChart
+              width="100%"
+              height="100%"
+              data={data}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="AY"
+                // interval={0}
+                // angle={-90}
+                // textAnchor="end"
+                // height={70} // X ekseni yüksekliğini artırın
+                // tick={{
+                //   dy: 10, // Etiketleri aşağı kaydırın
+                // }}
+              />
+              <YAxis unit="km" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
+              <Tooltip content={<CustomTooltip />} />
+              {/*<Legend content={<CustomLegend />} />*/}
+              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
+                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Modal>
+    </div>
   );
-};
+}
 
-export default KodYonetimi;
+export default KatedilenMesafeler;

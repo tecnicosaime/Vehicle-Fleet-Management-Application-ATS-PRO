@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from "recharts";
 import { Button, Popover, Spin, Typography, Modal, DatePicker, Tour } from "antd";
-
 import http from "../../../../api/http.jsx";
 import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
@@ -170,13 +169,24 @@ function KatedilenMesafeler(props = {}) {
         >
           <p className="label">{`Ay: ${label}`}</p>
           {payload.map((entry, index) => (
-            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value} km`}</p>
+            <p key={`item-${index}`} style={{ color: entry.color }}>{`${entry.name}: ${entry.value.toLocaleString("tr-TR")} km`}</p>
           ))}
         </div>
       );
     }
 
     return null;
+  };
+
+  const CustomLabel = (props) => {
+    const { x, y, width, value } = props;
+    const formattedValue = value.toLocaleString("tr-TR");
+
+    return (
+      <text x={x + width / 2} y={y - 10} fill="gray" textAnchor="middle" dominantBaseline="middle">
+        {formattedValue}
+      </text>
+    );
   };
 
   const showModal = (content) => {
@@ -326,11 +336,11 @@ function KatedilenMesafeler(props = {}) {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="AY" name="Ay" />
-                <YAxis unit="km" width={80} />
+                <YAxis unit="km" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
                 <Tooltip content={<CustomTooltip />} />
                 {/*<Legend content={<CustomLegend />} />*/}
                 <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
-                  <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                  <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -424,11 +434,11 @@ function KatedilenMesafeler(props = {}) {
                 //   dy: 10, // Etiketleri aşağı kaydırın
                 // }}
               />
-              <YAxis unit="km" width={80} />
+              <YAxis unit="km" width={80} tickFormatter={(value) => value.toLocaleString("tr-TR")} />
               <Tooltip content={<CustomTooltip />} />
               {/*<Legend content={<CustomLegend />} />*/}
               <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#00b7ce" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Katedilen Mesafe" unit="km">
-                <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

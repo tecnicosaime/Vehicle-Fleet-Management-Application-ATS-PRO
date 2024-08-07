@@ -153,6 +153,16 @@ function AylikAracBakimMaliyetleri(props = {}) {
       </ul>
     );
   };
+  const CustomLabel = (props) => {
+    const { x, y, width, value } = props;
+    const formattedValue = value.toLocaleString("tr-TR");
+
+    return (
+      <text x={x + width / 2} y={y - 10} fill="gray" textAnchor="middle" dominantBaseline="middle">
+        {formattedValue}
+      </text>
+    );
+  };
 
   const showModal = (content) => {
     setModalContent(content);
@@ -300,11 +310,11 @@ function AylikAracBakimMaliyetleri(props = {}) {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="AY" />
-                <YAxis />
+                <YAxis unit=" ₺" tickFormatter={(value) => value.toLocaleString("tr-TR")} />
                 <Tooltip />
                 {/*<Legend content={<CustomLegend />} />*/}
-                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Araç Bakım Maliyeti">
-                  <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+                <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Araç Bakım Maliyeti" unit=" ₺">
+                  <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -398,11 +408,11 @@ function AylikAracBakimMaliyetleri(props = {}) {
                 //   dy: 10, // Etiketleri aşağı kaydırın
                 // }}
               />
-              <YAxis />
+              <YAxis unit=" ₺" tickFormatter={(value) => value.toLocaleString("tr-TR")} />
               <Tooltip />
               {/*<Legend content={<CustomLegend />} />*/}
-              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Araç Bakım Maliyeti">
-                <LabelList style={{ fill: "white" }} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="insideTop" />
+              <Bar dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" stackId="a" fill="#8884d8" hide={!visibleSeries.AYLIK_BAKIM_ISEMRI_MALIYET} name="Araç Bakım Maliyeti" unit=" ₺">
+                <LabelList content={<CustomLabel />} dataKey="AYLIK_BAKIM_ISEMRI_MALIYET" position="top" />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
