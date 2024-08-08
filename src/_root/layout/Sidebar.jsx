@@ -175,6 +175,10 @@ const items = [
         key: "661",
         label: <Link to={"/hazirlaniyor"}>{t("cariHesaplar")}</Link>,
       },
+      {
+        key: "487",
+        label: <Link to={"/hazirlaniyor"}>{t("gelirIslemleri")}</Link>,
+      },
     ],
   },
   {
