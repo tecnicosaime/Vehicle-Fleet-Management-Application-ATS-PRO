@@ -373,6 +373,9 @@ const Yakit = () => {
                   cell: SortableHeaderCell,
                 },
               }}
+              scroll={{
+                x: 1200,
+              }}
               locale={{
                 emptyText: "Veri Bulunamadı",
               }}
