@@ -129,6 +129,11 @@
     height: 100vh !important;
     overflow: hidden !important;
 }
+.ant-layout-sider {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 250px !important;
+}
 
 /* .ant-layout-header {
   height: inherit !important;
