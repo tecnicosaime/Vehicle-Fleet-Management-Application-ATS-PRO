@@ -110,13 +110,13 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   });
   const { handleSubmit, reset, setValue, watch } = methods;
 
-  useEffect(() => {
-    if (watch("baslangicTarih")) {
-      const dateObj = dayjs.utc(watch("baslangicTarih"));
-      const newDateObj = dateObj.add(1, "year");
-      setValue("bitisTarih", newDateObj);
-    }
-  }, [watch("baslangicTarih")]);
+  // useEffect(() => {
+  //   if (watch("baslangicTarih")) {
+  //     const dateObj = dayjs.utc(watch("baslangicTarih"));
+  //     const newDateObj = dateObj.add(1, "year");
+  //     setValue("bitisTarih", newDateObj);
+  //   }
+  // }, [watch("baslangicTarih")]);
 
   useEffect(() => {
     if (updateModal) {
