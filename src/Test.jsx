@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { t } from "i18next";
 import axios from "axios";
@@ -31,8 +31,8 @@ const Vehicles = () => {
       pageSize: 10,
     },
   });
-  const [loading, setLoading] = useState(true);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(false);
   const [openRowHeader, setOpenRowHeader] = useState(false);
@@ -41,349 +41,43 @@ const Vehicles = () => {
   const [rows, setRows] = useState([]);
   const [filterData, setFilterData] = useState({});
   const [ayarlarData, setAyarlarData] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [country, setCountry] = useState({
     name: "",
     code: "",
   });
 
-  // Separate loading states for each API call
-  const [locationLoading, setLocationLoading] = useState(true);
-  const [ayarlarLoading, setAyarlarLoading] = useState(true);
-  const [vehiclesLoading, setVehiclesLoading] = useState(true);
-
-  // Fetch location data
   useEffect(() => {
-    const getLocation = async () => {
-      try {
-        const res = await axios.get("http://ip-api.com/json");
-        if (res.status === 200) {
-          setCountry({ name: res.data.country, code: res.data.countryCode });
-        }
-      } catch (error) {
-        console.error("Error fetching location data:", error);
-      } finally {
-        setLocationLoading(false); // End location loading
-      }
-    };
+    if (!loading && !isInitialLoading && !dataLoaded) {
+      fetchAyarlardata(); // Ensure this function is called before rendering the table
+    }
+  }, [loading, isInitialLoading, dataLoaded]);
 
+  useEffect(() => {
     getLocation();
   }, []);
 
-  // Fetch settings data
-  useEffect(() => {
-    const fetchAyarlardata = async () => {
-      try {
-        const response = await AxiosInstance.get("ReminderSettings/GetReminderSettingsItems");
-        if (response.data) {
-          setAyarlarData(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching settings data:", error);
-      } finally {
-        setAyarlarLoading(false); // End settings loading
+  async function getLocation() {
+    const res = await axios.get("http://ip-api.com/json");
+    if (res.status === 200) setCountry({ name: res.data.country, code: res.data.countryCode });
+  }
+
+  const fetchAyarlardata = async () => {
+    try {
+      setDataLoaded(false);
+      const response = await AxiosInstance.get("ReminderSettings/GetReminderSettingsItems");
+      if (response.data) {
+        setAyarlarData(response.data);
+        setDataLoaded(true); // Veriler yüklendi
       }
-    };
-
-    fetchAyarlardata();
-  }, []);
-
-  // Fetch vehicles data
-  useEffect(() => {
-    const fetchData = async () => {
-      setVehiclesLoading(true); // Start vehicles loading
-      try {
-        const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);
-        setDataSource(res?.data.vehicleList || []);
-        setTableParams((prevTableParams) => ({
-          ...prevTableParams,
-          pagination: {
-            ...prevTableParams.pagination,
-            total: res?.data.vehicleCount || 0,
-          },
-        }));
-      } catch (error) {
-        console.error("Error fetching vehicles data:", error);
-      } finally {
-        setVehiclesLoading(false); // End vehicles loading
-        setIsInitialLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
-
-  // Overall loading state based on individual loading states
-  useEffect(() => {
-    if (!locationLoading && !ayarlarLoading && !vehiclesLoading) {
-      setLoading(false); // All data has been loaded, end overall loading
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+      setDataLoaded(true); // Hata durumunda da veriler yüklendi
     }
-  }, [locationLoading, ayarlarLoading, vehiclesLoading]);
+  };
 
   const getBaseColumns = (country) => [
-    {
-      title: t("aracPlaka"),
-      dataIndex: "plaka",
-      key: 1,
-      render: (text, record) => (
-        <div style={{}}>
-          <Link to={`/detay/${record.aracId}`} className="plaka-button">
-            <span>{country.code}</span> <span>{text}</span>
-          </Link>
-        </div>
-      ),
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("aracTip"),
-      dataIndex: "aracTip",
-      key: 2,
-      ellipsis: true,
-      width: 100,
-    },
-    {
-      title: t("marka"),
-      dataIndex: "marka",
-      key: 3,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("model"),
-      dataIndex: "model",
-      key: 4,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("aracLokasyon"),
-      dataIndex: "lokasyon",
-      key: 10,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("guncelKm"),
-      dataIndex: "guncelKm",
-      key: 6,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("yil"),
-      dataIndex: "yil",
-      key: 8,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("yakitTip"),
-      dataIndex: "yakitTip",
-      key: 9,
-      ellipsis: true,
-      width: 100,
-    },
-    {
-      title: t("yakitTuketimi"),
-      dataIndex: "ortalamaTuketim",
-      key: "ortalamaTuketim",
-      ellipsis: true,
-      width: 100,
-      render: (text, record) => {
-        const { onGorulen, onGorulenMin, gerceklesen } = record;
-
-        if (gerceklesen === 0 || gerceklesen === undefined) {
-          return null;
-        }
-
-        const formattedGerceklesen = gerceklesen.toFixed(2);
-
-        let icon = null;
-        if (onGorulenMin !== null && onGorulenMin !== 0) {
-          if (gerceklesen < onGorulenMin) {
-            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
-          } else if (gerceklesen > onGorulen) {
-            icon = <ArrowUpOutlined style={{ color: "red", marginLeft: 4 }} />;
-          } else if (gerceklesen >= onGorulenMin && gerceklesen <= onGorulen) {
-            icon = <span style={{ marginLeft: 4 }}>~</span>;
-          }
-        } else if (onGorulen !== null && onGorulen !== 0) {
-          if (gerceklesen < onGorulen) {
-            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
-          }
-        }
-
-        return (
-          <Tooltip title={`Gerçekleşen: ${formattedGerceklesen}`}>
-            <span style={{ display: "flex", justifyContent: "flex-end" }}>
-              {formattedGerceklesen}
-              {icon}
-            </span>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: t("aracGrup"),
-      dataIndex: "grup",
-      key: 5,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("surucu"),
-      dataIndex: "surucu",
-      key: 10,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("departman"),
-      dataIndex: "departman",
-      key: 10,
-      ellipsis: true,
-      width: 160,
-    },
-    {
-      title: t("muayeneTarihi"),
-      dataIndex: "muayeneTarih",
-      key: 11,
-      ellipsis: true,
-      width: 160,
-      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
-    },
-    {
-      title: "Egzoz Tarih",
-      dataIndex: "egzosTarih",
-      key: 12,
-      ellipsis: true,
-      width: 160,
-      render: (text) => {
-        const today = dayjs(); // Sistem tarihini al
-        const date = dayjs(text); // Sütundaki tarihi al
-        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
-
-        // 3 id'li ayarı bul
-        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 3);
-
-        let backgroundColor = "";
-
-        if (ayar) {
-          if (difference > ayar.uyariSuresi) {
-            backgroundColor = ""; // Yeşil
-          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
-            backgroundColor = "#31c637"; // Sarı
-          } else if (difference < ayar.kritikSure && difference >= 0) {
-            backgroundColor = "yellow"; // Kırmızı
-          } else if (difference < 0) {
-            backgroundColor = "#ff4646"; // Mor
-          }
-        }
-
-        return (
-          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
-        );
-      },
-    },
-    {
-      title: t("aracVergi"),
-      dataIndex: "vergiTarih",
-      key: 13,
-      ellipsis: true,
-      width: 160,
-      render: (text) => {
-        const today = dayjs(); // Sistem tarihini al
-        const date = dayjs(text); // Sütundaki tarihi al
-        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
-
-        // 1 id'li ayarı bul
-        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 1);
-
-        let backgroundColor = "";
-
-        if (ayar) {
-          if (difference > ayar.uyariSuresi) {
-            backgroundColor = ""; // Yeşil
-          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
-            backgroundColor = "#31c637"; // Sarı
-          } else if (difference < ayar.kritikSure && difference >= 0) {
-            backgroundColor = "yellow"; // Kırmızı
-          } else if (difference < 0) {
-            backgroundColor = "#ff4646"; // Mor
-          }
-        }
-
-        return (
-          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
-        );
-      },
-    },
-    {
-      title: t("sozlesmeTarih"),
-      dataIndex: "sozlesmeTarih",
-      key: 14,
-      ellipsis: true,
-      width: 160,
-      render: (text) => {
-        const today = dayjs(); // Sistem tarihini al
-        const date = dayjs(text); // Sütundaki tarihi al
-        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
-
-        // 8 id'li ayarı bul
-        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 8);
-
-        let backgroundColor = "";
-
-        if (ayar) {
-          if (difference > ayar.uyariSuresi) {
-            backgroundColor = ""; // Yeşil
-          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
-            backgroundColor = "#31c637"; // Sarı
-          } else if (difference < ayar.kritikSure && difference >= 0) {
-            backgroundColor = "yellow"; // Kırmızı
-          } else if (difference < 0) {
-            backgroundColor = "#ff4646"; // Mor
-          }
-        }
-
-        return (
-          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
-        );
-      },
-    },
-    {
-      title: t("sigortaTarih"),
-      dataIndex: "sigortaBitisTarih",
-      key: 15,
-      ellipsis: true,
-      width: 160,
-      render: (text) => {
-        const today = dayjs(); // Sistem tarihini al
-        const date = dayjs(text); // Sütundaki tarihi al
-        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
-
-        // 6 id'li ayarı bul
-        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 6);
-
-        let backgroundColor = "";
-
-        if (ayar) {
-          if (difference > ayar.uyariSuresi) {
-            backgroundColor = ""; // Yeşil
-          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
-            backgroundColor = "#31c637"; // Sarı
-          } else if (difference < ayar.kritikSure && difference >= 0) {
-            backgroundColor = "yellow"; // Kırmızı
-          } else if (difference < 0) {
-            backgroundColor = "#ff4646"; // Mor
-          }
-        }
-
-        return (
-          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
-        );
-      },
-    },
+    // Your columns configuration...
   ];
 
   const [columns, setColumns] = useState(() =>
@@ -400,16 +94,58 @@ const Vehicles = () => {
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
   useEffect(() => {
-    setColumns(
-      getBaseColumns(country).map((column, i) => ({
-        ...column,
-        key: `${i}`,
-        onHeaderCell: () => ({
-          id: `${i}`,
-        }),
-      }))
-    );
-  }, [country]);
+    const fetchData = async () => {
+      setLoading(true);
+      const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);
+      setLoading(false);
+      setIsInitialLoading(false);
+
+      setDataSource(res?.data.vehicleList || []);
+      setTableParams((prevTableParams) => ({
+        ...prevTableParams,
+        pagination: {
+          ...prevTableParams.pagination,
+          total: res?.data.vehicleCount || 0,
+        },
+      }));
+    };
+
+    fetchData();
+  }, [search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setLoading(true);
+    setTableParams({
+      pagination,
+      filters,
+      ...sorter,
+    });
+
+    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+      setDataSource([]);
+    }
+  };
+
+  const filter = (data) => {
+    setLoading(true);
+    setStatus(true);
+    setFilterData(data);
+  };
+
+  const clear = () => {
+    setLoading(true);
+    setFilterData({});
+  };
+
+  const newColumns = columns.map((col) => ({
+    ...col,
+    hidden: !checkedList.includes(col.key),
+  }));
+
+  const options = columns.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }));
 
   const moveCheckbox = (fromIndex, toIndex) => {
     const updatedColumns = [...columns];
@@ -422,7 +158,6 @@ const Vehicles = () => {
 
   const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
 
-  // get selected rows data
   if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
   const handleRowSelection = (row, selected) => {
@@ -463,6 +198,18 @@ const Vehicles = () => {
     }
   }, [tableParams.pagination.current, search]);
 
+  useEffect(() => {
+    setColumns(
+      getBaseColumns(country).map((column, i) => ({
+        ...column,
+        key: `${i}`,
+        onHeaderCell: () => ({
+          id: `${i}`,
+        }),
+      }))
+    );
+  }, [country]);
+
   // Custom loading icon
   const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
@@ -493,42 +240,44 @@ const Vehicles = () => {
 
       <div className="content">
         <DragAndDropContext items={columns} setItems={setColumns}>
-          <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
-            <Table
-              rowKey={(record) => record.aracId}
-              columns={columns}
-              dataSource={dataSource}
-              pagination={{
-                ...tableParams.pagination,
-                showTotal: (total) => (
-                  <p className="text-info">
-                    [{total} {t("kayit")}]
-                  </p>
-                ),
-                locale: {
-                  items_per_page: `/ ${t("sayfa")}`,
-                },
-              }}
-              loading={false}
-              size="small"
-              onChange={handleTableChange}
-              rowSelection={{
-                selectedRowKeys: selectedRowKeys,
-                onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
-                onSelect: handleRowSelection,
-              }}
-              components={{
-                header: {
-                  cell: SortableHeaderCell,
-                },
-              }}
-              scroll={{
-                x: 1200,
-              }}
-              locale={{
-                emptyText: "Veri Bulunamadı",
-              }}
-            />
+          <Spin spinning={!dataLoaded || loading} indicator={customIcon}>
+            {dataLoaded && (
+              <Table
+                rowKey={(record) => record.aracId}
+                columns={newColumns}
+                dataSource={dataSource}
+                pagination={{
+                  ...tableParams.pagination,
+                  showTotal: (total) => (
+                    <p className="text-info">
+                      [{total} {t("kayit")}]
+                    </p>
+                  ),
+                  locale: {
+                    items_per_page: `/ ${t("sayfa")}`,
+                  },
+                }}
+                loading={false}
+                size="small"
+                onChange={handleTableChange}
+                rowSelection={{
+                  selectedRowKeys: selectedRowKeys,
+                  onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
+                  onSelect: handleRowSelection,
+                }}
+                components={{
+                  header: {
+                    cell: SortableHeaderCell,
+                  },
+                }}
+                scroll={{
+                  x: 1200,
+                }}
+                locale={{
+                  emptyText: "Veri Bulunamadı",
+                }}
+              />
+            )}
           </Spin>
         </DragAndDropContext>
       </div>
