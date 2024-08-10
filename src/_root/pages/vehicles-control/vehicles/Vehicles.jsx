@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { t } from "i18next";
 import axios from "axios";
@@ -16,6 +16,7 @@ import Filter from "./filter/Filter";
 import OperationsInfo from "./operations/OperationsInfo";
 import DurumFiltresi from "./components/DurumFiltresi.jsx";
 import dayjs from "dayjs";
+import AxiosInstance from "../../../../api/http";
 
 const { Text } = Typography;
 
@@ -31,7 +32,7 @@ const Vehicles = () => {
     },
   });
   const [loading, setLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(false);
   const [openRowHeader, setOpenRowHeader] = useState(false);
@@ -39,10 +40,17 @@ const Vehicles = () => {
   const [keys, setKeys] = useState([]);
   const [rows, setRows] = useState([]);
   const [filterData, setFilterData] = useState({});
+  const [ayarlarData, setAyarlarData] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [country, setCountry] = useState({
     name: "",
     code: "",
   });
+  useEffect(() => {
+    if (!loading && !isInitialLoading && !dataLoaded) {
+      fetchAyarlardata(); // Ensure this function is called before rendering the table
+    }
+  }, [loading, isInitialLoading, dataLoaded]);
 
   useEffect(() => {
     getLocation();
@@ -52,6 +60,20 @@ const Vehicles = () => {
     const res = await axios.get("http://ip-api.com/json");
     if (res.status === 200) setCountry({ name: res.data.country, code: res.data.countryCode });
   }
+
+  const fetchAyarlardata = async () => {
+    try {
+      setDataLoaded(false);
+      const response = await AxiosInstance.get("ReminderSettings/GetReminderSettingsItems");
+      if (response.data) {
+        setAyarlarData(response.data);
+        setDataLoaded(true); // Veriler yüklendi
+      }
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+      setDataLoaded(true); // Hata durumunda da veriler yüklendi
+    }
+  };
 
   const getBaseColumns = (country) => [
     {
@@ -196,7 +218,37 @@ const Vehicles = () => {
       key: 12,
       ellipsis: true,
       width: 160,
-      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+      render: (text) => {
+        if (!ayarlarData) {
+          return null; // Eğer ayarlarData henüz yüklenmediyse hiçbir şey render etme
+        }
+
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 3 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 3);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          // Eğer ayar bulunduysa
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
     },
     {
       title: t("aracVergi"),
@@ -204,7 +256,37 @@ const Vehicles = () => {
       key: 13,
       ellipsis: true,
       width: 160,
-      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+      render: (text) => {
+        if (!ayarlarData) {
+          return null; // Eğer ayarlarData henüz yüklenmediyse hiçbir şey render etme
+        }
+
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 3 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 1);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          // Eğer ayar bulunduysa
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
     },
     {
       title: t("sozlesmeTarih"),
@@ -212,7 +294,37 @@ const Vehicles = () => {
       key: 14,
       ellipsis: true,
       width: 160,
-      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+      render: (text) => {
+        if (!ayarlarData) {
+          return null; // Eğer ayarlarData henüz yüklenmediyse hiçbir şey render etme
+        }
+
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 3 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 8);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          // Eğer ayar bulunduysa
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
     },
     {
       title: t("sigortaTarih"),
@@ -220,7 +332,37 @@ const Vehicles = () => {
       key: 15,
       ellipsis: true,
       width: 160,
-      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+      render: (text) => {
+        if (!ayarlarData) {
+          return null; // Eğer ayarlarData henüz yüklenmediyse hiçbir şey render etme
+        }
+
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 3 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 6);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          // Eğer ayar bulunduysa
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
     },
   ];
 
@@ -388,42 +530,44 @@ const Vehicles = () => {
 
       <div className="content">
         <DragAndDropContext items={columns} setItems={setColumns}>
-          <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
-            <Table
-              rowKey={(record) => record.aracId}
-              columns={newColumns}
-              dataSource={dataSource}
-              pagination={{
-                ...tableParams.pagination,
-                showTotal: (total) => (
-                  <p className="text-info">
-                    [{total} {t("kayit")}]
-                  </p>
-                ),
-                locale: {
-                  items_per_page: `/ ${t("sayfa")}`,
-                },
-              }}
-              loading={false}
-              size="small"
-              onChange={handleTableChange}
-              rowSelection={{
-                selectedRowKeys: selectedRowKeys,
-                onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
-                onSelect: handleRowSelection,
-              }}
-              components={{
-                header: {
-                  cell: SortableHeaderCell,
-                },
-              }}
-              scroll={{
-                x: 1200,
-              }}
-              locale={{
-                emptyText: "Veri Bulunamadı",
-              }}
-            />
+          <Spin spinning={!dataLoaded || loading} indicator={customIcon}>
+            {dataLoaded && (
+              <Table
+                rowKey={(record) => record.aracId}
+                columns={newColumns}
+                dataSource={dataSource}
+                pagination={{
+                  ...tableParams.pagination,
+                  showTotal: (total) => (
+                    <p className="text-info">
+                      [{total} {t("kayit")}]
+                    </p>
+                  ),
+                  locale: {
+                    items_per_page: `/ ${t("sayfa")}`,
+                  },
+                }}
+                loading={false}
+                size="small"
+                onChange={handleTableChange}
+                rowSelection={{
+                  selectedRowKeys: selectedRowKeys,
+                  onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
+                  onSelect: handleRowSelection,
+                }}
+                components={{
+                  header: {
+                    cell: SortableHeaderCell,
+                  },
+                }}
+                scroll={{
+                  x: 1200,
+                }}
+                locale={{
+                  emptyText: "Veri Bulunamadı",
+                }}
+              />
+            )}
           </Spin>
         </DragAndDropContext>
       </div>
