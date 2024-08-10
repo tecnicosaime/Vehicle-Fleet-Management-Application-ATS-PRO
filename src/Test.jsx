@@ -1,320 +1,539 @@
-import React, { useEffect, useState } from "react";
-import { Button, Popover, Typography, Spin, Badge, Modal, Divider } from "antd";
-import { FaRegCalendarAlt } from "react-icons/fa";
-import styled from "styled-components";
-import Sigorta from "./components/Sigorta";
-import { FormProvider, useForm } from "react-hook-form";
+import { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
+import { t } from "i18next";
+import axios from "axios";
+import { Table, Popover, Button, Input, Spin, Typography, Tooltip } from "antd";
+import { MenuOutlined, HomeOutlined, LoadingOutlined, ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { PlakaContext } from "../../../../context/plakaSlice";
+import { GetVehiclesListService } from "../../../../api/services/vehicles/vehicles/services";
+import { DemoService } from "../../../../api/service";
+import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
+import DragAndDropContext from "../../../components/drag-drop-table/DragAndDropContext";
+import SortableHeaderCell from "../../../components/drag-drop-table/SortableHeaderCell";
+import Content from "../../../components/drag-drop-table/DraggableCheckbox";
+import AddModal from "./add/AddModal";
+import Filter from "./filter/Filter";
+import OperationsInfo from "./operations/OperationsInfo";
+import DurumFiltresi from "./components/DurumFiltresi.jsx";
+import dayjs from "dayjs";
+import AxiosInstance from "../../../../api/http";
 
 const { Text } = Typography;
 
-const CustomSpin = styled(Spin)`
-  .ant-spin-dot-item {
-    background-color: #0091ff !important; /* Blue color */
-  }
-`;
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("araclar") }];
 
-const ContentWrapper = styled.div`
-  width: 200px;
-`;
+const Vehicles = () => {
+  const { setPlaka } = useContext(PlakaContext);
+  const [dataSource, setDataSource] = useState([]);
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  });
+  const [loading, setLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState(false);
+  const [openRowHeader, setOpenRowHeader] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [keys, setKeys] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [filterData, setFilterData] = useState({});
+  const [ayarlarData, setAyarlarData] = useState(null);
+  const [country, setCountry] = useState({
+    name: "",
+    code: "",
+  });
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  cursor: pointer;
-`;
+  // Separate loading states for each API call
+  const [locationLoading, setLocationLoading] = useState(true);
+  const [ayarlarLoading, setAyarlarLoading] = useState(true);
+  const [vehiclesLoading, setVehiclesLoading] = useState(true);
 
-const Indicator = styled.div`
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-`;
-
-const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) => {
-  const [open, setOpen] = useState(false);
-  const [requested, setRequested] = useState(false); // Bayrak
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalContent, setModalContent] = useState(null);
-
-  const methods = useForm(); // Initialize form methods
-
+  // Fetch location data
   useEffect(() => {
-    if (open && !requested) {
-      getHatirlatici();
-      getHatirlatici1();
-      setRequested(true); // Bayrağı ayarla
+    const getLocation = async () => {
+      try {
+        const res = await axios.get("http://ip-api.com/json");
+        if (res.status === 200) {
+          setCountry({ name: res.data.country, code: res.data.countryCode });
+        }
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      } finally {
+        setLocationLoading(false); // End location loading
+      }
+    };
+
+    getLocation();
+  }, []);
+
+  // Fetch settings data
+  useEffect(() => {
+    const fetchAyarlardata = async () => {
+      try {
+        const response = await AxiosInstance.get("ReminderSettings/GetReminderSettingsItems");
+        if (response.data) {
+          setAyarlarData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching settings data:", error);
+      } finally {
+        setAyarlarLoading(false); // End settings loading
+      }
+    };
+
+    fetchAyarlardata();
+  }, []);
+
+  // Fetch vehicles data
+  useEffect(() => {
+    const fetchData = async () => {
+      setVehiclesLoading(true); // Start vehicles loading
+      try {
+        const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);
+        setDataSource(res?.data.vehicleList || []);
+        setTableParams((prevTableParams) => ({
+          ...prevTableParams,
+          pagination: {
+            ...prevTableParams.pagination,
+            total: res?.data.vehicleCount || 0,
+          },
+        }));
+      } catch (error) {
+        console.error("Error fetching vehicles data:", error);
+      } finally {
+        setVehiclesLoading(false); // End vehicles loading
+        setIsInitialLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
+
+  // Overall loading state based on individual loading states
+  useEffect(() => {
+    if (!locationLoading && !ayarlarLoading && !vehiclesLoading) {
+      setLoading(false); // All data has been loaded, end overall loading
     }
-  }, [open, requested, getHatirlatici, getHatirlatici1]);
+  }, [locationLoading, ayarlarLoading, vehiclesLoading]);
 
-  const handleOpenChange = (newOpen) => {
-    if (!newOpen) {
-      setRequested(false); // Popover kapandığında bayrağı sıfırla
-    }
-    setOpen(newOpen);
-  };
-
-  const handleRowClick = (title, content) => {
-    setModalTitle(title);
-    setModalContent(content);
-    setModalVisible(true);
-    setOpen(false); // Modal açıldığında popover'ı kapat
-  };
-
-  const totalReminders =
-    (data ? Object.values(data).reduce((acc, currentValue) => acc + currentValue, 0) : 0) + (data1 ? Object.values(data1).reduce((acc, currentValue) => acc + currentValue, 0) : 0);
-
-  const content = (
-    <ContentWrapper>
-      <Text strong style={{ fontSize: "16px" }}>
-        Hatırlatıcılar
-      </Text>
-      <CustomSpin spinning={loading}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-          <Row onClick={() => handleRowClick("Süresi Yaklaşan", <div>Süresi Yaklaşan İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#008000" }} />
-              <Text>Süresi Yaklaşan</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(0,128,0,0.37)",
-                color: "#008000",
-              }}
-            >
-              {data1?.yaklasanSure}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Kritik Süre", <div>Kritik Süre İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#ffad00" }} />
-              <Text>Kritik Süre</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(255,173,0,0.24)",
-                color: "#e68901",
-              }}
-            >
-              {data1?.kritikSure}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Süresi Geçen", <div>Süresi Geçen İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#ff0000" }} />
-              <Text>Süresi Geçen</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(255,0,0,0.38)",
-                color: "#ff0000",
-              }}
-            >
-              {data1?.gecenSure}
-            </Text>
-          </Row>
-          <Divider />
-          <Row onClick={() => handleRowClick("Sigorta", <Sigorta />)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "red" }} />
-              <Text>Sigorta</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "#ff000066",
-                color: "red",
-              }}
-            >
-              {data?.sigortaHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Taşıt Kartı", <div>Taşıt Kartı İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#009b84" }} />
-              <Text>Taşıt Kartı</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgb(0 155 132 / 35%)",
-                color: "#009b84",
-              }}
-            >
-              {data?.aracKartiHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Ceza Ödeme", <div>Ceza Ödeme İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "rgb(106,14,168)" }} />
-              <Text>Ceza Ödeme</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgb(106 14 168 / 35%)",
-                color: "rgb(106,14,168)",
-              }}
-            >
-              {data?.cezaHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Yakit Tüketimi", <div>Yakit Tüketimi İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "rgb(202,108,0)" }} />
-              <Text>Yakit Tüketimi</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgb(202,108,0,0.35)",
-                color: "rgb(202,108,0)",
-              }}
-            >
-              {data?.yakitTuketimiHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Kiralama", <div>Kiralama İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "rgba(0,196,255,0.88)" }} />
-              <Text>Kiralama</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgb(0,196,255,0.35)",
-                color: "rgb(0,161,207)",
-              }}
-            >
-              {data?.kiralamaHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Stok", <div>Stok İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "rgba(0,59,209,0.88)" }} />
-              <Text>Stok</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgb(0,59,209,0.20)",
-                color: "rgb(0,59,209,0.88)",
-              }}
-            >
-              {data?.stokHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Sürücü", <div>Sürücü İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "rgba(255,117,31,0.88)" }} />
-              <Text>Sürücü</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgb(255,117,31,0.20)",
-                color: "rgb(255,117,31,0.88)",
-              }}
-            >
-              {data?.surucuHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Vergi", <div>Vergi İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#921A40" }} />
-              <Text>Vergi</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(146,26,64,0.48)",
-                color: "#921A40",
-              }}
-            >
-              {data?.aracVergiHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Muayene", <div>Muayene İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#987D9A" }} />
-              <Text>Muayene</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(152,125,154,0.43)",
-                color: "#987D9A",
-              }}
-            >
-              {data?.aracMuayeneHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Sözleşme", <div>Sözleşme İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#EF5A6F" }} />
-              <Text>Sözleşme</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(239,90,111,0.44)",
-                color: "#EF5A6F",
-              }}
-            >
-              {data?.aracSozlesmeHatirlaticiSayisi}
-            </Text>
-          </Row>
-          <Row onClick={() => handleRowClick("Egzoz", <div>Egzoz İçeriği</div>)}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
-              <Indicator style={{ backgroundColor: "#134B70" }} />
-              <Text>Egzoz</Text>
-            </div>
-            <Text
-              style={{
-                borderRadius: "8px 8px 8px 8px",
-                padding: "1px 7px",
-                backgroundColor: "rgba(19,75,112,0.47)",
-                color: "#134B70",
-              }}
-            >
-              {data?.aracEgzozHatiraticiSayisi}
-            </Text>
-          </Row>
+  const getBaseColumns = (country) => [
+    {
+      title: t("aracPlaka"),
+      dataIndex: "plaka",
+      key: 1,
+      render: (text, record) => (
+        <div style={{}}>
+          <Link to={`/detay/${record.aracId}`} className="plaka-button">
+            <span>{country.code}</span> <span>{text}</span>
+          </Link>
         </div>
-      </CustomSpin>
-    </ContentWrapper>
+      ),
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("aracTip"),
+      dataIndex: "aracTip",
+      key: 2,
+      ellipsis: true,
+      width: 100,
+    },
+    {
+      title: t("marka"),
+      dataIndex: "marka",
+      key: 3,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("model"),
+      dataIndex: "model",
+      key: 4,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("aracLokasyon"),
+      dataIndex: "lokasyon",
+      key: 10,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("guncelKm"),
+      dataIndex: "guncelKm",
+      key: 6,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("yil"),
+      dataIndex: "yil",
+      key: 8,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("yakitTip"),
+      dataIndex: "yakitTip",
+      key: 9,
+      ellipsis: true,
+      width: 100,
+    },
+    {
+      title: t("yakitTuketimi"),
+      dataIndex: "ortalamaTuketim",
+      key: "ortalamaTuketim",
+      ellipsis: true,
+      width: 100,
+      render: (text, record) => {
+        const { onGorulen, onGorulenMin, gerceklesen } = record;
+
+        if (gerceklesen === 0 || gerceklesen === undefined) {
+          return null;
+        }
+
+        const formattedGerceklesen = gerceklesen.toFixed(2);
+
+        let icon = null;
+        if (onGorulenMin !== null && onGorulenMin !== 0) {
+          if (gerceklesen < onGorulenMin) {
+            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
+          } else if (gerceklesen > onGorulen) {
+            icon = <ArrowUpOutlined style={{ color: "red", marginLeft: 4 }} />;
+          } else if (gerceklesen >= onGorulenMin && gerceklesen <= onGorulen) {
+            icon = <span style={{ marginLeft: 4 }}>~</span>;
+          }
+        } else if (onGorulen !== null && onGorulen !== 0) {
+          if (gerceklesen < onGorulen) {
+            icon = <ArrowDownOutlined style={{ color: "green", marginLeft: 4 }} />;
+          }
+        }
+
+        return (
+          <Tooltip title={`Gerçekleşen: ${formattedGerceklesen}`}>
+            <span style={{ display: "flex", justifyContent: "flex-end" }}>
+              {formattedGerceklesen}
+              {icon}
+            </span>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: t("aracGrup"),
+      dataIndex: "grup",
+      key: 5,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("surucu"),
+      dataIndex: "surucu",
+      key: 10,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("departman"),
+      dataIndex: "departman",
+      key: 10,
+      ellipsis: true,
+      width: 160,
+    },
+    {
+      title: t("muayeneTarihi"),
+      dataIndex: "muayeneTarih",
+      key: 11,
+      ellipsis: true,
+      width: 160,
+      render: (text) => (text ? dayjs(text).format("DD.MM.YYYY") : ""),
+    },
+    {
+      title: "Egzoz Tarih",
+      dataIndex: "egzosTarih",
+      key: 12,
+      ellipsis: true,
+      width: 160,
+      render: (text) => {
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 3 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 3);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
+    },
+    {
+      title: t("aracVergi"),
+      dataIndex: "vergiTarih",
+      key: 13,
+      ellipsis: true,
+      width: 160,
+      render: (text) => {
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 1 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 1);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
+    },
+    {
+      title: t("sozlesmeTarih"),
+      dataIndex: "sozlesmeTarih",
+      key: 14,
+      ellipsis: true,
+      width: 160,
+      render: (text) => {
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 8 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 8);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
+    },
+    {
+      title: t("sigortaTarih"),
+      dataIndex: "sigortaBitisTarih",
+      key: 15,
+      ellipsis: true,
+      width: 160,
+      render: (text) => {
+        const today = dayjs(); // Sistem tarihini al
+        const date = dayjs(text); // Sütundaki tarihi al
+        const difference = date.diff(today, "day"); // İki tarih arasındaki gün farkı
+
+        // 6 id'li ayarı bul
+        const ayar = ayarlarData.find((item) => item.hatirlaticiAyarId === 6);
+
+        let backgroundColor = "";
+
+        if (ayar) {
+          if (difference > ayar.uyariSuresi) {
+            backgroundColor = ""; // Yeşil
+          } else if (difference <= ayar.uyariSuresi && difference >= ayar.kritikSure) {
+            backgroundColor = "#31c637"; // Sarı
+          } else if (difference < ayar.kritikSure && difference >= 0) {
+            backgroundColor = "yellow"; // Kırmızı
+          } else if (difference < 0) {
+            backgroundColor = "#ff4646"; // Mor
+          }
+        }
+
+        return (
+          <div style={{ backgroundColor, padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }}>{text ? dayjs(text).format("DD.MM.YYYY") : ""}</div>
+        );
+      },
+    },
+  ];
+
+  const [columns, setColumns] = useState(() =>
+    getBaseColumns(country).map((column, i) => ({
+      ...column,
+      key: `${i}`,
+      onHeaderCell: () => ({
+        id: `${i}`,
+      }),
+    }))
   );
 
+  const defaultCheckedList = columns.map((item) => item.key);
+  const [checkedList, setCheckedList] = useState(defaultCheckedList);
+
+  useEffect(() => {
+    setColumns(
+      getBaseColumns(country).map((column, i) => ({
+        ...column,
+        key: `${i}`,
+        onHeaderCell: () => ({
+          id: `${i}`,
+        }),
+      }))
+    );
+  }, [country]);
+
+  const moveCheckbox = (fromIndex, toIndex) => {
+    const updatedColumns = [...columns];
+    const [removed] = updatedColumns.splice(fromIndex, 1);
+    updatedColumns.splice(toIndex, 0, removed);
+
+    setColumns(updatedColumns);
+    setCheckedList(updatedColumns.map((col) => col.key));
+  };
+
+  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
+
+  // get selected rows data
+  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
+
+  const handleRowSelection = (row, selected) => {
+    if (selected) {
+      if (!keys.includes(row.aracId)) {
+        setKeys((prevKeys) => [...prevKeys, row.aracId]);
+        setRows((prevRows) => [...prevRows, row]);
+      }
+    } else {
+      setKeys((prevKeys) => prevKeys.filter((key) => key !== row.aracId));
+      setRows((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
+    }
+  };
+
+  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
+
+  useEffect(() => {
+    const newPlakaEntries = rows.map((vehicle) => ({
+      id: vehicle.aracId,
+      plaka: vehicle.plaka,
+      lokasyonId: vehicle.lokasyonId,
+      lokasyon: vehicle.lokasyon,
+    }));
+    setPlaka(newPlakaEntries);
+  }, [rows]);
+
+  useEffect(() => {
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
+    if (storedSelectedKeys.length) {
+      setKeys(storedSelectedKeys);
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
+    if (storedSelectedKeys.length) {
+      setSelectedRowKeys(storedSelectedKeys);
+    }
+  }, [tableParams.pagination.current, search]);
+
+  // Custom loading icon
+  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
+
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <FormProvider {...methods}>
-        <Popover content={content} trigger="click" open={open} onOpenChange={handleOpenChange}>
-          <Badge count={totalReminders} offset={[-3, 3]}>
-            <Button type="succes" shape="circle" icon={<FaRegCalendarAlt style={{ fontSize: "20px" }} />}></Button>
-          </Badge>
-        </Popover>
-        <Modal title={modalTitle} destroyOnClose open={modalVisible} onCancel={() => setModalVisible(false)} footer={null} width="90%">
-          {modalContent}
-        </Modal>
-      </FormProvider>
-    </div>
+    <>
+      <div className="content">
+        <BreadcrumbComp items={breadcrumb} />
+      </div>
+
+      <div className="content">
+        <div className="flex justify-between align-center">
+          <div className="flex align-center gap-1">
+            <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
+              <Button className="btn primary-btn">
+                <MenuOutlined />
+              </Button>
+            </Popover>
+            <Input placeholder="Arama" onChange={(e) => setSearch(e.target.value)} />
+            <AddModal setStatus={setStatus} />
+            <Filter filter={filter} clearFilters={clear} />
+            <DurumFiltresi />
+          </div>
+          <div>
+            <OperationsInfo ids={keys} />
+          </div>
+        </div>
+      </div>
+
+      <div className="content">
+        <DragAndDropContext items={columns} setItems={setColumns}>
+          <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
+            <Table
+              rowKey={(record) => record.aracId}
+              columns={columns}
+              dataSource={dataSource}
+              pagination={{
+                ...tableParams.pagination,
+                showTotal: (total) => (
+                  <p className="text-info">
+                    [{total} {t("kayit")}]
+                  </p>
+                ),
+                locale: {
+                  items_per_page: `/ ${t("sayfa")}`,
+                },
+              }}
+              loading={false}
+              size="small"
+              onChange={handleTableChange}
+              rowSelection={{
+                selectedRowKeys: selectedRowKeys,
+                onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
+                onSelect: handleRowSelection,
+              }}
+              components={{
+                header: {
+                  cell: SortableHeaderCell,
+                },
+              }}
+              scroll={{
+                x: 1200,
+              }}
+              locale={{
+                emptyText: "Veri Bulunamadı",
+              }}
+            />
+          </Spin>
+        </DragAndDropContext>
+      </div>
+    </>
   );
 };
 
-export default Hatirlatici;
+export default Vehicles;
