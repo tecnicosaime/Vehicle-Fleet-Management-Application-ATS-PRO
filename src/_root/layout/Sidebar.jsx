@@ -233,7 +233,7 @@ const items = [
       },
       {
         key: "43",
-        label: <Link to={"/servis-tanimlari"}>{t("servis")}</Link>,
+        label: <Link to={"/servis-tanimlari"}>{t("servisTanimlari")}</Link>,
       },
       {
         key: "44",
