@@ -47,10 +47,8 @@ const Vehicles = () => {
     code: "",
   });
   useEffect(() => {
-    if (!loading && !isInitialLoading && !dataLoaded) {
-      fetchAyarlardata(); // Ensure this function is called before rendering the table
-    }
-  }, [loading, isInitialLoading, dataLoaded]);
+    fetchAyarlardata(); // Ensure this function is called before rendering the table
+  }, []);
 
   useEffect(() => {
     getLocation();
@@ -399,8 +397,10 @@ const Vehicles = () => {
       }));
     };
 
-    fetchData();
-  }, [search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
+    if (ayarlarData) {
+      fetchData();
+    }
+  }, [ayarlarData, search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setLoading(true);
