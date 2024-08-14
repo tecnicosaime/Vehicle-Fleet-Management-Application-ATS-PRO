@@ -150,7 +150,6 @@ const EkspertizTable = ({ onSelectChange, selectedOptions, vehicleExpertData, ge
   useEffect(() => {
     if (fetchOptionsTrigger) {
       fetchOptions();
-      console.log("guncellemeBasarili");
     }
   }, [fetchOptionsTrigger]);
 
