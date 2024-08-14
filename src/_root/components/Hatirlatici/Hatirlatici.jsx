@@ -296,6 +296,22 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.aracEgzozHatiraticiSayisi}
             </Text>
           </Row>
+          <Row onClick={() => handleRowClick("Peryodik Bakım", <div>Peryodik Bakım İçeriği</div>)}>
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
+              <Indicator style={{ backgroundColor: "#00cfaa" }} />
+              <Text>Peryodik Bakım</Text>
+            </div>
+            <Text
+              style={{
+                borderRadius: "8px 8px 8px 8px",
+                padding: "1px 7px",
+                backgroundColor: "rgba(0,207,170,0.31)",
+                color: "#00cfaa",
+              }}
+            >
+              {data?.periyodikBakimHatirlaticiSayisi}
+            </Text>
+          </Row>
         </div>
       </CustomSpin>
     </ContentWrapper>
