@@ -8,6 +8,7 @@ import Car from "./svg/Car";
 import EkspertizTable from "./components/EkspertizTable";
 import Textarea from "../../../../../../components/form/inputs/Textarea";
 import AxiosInstance from "../../../../../../../api/http";
+import DurumModal from "./components/DurumModal.jsx";
 
 dayjs.locale("tr");
 
@@ -22,6 +23,7 @@ const Ekspertiz = ({ visible, onClose, id }) => {
   const [isColorModalVisible, setIsColorModalVisible] = useState(false);
   const [selectedColorData, setSelectedColorData] = useState({});
   const [colorList, setColorList] = useState([]);
+  const [fetchOptionsTrigger, setFetchOptionsTrigger] = useState(false);
 
   const defaultValues = {
     ekspertAciklama: "",
@@ -130,6 +132,25 @@ const Ekspertiz = ({ visible, onClose, id }) => {
     setIsColorModalVisible(false);
   };
 
+  const guncellemeBasarili = () => {
+    // Seçili seçenekleri güncellemek için yeni bir state ayarı
+    setSelectedOptions((prevState) => ({
+      ...prevState,
+      [selectedColorData.aracEkspertizDurum]: selectedColorData.aracEkspertizRenk,
+    }));
+
+    // colorStyles state'ini güncelle
+    setColorStyles((prevStyles) => ({
+      ...prevStyles,
+      [selectedColorData.aracEkspertizDurum]: selectedColorData.aracEkspertizRenk,
+    }));
+
+    // Modal kapandıktan sonra fetchOptions'ı tetiklemek için
+    setFetchOptionsTrigger((prev) => !prev);
+    fetchColorStyles();
+    fetchVehicleExpertData();
+  };
+
   const footer = [
     <Button key="submit" className="btn btn-min primary-btn" onClick={onSumbit}>
       Kaydet
@@ -153,15 +174,44 @@ const Ekspertiz = ({ visible, onClose, id }) => {
     setValue("durumID", selectedColorData?.aracEkspertizAyarId || "");
   }, [selectedColorData]);
 
+  const onSubmit = async (data) => {
+    try {
+      const body = {
+        aracEkspertizDurum: data.durumIsim,
+        aracEkspertizRenk: data.durumRenk,
+        aracEkspertizAyarId: data.durumID,
+      };
+
+      const response = await AxiosInstance.post(`AppraisalsSettings/UpdateAppraisalsSettingsItem`, body);
+
+      if (response.data.statusCode === 200) {
+        message.success("Veri başarıyla güncellendi");
+        handleColorModalClose();
+        fetchColorStyles();
+        fetchVehicleExpertData();
+        // guncellemeBasarili();
+      } else {
+        message.error("Güncelleme başarısız");
+      }
+    } catch (error) {
+      console.error("Error updating data: ", error);
+      message.error("Güncelleme sırasında hata oluştu");
+    }
+  };
+
   // console.log("araba rengleme", selectedOptions);
 
   return (
     <>
-      <Modal title="Ekspertiz Bilgileri" open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1400}>
+      <Modal title="Ekspertiz Bilgileri" open={visible} onCancel={onClose} centered maskClosable={false} footer={footer} width={1400}>
         <FormProvider {...methods}>
           <form onSubmit={onSumbit}>
-            <div className="grid gap-1">
+            <div style={{ height: "calc(100vh - 200px)", overflow: "auto" }} className="grid gap-1">
               <div className="col-span-7">
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <DurumModal guncellemeBasarili={guncellemeBasarili} />
+                </div>
+
                 <Car selectedOptions={selectedOptions} colorStyles={colorStyles} />
                 <div className="grid mt-10">
                   {colorList.map((item) => (
@@ -185,6 +235,7 @@ const Ekspertiz = ({ visible, onClose, id }) => {
                   selectedOptions={selectedOptions}
                   vehicleExpertData={vehicleExpertData} // Pass vehicle expert data to the table
                   getData={handleGetData} // Pass the function to get data from EkspertizTable
+                  fetchOptionsTrigger={fetchOptionsTrigger} // Yeni prop'u aktarın
                 />
               </div>
               <div className="col-span-12 mt-20">
@@ -200,6 +251,9 @@ const Ekspertiz = ({ visible, onClose, id }) => {
         open={isColorModalVisible}
         onCancel={handleColorModalClose}
         footer={[
+          <Button key="submit" onClick={handleSubmit(onSubmit)}>
+            Kaydet
+          </Button>,
           <Button key="ok" onClick={handleColorModalClose}>
             Kapat
           </Button>,

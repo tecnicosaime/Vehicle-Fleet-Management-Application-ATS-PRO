@@ -5,7 +5,7 @@ import AxiosInstance from "../../../../../../../../api/http";
 
 const { Option } = Select;
 
-const EkspertizTable = ({ onSelectChange, selectedOptions, vehicleExpertData, getData }) => {
+const EkspertizTable = ({ onSelectChange, selectedOptions, vehicleExpertData, getData, fetchOptionsTrigger }) => {
   const [data, setData] = useState([]);
   const [options, setOptions] = useState([]);
 
@@ -148,6 +148,13 @@ const EkspertizTable = ({ onSelectChange, selectedOptions, vehicleExpertData, ge
   }, []);
 
   useEffect(() => {
+    if (fetchOptionsTrigger) {
+      fetchOptions();
+      console.log("guncellemeBasarili");
+    }
+  }, [fetchOptionsTrigger]);
+
+  useEffect(() => {
     getData(data);
   }, [data]);
 
@@ -176,7 +183,7 @@ const EkspertizTable = ({ onSelectChange, selectedOptions, vehicleExpertData, ge
 
   const columns = [
     {
-      title: "Aksam",
+      title: "Parça",
       dataIndex: "title",
       key: "title",
       render: (text) => <span>{text}</span>,
@@ -218,7 +225,7 @@ const EkspertizTable = ({ onSelectChange, selectedOptions, vehicleExpertData, ge
 
   return (
     <>
-      <Button onClick={handleLogData}>Log Table Data</Button>
+      {/*<Button onClick={handleLogData}>Log Table Data</Button>*/}
       <Table dataSource={data} columns={columns} pagination={false} size="small" />
     </>
   );
