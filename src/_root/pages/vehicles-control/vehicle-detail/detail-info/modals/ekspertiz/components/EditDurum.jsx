@@ -36,7 +36,6 @@ function EditDurum({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
     // API'ye POST isteği gönder
     AxiosInstance.post("AppraisalsSettings/UpdateAppraisalsSettingsItem", Body)
       .then((response) => {
-        console.log("Data sent successfully:", response);
         if (response.data.statusCode === 200 || response.data.statusCode === 201) {
           message.success("Güncelleme Başarılı.");
           onRefresh();
@@ -59,7 +58,6 @@ function EditDurum({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
           message.error("Internet Bağlantısı Mevcut Değil.");
         }
       });
-    console.log({ Body });
   };
 
   const modalClose = () => {

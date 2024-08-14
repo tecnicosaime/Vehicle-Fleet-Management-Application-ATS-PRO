@@ -28,7 +28,6 @@ function InsertDurum({ onRefresh }) {
     // API'ye POST isteği gönder
     AxiosInstance.post("AppraisalsSettings/AddAppraisalsSettingsItem", Body)
       .then((response) => {
-        console.log("Data sent successfully:", response);
         if (response.data.statusCode === 200 || response.data.statusCode === 201) {
           message.success("Güncelleme Başarılı.");
           onRefresh();
@@ -51,7 +50,6 @@ function InsertDurum({ onRefresh }) {
           message.error("Internet Bağlantısı Mevcut Değil.");
         }
       });
-    console.log({ Body });
   };
 
   const showModal = () => {
