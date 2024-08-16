@@ -14,7 +14,6 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   const showModal = () => {
     setOpen(true);
   };
-
   const onClose = () => {
     Modal.confirm({
       title: "İptal etmek istediğinden emin misin?",
@@ -133,49 +132,50 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <ConfigProvider locale={tr_TR}>
-          <Button
-            type="primary"
-            onClick={showModal}
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <PlusOutlined />
-            Ekle
-          </Button>
-          <Modal
-            width="950px"
-            title="Yeni Kayıt Ekle"
-            open={open}
-            onCancel={onClose}
-            footer={
-              <Space>
-                <Button onClick={onClose}>İptal</Button>
-                <Button
-                  type="submit"
-                  onClick={handleClick}
-                  style={{
-                    backgroundColor: "#2bc770",
-                    borderColor: "#2bc770",
-                    color: "#ffffff",
-                  }}
-                >
-                  Kaydet
-                </Button>
-              </Space>
-            }
-          >
+      <ConfigProvider locale={tr_TR}>
+        <Button
+          type="primary"
+          onClick={showModal}
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <PlusOutlined />
+          Ekle
+        </Button>
+        <Modal
+          width="950px"
+          title="Yeni Kayıt Ekle"
+          destroyOnClose
+          open={open}
+          onCancel={onClose}
+          footer={
+            <Space>
+              <Button onClick={onClose}>İptal</Button>
+              <Button
+                type="submit"
+                onClick={handleClick}
+                style={{
+                  backgroundColor: "#2bc770",
+                  borderColor: "#2bc770",
+                  color: "#ffffff",
+                }}
+              >
+                Kaydet
+              </Button>
+            </Space>
+          }
+        >
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div style={{ overflow: "auto", height: "calc(100vh - 250px)" }}>
-              <MainTabs />
+              <MainTabs modalOpen={open} />
               {/* <SecondTabs /> */}
               {/*<Footer />*/}
             </div>
-          </Modal>
-        </ConfigProvider>
-      </form>
+          </form>
+        </Modal>
+      </ConfigProvider>
     </FormProvider>
   );
 }

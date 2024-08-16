@@ -9,8 +9,11 @@ import "./ResizeStyle.css";
 import AxiosInstance from "../../../../../api/http";
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
+import ContextMenu from "../components/ContextMenu/ContextMenu";
+import CreateDrawer from "../Insert/CreateDrawer";
 import dayjs from "dayjs";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+
 import { t } from "i18next";
 
 const { Text } = Typography;
@@ -1055,7 +1058,10 @@ const Sigorta = () => {
           {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
         </div>
-        <div style={{ display: "flex", gap: "10px" }}></div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
+          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+        </div>
       </div>
       <div
         style={{

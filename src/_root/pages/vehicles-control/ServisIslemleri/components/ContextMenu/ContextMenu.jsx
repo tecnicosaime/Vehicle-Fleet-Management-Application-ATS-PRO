@@ -24,15 +24,14 @@ export default function ContextMenu({ selectedRows, refreshTableData }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "0px 10px",
-          backgroundColor: "#17a2b8",
-          borderColor: "#17a2b8",
+          padding: "0px 5px",
+          backgroundColor: "#2BC770",
+          borderColor: "#2BC770",
           height: "32px",
         }}
       >
-        <Text style={{ color: "white", marginRight: "5px" }}>İşlemler</Text>
-        <DownOutlined style={{ color: "white", fontSize: "20px", margin: "0" }} />
         {selectedRows.length >= 1 && <Text style={{ color: "white", marginLeft: "3px" }}>{selectedRows.length}</Text>}
+        <MoreOutlined style={{ color: "white", fontSize: "20px", margin: "0" }} />
       </Button>
     </Popover>
   );
