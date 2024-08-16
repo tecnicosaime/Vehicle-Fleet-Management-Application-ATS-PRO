@@ -55,8 +55,8 @@ const Vehicles = () => {
   }, []);
 
   async function getLocation() {
-    const res = await axios.get("http://ip-api.com/json");
-    if (res.status === 200) setCountry({ name: res.data.country, code: res.data.countryCode });
+    const res = await axios.get("https://ipapi.co/json");
+    if (res.status === 200) setCountry({ name: res.data.country_name, code: res.data.country_code });
   }
 
   const fetchAyarlardata = async () => {
