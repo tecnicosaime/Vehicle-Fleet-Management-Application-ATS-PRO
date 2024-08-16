@@ -2,17 +2,19 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Button, Modal, Table, Input } from "antd";
 import AxiosInstance from "../../../../../../../../api/http";
 import { Resizable } from "react-resizable";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
 
+  // You may need to adjust the style to suit your exact needs
   const handleStyle = {
     position: "absolute",
     bottom: 0,
     right: "-5px",
     width: "20%",
-    height: "100%",
-    zIndex: 2,
+    height: "100%", // this is the area that is draggable, you can adjust it
+    zIndex: 2, // ensure it's above other elements
     cursor: "col-resize",
     padding: "0px",
     backgroundSize: "0px",
@@ -43,6 +45,7 @@ const ResizableTitle = (props) => {
   );
 };
 
+// Türkçe karakterleri İngilizce karşılıkları ile değiştiren fonksiyon
 const normalizeText = (text) => {
   return text
     .normalize("NFD")
@@ -76,10 +79,10 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
   });
 
   const [columns, setColumns] = useState(() => {
-    const savedWidths = localStorage.getItem("tableColumnWidths");
+    const savedWidths = localStorage.getItem("servisTableColumnWidths");
     const defaultColumns = [
       {
-        title: "Atölye Kodu",
+        title: "Servis Kodu",
         dataIndex: "code",
         key: "code",
         width: 150,
@@ -90,10 +93,40 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         },
       },
       {
-        title: "Atölye Tanımı",
+        title: "Servis Tanımı",
         dataIndex: "subject",
         key: "subject",
         width: 350,
+      },
+      {
+        title: "Km",
+        dataIndex: "km",
+        key: "km",
+        width: 100,
+        render: (text) => <span>{Number(text).toLocaleString()}</span>,
+      },
+      {
+        title: "Gün",
+        dataIndex: "gun",
+        key: "gun",
+        width: 100,
+      },
+      {
+        title: "Servis Tipi",
+        dataIndex: "servisTipi",
+        key: "servisTipi",
+        width: 100,
+      },
+      {
+        title: "Peryodik",
+        dataIndex: "periyodik",
+        key: "periyodik",
+        width: 100,
+        render: (text) => (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {text ? <CheckCircleOutlined style={{ color: "green" }} /> : <CloseCircleOutlined style={{ color: "red" }} />}
+          </div>
+        ),
       },
     ];
 
@@ -117,9 +150,8 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         width: size.width,
       };
       setColumns(newColumns);
-      localStorage.setItem("tableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
+      localStorage.setItem("servisTableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
     };
-
   const mergedColumns = columns.map((col, index) => ({
     ...col,
     onHeaderCell: (column) => ({
@@ -130,22 +162,23 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
 
   const fetch = useCallback(() => {
     setLoading(true);
-    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}&pageSize=${pagination.pageSize}`)
+    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}`)
       .then((response) => {
-        const fetchedData = response.data.map((item) => ({
+        const { list, recordCount } = response.data; // Destructure the list and recordCount from the response
+        const fetchedData = list.map((item) => ({
           ...item,
-          key: item.TB_ATOLYE_ID,
-          code: item.ATL_KOD,
-          subject: item.ATL_TANIM,
+          key: item.bakimId,
+          code: item.bakimKodu,
+          subject: item.tanim,
         }));
         setData(fetchedData);
         setPagination({
           ...pagination,
-          total: response.total, // You need to get total count of items from the API response if available
+          total: recordCount, // Update the total number of records for pagination
         });
       })
       .finally(() => setLoading(false));
-  }, [pagination.current, pagination.pageSize]);
+  }, [pagination.current]);
 
   const handleModalToggle = () => {
     setIsModalVisible((prev) => !prev);
@@ -159,6 +192,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     const selectedData = data.find((item) => item.key === selectedRowKeys[0]);
     if (selectedData) {
       onSubmit && onSubmit(selectedData);
+      console.log("selectedRowKeys", selectedData);
     }
     setIsModalVisible(false);
   };
@@ -175,6 +209,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     setPagination(newPagination);
   };
 
+  // Arama işlevselliği için handleSearch fonksiyonları
   const handleSearch1 = (e) => {
     const value = e.target.value;
     setSearchTerm1(value);
@@ -188,7 +223,6 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
       setFilteredData1(data);
     }
   };
-
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
