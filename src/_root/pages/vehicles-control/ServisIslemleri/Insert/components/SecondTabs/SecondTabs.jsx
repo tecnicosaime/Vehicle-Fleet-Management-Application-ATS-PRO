@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Tabs } from "antd";
+import { Input, Tabs, Typography } from "antd";
 import styled from "styled-components";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import Sigorta from "./components/Sigorta/Sigorta";
 // import DetayBilgiler from "./components/DetayBilgiler/DetayBilgiler";
 // import KontrolListesiTablo from "./components/KontrolListesi/KontrolListesiTablo";
@@ -19,6 +19,9 @@ import Sigorta from "./components/Sigorta/Sigorta";
 // import DosyaUpload from "./components/Dosya/DosyaUpload";
 // import AxiosInstance from "../../../../../../../api/http";
 // import Forms from "./components/KapamaBilgileri/Forms.jsx";
+
+const { Text, Link } = Typography;
+const { TextArea } = Input;
 
 //styled components
 const StyledTabs = styled(Tabs)`
@@ -74,11 +77,21 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
       key: "4",
       label: "Şikayetler",
       // children: <MalzemeListesiTablo isActive={activeTabKey === "4"} fieldRequirements={fieldRequirements} />,
+      children: (
+        <div>
+          <Controller name="sikayetler" render={({ field }) => <TextArea {...field} rows={4} placeholder="Şikayetler" style={{ width: "100%", resize: "none" }} />} />
+        </div>
+      ),
     },
     {
       key: "5",
       label: "Açıklama",
       // children: <DuruslarListesiTablo isActive={activeTabKey === "5"} fieldRequirements={fieldRequirements} />,
+      children: (
+        <div>
+          <Controller name="aciklama" render={({ field }) => <TextArea {...field} rows={4} placeholder="Açıklama" style={{ width: "100%", resize: "none" }} />} />
+        </div>
+      ),
     },
     {
       key: "6",
