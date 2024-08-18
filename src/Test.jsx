@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Button, Modal, Table, Input } from "antd";
 import AxiosInstance from "../../../../../../../../api/http";
 import { Resizable } from "react-resizable";
+import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { useFormContext } from "react-hook-form";
 
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
@@ -17,9 +19,11 @@ const ResizableTitle = (props) => {
     padding: "0px",
     backgroundSize: "0px",
   };
+
   if (!width) {
     return <th {...restProps} />;
   }
+
   return (
     <Resizable
       width={width}
@@ -43,32 +47,16 @@ const ResizableTitle = (props) => {
   );
 };
 
-const normalizeText = (text) => {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ğ/g, "g")
-    .replace(/Ğ/g, "G")
-    .replace(/ü/g, "u")
-    .replace(/Ü/g, "U")
-    .replace(/ş/g, "s")
-    .replace(/Ş/g, "S")
-    .replace(/ı/g, "i")
-    .replace(/İ/g, "I")
-    .replace(/ö/g, "o")
-    .replace(/Ö/g, "O")
-    .replace(/ç/g, "c")
-    .replace(/Ç/g, "C");
-};
-
-export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
+export default function HasarNoTablo({ workshopSelectedId, onSubmit }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debounceTimer, setDebounceTimer] = useState(null);
+  const [hasInteracted, setHasInteracted] = useState(false); // To track if the user has interacted with the search input
 
-  const [searchTerm1, setSearchTerm1] = useState("");
-  const [filteredData1, setFilteredData1] = useState([]);
+  const { watch } = useFormContext();
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -76,10 +64,10 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
   });
 
   const [columns, setColumns] = useState(() => {
-    const savedWidths = localStorage.getItem("tableColumnWidths");
+    const savedWidths = localStorage.getItem("servisTableColumnWidths");
     const defaultColumns = [
       {
-        title: "Atölye Kodu",
+        title: "Servis Kodu",
         dataIndex: "code",
         key: "code",
         width: 150,
@@ -90,10 +78,40 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         },
       },
       {
-        title: "Atölye Tanımı",
+        title: "Servis Tanımı",
         dataIndex: "subject",
         key: "subject",
         width: 350,
+      },
+      {
+        title: "Km",
+        dataIndex: "km",
+        key: "km",
+        width: 100,
+        render: (text) => <span>{Number(text).toLocaleString()}</span>,
+      },
+      {
+        title: "Gün",
+        dataIndex: "gun",
+        key: "gun",
+        width: 100,
+      },
+      {
+        title: "Servis Tipi",
+        dataIndex: "servisTipi",
+        key: "servisTipi",
+        width: 100,
+      },
+      {
+        title: "Peryodik",
+        dataIndex: "periyodik",
+        key: "periyodik",
+        width: 100,
+        render: (text) => (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {text ? <CheckCircleOutlined style={{ color: "green" }} /> : <CloseCircleOutlined style={{ color: "red" }} />}
+          </div>
+        ),
       },
     ];
 
@@ -117,7 +135,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         width: size.width,
       };
       setColumns(newColumns);
-      localStorage.setItem("tableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
+      localStorage.setItem("servisTableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
     };
 
   const mergedColumns = columns.map((col, index) => ({
@@ -128,24 +146,29 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     }),
   }));
 
+  const plakaID = watch("PlakaID");
+
   const fetch = useCallback(() => {
     setLoading(true);
-    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}&pageSize=${pagination.pageSize}`)
+    const body = [plakaID];
+
+    AxiosInstance.post(`Accident/GetAccidentsListByVehicleId?page=${pagination.current}&parameter=${searchTerm}`, body)
       .then((response) => {
-        const fetchedData = response.data.map((item) => ({
+        const { list, recordCount } = response.data;
+        const fetchedData = list.map((item) => ({
           ...item,
-          key: item.TB_ATOLYE_ID,
-          code: item.ATL_KOD,
-          subject: item.ATL_TANIM,
+          key: item.bakimId,
+          code: item.bakimKodu,
+          subject: item.tanim,
         }));
         setData(fetchedData);
-        setPagination({
-          ...pagination,
-          total: response.total, // You need to get total count of items from the API response if available
-        });
+        setPagination((prev) => ({
+          ...prev,
+          total: recordCount,
+        }));
       })
       .finally(() => setLoading(false));
-  }, [pagination.current, pagination.pageSize]);
+  }, [pagination.current, searchTerm, plakaID]);
 
   const handleModalToggle = () => {
     setIsModalVisible((prev) => !prev);
@@ -159,6 +182,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     const selectedData = data.find((item) => item.key === selectedRowKeys[0]);
     if (selectedData) {
       onSubmit && onSubmit(selectedData);
+      console.log("selectedRowKeys", selectedData);
     }
     setIsModalVisible(false);
   };
@@ -175,25 +199,30 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     setPagination(newPagination);
   };
 
-  const handleSearch1 = (e) => {
-    const value = e.target.value;
-    setSearchTerm1(value);
-    const normalizedSearchTerm = normalizeText(value);
-    if (value) {
-      const filtered = data.filter((item) =>
-        Object.keys(item).some((key) => item[key] && normalizeText(item[key].toString()).toLowerCase().includes(normalizedSearchTerm.toLowerCase()))
-      );
-      setFilteredData1(filtered);
-    } else {
-      setFilteredData1(data);
+  useEffect(() => {
+    if (hasInteracted) {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      const timeout = setTimeout(() => {
+        fetch();
+      }, 2000);
+      setDebounceTimer(timeout);
+
+      return () => clearTimeout(timeout);
     }
+  }, [searchTerm, hasInteracted, fetch]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    if (!hasInteracted) setHasInteracted(true);
   };
 
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
-      <Modal width={1200} centered title="Servis Kodları" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
-        <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px", marginBottom: "15px" }} />
+      <Modal width={1200} centered title="Kaza Kayıtları" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
+        <Input placeholder="Arama..." prefix={<SearchOutlined />} value={searchTerm} onChange={handleSearchChange} style={{ marginBottom: "20px" }} />
         <Table
           rowSelection={{
             type: "radio",
@@ -208,7 +237,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
           }}
           scroll={{ y: "calc(100vh - 380px)" }}
           columns={mergedColumns}
-          dataSource={filteredData1.length > 0 || searchTerm1 ? filteredData1 : data}
+          dataSource={data}
           loading={loading}
           pagination={pagination}
           onChange={handleTableChange}
