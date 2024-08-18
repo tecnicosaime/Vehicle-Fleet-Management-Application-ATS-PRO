@@ -59,6 +59,9 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       lokasyonDepoID: "",
       lokasyonEmail: "",
       lokasyonAciklama: "",
+      islemiYapan: "1",
+      durumBilgisi: "",
+      garantiKapsami: false,
     },
   });
 
@@ -145,7 +148,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           Ekle
         </Button>
         <Modal
-          width="950px"
+          width="1300px"
           title="Yeni Kayıt Ekle"
           destroyOnClose
           open={open}
