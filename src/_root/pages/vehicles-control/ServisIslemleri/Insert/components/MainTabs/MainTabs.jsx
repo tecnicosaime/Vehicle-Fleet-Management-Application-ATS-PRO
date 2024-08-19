@@ -672,6 +672,15 @@ export default function MainTabs({ modalOpen }) {
                     </Checkbox>
                   )}
                 />
+                <Controller
+                  name="surucuOder"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                      Sürücü Öder
+                    </Checkbox>
+                  )}
+                />
               </div>
             </div>
             <div>
