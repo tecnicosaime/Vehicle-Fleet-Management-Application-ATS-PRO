@@ -76,7 +76,6 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
     {
       key: "4",
       label: "Şikayetler",
-      // children: <MalzemeListesiTablo isActive={activeTabKey === "4"} fieldRequirements={fieldRequirements} />,
       children: (
         <div>
           <Controller name="sikayetler" render={({ field }) => <TextArea {...field} rows={4} placeholder="Şikayetler" style={{ width: "100%", resize: "none" }} />} />
@@ -86,7 +85,6 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
     {
       key: "5",
       label: "Açıklama",
-      // children: <DuruslarListesiTablo isActive={activeTabKey === "5"} fieldRequirements={fieldRequirements} />,
       children: (
         <div>
           <Controller name="aciklama" render={({ field }) => <TextArea {...field} rows={4} placeholder="Açıklama" style={{ width: "100%", resize: "none" }} />} />
