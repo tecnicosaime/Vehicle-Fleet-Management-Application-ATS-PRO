@@ -217,19 +217,14 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
     setLoading(true);
     const body = [plakaID];
 
-    AxiosInstance.get(`Company/GetCompaniesList1?page=${pagination.current}&parameter=${searchTerm}`)
+    AxiosInstance.get(`Code/GetCodeTextById?codeNumber=114`)
       .then((response) => {
-        const { list, recordCount } = response.data;
-        const fetchedData = list.map((item) => ({
+        const fetchedData = response.data.map((item) => ({
           ...item,
-          key: item.firmaId,
-          column1: item.unvan,
+          key: item.siraNo,
+          column1: item.codeText,
         }));
         setData(fetchedData);
-        setPagination((prev) => ({
-          ...prev,
-          total: recordCount,
-        }));
       })
       .finally(() => setLoading(false));
   }, [pagination.current, searchTerm, plakaID]);

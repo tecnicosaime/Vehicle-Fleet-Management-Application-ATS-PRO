@@ -3,6 +3,7 @@ import { Input, Tabs, Typography } from "antd";
 import styled from "styled-components";
 import { Controller, useFormContext } from "react-hook-form";
 import Sigorta from "./components/Sigorta/Sigorta";
+import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar.jsx";
 // import DetayBilgiler from "./components/DetayBilgiler/DetayBilgiler";
 // import KontrolListesiTablo from "./components/KontrolListesi/KontrolListesiTablo";
 // import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar";
@@ -95,6 +96,7 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
       key: "6",
       label: "Özel Alanlar",
       // children: <SureBilgileri fieldRequirements={fieldRequirements} />,
+      children: <OzelAlanlar />,
     },
   ];
 
