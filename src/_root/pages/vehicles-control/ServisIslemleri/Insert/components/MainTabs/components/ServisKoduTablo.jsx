@@ -192,7 +192,6 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     const selectedData = data.find((item) => item.key === selectedRowKeys[0]);
     if (selectedData) {
       onSubmit && onSubmit(selectedData);
-      console.log("selectedRowKeys", selectedData);
     }
     setIsModalVisible(false);
   };

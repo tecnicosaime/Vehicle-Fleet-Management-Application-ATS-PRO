@@ -28,7 +28,7 @@ export default function ServisNedeni({ disabled, fieldRequirements }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await AxiosInstance.get(`Driver/GetDriverListForSelectInput`);
+      const response = await AxiosInstance.get(`Code/GetCodeTextById?codeNumber=104`);
       if (response && response.data) {
         setOptions(response.data);
       }
@@ -54,19 +54,22 @@ export default function ServisNedeni({ disabled, fieldRequirements }) {
         });
         return;
       }
-
+      const body = {
+        codeId: 104,
+        codeText: name,
+      };
       setLoading(true);
-      AxiosInstance.post(`AddIsTip?entity=${name}&isTanimId`)
+      AxiosInstance.post(`Code/AddCode`, body)
         .then((response) => {
-          if (response.status_code === 201) {
+          if (response.data.statusCode === 201) {
             // Assuming 'id' is directly in the response
-            const newId = response.id; // Adjust this line based on your actual response structure
+            const newId = response.data.id; // Adjust this line based on your actual response structure
 
             messageApi.open({
               type: "success",
               content: "Ekleme Başarılı",
             });
-            setOptions((prevOptions) => [...prevOptions, { surucuId: newId, isim: name }]);
+            setOptions((prevOptions) => [...prevOptions, { codeId: newId, isim: name }]);
             setSelectKey((prevKey) => prevKey + 1);
             setName("");
           } else {
@@ -136,8 +139,8 @@ export default function ServisNedeni({ disabled, fieldRequirements }) {
                 </Spin>
               )}
               options={options.map((item) => ({
-                value: item.surucuId, // Use the ID as the value
-                label: item.isim, // Display the name in the dropdown
+                value: item.siraNo, // Use the ID as the value
+                label: item.codeText, // Display the name in the dropdown
               }))}
               onChange={(value) => {
                 // Seçilen değerin ID'sini NedeniID alanına set et

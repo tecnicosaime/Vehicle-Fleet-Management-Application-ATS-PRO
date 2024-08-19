@@ -88,6 +88,11 @@ export default function MainTabs({ modalOpen }) {
     }
   }, [islemiYapan]);
 
+  useEffect(() => {
+    setValue("islemiYapan1", "");
+    setValue("islemiYapan1ID", "");
+  }, [islemiYapan, setValue]);
+
   const handleMinusClick = () => {
     setValue("servisKodu", "");
     setValue("servisKoduID", "");
