@@ -61,7 +61,6 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       bitisTarihi: null,
       bitisSaati: null,
       aracKM: "",
-      isEmriNo: "",
       islemiYapan: "1",
       islemiYapan1: "",
       islemiYapan1ID: "",

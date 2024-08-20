@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import ServisKoduTablo from "./components/ServisKoduTablo.jsx";
@@ -69,6 +69,7 @@ export default function MainTabs({ modalOpen }) {
   const [localeDateFormat, setLocaleDateFormat] = useState("DD/MM/YYYY"); // Varsayılan format
   const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default time format
   const [selectboxTitle, setSelectboxTitle] = useState("");
+  const prevIslemiYapanRef = useRef();
 
   const islemiYapan = watch("islemiYapan");
 
@@ -81,8 +82,12 @@ export default function MainTabs({ modalOpen }) {
   }, [islemiYapan]);
 
   useEffect(() => {
-    setValue("islemiYapan1", "");
-    setValue("islemiYapan1ID", "");
+    const prevIslemiYapan = prevIslemiYapanRef.current;
+    if (prevIslemiYapan !== undefined && prevIslemiYapan !== islemiYapan) {
+      setValue("islemiYapan1", "");
+      setValue("islemiYapan1ID", "");
+    }
+    prevIslemiYapanRef.current = islemiYapan;
   }, [islemiYapan, setValue]);
 
   const handleMinusClick = () => {
@@ -122,18 +127,18 @@ export default function MainTabs({ modalOpen }) {
 
   // sistemin o anki tarih ve saatini almak için
 
-  useEffect(() => {
-    if (modalOpen) {
-      const currentDate = dayjs(); // Şu anki tarih için dayjs nesnesi
-      const currentTime = dayjs(); // Şu anki saat için dayjs nesnesi
-
-      // Tarih ve saat alanlarını güncelle
-      setTimeout(() => {
-        setValue("duzenlenmeTarihi", currentDate);
-        setValue("duzenlenmeSaati", currentTime);
-      }, 50);
-    }
-  }, [modalOpen, setValue]);
+  // useEffect(() => {
+  //   if (modalOpen) {
+  //     const currentDate = dayjs(); // Şu anki tarih için dayjs nesnesi
+  //     const currentTime = dayjs(); // Şu anki saat için dayjs nesnesi
+  //
+  //     // Tarih ve saat alanlarını güncelle
+  //     setTimeout(() => {
+  //       setValue("duzenlenmeTarihi", currentDate);
+  //       setValue("duzenlenmeSaati", currentTime);
+  //     }, 50);
+  //   }
+  // }, [modalOpen, setValue]);
 
   // sistemin o anki tarih ve saatini almak sonu
 
@@ -232,6 +237,17 @@ export default function MainTabs({ modalOpen }) {
     <div style={{ display: "flex", marginBottom: "15px", flexDirection: "column", gap: "10px", width: "100%" }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "10px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
+          <Controller
+            name="secilenKayitID"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text" // Set the type to "text" for name input
+                style={{ display: "none" }}
+              />
+            )}
+          />
           <div style={{ width: "100%", maxWidth: "330px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
@@ -506,33 +522,7 @@ export default function MainTabs({ modalOpen }) {
                 <Controller name="aracKM" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
               </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                maxWidth: "195px",
-                gap: "10px",
-                rowGap: "0px",
-              }}
-            >
-              <Text style={{ fontSize: "14px" }}>İş Emri No:</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  maxWidth: "100px",
-                  minWidth: "100px",
-                  gap: "10px",
-                  width: "100%",
-                }}
-              >
-                <Controller name="isEmriNo" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
-              </div>
-            </div>
+
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
               <Text style={{ fontSize: "14px" }}>İşlemi Yapan:</Text>
               <div
