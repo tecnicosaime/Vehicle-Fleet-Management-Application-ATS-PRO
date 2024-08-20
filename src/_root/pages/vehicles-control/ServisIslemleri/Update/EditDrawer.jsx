@@ -218,6 +218,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       <ConfigProvider locale={tr_TR}>
         <Modal
           width="1300px"
+          centered
           title="Kayıdı Güncelle"
           open={drawerVisible}
           onCancel={onClose}
@@ -253,9 +254,11 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
             </Spin>
           ) : (
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <MainTabs />
-              <SecondTabs />
-              {/*<Footer />*/}
+              <div style={{ overflow: "auto", height: "calc(100vh - 150px)" }}>
+                <MainTabs />
+                <SecondTabs />
+                {/*<Footer />*/}
+              </div>
             </form>
           )}
         </Modal>

@@ -216,6 +216,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
         </Button>
         <Modal
           width="1300px"
+          centered
           title="Yeni Kayıt Ekle"
           destroyOnClose
           open={open}
@@ -238,7 +239,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           }
         >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <div style={{ overflow: "auto", height: "calc(100vh - 250px)" }}>
+            <div style={{ overflow: "auto", height: "calc(100vh - 150px)" }}>
               <MainTabs modalOpen={open} />
               <SecondTabs />
               {/*<Footer />*/}
