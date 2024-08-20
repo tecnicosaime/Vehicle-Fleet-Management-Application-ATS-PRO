@@ -5,7 +5,6 @@ import { Controller, useFormContext } from "react-hook-form";
 import Sigorta from "./components/Sigorta/Sigorta";
 import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar.jsx";
 // import DetayBilgiler from "./components/DetayBilgiler/DetayBilgiler";
-// import KontrolListesiTablo from "./components/KontrolListesi/KontrolListesiTablo";
 // import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar";
 // import PersonelListesiTablo from "./components/Personel/PersonelListesiTablo";
 // import MalzemeListesiTablo from "./components/Malzeme/MalzemeListesiTablo";
