@@ -4,22 +4,8 @@ import styled from "styled-components";
 import { Controller, useFormContext } from "react-hook-form";
 import Sigorta from "./components/Sigorta/Sigorta";
 import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar.jsx";
-// import DetayBilgiler from "./components/DetayBilgiler/DetayBilgiler";
-// import KontrolListesiTablo from "./components/KontrolListesi/KontrolListesiTablo";
-// import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar";
-// import PersonelListesiTablo from "./components/Personel/PersonelListesiTablo";
-// import MalzemeListesiTablo from "./components/Malzeme/MalzemeListesiTablo";
-// import DuruslarListesiTablo from "./components/Duruslar/DuruslarListesiTablo";
-// import OlcumDegerleriListesiTablo from "./components/OlcumDegerleri/OlcumDegerleriListesiTablo";
-// import AracGereclerListesiTablo from "./components/AracGerecler/AracGereclerListesiTablo";
-// import SureBilgileri from "./components/SureBilgileri/SureBilgileri";
-// import Maliyetler from "./components/Maliyetler/Maliyetler";
-// import Notlar from "./components/Notlar/Notlar";
-// import Aciklama from "./components/Aciklama/Aciklama";
-// import ResimUpload from "./components/Resim/ResimUpload";
-// import DosyaUpload from "./components/Dosya/DosyaUpload";
-// import AxiosInstance from "../../../../../../../api/http";
-// import Forms from "./components/KapamaBilgileri/Forms.jsx";
+import IscilikTablo from "./components/Iscilik/IscilikTablo";
+import Malzemeler from "./components/Malzemeler/Malzemeler";
 
 const { Text, Link } = Typography;
 const { TextArea } = Input;
@@ -59,7 +45,7 @@ const StyledTabs = styled(Tabs)`
 
 export default function SecondTabs({ refreshKey, fieldRequirements }) {
   const { watch } = useFormContext();
-  const [activeTabKey, setActiveTabKey] = useState("3"); // Default to the first tab
+  const [activeTabKey, setActiveTabKey] = useState("1"); // Default to the first tab
 
   // Modify the onChange handler to update the active tab state
   const onChange = (key) => {
@@ -69,6 +55,16 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
   const secilenIsEmriID = watch("secilenIsEmriID");
 
   const items = [
+    {
+      key: "1",
+      label: "İş İşçilik",
+      children: <IscilikTablo fieldRequirements={fieldRequirements} />,
+    },
+    {
+      key: "2",
+      label: "Malzemeler",
+      children: <Malzemeler fieldRequirements={fieldRequirements} />,
+    },
     {
       key: "3",
       label: "Sigorta",
