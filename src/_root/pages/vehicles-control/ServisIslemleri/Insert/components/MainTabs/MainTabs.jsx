@@ -506,33 +506,7 @@ export default function MainTabs({ modalOpen }) {
                 <Controller name="aracKM" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
               </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                maxWidth: "195px",
-                gap: "10px",
-                rowGap: "0px",
-              }}
-            >
-              <Text style={{ fontSize: "14px" }}>İş Emri No:</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  maxWidth: "100px",
-                  minWidth: "100px",
-                  gap: "10px",
-                  width: "100%",
-                }}
-              >
-                <Controller name="isEmriNo" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
-              </div>
-            </div>
+
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
               <Text style={{ fontSize: "14px" }}>İşlemi Yapan:</Text>
               <div

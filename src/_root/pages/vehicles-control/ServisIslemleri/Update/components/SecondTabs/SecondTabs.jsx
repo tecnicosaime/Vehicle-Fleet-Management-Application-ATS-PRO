@@ -58,7 +58,7 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
     {
       key: "1",
       label: "İş İşçilik",
-      children: <IscilikTablo fieldRequirements={fieldRequirements} />,
+      children: <IscilikTablo isActive={activeTabKey === "1"} fieldRequirements={fieldRequirements} />,
     },
     {
       key: "2",
