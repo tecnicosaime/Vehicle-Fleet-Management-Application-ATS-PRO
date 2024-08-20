@@ -7,6 +7,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import dayjs from "dayjs";
 import AxiosInstance from "../../../../../api/http.jsx";
 import Footer from "../Footer";
+import SecondTabs from "./components/SecondTabs/SecondTabs.jsx";
 // import SecondTabs from "./components/secondTabs/secondTabs";
 
 export default function CreateModal({ selectedLokasyonId, onRefresh }) {
@@ -31,11 +32,6 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   };
 
   // back-end'e gönderilecek veriler
-
-  const handleClick = () => {
-    const values = methods.getValues();
-    console.log(onSubmit(values));
-  };
 
   //* export
   const methods = useForm({
@@ -79,6 +75,21 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       sigortaID: "",
       policeNo: "",
       firma: "",
+
+      ozelAlan1: "",
+      ozelAlan2: "",
+      ozelAlan3: "",
+      ozelAlan4: "",
+      ozelAlan5: "",
+      ozelAlan6: "",
+      ozelAlan7: "",
+      ozelAlan8: "",
+      ozelAlan9: null,
+      ozelAlan9ID: "",
+      ozelAlan10: null,
+      ozelAlan10ID: "",
+      ozelAlan11: "",
+      ozelAlan12: "",
 
       durumBilgisi: "",
       garantiKapsami: false,
@@ -145,8 +156,8 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       ozelAlan6: data.ozelAlan6,
       ozelAlan7: data.ozelAlan7,
       ozelAlan8: data.ozelAlan8,
-      ozelAlanKodId9: data.ozelAlanID9,
-      ozelAlanKodId10: data.ozelAlanID10,
+      ozelAlanKodId9: data.ozelAlan9ID,
+      ozelAlanKodId10: data.ozelAlan10ID,
       ozelAlan11: data.ozelAlan11,
       ozelAlan12: data.ozelAlan12,
     };
@@ -155,7 +166,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
     // handle response
     // });
 
-    AxiosInstance.post("Location/AddLocation", Body)
+    AxiosInstance.post("VehicleServices/AddServiceItem", Body)
       .then((response) => {
         // Handle successful response here, e.g.:
         console.log("Data sent successfully:", response);
@@ -214,7 +225,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
               <Button onClick={onClose}>İptal</Button>
               <Button
                 type="submit"
-                onClick={handleClick}
+                onClick={methods.handleSubmit(onSubmit)}
                 style={{
                   backgroundColor: "#2bc770",
                   borderColor: "#2bc770",
@@ -229,7 +240,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div style={{ overflow: "auto", height: "calc(100vh - 250px)" }}>
               <MainTabs modalOpen={open} />
-              {/* <SecondTabs /> */}
+              <SecondTabs />
               {/*<Footer />*/}
             </div>
           </form>

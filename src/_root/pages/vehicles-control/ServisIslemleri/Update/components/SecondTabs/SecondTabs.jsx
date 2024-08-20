@@ -1,17 +1,28 @@
-import React from "react";
-import { Tabs } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
+import { Input, Tabs, Typography } from "antd";
 import styled from "styled-components";
-import { useFormContext } from "react-hook-form";
-import MainTabs from "../MainTabs/MainTabs";
-import MakineTablo from "./components/MakineTablo";
-import PersonelTablo from "./components/PersonelTablo";
-import ProjeTablo from "./components/ProjeTablo";
-import ResimUpload from "./components/ResimUpload";
-import DosyaUpload from "./components/Dosya/DosyaUpload";
+import { Controller, useFormContext } from "react-hook-form";
+import Sigorta from "./components/Sigorta/Sigorta";
+import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar.jsx";
+// import DetayBilgiler from "./components/DetayBilgiler/DetayBilgiler";
+// import KontrolListesiTablo from "./components/KontrolListesi/KontrolListesiTablo";
+// import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar";
+// import PersonelListesiTablo from "./components/Personel/PersonelListesiTablo";
+// import MalzemeListesiTablo from "./components/Malzeme/MalzemeListesiTablo";
+// import DuruslarListesiTablo from "./components/Duruslar/DuruslarListesiTablo";
+// import OlcumDegerleriListesiTablo from "./components/OlcumDegerleri/OlcumDegerleriListesiTablo";
+// import AracGereclerListesiTablo from "./components/AracGerecler/AracGereclerListesiTablo";
+// import SureBilgileri from "./components/SureBilgileri/SureBilgileri";
+// import Maliyetler from "./components/Maliyetler/Maliyetler";
+// import Notlar from "./components/Notlar/Notlar";
+// import Aciklama from "./components/Aciklama/Aciklama";
+// import ResimUpload from "./components/Resim/ResimUpload";
+// import DosyaUpload from "./components/Dosya/DosyaUpload";
+// import AxiosInstance from "../../../../../../../api/http";
+// import Forms from "./components/KapamaBilgileri/Forms.jsx";
 
-const onChange = (key) => {
-  // console.log(key);
-};
+const { Text, Link } = Typography;
+const { TextArea } = Input;
 
 //styled components
 const StyledTabs = styled(Tabs)`
@@ -46,49 +57,52 @@ const StyledTabs = styled(Tabs)`
 
 //styled components end
 
-export default function SecondTabs({ refreshKey }) {
+export default function SecondTabs({ refreshKey, fieldRequirements }) {
+  const { watch } = useFormContext();
+  const [activeTabKey, setActiveTabKey] = useState("3"); // Default to the first tab
+
+  // Modify the onChange handler to update the active tab state
+  const onChange = (key) => {
+    setActiveTabKey(key);
+  };
+
+  const secilenIsEmriID = watch("secilenIsEmriID");
+
   const items = [
     {
-      key: "1",
-      label: "Lokasyon Bilgileri",
-      children: <MainTabs />,
-    },
-    {
-      key: "2",
-      label: "Araçlar",
-      children: <MakineTablo key={refreshKey} />,
-    },
-    {
       key: "3",
-      label: "Sürücüler",
-      children: <PersonelTablo />,
+      label: "Sigorta",
+      children: <Sigorta fieldRequirements={fieldRequirements} />,
     },
-    // {
-    //   key: "4",
-    //   label: "Projeler",
-    //   children: <ProjeTablo />,
-    // },
+    {
+      key: "4",
+      label: "Şikayetler",
+      children: (
+        <div>
+          <Controller name="sikayetler" render={({ field }) => <TextArea {...field} rows={4} placeholder="Şikayetler" style={{ width: "100%", resize: "none" }} />} />
+        </div>
+      ),
+    },
     {
       key: "5",
-      label: "Ekli Belgeler",
-      children: <DosyaUpload />,
+      label: "Açıklama",
+      children: (
+        <div>
+          <Controller name="aciklama" render={({ field }) => <TextArea {...field} rows={4} placeholder="Açıklama" style={{ width: "100%", resize: "none" }} />} />
+        </div>
+      ),
     },
     {
       key: "6",
-      label: "Resimler",
-      children: <ResimUpload />,
+      label: "Özel Alanlar",
+      // children: <SureBilgileri fieldRequirements={fieldRequirements} />,
+      children: <OzelAlanlar />,
     },
   ];
-  const { watch } = useFormContext();
 
   return (
     <div>
-      <StyledTabs
-        // tabPosition="right"
-        defaultActiveKey="1"
-        items={items}
-        onChange={onChange}
-      />
+      <StyledTabs defaultActiveKey={activeTabKey} items={items} onChange={onChange} />
     </div>
   );
 }

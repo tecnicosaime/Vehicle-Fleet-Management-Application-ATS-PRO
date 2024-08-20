@@ -1,6 +1,6 @@
 import tr_TR from "antd/es/locale/tr_TR";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Drawer, Space, ConfigProvider, Modal, message } from "antd";
+import { Button, Drawer, Space, ConfigProvider, Modal, message, Spin } from "antd";
 import React, { useEffect, useState, useTransition } from "react";
 import MainTabs from "./components/MainTabs/MainTabs";
 import secondTabs from "./components/SecondTabs/SecondTabs";
@@ -16,76 +16,102 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
   const showModal = () => {
     setOpen(true);
   };
-  // Modal kapanıp tekrar açıldığında içerisindeki bulunan tab lardaki api lere tekrardan istek atmasını sağlamak için
-  const [drawerKey, setDrawerKey] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (drawerVisible) {
-      setDrawerKey((prevKey) => prevKey + 1); // Modal her açıldığında anahtarı artır
-    }
-  }, [drawerVisible]);
-
-  // Modal kapanıp tekrar açıldığında içerisindeki bulunan tab lardaki api lere tekrardan istek atmasını sağlamak için son
-
-  const showConfirmationModal = () => {
-    Modal.confirm({
-      title: "İptal etmek istediğinden emin misin?",
-      content: "Kaydedilmemiş değişiklikler kaybolacaktır.",
-      okText: "Evet",
-      cancelText: "Hayır",
-      onOk: () => {
-        onDrawerClose(); // Close the modal
-        onRefresh();
-        reset();
-      },
-      onCancel: () => {
-        // Do nothing, continue from where the user left off
-      },
-    });
-  };
-
-  const onClose = () => {
-    // Kullanıcı "İptal" düğmesine tıkladığında Modal'ı göster
-    showConfirmationModal();
-  };
-
-  // Modal'ın kapatılma olayını ele al
-  const handleModalClose = () => {
-    // Kullanıcı çarpı işaretine veya dış alana tıkladığında Modal'ı göster
-    showConfirmationModal();
-  };
-
-  // back-end'e gönderilecek veriler
-
-  const handleClick = () => {
-    const values = methods.getValues();
-    console.log(onSubmit(values));
-  };
-
-  //* export
   const methods = useForm({
     defaultValues: {
-      anaLokasyonTanim: "",
-      anaLokasyonID: 0,
-      selectedLokasyonId: "",
-      lokasyonTanimi: "",
-      lokasyonAktif: true,
-      LokasyonTipi: null,
-      LokasyonTipiID: "",
-      lokasyonBina: null,
-      LokasyonBinaID: "",
-      lokasyonMasrafMerkezi: "",
-      lokasyonMasrafMerkeziID: "",
-      LokasyonKat: null,
-      LokasyonKatID: "",
-      lokasyonYoneticiTanim: "",
-      lokasyonYoneticiID: "",
-      lokasyonDepoTanim: "",
-      lokasyonDepoID: "",
-      lokasyonEmail: "",
-      lokasyonAciklama: "",
+      PlakaID: "",
+      Plaka: null,
+      duzenlenmeTarihi: null,
+      duzenlenmeSaati: null,
+      servisKodu: "",
+      servisKoduID: "",
+      servisTanimi: "",
+      servisTipi: "",
+      Surucu: null,
+      SurucuID: "",
+      servisNedeni: null,
+      servisNedeniID: "",
+      faturaTarihi: null,
+      faturaNo: "",
+      hasarNo: "",
+      hasarNoID: "",
+      talepNo: "",
+      onay: null,
+      onayID: "",
+      onayLabel: "",
+      baslamaTarihi: null,
+      baslamaSaati: null,
+      bitisTarihi: null,
+      bitisSaati: null,
+      aracKM: "",
+      isEmriNo: "",
+      islemiYapan: "1",
+      islemiYapan1: "",
+      islemiYapan1ID: "",
+      iscilikUcreti: "",
+      malzemeUcreti: "",
+      digerUcreti: "",
+      kdvUcreti: "",
+      eksiUcreti: "",
+      sigortaBilgileri: false,
+      sigorta: "",
+      sigortaID: "",
+      policeNo: "",
+      firma: "",
+
+      ozelAlan1: "",
+      ozelAlan2: "",
+      ozelAlan3: "",
+      ozelAlan4: "",
+      ozelAlan5: "",
+      ozelAlan6: "",
+      ozelAlan7: "",
+      ozelAlan8: "",
+      ozelAlan9: null,
+      ozelAlan9ID: "",
+      ozelAlan10: null,
+      ozelAlan10ID: "",
+      ozelAlan11: "",
+      ozelAlan12: "",
+
+      durumBilgisi: "",
+      garantiKapsami: false,
+
+      surucuOder: false,
+
+      aciklama: "",
+      sikayetler: "",
     },
   });
+
+  const { setValue, reset, watch } = methods;
+
+  // API'den gelen verileri form alanlarına set etme
+  useEffect(() => {
+    const handleDataFetchAndUpdate = async () => {
+      if (drawerVisible && selectedRow) {
+        setOpen(true); // İşlemler tamamlandıktan sonra drawer'ı aç
+        setLoading(true); // Yükleme başladığında
+        try {
+          const response = await AxiosInstance.get(`GetIsEmriById?isEmriId=${selectedRow.key}`);
+          const item = response[0]; // Veri dizisinin ilk elemanını al
+          // Form alanlarını set et
+          setValue("secilenIsEmriID", item.TB_ISEMRI_ID);
+          setValue("kapali", item.KAPALI);
+          setValue("isEmriNo", item.ISEMRI_NO);
+          // ... Diğer setValue çağrıları
+
+          setLoading(false); // Yükleme tamamlandığında
+        } catch (error) {
+          console.error("Veri çekilirken hata oluştu:", error);
+          setLoading(false); // Hata oluştuğunda
+        }
+      }
+    };
+
+    handleDataFetchAndUpdate();
+  }, [drawerVisible, selectedRow, setValue, onRefresh, methods.reset, AxiosInstance]);
 
   const formatDateWithDayjs = (dateString) => {
     const formattedDate = dayjs(dateString);
@@ -97,41 +123,63 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
     return formattedTime.isValid() ? formattedTime.format("HH:mm:ss") : "";
   };
 
-  const { setValue, reset } = methods;
-
-  //* export
   const onSubmit = (data) => {
+    // Form verilerini API'nin beklediği formata dönüştür
     const Body = {
-      lokasyonId: data.selectedLokasyonId,
-      lokasyonTanim: data.lokasyonTanimi,
-      anaLokasyonId: data.anaLokasyonID,
-      lokasyonTipId: data.LokasyonTipiID || 0,
-      lokasyonAciklama: data.lokasyonAciklama,
-      lokasyonAktif: data.lokasyonAktif,
+      aracId: data.PlakaID,
+      bakimId: data.servisKoduID,
+      kazaId: data.hasarNoID,
+      durumBilgisi: data.durumBilgisi,
+      islemiYapan: data.islemiYapan,
+      servisNedeniKodId: data.servisNedeniID,
 
-      // LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
-      // LOK_PERSONEL_ID: data.lokasyonYoneticiID,
-      // LOK_EMAIL: data.lokasyonEmail,
-      // LOK_BINA_KOD_ID: data.LokasyonBinaID,
-      // LOK_KAT_KOD_ID: data.LokasyonKatID,
-      // LOK_MALZEME_DEPO_ID: data.lokasyonDepoID,
-      // add more fields as needed
+      islemiYapanId: data.islemiYapan1ID,
+      surucuId: data.SurucuID, // lokasyonId: data.,
+      km: data.aracKM,
+      indirim: data.eksiUcreti, // toplam: data.,
+      kdv: data.kdvUcreti,
+      diger: data.digerUcreti,
+      malzeme: data.malzemeUcreti, // iscilik: data.,
+      talepNo: data.talepNo,
+      onayId: data.onayID,
+      tarih: data.duzenlenmeTarihi,
+      baslamaTarih: data.baslamaTarihi,
+      bitisTarih: data.bitisTarihi,
+      faturaTarih: data.faturaTarihi,
+      saat: data.duzenlenmeSaati,
+      baslamaSaat: data.baslamaSaati,
+      bitisSaat: data.bitisSaati,
+      faturaNo: data.faturaNo,
+      aciklama: data.aciklama,
+      sikayetler: data.sikayetler,
+      sigortaVar: data.sigortaBilgileri,
+      surucuOder: data.surucuOder,
+      sigortaId: data.sigortaID,
+      ozelAlan1: data.ozelAlan1,
+      ozelAlan2: data.ozelAlan2,
+      ozelAlan3: data.ozelAlan3,
+      ozelAlan4: data.ozelAlan4,
+      ozelAlan5: data.ozelAlan5,
+      ozelAlan6: data.ozelAlan6,
+      ozelAlan7: data.ozelAlan7,
+      ozelAlan8: data.ozelAlan8,
+      ozelAlanKodId9: data.ozelAlan9ID,
+      ozelAlanKodId10: data.ozelAlan10ID,
+      ozelAlan11: data.ozelAlan11,
+      ozelAlan12: data.ozelAlan12,
     };
 
-    // AxiosInstance.post("/api/endpoint", { Body }).then((response) => {
-    // handle response
-    // });
-
+    // API'ye POST isteği gönder
     AxiosInstance.post("Location/UpdateLocation", Body)
       .then((response) => {
-        // Handle successful response here, e.g.:
         console.log("Data sent successfully:", response);
         if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
           message.success("Ekleme Başarılı.");
-          onDrawerClose(); // Close the modal
+          setOpen(false);
           onRefresh();
-          reset();
-        } else if (response.data.statusCode === 401) {
+          methods.reset();
+          onDrawerClose();
+        } else if (response.status_code === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
         } else {
           message.error("Ekleme Başarısız.");
@@ -140,84 +188,78 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       .catch((error) => {
         // Handle errors here, e.g.:
         console.error("Error sending data:", error);
-        message.error("Başarısız Olundu.");
+        if (navigator.onLine) {
+          // İnternet bağlantısı var
+          message.error("Hata Mesajı: " + error.message);
+        } else {
+          // İnternet bağlantısı yok
+          message.error("Internet Bağlantısı Mevcut Değil.");
+        }
       });
     console.log({ Body });
   };
 
-  useEffect(() => {
-    if (drawerVisible && selectedRow) {
-      // console.log("selectedRow", selectedRow);
-      // startTransition(() => {
-      // Object.keys(selectedRow).forEach((key) => {
-      //   console.log(key, selectedRow[key]);
-      //   setValue(key, selectedRow[key]);
-      setValue("selectedLokasyonId", selectedRow.key);
-      setValue("lokasyonTanimi", selectedRow.lokasyonTanim);
-      setValue("lokasyonAktif", selectedRow.lokasyonAktif);
-      setValue("lokasyonAciklama", selectedRow.lokasyonAciklama);
-      setValue("anaLokasyonID", selectedRow.anaLokasyonId);
-      setValue("anaLokasyonTanim", selectedRow.anaLokasyon);
-      setValue("LokasyonTipi", selectedRow.LOK_TIP);
-      setValue("LokasyonTipiID", selectedRow.LOK_TIP_ID);
-      setValue("LokasyonBina", selectedRow.LOK_BINA);
-      setValue("LokasyonBinaID", selectedRow.LOK_BINA_KOD_ID);
-      setValue("lokasyonMasrafMerkeziTanim", selectedRow.LOK_MASRAF_MERKEZ);
-      setValue("lokasyonMasrafMerkeziID", selectedRow.LOK_MASRAF_MERKEZ_KOD_ID);
-      setValue("LokasyonKat", selectedRow.LOK_KAT);
-      setValue("LokasyonKatID", selectedRow.LOK_KAT_KOD_ID);
-      setValue("lokasyonYoneticiTanim", selectedRow.LOK_PERSONEL);
-      setValue("lokasyonYoneticiID", selectedRow.LOK_PERSONEL_ID);
-      setValue("lokasyonDepoTanim", selectedRow.LOK_DEPO);
-      setValue("lokasyonDepoID", selectedRow.LOK_MALZEME_DEPO_ID);
-      setValue("lokasyonEmail", selectedRow.LOK_EMAIL);
-
-      // add more fields as needed
-
-      // });
-      // });
-    }
-  }, [selectedRow, setValue, drawerVisible]);
-
-  useEffect(() => {
-    if (!drawerVisible) {
-      reset(); // Modal kapandığında formu sıfırla
-    }
-  }, [drawerVisible, reset]);
+  const onClose = () => {
+    Modal.confirm({
+      title: "İptal etmek istediğinden emin misin?",
+      content: "Kaydedilmemiş değişiklikler kaybolacaktır.",
+      okText: "Evet",
+      cancelText: "Hayır",
+      onOk: () => {
+        setOpen(false);
+        reset();
+        onDrawerClose();
+      },
+    });
+  };
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <ConfigProvider locale={tr_TR}>
-          <Modal
-            key={drawerKey}
-            width="950px"
-            title="Kayıdı Güncelle"
-            open={drawerVisible}
-            onCancel={handleModalClose}
-            footer={
-              <Space>
-                <Button onClick={onClose}>İptal</Button>
-                <Button
-                  type="submit"
-                  onClick={handleClick}
-                  style={{
-                    backgroundColor: "#2bc770",
-                    borderColor: "#2bc770",
-                    color: "#ffffff",
-                  }}
-                >
-                  Güncelle
-                </Button>
-              </Space>
-            }
-          >
-            {/* <MainTabs /> */}
-            <SecondTabs refreshKey={drawerKey} />
-            {/*<Footer />*/}
-          </Modal>
-        </ConfigProvider>
-      </form>
+      <ConfigProvider locale={tr_TR}>
+        <Modal
+          width="1300px"
+          title="Kayıdı Güncelle"
+          open={drawerVisible}
+          onCancel={onClose}
+          footer={
+            <Space>
+              <Button onClick={onClose}>İptal</Button>
+              <Button
+                type="submit"
+                onClick={methods.handleSubmit(onSubmit)}
+                style={{
+                  backgroundColor: "#2bc770",
+                  borderColor: "#2bc770",
+                  color: "#ffffff",
+                }}
+              >
+                Güncelle
+              </Button>
+            </Space>
+          }
+        >
+          {loading ? (
+            <Spin
+              spinning={loading}
+              size="large"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+              }}
+            >
+              {/* İçerik yüklenirken gösterilecek alan */}
+            </Spin>
+          ) : (
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <MainTabs />
+              <SecondTabs />
+              {/*<Footer />*/}
+            </form>
+          )}
+        </Modal>
+      </ConfigProvider>
     </FormProvider>
   );
 }
