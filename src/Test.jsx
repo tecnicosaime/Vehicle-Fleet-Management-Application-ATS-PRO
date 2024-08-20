@@ -1,248 +1,131 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Modal, Table, Input } from "antd";
-import AxiosInstance from "../../../../../../../../api/http";
-import { Resizable } from "react-resizable";
-import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { useFormContext } from "react-hook-form";
+import React, { useState } from "react";
+import { Modal, Input, Button, Typography } from "antd";
+import { Controller, useFormContext } from "react-hook-form";
+import AxiosInstance from "../../../../../../../../../api/http";
 
-const ResizableTitle = (props) => {
-  const { onResize, width, ...restProps } = props;
+const { Text } = Typography;
 
-  const handleStyle = {
-    position: "absolute",
-    bottom: 0,
-    right: "-5px",
-    width: "20%",
-    height: "100%",
-    zIndex: 2,
-    cursor: "col-resize",
-    padding: "0px",
-    backgroundSize: "0px",
-  };
+function OzelAlanlar(props) {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
 
-  if (!width) {
-    return <th {...restProps} />;
-  }
-
-  return (
-    <Resizable
-      width={width}
-      height={0}
-      handle={
-        <span
-          className="react-resizable-handle"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          style={handleStyle}
-        />
-      }
-      onResize={onResize}
-      draggableOpts={{
-        enableUserSelectHack: false,
-      }}
-    >
-      <th {...restProps} />
-    </Resizable>
-  );
-};
-
-export default function HasarNoTablo({ workshopSelectedId, onSubmit }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debounceTimer, setDebounceTimer] = useState(null);
-  const [hasInteracted, setHasInteracted] = useState(false); // To track if the user has interacted with the search input
+  const [clickedField, setClickedField] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
-  const { watch } = useFormContext();
+  const showModal = (field) => {
+    setClickedField(field);
+    setIsModalVisible(true);
+  };
 
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-  });
-
-  const [columns, setColumns] = useState(() => {
-    const savedWidths = localStorage.getItem("servisTableColumnWidths");
-    const defaultColumns = [
-      {
-        title: "Servis Kodu",
-        dataIndex: "code",
-        key: "code",
-        width: 150,
-        sorter: (a, b) => {
-          if (a.code === null) return -1;
-          if (b.code === null) return 1;
-          return a.code.localeCompare(b.code);
-        },
-      },
-      {
-        title: "Servis Tanımı",
-        dataIndex: "subject",
-        key: "subject",
-        width: 350,
-      },
-      {
-        title: "Km",
-        dataIndex: "km",
-        key: "km",
-        width: 100,
-        render: (text) => <span>{Number(text).toLocaleString()}</span>,
-      },
-      {
-        title: "Gün",
-        dataIndex: "gun",
-        key: "gun",
-        width: 100,
-      },
-      {
-        title: "Servis Tipi",
-        dataIndex: "servisTipi",
-        key: "servisTipi",
-        width: 100,
-      },
-      {
-        title: "Peryodik",
-        dataIndex: "periyodik",
-        key: "periyodik",
-        width: 100,
-        render: (text) => (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            {text ? <CheckCircleOutlined style={{ color: "green" }} /> : <CloseCircleOutlined style={{ color: "red" }} />}
-          </div>
-        ),
-      },
-    ];
-
-    if (!savedWidths) {
-      return defaultColumns;
-    }
-
-    const parsedWidths = JSON.parse(savedWidths);
-    return defaultColumns.map((col, index) => ({
-      ...col,
-      width: parsedWidths[index] || col.width,
-    }));
-  });
-
-  const handleResize =
-    (index) =>
-    (_, { size }) => {
-      const newColumns = [...columns];
-      newColumns[index] = {
-        ...newColumns[index],
-        width: size.width,
-      };
-      setColumns(newColumns);
-      localStorage.setItem("servisTableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
-    };
-
-  const mergedColumns = columns.map((col, index) => ({
-    ...col,
-    onHeaderCell: (column) => ({
-      width: column.width,
-      onResize: handleResize(index),
-    }),
-  }));
-
-  const plakaID = watch("PlakaID");
-
-  const fetch = useCallback(() => {
-    setLoading(true);
-    const body = [plakaID];
-
-    AxiosInstance.post(`Accident/GetAccidentsListByVehicleId?page=${pagination.current}&parameter=${searchTerm}`, body)
-      .then((response) => {
-        const { list, recordCount } = response.data;
-        const fetchedData = list.map((item) => ({
-          ...item,
-          key: item.bakimId,
-          code: item.bakimKodu,
-          subject: item.tanim,
-        }));
-        setData(fetchedData);
-        setPagination((prev) => ({
-          ...prev,
-          total: recordCount,
-        }));
-      })
-      .finally(() => setLoading(false));
-  }, [pagination.current, searchTerm, plakaID]);
-
-  const handleModalToggle = () => {
-    setIsModalVisible((prev) => !prev);
-    if (!isModalVisible) {
-      fetch();
-      setSelectedRowKeys([]);
+  const handleOk = async () => {
+    try {
+      await AxiosInstance.post(
+        `/CustomField/AddCustomFieldTopic?form=SERVIS&topic=${inputValue}&field=${clickedField}`
+      );
+      setIsModalVisible(false);
+      setInputValue("");
+    } catch (error) {
+      console.error("API request failed: ", error);
     }
   };
 
-  const handleModalOk = () => {
-    const selectedData = data.find((item) => item.key === selectedRowKeys[0]);
-    if (selectedData) {
-      onSubmit && onSubmit(selectedData);
-      console.log("selectedRowKeys", selectedData);
-    }
+  const handleCancel = () => {
     setIsModalVisible(false);
-  };
-
-  useEffect(() => {
-    setSelectedRowKeys(workshopSelectedId ? [workshopSelectedId] : []);
-  }, [workshopSelectedId]);
-
-  const onRowSelectChange = (selectedKeys) => {
-    setSelectedRowKeys(selectedKeys.length ? [selectedKeys[0]] : []);
-  };
-
-  const handleTableChange = (newPagination) => {
-    setPagination(newPagination);
-  };
-
-  useEffect(() => {
-    if (hasInteracted) {
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
-      const timeout = setTimeout(() => {
-        fetch();
-      }, 2000);
-      setDebounceTimer(timeout);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [searchTerm, hasInteracted, fetch]);
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    if (!hasInteracted) setHasInteracted(true);
+    setInputValue("");
   };
 
   return (
-    <div>
-      <Button onClick={handleModalToggle}> + </Button>
-      <Modal width={1200} centered title="Kaza Kayıtları" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
-        <Input placeholder="Arama..." prefix={<SearchOutlined />} value={searchTerm} onChange={handleSearchChange} style={{ marginBottom: "20px" }} />
-        <Table
-          rowSelection={{
-            type: "radio",
-            selectedRowKeys,
-            onChange: onRowSelectChange,
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          maxWidth: "450px",
+          gap: "10px",
+          rowGap: "0px",
+        }}
+      >
+        <Text
+          style={{ fontSize: "14px", cursor: "pointer" }}
+          onClick={() => showModal("OZELALAN_1")}
+        >
+          Özel Alan 1:
+        </Text>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            maxWidth: "300px",
+            minWidth: "300px",
+            gap: "10px",
+            width: "100%",
           }}
-          bordered
-          components={{
-            header: {
-              cell: ResizableTitle,
-            },
+        >
+          <Controller
+            name="ozelAlan1"
+            control={control}
+            render={({ field }) => <Input {...field} style={{ flex: 1 }} />}
+          />
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          maxWidth: "450px",
+          gap: "10px",
+          rowGap: "0px",
+        }}
+      >
+        <Text
+          style={{ fontSize: "14px", cursor: "pointer" }}
+          onClick={() => showModal("OZELALAN_2")}
+        >
+          Özel Alan 2:
+        </Text>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            maxWidth: "300px",
+            minWidth: "300px",
+            gap: "10px",
+            width: "100%",
           }}
-          scroll={{ y: "calc(100vh - 380px)" }}
-          columns={mergedColumns}
-          dataSource={data}
-          loading={loading}
-          pagination={pagination}
-          onChange={handleTableChange}
+        >
+          <Controller
+            name="ozelAlan2"
+            control={control}
+            render={({ field }) => <Input {...field} style={{ flex: 1 }} />}
+          />
+        </div>
+      </div>
+
+      <Modal
+        title="Özel Alan Girişi"
+        open={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Değer giriniz"
         />
       </Modal>
     </div>
   );
 }
+
+export default OzelAlanlar;

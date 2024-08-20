@@ -11,6 +11,7 @@ import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import ContextMenu from "../components/ContextMenu/ContextMenu";
 import CreateDrawer from "../Insert/CreateDrawer";
+import EditDrawer from "../Update/EditDrawer";
 import dayjs from "dayjs";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
 
@@ -1096,6 +1097,7 @@ const Sigorta = () => {
             rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
           />
         </Spin>
+        <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
       </div>
     </>
   );

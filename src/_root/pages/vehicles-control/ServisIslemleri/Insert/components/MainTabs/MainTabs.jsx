@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import LokasyonTipi from "./components/LokasyonTipi";
-import LokasyonBina from "./components/LokasyonBina";
 import ServisKoduTablo from "./components/ServisKoduTablo.jsx";
-import LokasyonKat from "./components/LokasyonKat";
-import LokasyonPersonelTablo from "./components/LokasyonPersonelTablo";
-import LokasyonDepoTablo from "./components/LokasyonDepoTablo";
 import styled from "styled-components";
-import LokasyonTablo from "./components/LokasyonTablo";
-import GoogleMaps from "./components/GoogleMaps.jsx";
 import Plaka from "./components/Plaka.jsx";
 import Surucu from "./components/Surucu.jsx";
 import ServisNedeni from "./components/ServisNedeni.jsx";
 import dayjs from "dayjs";
 import HasarNoTablo from "./components/HasarNoTablo.jsx";
 import Onay from "./components/Onay.jsx";
-import IslemiYapanSelect from "./components/IslemiYapanSelect.jsx";
 import Maliyetler from "./components/Maliyetler.jsx";
 import SecondTabs from "../SecondTabs/SecondTabs.jsx";
 import IslemYapanTablo from "./components/IslemYapanTablo.jsx";
@@ -109,23 +101,6 @@ export default function MainTabs({ modalOpen }) {
     setValue("islemiYapan1", "");
     setValue("islemiYapan1ID", "");
   };
-
-  const handleYoneticiMinusClick = () => {
-    setValue("lokasyonYoneticiTanim", "");
-    setValue("lokasyonYoneticiID", "");
-  };
-
-  const handleDepoMinusClick = () => {
-    setValue("lokasyonDepoTanim", "");
-    setValue("lokasyonDepoID", "");
-  };
-
-  const handleAnaLokasyonMinusClick = () => {
-    setValue("anaLokasyonTanim", "");
-    setValue("anaLokasyonID", "");
-  };
-
-  const selectedLokasyonId = watch("selectedLokasyonId");
 
   // duzenlenmeTarihi ve duzenlenmeSaati alanlarının boş ve ye sistem tarih ve saatinden büyük olup olmadığını kontrol etmek için bir fonksiyon
 
@@ -689,7 +664,6 @@ export default function MainTabs({ modalOpen }) {
           </div>
         </div>
       </div>
-      <SecondTabs />
     </div>
   );
 }
