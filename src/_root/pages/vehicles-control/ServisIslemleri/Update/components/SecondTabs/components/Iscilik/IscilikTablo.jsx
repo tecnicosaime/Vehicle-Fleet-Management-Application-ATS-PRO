@@ -46,14 +46,14 @@ export default function KontrolListesiTablo({ isActive }) {
 
   const columns = [
     {
-      title: "S.N.",
+      title: "İş Tanımı",
       dataIndex: "DKN_SIRANO",
       key: "DKN_SIRANO",
       width: 120,
       ellipsis: true,
     },
     {
-      title: "Yapıldı",
+      title: "İş Tipi",
       dataIndex: "DKN_YAPILDI",
       key: "DKN_YAPILDI",
       width: 100,
@@ -71,37 +71,9 @@ export default function KontrolListesiTablo({ isActive }) {
       },
     },
     {
-      title: "İş Tanımı",
+      title: "İşçilik Ücreti",
       dataIndex: "DKN_TANIM",
       key: "DKN_TANIM",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Personel",
-      dataIndex: "DKN_PERSONEL_ISIM",
-      key: "DKN_PERSONEL_ISIM",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Maliyet",
-      dataIndex: "DKN_MALIYET",
-      key: "DKN_MALIYET",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Süre",
-      dataIndex: "DKN_YAPILDI_SURE",
-      key: "DKN_YAPILDI_SURE",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Açıklama",
-      dataIndex: "DKN_ACIKLAMA",
-      key: "DKN_ACIKLAMA",
       width: 200,
       ellipsis: true,
     },

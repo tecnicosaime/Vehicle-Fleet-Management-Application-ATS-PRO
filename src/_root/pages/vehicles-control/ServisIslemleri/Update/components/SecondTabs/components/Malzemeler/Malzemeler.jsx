@@ -46,17 +46,17 @@ export default function KontrolListesiTablo({ isActive }) {
 
   const columns = [
     {
-      title: "S.N.",
+      title: "Malzeme Kodu",
       dataIndex: "DKN_SIRANO",
       key: "DKN_SIRANO",
       width: 120,
       ellipsis: true,
     },
     {
-      title: "Yapıldı",
+      title: "Malzeme Tanımı",
       dataIndex: "DKN_YAPILDI",
       key: "DKN_YAPILDI",
-      width: 100,
+      width: 250,
       ellipsis: true,
       render: (text, record) => {
         return record.DKN_YAPILDI ? (
@@ -71,38 +71,24 @@ export default function KontrolListesiTablo({ isActive }) {
       },
     },
     {
-      title: "İş Tanımı",
+      title: "Miktar",
       dataIndex: "DKN_TANIM",
       key: "DKN_TANIM",
-      width: 200,
+      width: 100,
       ellipsis: true,
     },
     {
-      title: "Personel",
+      title: "Birim",
       dataIndex: "DKN_PERSONEL_ISIM",
       key: "DKN_PERSONEL_ISIM",
-      width: 200,
+      width: 100,
       ellipsis: true,
     },
     {
-      title: "Maliyet",
+      title: "Toplam",
       dataIndex: "DKN_MALIYET",
       key: "DKN_MALIYET",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Süre",
-      dataIndex: "DKN_YAPILDI_SURE",
-      key: "DKN_YAPILDI_SURE",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Açıklama",
-      dataIndex: "DKN_ACIKLAMA",
-      key: "DKN_ACIKLAMA",
-      width: 200,
+      width: 100,
       ellipsis: true,
     },
   ];
