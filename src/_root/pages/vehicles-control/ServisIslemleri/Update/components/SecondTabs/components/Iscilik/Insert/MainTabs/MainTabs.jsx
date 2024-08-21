@@ -5,6 +5,8 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 import ServisKoduTablo from "../../../../../MainTabs/components/ServisKoduTablo.jsx";
 import YapilanIsTable from "./components/YapilanIsTable.jsx";
+import PersonelTable from "./components/PersonelTable.jsx";
+
 const { Text, Link } = Typography;
 const { TextArea } = Input;
 
@@ -62,6 +64,11 @@ export default function MainTabs() {
   const handleYapilanIsMinusClick = () => {
     setValue("yapilanIs", "");
     setValue("yapilanIsID", "");
+  };
+
+  const handlePersonelMinusClick = () => {
+    setValue("personel", "");
+    setValue("personelID", "");
   };
 
   const items = [
@@ -228,7 +235,7 @@ export default function MainTabs() {
           />
         </div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
         <Text style={{ fontSize: "14px", fontWeight: "600" }}>Yapılan İş:</Text>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
           <Controller
@@ -261,6 +268,66 @@ export default function MainTabs() {
             }}
           />
           <Button onClick={handleYapilanIsMinusClick}> - </Button>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px" }}>Personel:</Text>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
+          <Controller
+            name="personel"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text" // Set the type to "text" for name input
+                style={{ width: "215px" }}
+                disabled
+              />
+            )}
+          />
+          <Controller
+            name="personelID"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text" // Set the type to "text" for name input
+                style={{ display: "none" }}
+              />
+            )}
+          />
+          <PersonelTable
+            onSubmit={(selectedData) => {
+              setValue("personel", selectedData.isim);
+              setValue("personelID", selectedData.key);
+            }}
+          />
+          <Button onClick={handlePersonelMinusClick}> - </Button>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px" }}>İşçilik Ücreti:</Text>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+          <Controller name="iscilikUcreti" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+        </div>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px" }}>KDV Oranı %:</Text>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+          <Controller name="kdvOrani" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+        </div>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px" }}>İndirim %:</Text>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+          <Controller name="indirimYuzde" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+          <Controller name="indirimOranı" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+        </div>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px" }}>Toplam:</Text>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+          <Controller name="toplam" control={control} render={({ field }) => <InputNumber {...field} disabled style={{ flex: 1 }} />} />
         </div>
       </div>
       <StyledTabs defaultActiveKey="1" items={items} onChange={onChange} />
