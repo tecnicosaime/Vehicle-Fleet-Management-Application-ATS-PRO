@@ -13,6 +13,7 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
     defaultValues: {
       plaka: plaka,
       aracID: aracID,
+      kdvOrani: 18,
       siraNo: "",
       secilenID: "",
       isTanimi: "",
