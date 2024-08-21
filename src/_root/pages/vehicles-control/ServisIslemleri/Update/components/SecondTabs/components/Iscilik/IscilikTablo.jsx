@@ -76,6 +76,7 @@ export default function KontrolListesiTablo({ isActive }) {
   ];
 
   const plaka = watch("Plaka");
+  const aracID = watch("PlakaID");
   const secilenKayitID = watch("secilenKayitID");
 
   // const fetch = useCallback(() => {
@@ -174,7 +175,7 @@ export default function KontrolListesiTablo({ isActive }) {
           onChange={(e) => setSearchTerm(e.target.value)}
           prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
         />
-        <CreateModal onRefresh={refreshTable} secilenKayitID={secilenKayitID} plaka={plaka} />
+        <CreateModal onRefresh={refreshTable} secilenKayitID={secilenKayitID} plaka={plaka} aracID={aracID} />
       </div>
 
       <Table
