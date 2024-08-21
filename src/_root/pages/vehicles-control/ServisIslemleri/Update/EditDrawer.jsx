@@ -102,7 +102,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("Plaka", item.plaka);
           setValue("duzenlenmeTarihi", item.tarih ? (dayjs(item.tarih).isValid() ? dayjs(item.tarih) : null) : null);
           setValue("duzenlenmeSaati", item.saat ? (dayjs(item.saat, "HH:mm:ss").isValid() ? dayjs(item.saat, "HH:mm:ss") : null) : null);
-          setValue("servisKodu", "???");
+          setValue("servisKodu", item.servisKodu);
           setValue("servisKoduID", item.bakimId);
           setValue("servisTanimi", item.servisTanimi);
           setValue("servisTipi", item.servisTipi);
@@ -120,12 +120,12 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("servisNedeniID", item.servisNedeniKodId);
           setValue("faturaTarihi", item.faturaTarih ? (dayjs(item.faturaTarih).isValid() ? dayjs(item.faturaTarih) : null) : null);
           setValue("faturaNo", item.faturaNo);
-          setValue("hasarNo", "???");
+          setValue("hasarNo", item.hasarNo);
           setValue("hasarNoID", item.kazaId);
           setValue("talepNo", item.talepNo);
           setValue("onayID", item.onayId);
           setValue("durumBilgisi", item.durumBilgisi);
-          setValue("garantiKapsami", "???");
+          setValue("garantiKapsami", item.garantili);
           setValue("surucuOder", item.surucuOder);
           setValue("iscilikUcreti", item.iscilik);
           setValue("malzemeUcreti", item.malzeme);
@@ -134,10 +134,10 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("eksiUcreti", item.indirim);
 
           setValue("sigortaBilgileri", item.sigortaVar);
-          setValue("sigorta", "???");
+          setValue("sigorta", item.sigortaPolice);
           setValue("sigortaID", item.sigortaId);
-          setValue("policeNo", "???");
-          setValue("firma", "???");
+          setValue("policeNo", item.policeNo);
+          setValue("firma", item.sigortaFirmaUnvan);
           setValue("aciklama", item.aciklama);
           setValue("sikayetler", item.sikayetler);
 
@@ -198,18 +198,19 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       malzeme: data.malzemeUcreti, // iscilik: data.,
       talepNo: data.talepNo,
       onayId: data.onayID,
-      tarih: data.duzenlenmeTarihi,
-      baslamaTarih: data.baslamaTarihi,
-      bitisTarih: data.bitisTarihi,
-      faturaTarih: data.faturaTarihi,
-      saat: data.duzenlenmeSaati,
-      baslamaSaat: data.baslamaSaati,
-      bitisSaat: data.bitisSaati,
+      tarih: formatDateWithDayjs(data.duzenlenmeTarihi),
+      baslamaTarih: formatDateWithDayjs(data.baslamaTarihi),
+      bitisTarih: formatDateWithDayjs(data.bitisTarihi),
+      faturaTarih: formatDateWithDayjs(data.faturaTarihi),
+      saat: formatTimeWithDayjs(data.duzenlenmeSaati),
+      baslamaSaat: formatTimeWithDayjs(data.baslamaSaati),
+      bitisSaat: formatTimeWithDayjs(data.bitisSaati),
       faturaNo: data.faturaNo,
       aciklama: data.aciklama,
       sikayetler: data.sikayetler,
       sigortaVar: data.sigortaBilgileri,
       surucuOder: data.surucuOder,
+      garantili: data.garantiKapsami,
       sigortaId: data.sigortaID,
       ozelAlan1: data.ozelAlan1,
       ozelAlan2: data.ozelAlan2,
