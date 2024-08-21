@@ -54,34 +54,23 @@ export default function KontrolListesiTablo({ isActive }) {
   const columns = [
     {
       title: "İş Tanımı",
-      dataIndex: "DKN_SIRANO",
-      key: "DKN_SIRANO",
-      width: 120,
+      dataIndex: "isTanim",
+      key: "isTanim",
+      width: 150,
       ellipsis: true,
     },
     {
       title: "İş Tipi",
-      dataIndex: "DKN_YAPILDI",
-      key: "DKN_YAPILDI",
+      dataIndex: "isTip",
+      key: "isTip",
       width: 100,
       ellipsis: true,
-      render: (text, record) => {
-        return record.DKN_YAPILDI ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <CheckOutlined style={{ color: "green" }} />
-          </div>
-        ) : (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <CloseOutlined style={{ color: "red" }} />
-          </div>
-        );
-      },
     },
     {
       title: "İşçilik Ücreti",
-      dataIndex: "DKN_TANIM",
-      key: "DKN_TANIM",
-      width: 200,
+      dataIndex: "iscilikUcreti",
+      key: "iscilikUcreti",
+      width: 100,
       ellipsis: true,
     },
   ];
