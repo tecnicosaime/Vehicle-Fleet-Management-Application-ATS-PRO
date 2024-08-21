@@ -146,6 +146,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       sikayetler: data.sikayetler,
       sigortaVar: data.sigortaBilgileri,
       surucuOder: data.surucuOder,
+      garantili: data.garantiKapsami,
       sigortaId: data.sigortaID,
       ozelAlan1: data.ozelAlan1,
       ozelAlan2: data.ozelAlan2,

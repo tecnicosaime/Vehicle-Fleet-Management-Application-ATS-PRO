@@ -110,7 +110,7 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
           </Button>
         </div>
 
-        <Modal width="800px" title="İşçilik Ekle" open={isModalVisible} onOk={methods.handleSubmit(onSubmited)} onCancel={handleModalToggle}>
+        <Modal width="800px" title="İşçilik Ekle" open={isModalVisible} centered onOk={methods.handleSubmit(onSubmited)} onCancel={handleModalToggle}>
           {loading ? (
             <Spin spinning={loading} size="large" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
               {/* İçerik yüklenirken gösterilecek alan */}
