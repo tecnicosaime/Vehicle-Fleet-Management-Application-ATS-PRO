@@ -19,8 +19,21 @@ http.interceptors.request.use(async (config) => {
   return config;
 });
 
-http.interceptors.response.use((response) => {
-  return response;
-});
+http.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("id");
+      localStorage.removeItem("token_expire");
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login"; // `/auth` sayfasına yönlendir
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default http;

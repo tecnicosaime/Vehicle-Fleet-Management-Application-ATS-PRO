@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import ServisKoduTablo from "../../../../../MainTabs/components/ServisKoduTablo.jsx";
 import YapilanIsTable from "./components/YapilanIsTable.jsx";
 import PersonelTable from "./components/PersonelTable.jsx";
+import { SearchOutlined } from "@ant-design/icons";
+import IsTipi from "./components/IsTipi.jsx";
 
 const { Text, Link } = Typography;
 const { TextArea } = Input;
@@ -64,6 +66,12 @@ export default function MainTabs() {
   const handleYapilanIsMinusClick = () => {
     setValue("yapilanIs", "");
     setValue("yapilanIsID", "");
+    setValue("iscilikUcreti", 0);
+    setValue("saat", "");
+    setValue("dakika", "");
+    setValue("isTipi", null);
+    setValue("isTipiID", "");
+    setValue("toplam", 0);
   };
 
   const handlePersonelMinusClick = () => {
@@ -184,150 +192,232 @@ export default function MainTabs() {
 
   // iki tarih ve saat arasında geçen süreyi hesaplamak için sonu
 
+  const iscilikUcreti = watch("iscilikUcreti") || 0;
+  const indirimYuzde = watch("indirimYuzde") || 0;
+  const indirimOrani = watch("indirimOrani") || 0;
+  const kdvOrani = watch("kdvOrani") || 0;
+  const kdvDegeri = watch("kdvDegeri") || 0;
+
+  const handleIndirimYuzdeChange = (value) => {
+    setValue("indirimYuzde", value);
+    const calculatedIndirimOrani = (iscilikUcreti * value) / 100;
+    setValue("indirimOrani", isNaN(calculatedIndirimOrani) ? 0 : calculatedIndirimOrani);
+  };
+
+  const handleIndirimOraniChange = (value) => {
+    setValue("indirimOrani", value);
+    const calculatedIndirimYuzde = (value / iscilikUcreti) * 100;
+    setValue("indirimYuzde", isNaN(calculatedIndirimYuzde) ? 0 : calculatedIndirimYuzde);
+  };
+
+  // indirimYuzde veya indirimOrani değiştiğinde otomatik hesaplamaları tetikleyin
+  useEffect(() => {
+    if (iscilikUcreti > 0) {
+      if (indirimYuzde !== (indirimOrani / iscilikUcreti) * 100) {
+        const calculatedIndirimOrani = (iscilikUcreti * indirimYuzde) / 100;
+        setValue("indirimOrani", isNaN(calculatedIndirimOrani) ? 0 : calculatedIndirimOrani);
+      }
+    }
+  }, [indirimYuzde, iscilikUcreti, setValue]);
+
+  useEffect(() => {
+    if (iscilikUcreti > 0) {
+      if (indirimOrani !== (iscilikUcreti * indirimYuzde) / 100) {
+        const calculatedIndirimYuzde = (indirimOrani / iscilikUcreti) * 100;
+        setValue("indirimYuzde", isNaN(calculatedIndirimYuzde) ? 0 : calculatedIndirimYuzde);
+      }
+    }
+  }, [indirimOrani, iscilikUcreti, setValue]);
+
+  // Toplam hesaplaması
+  useEffect(() => {
+    const remainingAmount = iscilikUcreti - (indirimOrani || 0);
+    const kdv = remainingAmount * (kdvOrani / 100);
+    const finalAmount = remainingAmount + kdv;
+
+    setValue("kdvDegeri", isNaN(kdv) ? 0 : kdv);
+    setValue("toplam", isNaN(finalAmount) ? 0 : finalAmount);
+  }, [kdvOrani, indirimOrani, iscilikUcreti, setValue]);
+
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          maxWidth: "450px",
-          gap: "10px",
-          rowGap: "0px",
-          marginBottom: "10px",
-        }}
-      >
-        <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            maxWidth: "300px",
-            minWidth: "300px",
-            gap: "10px",
-            width: "100%",
-          }}
-        >
-          <Controller
-            name="plaka"
-            control={control}
-            rules={{ required: "Alan Boş Bırakılamaz!" }}
-            render={({ field, fieldState: { error } }) => (
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px", width: "100%" }}>
-                <Input {...field} status={error ? "error" : ""} disabled style={{ flex: 1 }} />
-                {error && <div style={{ color: "red" }}>{error.message}</div>}
-              </div>
-            )}
-          />
-          <Controller
-            name="aracID"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ display: "none" }}
-              />
-            )}
-          />
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-        <Text style={{ fontSize: "14px", fontWeight: "600" }}>Yapılan İş:</Text>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
-          <Controller
-            name="yapilanIs"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ width: "215px" }}
-                disabled
-              />
-            )}
-          />
-          <Controller
-            name="yapilanIsID"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ display: "none" }}
-              />
-            )}
-          />
-          <YapilanIsTable
-            onSubmit={(selectedData) => {
-              setValue("yapilanIs", selectedData.tanim);
-              setValue("yapilanIsID", selectedData.key);
+      <div style={{ display: "flex", columnGap: "10px", flexWrap: "wrap" }}>
+        <div style={{ width: "100%", maxWidth: "450px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              maxWidth: "450px",
+              gap: "10px",
+              rowGap: "0px",
+              marginBottom: "10px",
             }}
-          />
-          <Button onClick={handleYapilanIsMinusClick}> - </Button>
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-        <Text style={{ fontSize: "14px" }}>Personel:</Text>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
-          <Controller
-            name="personel"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ width: "215px" }}
-                disabled
+          >
+            <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                maxWidth: "300px",
+                minWidth: "300px",
+                gap: "10px",
+                width: "100%",
+              }}
+            >
+              <Controller
+                name="plaka"
+                control={control}
+                rules={{ required: "Alan Boş Bırakılamaz!" }}
+                render={({ field, fieldState: { error } }) => (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "5px", width: "100%" }}>
+                    <Input {...field} status={error ? "error" : ""} disabled style={{ flex: 1 }} />
+                    {error && <div style={{ color: "red" }}>{error.message}</div>}
+                  </div>
+                )}
               />
-            )}
-          />
-          <Controller
-            name="personelID"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ display: "none" }}
+              <Controller
+                name="aracID"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text" // Set the type to "text" for name input
+                    style={{ display: "none" }}
+                  />
+                )}
               />
-            )}
-          />
-          <PersonelTable
-            onSubmit={(selectedData) => {
-              setValue("personel", selectedData.isim);
-              setValue("personelID", selectedData.key);
-            }}
-          />
-          <Button onClick={handlePersonelMinusClick}> - </Button>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px", fontWeight: "600" }}>Yapılan İş:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
+              <Controller
+                name="yapilanIs"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text" // Set the type to "text" for name input
+                    style={{ width: "215px" }}
+                    disabled
+                  />
+                )}
+              />
+              <Controller
+                name="yapilanIsID"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text" // Set the type to "text" for name input
+                    style={{ display: "none" }}
+                  />
+                )}
+              />
+              <YapilanIsTable
+                onSubmit={(selectedData) => {
+                  setValue("yapilanIs", selectedData.tanim);
+                  setValue("yapilanIsID", selectedData.key);
+                  setValue("iscilikUcreti", selectedData.ucret);
+                  setValue("saat", selectedData.saat);
+                  setValue("dakika", selectedData.dakika);
+                  setValue("isTipi", selectedData.isTip);
+                  setValue("isTipiID", selectedData.isTipKodId);
+                }}
+              />
+              <Button onClick={handleYapilanIsMinusClick}> - </Button>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>Personel:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
+              <Controller
+                name="personel"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text" // Set the type to "text" for name input
+                    style={{ width: "215px" }}
+                    disabled
+                  />
+                )}
+              />
+              <Controller
+                name="personelID"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text" // Set the type to "text" for name input
+                    style={{ display: "none" }}
+                  />
+                )}
+              />
+              <PersonelTable
+                onSubmit={(selectedData) => {
+                  setValue("personel", selectedData.isim);
+                  setValue("personelID", selectedData.key);
+                }}
+              />
+              <Button onClick={handlePersonelMinusClick}> - </Button>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>İşçilik Ücreti:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller name="iscilikUcreti" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>KDV Oranı %:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller
+                name="kdvOrani"
+                control={control}
+                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} />}
+              />
+              <Controller name="kdvDegeri" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, display: "none" }} />} />
+            </div>
+          </div>
         </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-        <Text style={{ fontSize: "14px" }}>İşçilik Ücreti:</Text>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-          <Controller name="iscilikUcreti" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-        <Text style={{ fontSize: "14px" }}>KDV Oranı %:</Text>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-          <Controller name="kdvOrani" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-        <Text style={{ fontSize: "14px" }}>İndirim %:</Text>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-          <Controller name="indirimYuzde" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-          <Controller name="indirimOranı" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-        <Text style={{ fontSize: "14px" }}>Toplam:</Text>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-          <Controller name="toplam" control={control} render={({ field }) => <InputNumber {...field} disabled style={{ flex: 1 }} />} />
+
+        <div style={{ width: "100%", maxWidth: "450px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>İndirim %:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller
+                name="indirimYuzde"
+                control={control}
+                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} onChange={handleIndirimYuzdeChange} />}
+              />
+              <Controller name="indirimOrani" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} onChange={handleIndirimOraniChange} />
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>Toplam:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller name="toplam" control={control} render={({ field }) => <InputNumber {...field} disabled style={{ flex: 1 }} />} />
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>İş Tipi:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <IsTipi />
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>Saat-Dakika:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller name="saat" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+              <Controller name="dakika" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+            </div>
+          </div>
         </div>
       </div>
       <StyledTabs defaultActiveKey="1" items={items} onChange={onChange} />

@@ -87,7 +87,32 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
 
   const { setValue, reset, watch } = methods;
 
+  const refreshTable = watch("refreshTable");
+
   // API'den gelen verileri form alanlarına set etme
+  useEffect(() => {
+    const fetchUcretCalculation = async () => {
+      if ((drawerVisible && selectedRow) || refreshTable === true) {
+        try {
+          const response = await AxiosInstance.get(`VehicleServices/GetServiceCardCost?serviceId=${selectedRow.key}`);
+          const item = response.data;
+          if (item) {
+            setValue("iscilikUcreti", item.iscilik);
+            setValue("malzemeUcreti", item.malzeme);
+            setValue("kdvUcreti", item.kdv);
+            setValue("eksiUcreti", item.indirim);
+          }
+          setValue("refreshTable", false);
+        } catch (error) {
+          console.error("Veri çekilirken hata oluştu:", error);
+          setLoading(false); // Hata oluştuğunda
+        }
+      }
+    };
+
+    fetchUcretCalculation();
+  }, [drawerVisible, selectedRow, setValue, onRefresh, methods.reset, AxiosInstance, refreshTable]);
+
   useEffect(() => {
     const handleDataFetchAndUpdate = async () => {
       if (drawerVisible && selectedRow) {
@@ -124,14 +149,14 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("hasarNoID", item.kazaId);
           setValue("talepNo", item.talepNo);
           setValue("onayID", item.onayId);
-          setValue("durumBilgisi", item.durumBilgisi);
+          setValue("durumBilgisi", String(item.durumBilgisi));
           setValue("garantiKapsami", item.garantili);
           setValue("surucuOder", item.surucuOder);
-          setValue("iscilikUcreti", item.iscilik);
-          setValue("malzemeUcreti", item.malzeme);
+          // setValue("iscilikUcreti", item.iscilik);
+          // setValue("malzemeUcreti", item.malzeme);
           setValue("digerUcreti", item.diger);
-          setValue("kdvUcreti", item.kdv);
-          setValue("eksiUcreti", item.indirim);
+          // setValue("kdvUcreti", item.kdv);
+          // setValue("eksiUcreti", item.indirim);
 
           setValue("sigortaBilgileri", item.sigortaVar);
           setValue("sigorta", item.sigortaPolice);
@@ -190,12 +215,13 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       servisNedeniKodId: data.servisNedeniID,
 
       islemiYapanId: data.islemiYapan1ID,
-      surucuId: data.SurucuID, // lokasyonId: data.,
+      surucuId: data.SurucuID,
       km: data.aracKM,
-      indirim: data.eksiUcreti, // toplam: data.,
+      indirim: data.eksiUcreti,
       kdv: data.kdvUcreti,
       diger: data.digerUcreti,
-      malzeme: data.malzemeUcreti, // iscilik: data.,
+      malzeme: data.malzemeUcreti,
+      iscilik: data.iscilikUcreti,
       talepNo: data.talepNo,
       onayId: data.onayID,
       tarih: formatDateWithDayjs(data.duzenlenmeTarihi),
@@ -297,18 +323,20 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           }
         >
           {loading ? (
-            <Spin
-              spinning={loading}
-              size="large"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "100vh",
-              }}
-            >
-              {/* İçerik yüklenirken gösterilecek alan */}
-            </Spin>
+            <div style={{ overflow: "auto", height: "calc(100vh - 150px)" }}>
+              <Spin
+                spinning={loading}
+                size="large"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: "100vh",
+                }}
+              >
+                {/* İçerik yüklenirken gösterilecek alan */}
+              </Spin>
+            </div>
           ) : (
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div style={{ overflow: "auto", height: "calc(100vh - 150px)" }}>

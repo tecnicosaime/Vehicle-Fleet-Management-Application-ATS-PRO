@@ -137,6 +137,7 @@ export default function KontrolListesiTablo({ isActive }) {
 
   const refreshTable = useCallback(() => {
     fetch(); // fetch fonksiyonu tabloyu yeniler
+    setValue("refreshTable", true);
   }, [fetch]);
 
   const handleTableChange = (newPagination) => {
@@ -206,7 +207,7 @@ export default function KontrolListesiTablo({ isActive }) {
             setSelectedRow(null);
           }}
           onRefresh={refreshTable}
-          secilenKayitID={secilenKayitID}
+          secilenUstKayitID={secilenKayitID}
         />
       )}
     </div>
