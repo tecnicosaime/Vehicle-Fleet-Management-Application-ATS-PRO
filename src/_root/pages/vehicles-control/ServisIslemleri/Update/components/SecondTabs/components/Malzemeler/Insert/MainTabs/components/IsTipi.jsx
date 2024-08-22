@@ -7,15 +7,18 @@ import { PlusOutlined } from "@ant-design/icons";
 const { Text, Link } = Typography;
 const { Option } = Select;
 
-export default function VardiyaSelect({ disabled }) {
-  const { control, setValue, watch } = useFormContext();
+export default function IsTipi({ disabled, fieldRequirements }) {
+  const {
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext();
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const inputRef = createRef();
   const [name, setName] = useState("");
   const [selectKey, setSelectKey] = useState(0);
-
-  const yapildi = watch("yapildi");
 
   // message
   const [messageApi, contextHolder] = message.useMessage();
@@ -25,9 +28,9 @@ export default function VardiyaSelect({ disabled }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await AxiosInstance.get("KodList?grup=32759");
-      if (response && response) {
-        setOptions(response);
+      const response = await AxiosInstance.get(`Code/GetCodeTextById?codeNumber=113`);
+      if (response && response.data) {
+        setOptions(response.data);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -44,26 +47,29 @@ export default function VardiyaSelect({ disabled }) {
 
   const addItem = () => {
     if (name.trim() !== "") {
-      if (options.some((option) => option.KOD_TANIM === name)) {
+      if (options.some((option) => option.surucu === name)) {
         messageApi.open({
           type: "warning",
           content: "Bu durum zaten var!",
         });
         return;
       }
-
+      const body = {
+        codeId: 113,
+        codeText: name,
+      };
       setLoading(true);
-      AxiosInstance.post(`AddKodList?entity=${name}&grup=32759`)
+      AxiosInstance.post(`Code/AddCode`, body)
         .then((response) => {
-          if (response.status_code === 201) {
+          if (response.data.statusCode === 201) {
             // Assuming 'id' is directly in the response
-            const newId = response.id; // Adjust this line based on your actual response structure
+            const newId = response.data.id; // Adjust this line based on your actual response structure
 
             messageApi.open({
               type: "success",
               content: "Ekleme Başarılı",
             });
-            setOptions((prevOptions) => [...prevOptions, { TB_KOD_ID: newId, KOD_TANIM: name }]);
+            setOptions((prevOptions) => [...prevOptions, { codeId: newId, isim: name }]);
             setSelectKey((prevKey) => prevKey + 1);
             setName("");
           } else {
@@ -92,16 +98,16 @@ export default function VardiyaSelect({ disabled }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: "space-between" }}>
       {contextHolder}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", flexDirection: "column" }}>
         <Controller
-          name="vardiya"
+          name="isTipi"
           control={control}
           render={({ field }) => (
             <Select
               {...field}
-              disabled={!yapildi}
+              disabled={disabled}
               key={selectKey}
-              style={{ width: "200px" }}
+              style={{ width: "300px" }}
               showSearch
               allowClear
               placeholder="Seçim Yapınız"
@@ -133,14 +139,14 @@ export default function VardiyaSelect({ disabled }) {
                 </Spin>
               )}
               options={options.map((item) => ({
-                value: item.TB_KOD_ID, // Use the ID as the value
-                label: item.KOD_TANIM, // Display the name in the dropdown
+                value: item.siraNo, // Use the ID as the value
+                label: item.codeText, // Display the name in the dropdown
               }))}
               onChange={(value) => {
                 // Seçilen değerin ID'sini NedeniID alanına set et
                 // `null` veya `undefined` değerlerini ele al
-                setValue("vardiya", value ?? null);
-                setValue("vardiyaID", value ?? null);
+                setValue("isTipi", value ?? null);
+                setValue("isTipiID", value ?? null);
                 field.onChange(value ?? null);
               }}
               value={field.value ?? null} // Eğer `field.value` `undefined` ise, `null` kullanarak `Select` bileşenine geçir
@@ -148,7 +154,7 @@ export default function VardiyaSelect({ disabled }) {
           )}
         />
         <Controller
-          name="vardiyaID"
+          name="isTipiID"
           control={control}
           render={({ field }) => (
             <Input
