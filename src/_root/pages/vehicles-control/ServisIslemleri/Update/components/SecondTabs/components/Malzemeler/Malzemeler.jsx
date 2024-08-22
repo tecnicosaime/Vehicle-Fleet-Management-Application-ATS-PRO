@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Modal, Table } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Button, Input, Modal, Table } from "antd";
+import { CheckOutlined, CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../../../../../api/http";
 import CreateModal from "./Insert/CreateModal";
@@ -13,6 +13,13 @@ export default function KontrolListesiTablo({ isActive }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchCount, setSearchCount] = useState(0);
+  const [debounceTimer, setDebounceTimer] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
   // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için
 
@@ -47,79 +54,91 @@ export default function KontrolListesiTablo({ isActive }) {
   const columns = [
     {
       title: "Malzeme Kodu",
-      dataIndex: "DKN_SIRANO",
-      key: "DKN_SIRANO",
+      dataIndex: "malezemeKod",
+      key: "malezemeKod",
       width: 120,
       ellipsis: true,
     },
     {
       title: "Malzeme Tanımı",
-      dataIndex: "DKN_YAPILDI",
-      key: "DKN_YAPILDI",
+      dataIndex: "malezemeTanim",
+      key: "malezemeTanim",
       width: 250,
       ellipsis: true,
-      render: (text, record) => {
-        return record.DKN_YAPILDI ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <CheckOutlined style={{ color: "green" }} />
-          </div>
-        ) : (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <CloseOutlined style={{ color: "red" }} />
-          </div>
-        );
-      },
     },
     {
       title: "Miktar",
-      dataIndex: "DKN_TANIM",
-      key: "DKN_TANIM",
+      dataIndex: "miktar",
+      key: "miktar",
       width: 100,
       ellipsis: true,
     },
     {
       title: "Birim",
-      dataIndex: "DKN_PERSONEL_ISIM",
-      key: "DKN_PERSONEL_ISIM",
+      dataIndex: "birim",
+      key: "birim",
       width: 100,
       ellipsis: true,
     },
     {
       title: "Toplam",
-      dataIndex: "DKN_MALIYET",
-      key: "DKN_MALIYET",
+      dataIndex: "toplam",
+      key: "toplam",
       width: 100,
       ellipsis: true,
     },
   ];
 
-  const secilenIsEmriID = watch("secilenIsEmriID");
+  const plaka = watch("Plaka");
+  const aracID = watch("PlakaID");
+  const secilenKayitID = watch("secilenKayitID");
+
+  // const fetch = useCallback(() => {
+  //   if (isActive) {
+  //     setLoading(true);
+  //     AxiosInstance.get(`FetchIsEmriKontrolList?isemriID=${secilenKayitID}`)
+  //       .then((response) => {
+  //         const fetchedData = response.map((item) => ({
+  //           ...item,
+  //           key: item.TB_ISEMRI_KONTROLLIST_ID,
+  //         }));
+  //         setData(fetchedData);
+  //       })
+  //       .catch((error) => {
+  //         // Hata işleme
+  //         console.error("API isteği sırasında hata oluştu:", error);
+  //       })
+  //       .finally(() => setLoading(false));
+  //   }
+  // }, [secilenKayitID, isActive]); // secilenKayitID değiştiğinde fetch fonksiyonunu güncelle
 
   const fetch = useCallback(() => {
     if (isActive) {
       setLoading(true);
-      AxiosInstance.get(`FetchIsEmriKontrolList?isemriID=${secilenIsEmriID}`)
+
+      AxiosInstance.get(`MaterialMovements/GetMaterialMovementsServiceList?serviceId=${secilenKayitID}&page=${pagination.current}&parameter=${searchTerm}`)
         .then((response) => {
-          const fetchedData = response.map((item) => ({
+          const { list, recordCount } = response.data;
+          const fetchedData = list.map((item) => ({
             ...item,
-            key: item.TB_ISEMRI_KONTROLLIST_ID,
+            key: item.siraNo,
           }));
           setData(fetchedData);
-        })
-        .catch((error) => {
-          // Hata işleme
-          console.error("API isteği sırasında hata oluştu:", error);
+          setPagination((prev) => ({
+            ...prev,
+            total: recordCount,
+          }));
         })
         .finally(() => setLoading(false));
     }
-  }, [secilenIsEmriID, isActive]); // secilenIsEmriID değiştiğinde fetch fonksiyonunu güncelle
+  }, [pagination.current, searchTerm, isActive, secilenKayitID]); // pagination.current, searchTerm veya plakaID değiştiğinde fetch fonksiyonunu güncelle
 
   useEffect(() => {
-    if (secilenIsEmriID) {
-      // secilenIsEmriID'nin varlığını ve geçerliliğini kontrol edin
+    if (secilenKayitID) {
+      // secilenKayitID'nin varlığını ve geçerliliğini kontrol edin
       fetch(); // fetch fonksiyonunu çağırın
     }
-  }, [secilenIsEmriID, fetch]); // secilenIsEmriID veya fetch fonksiyonu değiştiğinde useEffect'i tetikle
+  }, [secilenKayitID]); // secilenKayitID veya fetch fonksiyonu değiştiğinde useEffect'i tetikle
 
   const onRowSelectChange = (selectedKeys) => {
     setSelectedRowKeys(selectedKeys.length ? [selectedKeys[0]] : []);
@@ -132,11 +151,48 @@ export default function KontrolListesiTablo({ isActive }) {
 
   const refreshTable = useCallback(() => {
     fetch(); // fetch fonksiyonu tabloyu yeniler
+    setValue("refreshTable", true);
   }, [fetch]);
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
+
+  useEffect(() => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+
+    const timeout = setTimeout(() => {
+      if (searchTerm.trim() !== "") {
+        fetch(); // Trigger the API request based on your search logic
+        setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
+        setSearchCount(searchCount + 1);
+      } else if (searchTerm.trim() === "" && searchCount > 0) {
+        fetch(); // Fetch data without search term
+        setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
+      }
+    }, 2000);
+
+    setDebounceTimer(timeout);
+
+    return () => clearTimeout(timeout);
+  }, [searchTerm, fetch]);
 
   return (
     <div style={{ marginBottom: "25px" }}>
-      <CreateModal onRefresh={refreshTable} secilenIsEmriID={secilenIsEmriID} />
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Input
+          style={{ width: "250px", marginBottom: "10px" }}
+          type="text"
+          placeholder="Arama yap..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+        />
+        <CreateModal onRefresh={refreshTable} secilenKayitID={secilenKayitID} plaka={plaka} aracID={aracID} />
+      </div>
+
       <Table
         rowSelection={{
           type: "radio",
@@ -148,6 +204,8 @@ export default function KontrolListesiTablo({ isActive }) {
         })}
         columns={columns}
         dataSource={data}
+        pagination={pagination}
+        onChange={handleTableChange}
         loading={loading}
         scroll={{
           // x: "auto",
@@ -163,7 +221,7 @@ export default function KontrolListesiTablo({ isActive }) {
             setSelectedRow(null);
           }}
           onRefresh={refreshTable}
-          secilenIsEmriID={secilenIsEmriID}
+          secilenUstKayitID={secilenKayitID}
         />
       )}
     </div>
