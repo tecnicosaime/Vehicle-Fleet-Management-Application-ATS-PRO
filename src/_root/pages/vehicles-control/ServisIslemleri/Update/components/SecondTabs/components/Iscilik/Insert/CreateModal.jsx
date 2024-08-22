@@ -13,23 +13,21 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
     defaultValues: {
       plaka: plaka,
       aracID: aracID,
-      kdvOrani: 18,
-      siraNo: "",
-      secilenID: "",
-      isTanimi: "",
-      yapildi: false,
-      atolyeTanim: "",
-      atolyeID: "",
-      personelTanim: "",
-      personelID: "",
-      baslangicTarihi: "",
-      baslangicSaati: "",
-      vardiya: "",
-      vardiyaID: "",
-      bitisTarihi: "",
-      bitisSaati: "",
-      sure: "",
       aciklama: "",
+      yapilanIs: "",
+      yapilanIsID: "",
+      personel: "",
+      personelID: "",
+      kdvOrani: 18,
+      kdvDegeri: 0,
+      iscilikUcreti: 0,
+      indirimYuzde: 0,
+      indirimOrani: 0,
+      toplam: 0,
+      saat: "",
+      dakika: "",
+      isTipi: null,
+      isTipiID: "",
       // Add other default values here
     },
   });
@@ -50,34 +48,32 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
 
   const onSubmited = (data) => {
     const Body = {
-      TB_ISEMRI_KONTROLLIST_ID: 0,
-      DKN_SIRANO: data.siraNo,
-      DKN_YAPILDI: data.yapildi,
-      DKN_TANIM: data.isTanimi,
-      // DKN_MALIYET: data.maliyet, // Maliyet diye bir alan yok frontda
-      DKN_YAPILDI_PERSONEL_ID: data.personelID,
-      DKN_YAPILDI_ATOLYE_ID: data.atolyeID,
-      DKN_YAPILDI_SURE: data.sure,
-      DKN_ACIKLAMA: data.aciklama,
-      DKN_YAPILDI_KOD_ID: -1,
-      DKN_REF_ID: -1,
-      DKN_YAPILDI_TARIH: formatDateWithDayjs(data.baslangicTarihi),
-      DKN_YAPILDI_SAAT: formatTimeWithDayjs(data.baslangicSaati),
-      DKN_BITIS_TARIH: formatDateWithDayjs(data.bitisTarihi),
-      DKN_BITIS_SAAT: formatTimeWithDayjs(data.bitisSaati),
-      DKN_YAPILDI_MESAI_KOD_ID: data.vardiyaID,
+      aracId: data.aracID,
+      isTanimId: data.yapilanIsID,
+      isTipKodId: data.isTipiID,
+      indirimOran: data.indirimYuzde,
+      indirim: data.indirimOrani,
+      kdvOran: data.kdvOrani,
+      kdvTutar: data.kdvDegeri,
+      iscilikUcreti: data.iscilikUcreti,
+      toplam: data.toplam,
+      servisSiraNo: secilenKayitID,
+      aciklama: data.aciklama,
+      sureSaat: data.saat,
+      sureDakika: data.dakika,
+      personelId: data.personelID || 0,
     };
 
-    AxiosInstance.post(`AddUpdateIsEmriKontrolList?isEmriId=${secilenKayitID}`, Body)
+    AxiosInstance.post(`ServiceWorkCard/AddServiceWorkCard`, Body)
       .then((response) => {
         console.log("Data sent successfully:", response);
 
-        if (response.status_code === 200 || response.status_code === 201) {
+        if (response.data.statusCode === 200 || response.data.statusCode === 201) {
           message.success("Ekleme Başarılı.");
           reset();
           setIsModalVisible(false); // Sadece başarılı olursa modalı kapat
           onRefresh();
-        } else if (response.status_code === 401) {
+        } else if (response.data.statusCode === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
         } else {
           message.error("Ekleme Başarısız.");
@@ -110,7 +106,7 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
           </Button>
         </div>
 
-        <Modal width="800px" title="İşçilik Ekle" open={isModalVisible} centered onOk={methods.handleSubmit(onSubmited)} onCancel={handleModalToggle}>
+        <Modal width="960px" title="İşçilik Ekle" open={isModalVisible} centered onOk={methods.handleSubmit(onSubmited)} onCancel={handleModalToggle}>
           {loading ? (
             <Spin spinning={loading} size="large" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
               {/* İçerik yüklenirken gösterilecek alan */}

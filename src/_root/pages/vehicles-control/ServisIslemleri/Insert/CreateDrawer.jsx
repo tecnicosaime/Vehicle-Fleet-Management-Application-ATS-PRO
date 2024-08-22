@@ -131,7 +131,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       kdv: data.kdvUcreti,
       diger: data.digerUcreti,
       malzeme: data.malzemeUcreti,
-      // iscilik: data.,
+      iscilik: data.iscilikUcreti,
       talepNo: data.talepNo,
       onayId: data.onayID,
       tarih: formatDateWithDayjs(data.duzenlenmeTarihi),

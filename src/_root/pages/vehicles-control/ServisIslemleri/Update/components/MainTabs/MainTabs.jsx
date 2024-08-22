@@ -288,9 +288,11 @@ export default function MainTabs({ modalOpen }) {
               <Controller
                 name="servisKodu"
                 control={control}
+                rules={{ required: "Alan Boş Bırakılamaz!" }}
                 render={({ field }) => (
                   <Input
                     {...field}
+                    status={errors.servisKodu ? "error" : ""}
                     type="text" // Set the type to "text" for name input
                     style={{ width: "215px" }}
                     disabled
@@ -318,6 +320,7 @@ export default function MainTabs({ modalOpen }) {
                 }}
               />
               <Button onClick={handleMinusClick}> - </Button>
+              {errors.servisKodu && <div style={{ color: "red", marginTop: "5px" }}>{errors.servisKodu.message}</div>}
             </div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
