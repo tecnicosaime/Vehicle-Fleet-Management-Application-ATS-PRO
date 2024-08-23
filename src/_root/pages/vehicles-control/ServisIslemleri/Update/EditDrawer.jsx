@@ -331,7 +331,6 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  minHeight: "100vh",
                 }}
               >
                 {/* İçerik yüklenirken gösterilecek alan */}

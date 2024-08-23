@@ -7,7 +7,7 @@ import { PlusOutlined } from "@ant-design/icons";
 const { Text, Link } = Typography;
 const { Option } = Select;
 
-export default function IsTipi({ disabled, fieldRequirements }) {
+export default function CikisDeposu({ disabled, fieldRequirements }) {
   const {
     control,
     setValue,
@@ -25,10 +25,12 @@ export default function IsTipi({ disabled, fieldRequirements }) {
 
   // message end
 
+  const stokluMalzeme = watch("stokluMalzeme");
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await AxiosInstance.get(`Code/GetCodeTextById?codeNumber=113`);
+      const response = await AxiosInstance.get(`WareHouse/GetWareHouseListByTip?tip=MALZEME`);
       if (response && response.data) {
         setOptions(response.data);
       }
@@ -54,22 +56,19 @@ export default function IsTipi({ disabled, fieldRequirements }) {
         });
         return;
       }
-      const body = {
-        codeId: 113,
-        codeText: name,
-      };
+
       setLoading(true);
-      AxiosInstance.post(`Code/AddCode`, body)
+      AxiosInstance.post(`AddIsTip?entity=${name}&isTanimId`)
         .then((response) => {
-          if (response.data.statusCode === 201) {
+          if (response.status_code === 201) {
             // Assuming 'id' is directly in the response
-            const newId = response.data.id; // Adjust this line based on your actual response structure
+            const newId = response.id; // Adjust this line based on your actual response structure
 
             messageApi.open({
               type: "success",
               content: "Ekleme Başarılı",
             });
-            setOptions((prevOptions) => [...prevOptions, { codeId: newId, isim: name }]);
+            setOptions((prevOptions) => [...prevOptions, { surucuId: newId, isim: name }]);
             setSelectKey((prevKey) => prevKey + 1);
             setName("");
           } else {
@@ -100,14 +99,16 @@ export default function IsTipi({ disabled, fieldRequirements }) {
       {contextHolder}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", flexDirection: "column" }}>
         <Controller
-          name="isTipi"
+          name="depo"
           control={control}
+          rules={{ required: stokluMalzeme }} // stokluMalzeme true ise zorunlu, değilse değil
           render={({ field }) => (
             <Select
               {...field}
-              disabled={disabled}
+              disabled={!stokluMalzeme} // stokluMalzeme false ise disabled olsun
               key={selectKey}
               style={{ width: "300px" }}
+              status={errors.depo ? "error" : ""}
               showSearch
               allowClear
               placeholder="Seçim Yapınız"
@@ -118,43 +119,44 @@ export default function IsTipi({ disabled, fieldRequirements }) {
                   fetchData(); // Fetch data when the dropdown is opened
                 }
               }}
-              dropdownRender={(menu) => (
-                <Spin spinning={loading}>
-                  {menu}
-                  <Divider
-                    style={{
-                      margin: "8px 0",
-                    }}
-                  />
-                  <Space
-                    style={{
-                      padding: "0 8px 4px",
-                    }}
-                  >
-                    <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
-                    <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                      Ekle
-                    </Button>
-                  </Space>
-                </Spin>
-              )}
+              // dropdownRender={(menu) => (
+              //   <Spin spinning={loading}>
+              //     {menu}
+              //     <Divider
+              //       style={{
+              //         margin: "8px 0",
+              //       }}
+              //     />
+              //     <Space
+              //       style={{
+              //         padding: "0 8px 4px",
+              //       }}
+              //     >
+              //       <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
+              //       <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+              //         Ekle
+              //       </Button>
+              //     </Space>
+              //   </Spin>
+              // )}
               options={options.map((item) => ({
                 value: item.siraNo, // Use the ID as the value
-                label: item.codeText, // Display the name in the dropdown
+                label: item.tanim, // Display the name in the dropdown
               }))}
               onChange={(value) => {
                 // Seçilen değerin ID'sini NedeniID alanına set et
                 // `null` veya `undefined` değerlerini ele al
-                setValue("isTipi", value ?? null);
-                setValue("isTipiID", value ?? null);
+                setValue("depo", value ?? null);
+                setValue("depoID", value ?? null);
                 field.onChange(value ?? null);
               }}
               value={field.value ?? null} // Eğer `field.value` `undefined` ise, `null` kullanarak `Select` bileşenine geçir
             />
           )}
         />
+        {errors.depo && <Text type="danger">Bu alan zorunludur</Text>}
         <Controller
-          name="isTipiID"
+          name="depoID"
           control={control}
           render={({ field }) => (
             <Input
