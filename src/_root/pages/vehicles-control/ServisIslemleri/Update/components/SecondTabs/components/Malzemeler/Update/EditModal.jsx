@@ -119,7 +119,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
       stoklu: data.stokluMalzeme,
     };
 
-    AxiosInstance.post(`ServiceWorkCard/UpdateServiceWorkCard`, Body)
+    AxiosInstance.post(`MaterialMovements/UpdateMaterialMovementService`, Body)
       .then((response) => {
         console.log("Data sent successfully:", response);
 
