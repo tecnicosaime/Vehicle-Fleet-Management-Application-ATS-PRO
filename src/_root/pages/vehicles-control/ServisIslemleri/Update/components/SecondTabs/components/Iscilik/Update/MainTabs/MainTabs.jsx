@@ -72,6 +72,10 @@ export default function MainTabs({ isApiUpdate }) {
     setValue("isTipi", null);
     setValue("isTipiID", "");
     setValue("toplam", 0);
+
+    // KDV, indirim ve toplam değerlerini sıfırla veya yeniden hesapla
+    recalculateIndirimOrani(0, indirimYuzde);
+    recalculateToplam(0, 0, kdvOrani);
   };
 
   const handlePersonelMinusClick = () => {
@@ -197,49 +201,55 @@ export default function MainTabs({ isApiUpdate }) {
   const indirimOrani = watch("indirimOrani") || 0;
   const kdvOrani = watch("kdvOrani") || 0;
 
+  const handleIscilikUcretiChange = (value) => {
+    setValue("iscilikUcreti", value);
+    recalculateIndirimOrani(value, indirimYuzde);
+    recalculateToplam(value, indirimOrani, kdvOrani);
+  };
+
   const handleIndirimYuzdeChange = (value) => {
-    if (!isApiUpdate) {
-      const calculatedIndirimOrani = (iscilikUcreti * value) / 100;
-      setValue("indirimOrani", isNaN(calculatedIndirimOrani) ? 0 : calculatedIndirimOrani);
-    }
     setValue("indirimYuzde", value);
+    recalculateIndirimOrani(iscilikUcreti, value);
   };
 
   const handleIndirimOraniChange = (value) => {
-    if (!isApiUpdate) {
-      const calculatedIndirimYuzde = (value / iscilikUcreti) * 100;
-      setValue("indirimYuzde", isNaN(calculatedIndirimYuzde) ? 0 : calculatedIndirimYuzde);
-    }
     setValue("indirimOrani", value);
+    recalculateIndirimYuzde(iscilikUcreti, value);
+    recalculateToplam(iscilikUcreti, value, kdvOrani);
   };
 
-  useEffect(() => {
-    if (!isApiUpdate && iscilikUcreti > 0) {
+  const handleKdvOraniChange = (value) => {
+    setValue("kdvOrani", value);
+    recalculateToplam(iscilikUcreti, indirimOrani, value);
+  };
+
+  const recalculateIndirimOrani = (iscilikUcreti, indirimYuzde) => {
+    if (!isApiUpdate) {
       const calculatedIndirimOrani = (iscilikUcreti * indirimYuzde) / 100;
-      if (calculatedIndirimOrani !== indirimOrani) {
-        setValue("indirimOrani", isNaN(calculatedIndirimOrani) ? 0 : calculatedIndirimOrani);
-      }
+      setValue("indirimOrani", isNaN(calculatedIndirimOrani) ? 0 : calculatedIndirimOrani);
     }
-  }, [indirimYuzde, iscilikUcreti, setValue, isApiUpdate]);
+  };
 
-  useEffect(() => {
-    if (!isApiUpdate && iscilikUcreti > 0) {
+  const recalculateIndirimYuzde = (iscilikUcreti, indirimOrani) => {
+    if (!isApiUpdate) {
       const calculatedIndirimYuzde = (indirimOrani / iscilikUcreti) * 100;
-      if (calculatedIndirimYuzde !== indirimYuzde) {
-        setValue("indirimYuzde", isNaN(calculatedIndirimYuzde) ? 0 : calculatedIndirimYuzde);
-      }
+      setValue("indirimYuzde", isNaN(calculatedIndirimYuzde) ? 0 : calculatedIndirimYuzde);
     }
-  }, [indirimOrani, iscilikUcreti, setValue, isApiUpdate]);
+  };
 
-  // Toplam hesaplaması
-  useEffect(() => {
-    const remainingAmount = iscilikUcreti - (indirimOrani || 0);
-    const kdv = remainingAmount * (kdvOrani / 100);
-    const finalAmount = remainingAmount + kdv;
+  const recalculateToplam = (iscilikUcreti, indirimOrani, kdvOrani) => {
+    if (!iscilikUcreti || iscilikUcreti <= 0) {
+      setValue("kdvDegeri", 0);
+      setValue("toplam", 0);
+    } else {
+      const remainingAmount = iscilikUcreti - (indirimOrani || 0);
+      const kdv = remainingAmount * (kdvOrani / 100);
+      const finalAmount = remainingAmount + kdv;
 
-    setValue("kdvDegeri", isNaN(kdv) ? 0 : kdv);
-    setValue("toplam", isNaN(finalAmount) ? 0 : finalAmount);
-  }, [kdvOrani, indirimOrani, iscilikUcreti, setValue]);
+      setValue("kdvDegeri", isNaN(kdv) ? 0 : kdv);
+      setValue("toplam", isNaN(finalAmount) ? 0 : finalAmount);
+    }
+  };
 
   return (
     <div>
@@ -329,6 +339,10 @@ export default function MainTabs({ isApiUpdate }) {
                   setValue("dakika", selectedData.dakika);
                   setValue("isTipi", selectedData.isTip);
                   setValue("isTipiID", selectedData.isTipKodId);
+
+                  // Yeni değerleri güncelledikten sonra hesaplamaları tetikleyin
+                  recalculateIndirimOrani(selectedData.ucret, indirimYuzde);
+                  recalculateToplam(selectedData.ucret, indirimOrani, kdvOrani);
                 }}
               />
               <Button onClick={handleYapilanIsMinusClick}> - </Button>
@@ -372,7 +386,11 @@ export default function MainTabs({ isApiUpdate }) {
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
             <Text style={{ fontSize: "14px" }}>İşçilik Ücreti:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller name="iscilikUcreti" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+              <Controller
+                name="iscilikUcreti"
+                control={control}
+                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} onChange={(value) => handleIscilikUcretiChange(value)} />}
+              />
             </div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
@@ -381,7 +399,9 @@ export default function MainTabs({ isApiUpdate }) {
               <Controller
                 name="kdvOrani"
                 control={control}
-                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} />}
+                render={({ field }) => (
+                  <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} onChange={(value) => handleKdvOraniChange(value)} />
+                )}
               />
               <Controller name="kdvDegeri" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, display: "none" }} />} />
             </div>
@@ -395,9 +415,15 @@ export default function MainTabs({ isApiUpdate }) {
               <Controller
                 name="indirimYuzde"
                 control={control}
-                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} onChange={handleIndirimYuzdeChange} />}
+                render={({ field }) => (
+                  <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} onChange={(value) => handleIndirimYuzdeChange(value)} />
+                )}
               />
-              <Controller name="indirimOrani" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} onChange={handleIndirimOraniChange} />
+              <Controller
+                name="indirimOrani"
+                control={control}
+                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} onChange={(value) => handleIndirimOraniChange(value)} />}
+              />
             </div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>

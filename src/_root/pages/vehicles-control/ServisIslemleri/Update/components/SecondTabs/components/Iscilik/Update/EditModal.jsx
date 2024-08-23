@@ -55,8 +55,10 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
           setValue("personelID", item.personelId);
           setValue("iscilikUcreti", item.iscilikUcreti);
           setValue("kdvOrani", item.kdvOran);
+          setValue("kdvDegeri", item.kdvTutar);
           setValue("indirimOrani", item.indirim);
           setValue("indirimYuzde", item.indirimOran);
+          setValue("toplam", item.toplam);
 
           setValue("saat", item.sureSaat);
           setValue("dakika", item.sureDakika);
