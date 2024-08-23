@@ -11,26 +11,27 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
   const [loading, setLoading] = useState(false);
   const methods = useForm({
     defaultValues: {
-      plaka: plaka,
+      // plaka: plaka,
       aracID: aracID,
       aciklama: "",
       stokluMalzeme: true,
-      depo: "",
-      depoID: "",
-      yapilanIs: "",
-      yapilanIsID: "",
-      personel: "",
-      personelID: "",
+      malzemeKodu: "",
+      malzemeKoduID: "",
+      malzemeTanimi: "",
+      miktar: 1,
+      iscilikUcreti: 0,
       kdvOrani: 18,
       kdvDegeri: 0,
-      iscilikUcreti: 0,
-      indirimYuzde: 0,
       indirimOrani: 0,
+      indirimYuzde: 0,
       toplam: 0,
-      saat: "",
-      dakika: "",
       isTipi: null,
       isTipiID: "",
+      depo: null,
+      depoID: "",
+      birim: null,
+      birimID: "",
+
       // Add other default values here
     },
   });
@@ -51,23 +52,23 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
 
   const onSubmited = (data) => {
     const Body = {
-      aracId: data.aracID,
-      isTanimId: data.yapilanIsID,
-      isTipKodId: data.isTipiID,
-      indirimOran: data.indirimYuzde,
-      indirim: data.indirimOrani,
+      mlzAracId: data.aracID,
+      servisSirano: secilenKayitID,
+      cikisDepoSiraNo: data.depoID,
+      malzemeId: data.malzemeKoduID,
+      birimKodId: data.birimID,
+      miktar: data.miktar,
+      fiyat: data.iscilikUcreti,
+      gc: -1,
       kdvOran: data.kdvOrani,
-      kdvTutar: data.kdvDegeri,
-      iscilikUcreti: data.iscilikUcreti,
+      indirim: data.indirimOrani,
+      indirimOran: data.indirimYuzde,
       toplam: data.toplam,
-      servisSiraNo: secilenKayitID,
       aciklama: data.aciklama,
-      sureSaat: data.saat,
-      sureDakika: data.dakika,
-      personelId: data.personelID || 0,
+      stoklu: data.stokluMalzeme,
     };
 
-    AxiosInstance.post(`ServiceWorkCard/AddServiceWorkCard`, Body)
+    AxiosInstance.post(`MaterialMovements/AddMaterialMovementService`, Body)
       .then((response) => {
         console.log("Data sent successfully:", response);
 
@@ -109,7 +110,7 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
           </Button>
         </div>
 
-        <Modal width="960px" title="İşçilik Ekle" open={isModalVisible} centered onOk={methods.handleSubmit(onSubmited)} onCancel={handleModalToggle}>
+        <Modal width="960px" title="Malzeme Ekle" open={isModalVisible} centered onOk={methods.handleSubmit(onSubmited)} onCancel={handleModalToggle}>
           {loading ? (
             <Spin spinning={loading} size="large" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
               {/* İçerik yüklenirken gösterilecek alan */}

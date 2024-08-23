@@ -11,23 +11,25 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
 
   const methods = useForm({
     defaultValues: {
-      plaka: null,
       aracID: "",
       aciklama: "",
-      yapilanIs: "",
-      yapilanIsID: "",
-      personel: "",
-      personelID: "",
-      kdvOrani: 0,
-      kdvDegeri: 0,
+      stokluMalzeme: true,
+      malzemeKodu: "",
+      malzemeKoduID: "",
+      malzemeTanimi: "",
+      miktar: 1,
       iscilikUcreti: 0,
-      indirimYuzde: 0,
+      kdvOrani: 18,
+      kdvDegeri: 0,
       indirimOrani: 0,
+      indirimYuzde: 0,
       toplam: 0,
-      saat: "",
-      dakika: "",
       isTipi: null,
       isTipiID: "",
+      depo: null,
+      depoID: "",
+      birim: null,
+      birimID: "",
       // Add other default values here
     },
   });
@@ -40,28 +42,31 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
       if (isModalVisible && selectedRow) {
         setLoading(true);
         try {
-          const response = await AxiosInstance.get(`ServiceWorkCard/GetServiceWorkCardById?id=${selectedRow.key}`);
+          const response = await AxiosInstance.get(`MaterialMovements/GetMaterialMovementsById?id=${selectedRow.key}`);
           const item = response.data;
 
           setIsApiUpdate(true); // API güncellemeleri başlamadan önce flag'i true yap
 
           // API'den gelen verileri set ederken
-          setValue("plaka", item.plaka);
-          setValue("aracID", item.aracID);
+          setValue("aracID", item.mlzAracId);
           setValue("aciklama", item.aciklama);
-          setValue("yapilanIs", item.isTanim);
-          setValue("yapilanIsID", item.isTanimId);
-          setValue("personel", item.personelIsim);
-          setValue("personelID", item.personelId);
-          setValue("iscilikUcreti", item.iscilikUcreti);
+          setValue("stokluMalzeme", item.stoklu);
+          setValue("malzemeKodu", item.malzemeKodu);
+          setValue("malzemeKoduID", item.malzemeId);
+          setValue("malzemeTanimi", item.malzemeTanimi);
+          setValue("miktar", item.miktar);
+          setValue("iscilikUcreti", item.fiyat);
           setValue("kdvOrani", item.kdvOran);
+          setValue("kdvDegeri", item.kdvDegeri);
           setValue("indirimOrani", item.indirim);
           setValue("indirimYuzde", item.indirimOran);
-
-          setValue("saat", item.sureSaat);
-          setValue("dakika", item.sureDakika);
-          setValue("isTipi", item.isTip);
-          setValue("isTipiID", item.isTipKodId);
+          setValue("toplam", item.toplam);
+          setValue("isTipi", item.isTipi);
+          setValue("isTipiID", item.isTipiID);
+          setValue("depo", item.cikisDepo);
+          setValue("depoID", item.cikisDepoSiraNo);
+          setValue("birim", item.birim);
+          setValue("birimID", item.birimKodId);
 
           // Diğer setValue çağrıları burada yapılır
 
@@ -98,20 +103,20 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
   const onSubmited = (data) => {
     const Body = {
       siraNo: selectedRow.key,
-      aracId: data.aracID,
-      isTanimId: data.yapilanIsID,
-      isTipKodId: data.isTipiID,
-      indirimOran: data.indirimYuzde,
-      indirim: data.indirimOrani,
-      kdvOran: data.kdvOrani,
-      kdvTutar: data.kdvDegeri,
-      iscilikUcreti: data.iscilikUcreti,
-      toplam: data.toplam,
       servisSiraNo: secilenUstKayitID,
+      mlzAracId: data.aracID,
+      cikisDepoSiraNo: data.depoID,
+      malzemeId: data.malzemeKoduID,
+      birimKodId: data.birimID,
+      miktar: data.miktar,
+      fiyat: data.iscilikUcreti,
+      gc: -1,
+      kdvOran: data.kdvOrani,
+      indirim: data.indirimOrani,
+      indirimOran: data.indirimYuzde,
+      toplam: data.toplam,
       aciklama: data.aciklama,
-      sureSaat: data.saat,
-      sureDakika: data.dakika,
-      personelId: data.personelID || 0,
+      stoklu: data.stokluMalzeme,
     };
 
     AxiosInstance.post(`ServiceWorkCard/UpdateServiceWorkCard`, Body)

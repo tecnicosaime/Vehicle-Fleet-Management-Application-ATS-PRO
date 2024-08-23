@@ -7,7 +7,7 @@ import { PlusOutlined } from "@ant-design/icons";
 const { Text, Link } = Typography;
 const { Option } = Select;
 
-export default function IsTipi({ disabled, fieldRequirements }) {
+export default function MalzemeTipi({ disabled, fieldRequirements }) {
   const {
     control,
     setValue,
@@ -28,7 +28,7 @@ export default function IsTipi({ disabled, fieldRequirements }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await AxiosInstance.get(`Code/GetCodeTextById?codeNumber=113`);
+      const response = await AxiosInstance.get(`Code/GetCodeTextById?codeNumber=301`);
       if (response && response.data) {
         setOptions(response.data);
       }
@@ -55,7 +55,7 @@ export default function IsTipi({ disabled, fieldRequirements }) {
         return;
       }
       const body = {
-        codeId: 113,
+        codeId: 301,
         codeText: name,
       };
       setLoading(true);
