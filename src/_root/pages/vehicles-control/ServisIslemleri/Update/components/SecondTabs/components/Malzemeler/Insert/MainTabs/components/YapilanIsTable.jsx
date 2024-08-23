@@ -35,51 +35,66 @@ export default function YapilanIsTable({ workshopSelectedId, onSubmit }) {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
+    total: 0,
   });
 
   const columns = [
     {
-      title: "Tanım",
+      title: "Malzeme Kodu",
+      dataIndex: "malzemeKod",
+      key: "malzemeKod",
+      width: 150,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.malzemeKod === null) return -1;
+        if (b.malzemeKod === null) return 1;
+        return a.malzemeKod.localeCompare(b.malzemeKod);
+      },
+    },
+    {
+      title: "Malzeme Tanımı",
       dataIndex: "tanim",
       key: "tanim",
       width: 150,
       ellipsis: true,
-      sorter: (a, b) => {
-        if (a.tanim === null) return -1;
-        if (b.tanim === null) return 1;
-        return a.tanim.localeCompare(b.tanim);
-      },
     },
     {
-      title: "İş Tipi",
-      dataIndex: "isTip",
-      key: "isTip",
-      width: 150,
-      ellipsis: true,
-    },
-    {
-      title: "İş Grubu",
-      dataIndex: "bakimDepartman",
-      key: "bakimDepartman",
-      width: 200,
-      ellipsis: true,
-    },
-    {
-      title: "Süre (Saat)",
-      dataIndex: "saat",
-      key: "saat",
+      title: "Giren Miktar",
+      dataIndex: "girenMiktar",
+      key: "girenMiktar",
       width: 100,
       ellipsis: true,
     },
     {
-      title: "Süre (Dakika)",
-      dataIndex: "dakika",
-      key: "dakika",
+      title: "Çıkan Miktar",
+      dataIndex: "cikanMiktar",
+      key: "cikanMiktar",
       width: 100,
       ellipsis: true,
     },
     {
-      title: "Ücret",
+      title: "Stok Miktarı",
+      dataIndex: "stokMiktar",
+      key: "stokMiktar",
+      width: 100,
+      ellipsis: true,
+    },
+    {
+      title: "Birim",
+      dataIndex: "birim",
+      key: "birim",
+      width: 100,
+      ellipsis: true,
+    },
+    {
+      title: "Fiyat",
+      dataIndex: "fiyat",
+      key: "fiyat",
+      width: 100,
+      ellipsis: true,
+    },
+    {
+      title: "Maliyet ??",
       dataIndex: "ucret",
       key: "ucret",
       width: 100,
@@ -87,31 +102,34 @@ export default function YapilanIsTable({ workshopSelectedId, onSubmit }) {
     },
   ];
 
-  const fetch = useCallback(() => {
+  const fetch = useCallback((page = pagination.current, term = searchTerm) => {
     setLoading(true);
-
-    AxiosInstance.get(`WorkCard/GetWorkCardsList?page=${pagination.current}&parameter=${searchTerm}`)
+    AxiosInstance.post(`Material/GetMaterialList?page=${page}&parameter=${term}`)
       .then((response) => {
-        const { list, recordCount } = response.data; // Destructure the list and recordCount from the response
-        const fetchedData = list.map((item) => ({
+        const { materialList, total_count } = response.data;
+        const fetchedData = materialList.map((item) => ({
           ...item,
-          key: item.isTanimId,
+          key: item.malzemeId,
         }));
         setData(fetchedData);
-        setPagination({
-          ...pagination,
-          total: recordCount, // Update the total number of records for pagination
-        });
+        setPagination((prev) => ({
+          ...prev,
+          current: page,
+          total: total_count,
+        }));
       })
       .finally(() => setLoading(false));
-  }, [pagination.current, searchTerm]);
+  }, []);
 
   const handleModalToggle = () => {
-    setIsModalVisible((prev) => !prev);
-    if (!isModalVisible) {
-      fetch();
-      setSelectedRowKeys([]);
-    }
+    setIsModalVisible((prev) => {
+      if (!prev) {
+        // Eğer modal açılıyorsa
+        fetch(1, searchTerm); // İlk sayfayı ve mevcut arama terimini kullanarak veriyi getir
+        setSelectedRowKeys([]);
+      }
+      return !prev;
+    });
   };
 
   const handleModalOk = () => {
@@ -131,7 +149,7 @@ export default function YapilanIsTable({ workshopSelectedId, onSubmit }) {
   };
 
   const handleTableChange = (newPagination) => {
-    setPagination(newPagination);
+    fetch(newPagination.current, searchTerm);
   };
 
   useEffect(() => {
@@ -141,12 +159,10 @@ export default function YapilanIsTable({ workshopSelectedId, onSubmit }) {
 
     const timeout = setTimeout(() => {
       if (searchTerm.trim() !== "") {
-        fetch(); // Trigger the API request based on your search logic
-        setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
+        fetch(1, searchTerm); // Arama yaparken her zaman ilk sayfadan başla
         setSearchCount(searchCount + 1);
       } else if (searchTerm.trim() === "" && searchCount > 0) {
-        fetch(); // Fetch data without search term
-        setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
+        fetch(1, ""); // Arama terimi boşsa, ilk sayfadan başla
       }
     }, 2000);
 
@@ -178,7 +194,11 @@ export default function YapilanIsTable({ workshopSelectedId, onSubmit }) {
           columns={columns}
           dataSource={data}
           loading={loading}
-          pagination={pagination}
+          pagination={{
+            ...pagination,
+            showQuickJumper: true,
+            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} kayıt`,
+          }}
           onChange={handleTableChange}
         />
       </Modal>
