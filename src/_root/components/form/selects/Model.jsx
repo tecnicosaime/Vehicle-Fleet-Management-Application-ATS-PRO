@@ -8,11 +8,14 @@ const Model = ({ required }) => {
   const [data, setData] = useState([]);
   const { setValue, watch, control } = useFormContext();
 
+  const markaId = watch("markaId");
   const handleClickSelect = () => {
-    CodeControlByUrlService("Model/GetModelList").then((res) => {
+    CodeControlByUrlService(`Model/GetModelListByMarkId?markId=${markaId}`).then((res) => {
       setData(res.data);
     });
   };
+
+  console.log(watch("markaId"));
 
   return (
     <Controller

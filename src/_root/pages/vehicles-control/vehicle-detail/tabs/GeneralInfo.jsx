@@ -31,10 +31,10 @@ const GeneralInfo = () => {
     const vergiDate = dayjs(watch("vergiTarih")).endOf("day");
 
     setWarning({
-      muayene: muayeneDate.isValid() && muayeneDate.diff(current, "day") < 0 && muayeneDate.diff(current, "day") > -3,
-      sozlesme: sozlesmeDate.isValid() && sozlesmeDate.diff(current, "day") < 0 && sozlesmeDate.diff(current, "day") > -3,
-      egzos: egzosDate.isValid() && egzosDate.diff(current, "day") < 0 && egzosDate.diff(current, "day") > -3,
-      vergi: vergiDate.isValid() && vergiDate.diff(current, "day") < 0 && vergiDate.diff(current, "day") > -3,
+      muayene: muayeneDate.isValid() && muayeneDate.diff(current, "day") < 0,
+      sozlesme: sozlesmeDate.isValid() && sozlesmeDate.diff(current, "day") < 0,
+      egzos: egzosDate.isValid() && egzosDate.diff(current, "day") < 0,
+      vergi: vergiDate.isValid() && vergiDate.diff(current, "day") < 0,
     });
   }, [watch("muayeneTarih"), watch("sozlesmeTarih"), watch("egzosTarih"), watch("vergiTarih")]);
 
@@ -174,7 +174,7 @@ const GeneralInfo = () => {
             <div className="grid gap-1 mt-10">
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
-                  <label className="text-info flex gap-2">
+                  <label className="text-info flex gap-2" style={{ color: warning.muayene ? "red" : "#17a2b8" }}>
                     <span>{t("muayeneTarihi")} </span>
                     <span className={`warning-icon ${warning.muayene ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
@@ -185,7 +185,7 @@ const GeneralInfo = () => {
               </div>
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
-                  <label className="text-info flex gap-2">
+                  <label className="text-info flex gap-2" style={{ color: warning.sozlesme ? "red" : "#17a2b8" }}>
                     <span>{t("sozlesmeTarihi")} </span>
                     <span className={`warning-icon ${warning.sozlesme ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
@@ -196,7 +196,7 @@ const GeneralInfo = () => {
               </div>
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
-                  <label className="text-info flex gap-2">
+                  <label className="text-info flex gap-2" style={{ color: warning.egzos ? "red" : "#17a2b8" }}>
                     <span>{t("egzozEmisyon")} </span>
                     <span className={`warning-icon ${warning.egzos ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
@@ -207,7 +207,7 @@ const GeneralInfo = () => {
               </div>
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
-                  <label className="text-info flex gap-2">
+                  <label className="text-info flex gap-2" style={{ color: warning.vergi ? "red" : "#17a2b8" }}>
                     <span>{t("vergi")} </span>
                     <span className={`warning-icon ${warning.vergi ? "show" : "hide"}`}>
                       <IoIosWarning style={{ color: "red", fontSize: 18 }} />
