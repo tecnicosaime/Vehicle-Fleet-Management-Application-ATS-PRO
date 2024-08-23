@@ -167,7 +167,6 @@ const AddModal = ({ setStatus }) => {
       departmanId: value.departmanId || 0,
       surucuId: value.surucuId || 0,
       aracTipId: value.aracTipId || 0,
-      aracTipId: value.aracTipId || 0,
       guncelKm: value.guncelKm || 0,
       muayeneTarih: value.muayeneTarih ? dayjs(value.muayeneTarih).format("YYYY-MM-DD") : null,
       egzosTarih: value.egzosTarih ? dayjs(value.egzosTarih).format("YYYY-MM-DD") : null,

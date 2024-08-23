@@ -56,7 +56,7 @@ const items = [
       },
       {
         key: "11",
-        label: <Link to={"/hazirlaniyor"}>{t("lastikler")}</Link>,
+        label: <Link to={"/lastik-tanimlari"}>{t("lastikler")}</Link>,
       },
       {
         key: "121",
@@ -76,23 +76,23 @@ const items = [
     children: [
       {
         key: "21",
-        label: <Link to={"/hazirlaniyor"}>{t("servisIslemleri")}</Link>,
+        label: <Link to={"/servis-islemleri"}>{t("servisIslemleri")}</Link>,
       },
       {
         key: "20",
-        label: <Link to={"/hazirlaniyor"}>{t("periyodikBakimlar")}</Link>,
+        label: <Link to={"/sigorta-islemleri"}>{t("periyodikBakimlar")}</Link>,
       },
       {
         key: "22",
-        label: <Link to={"/hazirlaniyor"}>{t("randevuTakibi")}</Link>,
+        label: <Link to={"/sefer-islemleri"}>{t("randevuTakibi")}</Link>,
       },
       {
         key: "23",
-        label: <Link to={"/hazirlaniyor"}>{t("servısFaturalari")}</Link>,
+        label: <Link to={"/harcama-islemleri"}>{t("servısFaturalari")}</Link>,
       },
       {
         key: "24",
-        label: <Link to={"/hazirlaniyor"}>{t("atolyeTanimlari")}</Link>,
+        label: <Link to={"/malzeme-tanimlari"}>{t("atolyeTanimlari")}</Link>,
       },
     ],
   },
@@ -119,7 +119,7 @@ const items = [
       },
       {
         key: "36",
-        label: <Link to={"/"}>{t("talepler")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("talepler")}</Link>,
       },
       {
         key: "37",
@@ -127,7 +127,7 @@ const items = [
       },
       {
         key: "837",
-        label: <Link to={"/depoTanimlari"}>{t("malzemeDepoTanimlari")}</Link>,
+        label: <Link to={"/hazirlaniyor"}>{t("malzemeDepoTanimlari")}</Link>,
       },
     ],
   },
@@ -273,7 +273,7 @@ const items = [
       },
       {
         key: "52",
-        label: <Link to={`/kullanici-tanimlari`}>{t("kullaniciTanimlari")}</Link>,
+        label: <Link to={`/hazirlaniyor`}>{t("kullaniciTanimlari")}</Link>,
       },
       {
         key: "53",
