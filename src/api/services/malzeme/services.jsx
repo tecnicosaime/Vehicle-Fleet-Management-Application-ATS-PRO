@@ -53,5 +53,5 @@ export const GetMaterialTransferReceiptListService = async (search, page, data) 
 
 // hareket
 export const GetMaterialMovementsListService = async (search, page, data) => {
-  return await http.post(`/MaterialMovements/GetMaterialMovementsList?page=${page}&parameter=${search}`, data);
+  return await http.post(`MaterialMovements/GetMaterialMovementsList?page=${page}&parameter=${search}&type=M`, data);
 };

@@ -154,7 +154,7 @@ const items = [
       },
       {
         key: "18",
-        label: <Link to={"/"}>{t("hareketler")}</Link>,
+        label: <Link to={"/yakit-hareketleri"}>{t("hareketler")}</Link>,
       },
       {
         key: "138",

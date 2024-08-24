@@ -120,7 +120,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
       .then((response) => {
         console.log("Data sent successfully:", response);
 
-        if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+        if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
           message.success("Ekleme Başarılı.");
           reset();
           onModalClose(); // Modal'ı kapat

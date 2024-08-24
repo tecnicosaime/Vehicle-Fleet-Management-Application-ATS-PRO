@@ -38,6 +38,7 @@ import ServisTanim from "./_root/pages/sistem-tanimlari/servis-tanim/ServisTanim
 import FirmaTanim from "./_root/pages/sistem-tanimlari/firma-tanim/FirmaTanim";
 import PersonelTanim from "./_root/pages/sistem-tanimlari/personel-tanim/PersonelTanim";
 import LokasyonTanimlari from "./_root/pages/sistem-tanimlari/LokasyonTanimlari/LokasyonTanimlari.jsx";
+import YakitHaraketleri from "./_root/pages/yakit-yonetim/YakitHareketleri/YakitIslemleri.jsx";
 
 import Raporlar from "./_root/pages/raporlar/RaporYonetimi.jsx";
 import KodYonetimi from "./_root/pages/kod-yonetimi/KodYonetimi";
@@ -81,6 +82,7 @@ const App = () => {
         <Route path="/yakit-giris-fisleri" element={<YakitGirisFisleri />} />
         <Route path="/yakit-cikis-fisleri" element={<YakitCikisFisleri />} />
         <Route path="/yakit-transferler" element={<YakitTransferler />} />
+        <Route path="/yakit-hareketleri" element={<YakitHaraketleri />} />
         {/* malzeme depo */}
         <Route path="/malzeme-tanimlari" element={<Malzemeler />} />
         <Route path="/giris-fisleri" element={<GirisFisleri />} />
