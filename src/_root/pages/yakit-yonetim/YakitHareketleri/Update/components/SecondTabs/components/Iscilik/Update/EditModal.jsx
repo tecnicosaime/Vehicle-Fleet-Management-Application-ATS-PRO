@@ -11,25 +11,23 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
 
   const methods = useForm({
     defaultValues: {
+      plaka: null,
       aracID: "",
       aciklama: "",
-      stokluMalzeme: true,
-      malzemeKodu: "",
-      malzemeKoduID: "",
-      malzemeTanimi: "",
-      miktar: 1,
-      iscilikUcreti: 0,
-      kdvOrani: 18,
+      yapilanIs: "",
+      yapilanIsID: "",
+      personel: "",
+      personelID: "",
+      kdvOrani: 0,
       kdvDegeri: 0,
-      indirimOrani: 0,
+      iscilikUcreti: 0,
       indirimYuzde: 0,
+      indirimOrani: 0,
       toplam: 0,
+      saat: "",
+      dakika: "",
       isTipi: null,
       isTipiID: "",
-      depo: null,
-      depoID: "",
-      birim: null,
-      birimID: "",
       // Add other default values here
     },
   });
@@ -42,31 +40,30 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
       if (isModalVisible && selectedRow) {
         setLoading(true);
         try {
-          const response = await AxiosInstance.get(`MaterialMovements/GetMaterialMovementsById?id=${selectedRow.key}`);
+          const response = await AxiosInstance.get(`ServiceWorkCard/GetServiceWorkCardById?id=${selectedRow.key}`);
           const item = response.data;
 
           setIsApiUpdate(true); // API güncellemeleri başlamadan önce flag'i true yap
 
           // API'den gelen verileri set ederken
-          setValue("aracID", item.mlzAracId);
+          setValue("plaka", item.plaka);
+          setValue("aracID", item.aracID);
           setValue("aciklama", item.aciklama);
-          setValue("stokluMalzeme", item.stoklu);
-          setValue("malzemeKodu", item.malezemeKod);
-          setValue("malzemeKoduID", item.malzemeId);
-          setValue("malzemeTanimi", item.malezemeTanim);
-          setValue("miktar", item.miktar);
-          setValue("iscilikUcreti", item.fiyat);
+          setValue("yapilanIs", item.isTanim);
+          setValue("yapilanIsID", item.isTanimId);
+          setValue("personel", item.personelIsim);
+          setValue("personelID", item.personelId);
+          setValue("iscilikUcreti", item.iscilikUcreti);
           setValue("kdvOrani", item.kdvOran);
           setValue("kdvDegeri", item.kdvTutar);
           setValue("indirimOrani", item.indirim);
           setValue("indirimYuzde", item.indirimOran);
           setValue("toplam", item.toplam);
-          setValue("isTipi", item.malzemeTip);
-          setValue("isTipiID", item.malzemeTipKodId);
-          setValue("depo", item.cikisDepo);
-          setValue("depoID", item.cikisDepoSiraNo);
-          setValue("birim", item.birim);
-          setValue("birimID", item.birimKodId);
+
+          setValue("saat", item.sureSaat);
+          setValue("dakika", item.sureDakika);
+          setValue("isTipi", item.isTip);
+          setValue("isTipiID", item.isTipKodId);
 
           // Diğer setValue çağrıları burada yapılır
 
@@ -103,28 +100,27 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
   const onSubmited = (data) => {
     const Body = {
       siraNo: selectedRow.key,
-      servisSiraNo: secilenUstKayitID,
-      mlzAracId: data.aracID,
-      cikisDepoSiraNo: data.depoID,
-      malzemeId: data.malzemeKoduID,
-      birimKodId: data.birimID,
-      miktar: data.miktar,
-      fiyat: data.iscilikUcreti,
-      gc: -1,
-      kdvOran: data.kdvOrani,
-      indirim: data.indirimOrani,
+      aracId: data.aracID,
+      isTanimId: data.yapilanIsID,
+      isTipKodId: data.isTipiID,
       indirimOran: data.indirimYuzde,
-      toplam: data.toplam,
-      aciklama: data.aciklama,
-      stoklu: data.stokluMalzeme,
+      indirim: data.indirimOrani,
+      kdvOran: data.kdvOrani,
       kdvTutar: data.kdvDegeri,
+      iscilikUcreti: data.iscilikUcreti,
+      toplam: data.toplam,
+      servisSiraNo: secilenUstKayitID,
+      aciklama: data.aciklama,
+      sureSaat: data.saat,
+      sureDakika: data.dakika,
+      personelId: data.personelID || 0,
     };
 
-    AxiosInstance.post(`MaterialMovements/UpdateMaterialMovementService`, Body)
+    AxiosInstance.post(`ServiceWorkCard/UpdateServiceWorkCard`, Body)
       .then((response) => {
         console.log("Data sent successfully:", response);
 
-        if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
+        if (response.data.statusCode === 200 || response.data.statusCode === 201) {
           message.success("Ekleme Başarılı.");
           reset();
           onModalClose(); // Modal'ı kapat
