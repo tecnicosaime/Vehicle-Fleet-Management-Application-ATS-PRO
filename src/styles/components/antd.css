@@ -2,10 +2,10 @@
   flex-direction: column;
 }
 
-.ant-drawer,
+/* .ant-drawer,
 .ant-select-dropdown {
   z-index: 2003 !important;
-}
+} */
 
 .ant-menu-dark .ant-menu-item-selected,
 .ant-menu-dark > .ant-menu .ant-menu-item-selected {
@@ -71,9 +71,9 @@
   color: var(--black);
 }
 
-.ant-drawer-content-wrapper {
+/* .ant-drawer-content-wrapper {
   width: 500px !important;
-}
+} */
 
 .ant-input-outlined.ant-input-disabled,
 .ant-input-outlined[disabled],
