@@ -60,7 +60,7 @@ const items = [
       },
       {
         key: "121",
-        label: <Link to={"/hazirlaniyor"}>{t("ekspertizler")}</Link>,
+        label: <Link to={"/ekspertizler"}>{t("ekspertizler")}</Link>,
       },
       {
         key: "12",
