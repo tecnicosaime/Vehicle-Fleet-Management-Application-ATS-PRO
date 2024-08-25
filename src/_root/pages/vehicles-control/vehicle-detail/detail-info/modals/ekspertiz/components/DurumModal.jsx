@@ -6,6 +6,7 @@ import { HolderOutlined, SearchOutlined, MenuOutlined, CheckOutlined, CloseOutli
 import { useFormContext } from "react-hook-form";
 import EditDurum from "./EditDurum.jsx";
 import IsertDurum from "./InsertDurum.jsx";
+import { IoSettings } from "react-icons/io5";
 
 function DurumModal({ guncellemeBasarili }) {
   const [colorList, setColorList] = useState([]);
@@ -159,8 +160,8 @@ function DurumModal({ guncellemeBasarili }) {
 
   return (
     <div>
-      <Button type="primary" onClick={showModal}>
-        Durum Listesi
+      <Button type="primary" onClick={showModal} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <IoSettings style={{ fontSize: "20px" }} />
       </Button>
 
       <Modal

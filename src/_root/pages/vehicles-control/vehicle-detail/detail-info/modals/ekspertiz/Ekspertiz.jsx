@@ -68,8 +68,10 @@ const Ekspertiz = ({ visible, onClose, id }) => {
   };
 
   useEffect(() => {
-    fetchColorStyles();
-    fetchVehicleExpertData();
+    if (id) {
+      fetchColorStyles();
+      fetchVehicleExpertData();
+    }
   }, [id]);
 
   useEffect(() => {
@@ -206,16 +208,21 @@ const Ekspertiz = ({ visible, onClose, id }) => {
       <Modal title="Ekspertiz Bilgileri" open={visible} onCancel={onClose} centered maskClosable={false} footer={footer} width={1400}>
         <FormProvider {...methods}>
           <form onSubmit={onSumbit}>
-            <div style={{ height: "calc(100vh - 200px)", overflow: "auto" }} className="grid gap-1">
+            <div style={{ height: "calc(100vh - 140px)", overflow: "auto" }} className="grid gap-1">
               <div className="col-span-7">
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", padding: "5px 10px" }}>
                   <DurumModal guncellemeBasarili={guncellemeBasarili} />
                 </div>
 
                 <Car selectedOptions={selectedOptions} colorStyles={colorStyles} />
                 <div className="grid mt-10">
                   {colorList.map((item) => (
-                    <div style={{ cursor: "pointer" }} className="col-span-3 flex gap-1 cursor-pointer" key={item.aracEkspertizAyarId} onClick={() => handleColorClick(item)}>
+                    <div
+                      style={{ cursor: "pointer", marginBottom: "10px" }}
+                      className="col-span-3 flex gap-1 cursor-pointer"
+                      key={item.aracEkspertizAyarId}
+                      onClick={() => handleColorClick(item)}
+                    >
                       <div
                         style={{
                           width: "20px",
@@ -237,10 +244,10 @@ const Ekspertiz = ({ visible, onClose, id }) => {
                   getData={handleGetData} // Pass the function to get data from EkspertizTable
                   fetchOptionsTrigger={fetchOptionsTrigger} // Yeni prop'u aktarın
                 />
-              </div>
-              <div className="col-span-12 mt-20">
-                <label>Ekspertiz Açıklama</label>
-                <Textarea name="ekspertAciklama" />
+                <div className="col-span-12 mt-20">
+                  <label>Ekspertiz Açıklama</label>
+                  <Textarea name="ekspertAciklama" />
+                </div>
               </div>
             </div>
           </form>
