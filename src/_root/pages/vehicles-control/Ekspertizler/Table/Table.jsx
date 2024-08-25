@@ -185,7 +185,7 @@ const Sigorta = () => {
   //   const fetchData = async () => {
   //     try {
   //       const response = await AxiosInstance.get("OzelAlan?form=ISEMRI"); // API URL'niz
-  //       localStorage.setItem("ozelAlanlarYakitHareketleri", JSON.stringify(response));
+  //       localStorage.setItem("ozelAlanlarEkspertiz", JSON.stringify(response));
   //       setLabel(response); // Örneğin, API'den dönen yanıt doğrudan etiket olacak
   //     } catch (error) {
   //       console.error("API isteğinde hata oluştu:", error);
@@ -196,7 +196,7 @@ const Sigorta = () => {
   //   fetchData();
   // }, [drawer.visible]);
 
-  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarYakitHareketleri"));
+  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarEkspertiz"));
 
   // Özel Alanların nameleri backend çekmek için api isteği sonu
   const initialColumns = [
@@ -530,9 +530,9 @@ const Sigorta = () => {
 
   // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz
   const [columns, setColumns] = useState(() => {
-    const savedOrder = localStorage.getItem("columnOrderYakitHareketleri");
-    const savedVisibility = localStorage.getItem("columnVisibilityYakitHareketleri");
-    const savedWidths = localStorage.getItem("columnWidthsYakitHareketleri");
+    const savedOrder = localStorage.getItem("columnOrderEkspertiz");
+    const savedVisibility = localStorage.getItem("columnVisibilityEkspertiz");
+    const savedWidths = localStorage.getItem("columnWidthsEkspertiz");
 
     let order = savedOrder ? JSON.parse(savedOrder) : [];
     let visibility = savedVisibility ? JSON.parse(savedVisibility) : {};
@@ -550,9 +550,9 @@ const Sigorta = () => {
       }
     });
 
-    localStorage.setItem("columnOrderYakitHareketleri", JSON.stringify(order));
-    localStorage.setItem("columnVisibilityYakitHareketleri", JSON.stringify(visibility));
-    localStorage.setItem("columnWidthsYakitHareketleri", JSON.stringify(widths));
+    localStorage.setItem("columnOrderEkspertiz", JSON.stringify(order));
+    localStorage.setItem("columnVisibilityEkspertiz", JSON.stringify(visibility));
+    localStorage.setItem("columnWidthsEkspertiz", JSON.stringify(widths));
 
     return order.map((key) => {
       const column = initialColumns.find((col) => col.key === key);
@@ -563,9 +563,9 @@ const Sigorta = () => {
 
   // sütunları local storage'a kaydediyoruz
   useEffect(() => {
-    localStorage.setItem("columnOrderYakitHareketleri", JSON.stringify(columns.map((col) => col.key)));
+    localStorage.setItem("columnOrderEkspertiz", JSON.stringify(columns.map((col) => col.key)));
     localStorage.setItem(
-      "columnVisibilityYakitHareketleri",
+      "columnVisibilityEkspertiz",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -577,7 +577,7 @@ const Sigorta = () => {
       )
     );
     localStorage.setItem(
-      "columnWidthsYakitHareketleri",
+      "columnWidthsEkspertiz",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -653,10 +653,10 @@ const Sigorta = () => {
   // sütunları sıfırlamak için kullanılan fonksiyon
 
   function resetColumns() {
-    localStorage.removeItem("columnOrderYakitHareketleri");
-    localStorage.removeItem("columnVisibilityYakitHareketleri");
-    localStorage.removeItem("columnWidthsYakitHareketleri");
-    localStorage.removeItem("ozelAlanlarYakitHareketleri");
+    localStorage.removeItem("columnOrderEkspertiz");
+    localStorage.removeItem("columnVisibilityEkspertiz");
+    localStorage.removeItem("columnWidthsEkspertiz");
+    localStorage.removeItem("ozelAlanlarEkspertiz");
     window.location.reload();
   }
 
