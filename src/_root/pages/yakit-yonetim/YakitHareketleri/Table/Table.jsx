@@ -925,7 +925,7 @@ const Sigorta = () => {
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
           <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+          {/*<CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />*/}
         </div>
       </div>
       <div
@@ -961,7 +961,7 @@ const Sigorta = () => {
             rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
           />
         </Spin>
-        <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
+        {/*<EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />*/}
       </div>
     </>
   );
