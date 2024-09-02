@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { t } from "i18next";
-import { Button, Input, Spin } from "antd";
+import { Button, Input, message, Spin } from "antd";
 import { LoginUserService } from "../api/service";
 import { setItemWithExpiration } from "../utils/expireToken";
 import SuccessAlert from "../components/alerts/SuccessAlert";
@@ -39,6 +39,9 @@ const AuthLayout = () => {
         setIsSuccess(true);
         setItemWithExpiration("token", response?.data.accessToken, 24, response?.data.siraNo);
         navigate("/");
+      }
+      if (response?.data.siraNo === 0) {
+        message.error("Kullanıcı adı veya şifre hatalıdır.");
       }
     } catch (error) {
       setIsError(true);
@@ -94,7 +97,6 @@ const AuthLayout = () => {
 };
 
 export default AuthLayout;
-
 
 // password pattern --> pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
 // username pattern --> pattern: /^[a-zA-Z0-9_]+$/
