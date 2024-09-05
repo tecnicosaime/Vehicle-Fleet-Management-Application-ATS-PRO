@@ -48,20 +48,20 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
 
   const onSubmited = (data) => {
     const Body = {
-      aracId: data.aracID,
-      isTanimId: data.yapilanIsID,
-      isTipKodId: data.isTipiID,
-      indirimOran: data.indirimYuzde,
-      indirim: data.indirimOrani,
-      kdvOran: data.kdvOrani,
-      kdvTutar: data.kdvDegeri,
-      iscilikUcreti: data.iscilikUcreti,
-      toplam: data.toplam,
-      servisSiraNo: secilenKayitID,
+      aracId: Number(data.aracID),
+      isTanimId: Number(data.yapilanIsID),
+      isTipKodId: Number(data.isTipiID),
+      indirimOran: Number(data.indirimYuzde),
+      indirim: Number(data.indirimOrani),
+      kdvOran: Number(data.kdvOrani),
+      kdvTutar: Number(data.kdvDegeri),
+      iscilikUcreti: Number(data.iscilikUcreti),
+      toplam: Number(data.toplam),
+      servisSiraNo: Number(secilenKayitID),
       aciklama: data.aciklama,
-      sureSaat: data.saat,
-      sureDakika: data.dakika,
-      personelId: data.personelID || 0,
+      sureSaat: Number(data.saat),
+      sureDakika: Number(data.dakika),
+      personelId: Number(data.personelID),
     };
 
     AxiosInstance.post(`ServiceWorkCard/AddServiceWorkCard`, Body)

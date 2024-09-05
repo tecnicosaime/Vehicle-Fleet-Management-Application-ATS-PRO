@@ -29,8 +29,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
       depo: null,
       depoID: "",
       birim: null,
-      birimID: "",
-      // Add other default values here
+      birimID: "", // Add other default values here
     },
   });
 
@@ -102,22 +101,22 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
 
   const onSubmited = (data) => {
     const Body = {
-      siraNo: selectedRow.key,
-      servisSiraNo: secilenUstKayitID,
-      mlzAracId: data.aracID,
-      cikisDepoSiraNo: data.depoID,
-      malzemeId: data.malzemeKoduID,
-      birimKodId: data.birimID,
-      miktar: data.miktar,
-      fiyat: data.iscilikUcreti,
+      siraNo: Number(selectedRow.key),
+      servisSiraNo: Number(secilenUstKayitID),
+      mlzAracId: Number(data.aracID),
+      cikisDepoSiraNo: Number(data.depoID),
+      malzemeId: Number(data.malzemeKoduID),
+      birimKodId: Number(data.birimID),
+      miktar: Number(data.miktar),
+      fiyat: Number(data.iscilikUcreti),
       gc: -1,
-      kdvOran: data.kdvOrani,
-      indirim: data.indirimOrani,
-      indirimOran: data.indirimYuzde,
-      toplam: data.toplam,
+      kdvOran: Number(data.kdvOrani),
+      indirim: Number(data.indirimOrani),
+      indirimOran: Number(data.indirimYuzde),
+      toplam: Number(data.toplam),
       aciklama: data.aciklama,
       stoklu: data.stokluMalzeme,
-      kdvTutar: data.kdvDegeri,
+      kdvTutar: Number(data.kdvDegeri),
     };
 
     AxiosInstance.post(`MaterialMovements/UpdateMaterialMovementService`, Body)
@@ -148,7 +147,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
   return (
     <FormProvider {...methods}>
       <div>
-        <Modal width="990px" title="Kontrol Listesi Güncelle" open={isModalVisible} onOk={methods.handleSubmit(onSubmited)} onCancel={onModalClose}>
+        <Modal width="990px" title="Malzeme Listesi Güncelle" open={isModalVisible} onOk={methods.handleSubmit(onSubmited)} onCancel={onModalClose}>
           {loading ? (
             <Spin
               spinning={loading}
