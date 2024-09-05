@@ -99,21 +99,21 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
 
   const onSubmited = (data) => {
     const Body = {
-      siraNo: selectedRow.key,
-      aracId: data.aracID,
-      isTanimId: data.yapilanIsID,
-      isTipKodId: data.isTipiID,
-      indirimOran: data.indirimYuzde,
-      indirim: data.indirimOrani,
-      kdvOran: data.kdvOrani,
-      kdvTutar: data.kdvDegeri,
-      iscilikUcreti: data.iscilikUcreti,
-      toplam: data.toplam,
-      servisSiraNo: secilenUstKayitID,
+      siraNo: Number(selectedRow.key),
+      aracId: Number(data.aracID),
+      isTanimId: Number(data.yapilanIsID),
+      isTipKodId: Number(data.isTipiID),
+      indirimOran: Number(data.indirimYuzde),
+      indirim: Number(data.indirimOrani),
+      kdvOran: Number(data.kdvOrani),
+      kdvTutar: Number(data.kdvDegeri),
+      iscilikUcreti: Number(data.iscilikUcreti),
+      toplam: Number(data.toplam),
+      servisSiraNo: Number(secilenUstKayitID),
       aciklama: data.aciklama,
-      sureSaat: data.saat,
-      sureDakika: data.dakika,
-      personelId: data.personelID || 0,
+      sureSaat: Number(data.saat),
+      sureDakika: Number(data.dakika),
+      personelId: Number(data.personelID),
     };
 
     AxiosInstance.post(`ServiceWorkCard/UpdateServiceWorkCard`, Body)

@@ -52,21 +52,21 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
 
   const onSubmited = (data) => {
     const Body = {
-      mlzAracId: data.aracID,
-      servisSirano: secilenKayitID,
-      cikisDepoSiraNo: data.depoID,
-      malzemeId: data.malzemeKoduID,
-      birimKodId: data.birimID,
-      miktar: data.miktar,
-      fiyat: data.iscilikUcreti,
+      mlzAracId: Number(data.aracID),
+      servisSirano: Number(secilenKayitID),
+      cikisDepoSiraNo: Number(data.depoID),
+      malzemeId: Number(data.malzemeKoduID),
+      birimKodId: Number(data.birimID),
+      miktar: Number(data.miktar),
+      fiyat: Number(data.iscilikUcreti),
       gc: -1,
-      kdvOran: data.kdvOrani,
-      indirim: data.indirimOrani,
-      indirimOran: data.indirimYuzde,
-      toplam: data.toplam,
+      kdvOran: Number(data.kdvOrani),
+      indirim: Number(data.indirimOrani),
+      indirimOran: Number(data.indirimYuzde),
+      toplam: Number(data.toplam),
       aciklama: data.aciklama,
       stoklu: data.stokluMalzeme,
-      kdvTutar: data.kdvDegeri,
+      kdvTutar: Number(data.kdvDegeri),
     };
 
     AxiosInstance.post(`MaterialMovements/AddMaterialMovementService`, Body)
