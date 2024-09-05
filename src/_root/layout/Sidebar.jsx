@@ -72,7 +72,7 @@ const items = [
   {
     key: "19",
     icon: <GiAutoRepair />,
-    label: "Bakım ve Onarım İşlemleri",
+    label: "Bakım & Onarım",
     children: [
       {
         key: "21",
