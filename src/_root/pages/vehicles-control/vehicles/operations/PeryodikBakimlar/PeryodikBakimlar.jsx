@@ -37,7 +37,7 @@ function PeryodikBakimlar({ visible, onClose, ids }) {
   return (
     <FormProvider {...formMethods}>
       <div>
-        <Modal title={`Periyodik Bakım Bilgileri - Plaka: [${data?.plaka}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+        <Modal title={`Servis Bilgileri - Plaka: [${data?.plaka}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
           <Table ids={ids} />
         </Modal>
       </div>
