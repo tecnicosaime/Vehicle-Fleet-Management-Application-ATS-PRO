@@ -243,7 +243,7 @@ const GeneralInfo = () => {
             <div className="col-span-12" style={{ marginTop: "26px" }}>
               <div className="grid gap-1">
                 <div className="col-span-3">
-                  <Button className="w-full bg-success text-white">Aktiv</Button>
+                  <Button className="w-full bg-success text-white">Aktif</Button>
                   <Controller name="" control={control} render={({ field }) => <Checkbox {...field} style={{ display: "none" }} />} />
                 </div>
                 <div className="col-span-3">

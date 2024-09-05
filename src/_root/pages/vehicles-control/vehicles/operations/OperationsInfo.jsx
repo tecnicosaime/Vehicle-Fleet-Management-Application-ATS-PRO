@@ -24,10 +24,15 @@ const OperationsInfo = ({ ids }) => {
 
   const items = [
     {
-      label: t("bakimlar"),
-      key: "1",
+      label: t("servisler"),
+      key: "12",
       icon: <FaWrench className="text-info" />,
     },
+    // {
+    //   label: t("bakimlar"),
+    //   key: "1",
+    //   icon: <FaWrench className="text-info" />,
+    // },
     {
       label: t("yakitlar"),
       key: "2",
