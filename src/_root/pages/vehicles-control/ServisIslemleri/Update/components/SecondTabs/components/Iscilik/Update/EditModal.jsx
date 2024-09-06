@@ -62,7 +62,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
 
           setValue("saat", item.sureSaat);
           setValue("dakika", item.sureDakika);
-          setValue("isTipi", item.isTip);
+          setValue("isTipi", item.isTip ? item.isTip : null);
           setValue("isTipiID", item.isTipKodId);
 
           // Diğer setValue çağrıları burada yapılır

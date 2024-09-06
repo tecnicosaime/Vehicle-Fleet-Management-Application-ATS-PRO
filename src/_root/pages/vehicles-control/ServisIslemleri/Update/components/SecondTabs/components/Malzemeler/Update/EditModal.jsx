@@ -60,11 +60,11 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
           setValue("indirimOrani", item.indirim);
           setValue("indirimYuzde", item.indirimOran);
           setValue("toplam", item.toplam);
-          setValue("isTipi", item.malzemeTip);
+          setValue("isTipi", item.malzemeTip ? item.malzemeTip : null);
           setValue("isTipiID", item.malzemeTipKodId);
-          setValue("depo", item.cikisDepo);
+          setValue("depo", item.cikisDepo ? item.cikisDepo : null);
           setValue("depoID", item.cikisDepoSiraNo);
-          setValue("birim", item.birim);
+          setValue("birim", item.birim ? item.birim : null);
           setValue("birimID", item.birimKodId);
 
           // Diğer setValue çağrıları burada yapılır
@@ -117,6 +117,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
       aciklama: data.aciklama,
       stoklu: data.stokluMalzeme,
       kdvTutar: Number(data.kdvDegeri),
+      malzemeTipKodId: Number(data.isTipiID),
     };
 
     AxiosInstance.post(`MaterialMovements/UpdateMaterialMovementService`, Body)

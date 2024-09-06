@@ -67,6 +67,7 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
       aciklama: data.aciklama,
       stoklu: data.stokluMalzeme,
       kdvTutar: Number(data.kdvDegeri),
+      malzemeTipKodId: Number(data.isTipiID),
     };
 
     AxiosInstance.post(`MaterialMovements/AddMaterialMovementService`, Body)
