@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu } from "antd";
+import { Menu, Divider } from "antd";
 import { PieChartOutlined, CarOutlined } from "@ant-design/icons";
 import { MdOutlineSystemUpdateAlt } from "react-icons/md";
 import { PiTireBold } from "react-icons/pi";
@@ -93,6 +93,33 @@ const items = [
       {
         key: "24",
         label: <Link to={"/malzeme-tanimlari"}>{t("atolyeTanimlari")}</Link>,
+      },
+    ],
+  },
+  {
+    key: "345",
+    icon: <FaGears />,
+    label: t("lastikYonetimi"),
+    children: [
+      {
+        key: "2345",
+        label: <Link to={"/lastikIslemleri"}>{t("lastikIslemleri")}</Link>,
+      },
+      {
+        key: "99324",
+        label: <Link to={`/lastikEnvanteri`}>{t("lastikEnvanteri")}</Link>,
+      },
+      {
+        key: "divider-1",
+        label: <Divider className="menu-divider" />, // Special class for styling
+      },
+      {
+        key: "3647",
+        label: <Link to={`/lastikTanimlari`}>{t("lastikTanimlari")}</Link>,
+      },
+      {
+        key: "12344",
+        label: <Link to={`/aksTanimlari`}>{t("aksTanimlari")}</Link>,
       },
     ],
   },
