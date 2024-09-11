@@ -175,5 +175,11 @@
   "guncelKmSifirlamaSoru": "Güncel Km Sıfırlamaya Eminmisiniz?",
   "malzemeSinif": "Malzeme Sınıfı",
   "stoktanKullanim": "Stoktan Kullanım",
-  "engelle": "KM Log'a Yazma"
+  "engelle": "KM Log'a Yazma",
+    "Giris": "Entry",
+  "hosGeldinizKullaniciKoduVeSifreniziGiriniz": "Welcome! Please enter your user code and password.",
+  "KullaniciKodu": "User Code",
+  "Sifre": "Password",
+  "forgotPassword": "Forgot Password?",
+  "login": "Login"
 }
