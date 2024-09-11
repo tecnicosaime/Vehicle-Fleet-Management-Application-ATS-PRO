@@ -529,5 +529,10 @@
   "forgotPassword": "Şifrəmi Unutdum",
   "login": "Giriş",
   "username": "İstifadəçi Kodu",
-  "password": "Şifrə"
+  "password": "Şifrə",
+  "lastikIslemleri": "Təkər Əməliyyatları",
+  "lastikTanimlari": "Təkər Təsvirləri",
+  "aksTanimlari": "AKS Təsvirləri",
+  "lastikEnvanteri": "Təkər İnventarları",
+  "lastikYonetimi": "Təkər İdarəçiliyi"
 }
