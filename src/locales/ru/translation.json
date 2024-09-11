@@ -38,5 +38,12 @@
   "alinanKm": "Получил КМ.",
   "kullanim": "Использовать",
   "tuketim": "Среднее Потребление",
-    "Giris": "Вход"
+  "Giris": "Вход",
+  "hosGeldinizKullaniciKoduVeSifreniziGiriniz": "Добро пожаловать! введите свой логин и пароль",
+  "KullaniciKodu": "Код Пользователя",
+  "Sifre": "Пароль",
+  "forgotPassword": "Пароль забыли",
+  "login": "Войти",
+  "username": "Имя пользователя",
+  "password": "Пароль"
 }
