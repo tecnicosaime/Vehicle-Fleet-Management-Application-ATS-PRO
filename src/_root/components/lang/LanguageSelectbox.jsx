@@ -16,12 +16,18 @@ const LanguageSelector = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("i18nextLng") || "en";
+    let storedLanguage = localStorage.getItem("i18nextLng") || "en";
+    if (storedLanguage.includes("-")) {
+      storedLanguage = storedLanguage.split("-")[0];
+    }
     setSelectedLanguage(storedLanguage);
     i18n.changeLanguage(storedLanguage);
   }, []);
 
   const changeLanguage = (lng) => {
+    if (lng.includes("-")) {
+      lng = lng.split("-")[0];
+    }
     i18n.changeLanguage(lng);
     localStorage.setItem("i18nextLng", lng);
     setSelectedLanguage(lng);
