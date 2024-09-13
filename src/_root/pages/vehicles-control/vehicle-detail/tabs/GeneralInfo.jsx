@@ -64,8 +64,8 @@ const GeneralInfo = () => {
             <div className="grid gap-1 mt-10">
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="yil">{t("yil")}</label>
-                  <NumberInput name="yil" />
+                  <label htmlFor="departmanId">{t("departman")}</label>
+                  <CodeControl name="departman" codeName="departmanId" id={200} />
                 </div>
               </div>
               <div className="col-span-4">
@@ -88,10 +88,11 @@ const GeneralInfo = () => {
               </div>
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="departmanId">{t("departman")}</label>
-                  <CodeControl name="departman" codeName="departmanId" id={200} />
+                  <label htmlFor="yil">{t("yil")}</label>
+                  <NumberInput name="yil" />
                 </div>
               </div>
+
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label>{t("proje")} -- ?</label>
@@ -147,6 +148,18 @@ const GeneralInfo = () => {
                       ...
                     </Button>
                   </div>
+                </div>
+              </div>
+              <div className="col-span-4">
+                <div className="flex flex-col gap-1">
+                  <label>{t("DepoBataryaKapasitesi")}</label>
+                  <NumberInput name="DepoBataryaKapasitesi" />
+                </div>
+              </div>
+              <div className="col-span-4">
+                <div className="flex flex-col gap-1">
+                  <label>{t("tamDepoSarjIleMenzil")}</label>
+                  <NumberInput name="tamDepoSarjIleMenzil" />
                 </div>
               </div>
             </div>
