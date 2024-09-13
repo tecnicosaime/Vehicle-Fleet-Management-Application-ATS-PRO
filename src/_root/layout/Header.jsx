@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Input, Avatar, Button, Layout, Spin } from "antd";
+import { Input, Avatar, Button, Layout, Spin, Popover } from "antd";
 import { HomeOutlined, AntDesignOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import LanguageSelector from "../components/lang/LanguageSelector";
 import Bildirim from "../components/Notification/Bildirim";
@@ -8,6 +8,7 @@ import Hatirlatici from "../components/Hatirlatici/Hatirlatici";
 import { t } from "i18next";
 import AxiosInstance from "../../api/http";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const { Header } = Layout;
 
@@ -21,6 +22,7 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
   const [data, setData] = useState(null);
   const [data1, setData1] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const getHatirlatici = async () => {
     try {
@@ -61,6 +63,18 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
     getHatirlatici1();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("token_expire");
+    navigate("/login");
+  };
+
+  const popoverContent = (
+    <Button type="primary" onClick={handleLogout}>
+      {t("logout")}
+    </Button>
+  );
+
   return (
     <Header
       style={{
@@ -88,7 +102,9 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
           </CustomSpin>
           <Bildirim />
           <Input className="search-input" placeholder={t("arama")} allowClear />
-          <Avatar className="header-avatar" icon={<AntDesignOutlined />} />
+          <Popover content={popoverContent} trigger="click">
+            <Avatar className="header-avatar" icon={<AntDesignOutlined />} />
+          </Popover>
         </div>
       </div>
     </Header>
