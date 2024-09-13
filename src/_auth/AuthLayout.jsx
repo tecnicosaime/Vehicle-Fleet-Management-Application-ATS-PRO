@@ -62,7 +62,7 @@ const AuthLayout = () => {
       {isError && <ErrorAlert />}
 
       <div className="grid h-full">
-        <div className="col-span-5 login-card">
+        <div className="col-span-5 login-card" style={{ display: "flex", justifyContent: "space-evenly" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
             <LanguageSelectbox />
