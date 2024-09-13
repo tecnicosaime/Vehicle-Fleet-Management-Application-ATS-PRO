@@ -310,6 +310,8 @@ const DetailUpdate = () => {
       yakitTipId: values.yakitTipId || 0,
       tts: values.tts,
       durumKodId: values.durumKodId || 0,
+      DepoBataryaKapasitesi: Number(values.DepoBataryaKapasitesi), // name i alborzdan al
+      tamDepoSarjIleMenzil: Number(values.tamDepoSarjIleMenzil), // namei alborzdan al
       yakitUyari: values.uyari,
       aktif: values.aracDurum === 1 ? true : false,
       havuzGrup: values.havuzGrup,

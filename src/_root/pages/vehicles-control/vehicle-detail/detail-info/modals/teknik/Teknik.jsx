@@ -26,7 +26,7 @@ const Teknik = ({ visible, onClose, id }) => {
     dtyHizlanma: null,
     dtyCekisAksi: null,
     tnetAgirlik: null,
-    tyakitHacmi: null,
+    /*tyakitHacmi: null,*/
     tboy: null,
     tgenislik: null,
     tyukseklik: null,
@@ -61,7 +61,7 @@ const Teknik = ({ visible, onClose, id }) => {
       setValue("tyukseklik", res.data.tyukseklik);
       setValue("tgenislik", res.data.tgenislik);
       setValue("tboy", res.data.tboy);
-      setValue("tyakitHacmi", res.data.tyakitHacmi);
+      /*setValue("tyakitHacmi", res.data.tyakitHacmi);*/ // alborza bu alanın kaldırıldığını söyle
       setValue("tnetAgirlik", res.data.tnetAgirlik);
       setValue("dtyCekisAksi", res.data.dtyCekisAksi);
       setValue("dtyHizlanma", res.data.dtyHizlanma);
@@ -94,7 +94,7 @@ const Teknik = ({ visible, onClose, id }) => {
       dtyHizlanma: values.dtyHizlanma,
       dtyCekisAksi: values.dtyCekisAksi,
       tnetAgirlik: values.tnetAgirlik,
-      tyakitHacmi: values.tyakitHacmi,
+      /*tyakitHacmi: values.tyakitHacmi,*/ //Alborza Bu alanın kaldırıldığını söyle
       tboy: values.tboy,
       tgenislik: values.tgenislik,
       tyukseklik: values.tyukseklik,
@@ -245,12 +245,12 @@ const Teknik = ({ visible, onClose, id }) => {
                 <NumberInput name="dtyIcYukseklik" />
               </div>
             </div>
-            <div className="col-span-2">
+            {/* <div className="col-span-2">
               <div className="flex flex-col gap-1">
                 <label>{t("yakitDeposu")}</label>
                 <NumberInput name="tyakitHacmi" />
               </div>
-            </div>
+            </div>*/}
             <div className="col-span-2">
               <div className="flex flex-col gap-1">
                 <label>{t("bagajHacmi")}</label>
