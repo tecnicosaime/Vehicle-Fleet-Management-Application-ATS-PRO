@@ -182,7 +182,7 @@ const Teknik = ({ visible, onClose, id }) => {
             </div>
             <div className="col-span-3">
               <div className="flex flex-col gap-1">
-                <label>{t("hizlanma")}</label>
+                <label>{`${t("hizlanma")} (0-->100)`}</label>
                 <TextInput name="dtyHizlanma" />
               </div>
             </div>

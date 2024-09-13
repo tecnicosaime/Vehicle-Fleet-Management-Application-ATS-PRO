@@ -219,7 +219,7 @@ const GeneralInfo = () => {
             </div>
           </div>
           <div className="border p-10 mt-10">
-            <h3 className="sub-title">{t("yakitTuketimKontrol")} (lt/100 km)</h3>
+            <h3 className="sub-title">{t("yakitTuketimKontrol")} (100 km)</h3>
             <div className="grid gap-2">
               <div className="col-span-6 mt-10">
                 <div className="flex flex-col gap-1">
