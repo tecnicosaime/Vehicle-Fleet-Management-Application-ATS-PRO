@@ -413,7 +413,7 @@ const DetailUpdate = () => {
         <div className="content">
           <div className="grid">
             <div className="col-span-3">
-              <ProfilePhoto setImages={setProfile} urls={urls} />
+              <ProfilePhoto setImages={setProfile} urls={urls} imageUrls={imageUrls} />
               <div className="flex gap-1 justify-between mt-10">
                 <p className="flex gap-1 align-center">
                   <span>
