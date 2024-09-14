@@ -52,6 +52,7 @@ const DetailUpdate = () => {
   const [filesUrl, setFilesUrl] = useState([]);
   const [files, setFiles] = useState([]);
   const [loadingFiles, setLoadingFiles] = useState(false);
+  const [uploadFinished, setUploadFinished] = useState(1);
   // photo
   const [imageUrls, setImageUrls] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
@@ -280,6 +281,7 @@ const DetailUpdate = () => {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
       setLoadingFiles(false);
+      setUploadFinished(2);
     }
   };
 
@@ -374,7 +376,7 @@ const DetailUpdate = () => {
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} />,
+      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} uploadFinished={uploadFinished} setUploadFinished={setUploadFinished} />,
     },
   ];
 
