@@ -17,15 +17,16 @@ import Lastik from "./lastik/Lastik";
 import Bakim from "./bakim/Bakim";
 import KmTakibi from "./KmTakibi/KmTakibi.jsx";
 import PeryodikBakimlar from "./PeryodikBakimlar/PeryodikBakimlar.jsx";
+import Servisler from "./Servisler/Servisler";
 
-const OperationsInfo = ({ ids }) => {
+const OperationsInfo = ({ ids, selectedRowsData }) => {
   const { setPlaka } = useContext(PlakaContext);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const items = [
     {
       label: t("servisler"),
-      key: "12",
+      key: "13",
       icon: <FaWrench className="text-info" />,
     },
     // {
@@ -119,6 +120,7 @@ const OperationsInfo = ({ ids }) => {
               setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "2":
@@ -207,6 +209,18 @@ const OperationsInfo = ({ ids }) => {
               setPlaka([]);
             }}
             ids={ids}
+          />
+        );
+      case "13":
+        return (
+          <Servisler
+            visible={selectedItem === "13"}
+            onClose={() => {
+              setSelectedItem(null);
+              setPlaka([]);
+            }}
+            ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       default:

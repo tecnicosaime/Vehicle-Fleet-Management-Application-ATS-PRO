@@ -41,6 +41,8 @@ import LokasyonTanimlari from "./_root/pages/sistem-tanimlari/LokasyonTanimlari/
 import YakitHaraketleri from "./_root/pages/yakit-yonetim/YakitHareketleri/YakitIslemleri.jsx";
 import Ekspertizler from "./_root/pages/vehicles-control/Ekspertizler/Ekspertizler.jsx";
 
+import PeriyordikBakimlar from "./_root/pages/BakimVeOnarim/PeriyodikBakimlar/PeriyodikBakimlar.jsx";
+
 import Raporlar from "./_root/pages/raporlar/RaporYonetimi.jsx";
 import KodYonetimi from "./_root/pages/kod-yonetimi/KodYonetimi";
 import Hazirlaniyor from "./_root/pages/Hazirlaniyor";
@@ -104,6 +106,8 @@ const App = () => {
         <Route path="/servis-tanimlari" element={<ServisTanim />} />
         <Route path="/firma-tanimlari" element={<FirmaTanim />} />
         <Route path="/personel-tanimlari" element={<PersonelTanim />} />
+
+        <Route path="/Periodic-Maintenance" element={<PeriyordikBakimlar />} />
 
         <Route path="/surucu-tanimlari" element={<Suruculer />} />
         <Route path="/raporlar" element={<Raporlar />} />

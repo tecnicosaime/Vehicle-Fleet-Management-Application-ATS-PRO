@@ -7,7 +7,7 @@ import AxiosInstance from "../../../../../../api/http.jsx";
 
 const { Text } = Typography;
 
-function PeryodikBakimlar({ visible, onClose, ids, selectedRowsData }) {
+function Servisler({ visible, onClose, ids, selectedRowsData }) {
   const formMethods = useForm();
 
   const footer = [
@@ -20,7 +20,7 @@ function PeryodikBakimlar({ visible, onClose, ids, selectedRowsData }) {
     <FormProvider {...formMethods}>
       <div>
         <Modal
-          title={`Peryodik Bakım Bilgileri - Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+          title={`Servis Bilgileri - Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
           open={visible}
           onCancel={onClose}
           maskClosable={false}
@@ -34,4 +34,4 @@ function PeryodikBakimlar({ visible, onClose, ids, selectedRowsData }) {
   );
 }
 
-export default PeryodikBakimlar;
+export default Servisler;

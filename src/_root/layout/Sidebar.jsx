@@ -80,7 +80,7 @@ const items = [
       },
       {
         key: "20",
-        label: <Link to={"/sigorta-islemleri"}>{t("periyodikBakimlar")}</Link>,
+        label: <Link to={"/Periodic-Maintenance"}>{t("periyodikBakimlar")}</Link>,
       },
       {
         key: "22",

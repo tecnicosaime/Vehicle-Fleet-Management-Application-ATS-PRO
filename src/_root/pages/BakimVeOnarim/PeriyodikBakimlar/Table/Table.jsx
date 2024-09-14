@@ -6,13 +6,20 @@ import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, v
 import { CSS } from "@dnd-kit/utilities";
 import { Resizable } from "react-resizable";
 import "./ResizeStyle.css";
-import AxiosInstance from "../../../../../../../api/http";
+import AxiosInstance from "../../../../../api/http";
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
+import ContextMenu from "../components/ContextMenu/ContextMenu";
+import CreateDrawer from "../Insert/CreateDrawer";
+import EditDrawer from "../Update/EditDrawer";
 import dayjs from "dayjs";
+import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+
 import { t } from "i18next";
 
 const { Text } = Typography;
+
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("periyodikBakimlar") }];
 
 const StyledButton = styled(Button)`
   display: flex;
@@ -119,7 +126,7 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 
 // Sütunların sürüklenebilir olmasını sağlayan component sonu
 
-const MainTable = ({ ids }) => {
+const Sigorta = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { setValue } = useFormContext();
   const [data, setData] = useState([]);
@@ -521,7 +528,7 @@ const MainTable = ({ ids }) => {
 
   useEffect(() => {
     fetchEquipmentData(body, currentPage, pageSize);
-  }, [body, currentPage, pageSize, ids]);
+  }, [body, currentPage, pageSize]);
 
   // ana tablo api isteği için kullanılan useEffect son
 
@@ -556,7 +563,7 @@ const MainTable = ({ ids }) => {
     try {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.post(`PeriodicMaintenance/GetPeriodicMaintenanceByVehicleIds?page=${currentPage}&parameter=${keyword}`, ids);
+      const response = await AxiosInstance.get(`PeriodicMaintenance/GetPeriodicMaintenanceList?page=${currentPage}&parameter=${keyword}`);
       if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
@@ -794,6 +801,17 @@ const MainTable = ({ ids }) => {
 
   return (
     <>
+      <div
+        style={{
+          backgroundColor: "white",
+          marginBottom: "15px",
+          padding: "15px",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <BreadcrumbComp items={breadcrumb} />
+      </div>
       <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
         <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
         <div
@@ -878,12 +896,15 @@ const MainTable = ({ ids }) => {
       </Modal>
       <div
         style={{
+          backgroundColor: "white",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "space-between",
-          marginBottom: "10px",
+          marginBottom: "15px",
           gap: "10px",
-          padding: "0 5px",
+          padding: "15px",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
       >
         <div
@@ -910,34 +931,48 @@ const MainTable = ({ ids }) => {
           {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
         </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
+          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+        </div>
       </div>
-
-      <CustomSpin spinning={loading}>
-        <CustomTable
-          components={components}
-          rowSelection={rowSelection}
-          columns={filteredColumns}
-          dataSource={data}
-          pagination={{
-            current: currentPage,
-            total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
-            pageSize: pageSize,
-            defaultPageSize: 10,
-            showSizeChanger: true,
-            pageSizeOptions: ["10", "20", "50", "100"],
-            position: ["bottomRight"],
-            onChange: handleTableChange,
-            showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
-            showQuickJumper: true,
-          }}
-          // onRow={onRowClick}
-          scroll={{ y: "calc(100vh - 400px)" }}
-          onChange={handleTableChange}
-          rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
-        />
-      </CustomSpin>
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "10px",
+          height: "calc(100vh - 270px)",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <Spin spinning={loading}>
+          <CustomTable
+            components={components}
+            rowSelection={rowSelection}
+            columns={filteredColumns}
+            dataSource={data}
+            pagination={{
+              current: currentPage,
+              total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
+              pageSize: pageSize,
+              defaultPageSize: 10,
+              showSizeChanger: true,
+              pageSizeOptions: ["10", "20", "50", "100"],
+              position: ["bottomRight"],
+              onChange: handleTableChange,
+              showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
+              showQuickJumper: true,
+            }}
+            // onRow={onRowClick}
+            scroll={{ y: "calc(100vh - 400px)" }}
+            onChange={handleTableChange}
+            rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
+          />
+        </Spin>
+        <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
+      </div>
     </>
   );
 };
 
-export default MainTable;
+export default Sigorta;
