@@ -176,7 +176,7 @@ const MainTable = ({ ids }) => {
   //   const fetchData = async () => {
   //     try {
   //       const response = await AxiosInstance.get("OzelAlan?form=ISEMRI"); // API URL'niz
-  //       localStorage.setItem("ozelAlanlarPeryodikBakim", JSON.stringify(response));
+  //       localStorage.setItem("ozelAlanlarServisIslemleri", JSON.stringify(response));
   //       setLabel(response); // Örneğin, API'den dönen yanıt doğrudan etiket olacak
   //     } catch (error) {
   //       console.error("API isteğinde hata oluştu:", error);
@@ -187,12 +187,12 @@ const MainTable = ({ ids }) => {
   //   fetchData();
   // }, [drawer.visible]);
 
-  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarPeryodikBakim"));
+  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarServisIslemleri"));
 
   // Özel Alanların nameleri backend çekmek için api isteği sonu
   const initialColumns = [
     {
-      title: t("plaka"),
+      title: "Plaka",
       dataIndex: "plaka",
       key: "plaka",
       width: 120,
@@ -207,72 +207,85 @@ const MainTable = ({ ids }) => {
         return a.plaka.localeCompare(b.plaka);
       },
     },
-
     {
-      title: t("marka"),
-      dataIndex: "marka",
-      key: "marka",
-      width: 150,
+      title: "Tarihi",
+      dataIndex: "tarih",
+      key: "tarih",
+      width: 110,
       ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
       sorter: (a, b) => {
-        if (a.marka === null) return -1;
-        if (b.marka === null) return 1;
-        return a.marka.localeCompare(b.marka);
+        if (a.tarih === null) return -1;
+        if (b.tarih === null) return 1;
+        return a.tarih.localeCompare(b.tarih);
       },
-    },
 
+      visible: true, // Varsayılan olarak açık
+      render: (text) => formatDate(text),
+    },
     {
-      title: t("model"),
-      dataIndex: "model",
-      key: "model",
-      width: 150,
+      title: "Saat",
+      dataIndex: "saat",
+      key: "saat",
+      width: 90,
       ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
       sorter: (a, b) => {
-        if (a.model === null) return -1;
-        if (b.model === null) return 1;
-        return a.model.localeCompare(b.model);
+        if (a.saat === null) return -1;
+        if (b.saat === null) return 1;
+        return a.saat.localeCompare(b.saat);
       },
-    },
 
-    {
-      title: t("bakimKodu"),
-      dataIndex: "bakimKodu",
-      key: "bakimKodu",
-      width: 150,
-      ellipsis: true,
       visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.bakimKodu === null) return -1;
-        if (b.bakimKodu === null) return 1;
-        return a.bakimKodu.localeCompare(b.bakimKodu);
-      },
+      render: (text) => formatTime(text),
     },
-
     {
-      title: t("bakimTanimi"),
-      dataIndex: "bakimTanimi",
-      key: "bakimTanimi",
+      title: "Servis Tanımı",
+      dataIndex: "servisTanimi",
+      key: "servisTanimi",
       width: 190,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.bakimTanimi === null) return -1;
-        if (b.bakimTanimi === null) return 1;
-        return a.bakimTanimi.localeCompare(b.bakimTanimi);
+        if (a.servisTanimi === null) return -1;
+        if (b.servisTanimi === null) return 1;
+        return a.servisTanimi.localeCompare(b.servisTanimi);
       },
     },
 
     {
-      title: t("servisTipi"),
+      title: "Servis Nedeni",
+      dataIndex: "servisNedeni",
+      key: "servisNedeni",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.servisNedeni === null) return -1;
+        if (b.servisNedeni === null) return 1;
+        return a.servisNedeni.localeCompare(b.servisNedeni);
+      },
+    },
+
+    {
+      title: "Firma",
+      dataIndex: "servisFirma",
+      key: "servisFirma",
+      width: 190,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.servisFirma === null) return -1;
+        if (b.servisFirma === null) return 1;
+        return a.servisFirma.localeCompare(b.servisFirma);
+      },
+    },
+    {
+      title: "Servis Tipi",
       dataIndex: "servisTipi",
       key: "servisTipi",
-      width: 190,
+      width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
@@ -282,62 +295,31 @@ const MainTable = ({ ids }) => {
         return a.servisTipi.localeCompare(b.servisTipi);
       },
     },
-
     {
-      title: t("herKm"),
-      dataIndex: "herKm",
-      key: "herKm",
-      width: 120,
+      title: "Sürücü",
+      dataIndex: "surucuIsim",
+      key: "surucuIsim",
+      width: 160,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.herKm === null) return -1;
-        if (b.herKm === null) return 1;
-        return a.herKm - b.herKm;
+        if (a.surucuIsim === null) return -1;
+        if (b.surucuIsim === null) return 1;
+        return a.surucuIsim.localeCompare(b.surucuIsim);
       },
     },
 
     {
-      title: t("herGun"),
-      dataIndex: "herGun",
-      key: "herGun",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.herGun === null) return -1;
-        if (b.herGun === null) return 1;
-        return a.herGun - b.herGun;
-      },
-    },
-
-    {
-      title: t("sonKm"),
-      dataIndex: "sonKm",
-      key: "sonKm",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.sonKm === null) return -1;
-        if (b.sonKm === null) return 1;
-        return a.sonKm - b.sonKm;
-      },
-    },
-
-    {
-      title: t("sonTarih"),
-      dataIndex: "sonTarih",
-      key: "sonTarih",
+      title: "Başlama Tarihi",
+      dataIndex: "baslamaTarih",
+      key: "baslamaTarih",
       width: 110,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.sonTarih === null) return -1;
-        if (b.sonTarih === null) return 1;
-        return a.sonTarih.localeCompare(b.sonTarih);
+        if (a.baslamaTarih === null) return -1;
+        if (b.baslamaTarih === null) return 1;
+        return a.baslamaTarih.localeCompare(b.baslamaTarih);
       },
 
       visible: true, // Varsayılan olarak açık
@@ -345,15 +327,15 @@ const MainTable = ({ ids }) => {
     },
 
     {
-      title: t("hedefTarih"),
-      dataIndex: "hedefTarih",
-      key: "hedefTarih",
+      title: "Bitiş Tarihi",
+      dataIndex: "bitisTarih",
+      key: "bitisTarih",
       width: 110,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.hedefTarih === null) return -1;
-        if (b.hedefTarih === null) return 1;
-        return a.hedefTarih.localeCompare(b.hedefTarih);
+        if (a.bitisTarih === null) return -1;
+        if (b.bitisTarih === null) return 1;
+        return a.bitisTarih.localeCompare(b.bitisTarih);
       },
 
       visible: true, // Varsayılan olarak açık
@@ -361,43 +343,144 @@ const MainTable = ({ ids }) => {
     },
 
     {
-      title: t("hedefKm"),
-      dataIndex: "hedefKm",
-      key: "hedefKm",
+      title: "Servis Km.",
+      dataIndex: "km",
+      key: "km",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.hedefKm === null) return -1;
-        if (b.hedefKm === null) return 1;
-        return a.hedefKm - b.hedefKm;
+        if (a.km === null) return -1;
+        if (b.km === null) return 1;
+        return a.km - b.km;
       },
     },
 
     {
-      title: t("aktif"),
-      dataIndex: "aktif",
-      key: "aktif",
-      width: 190,
+      title: "İşçilik Ücreti",
+      dataIndex: "iscilik",
+      key: "iscilik",
+      width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.aktif === null) return -1;
-        if (b.aktif === null) return 1;
-        return a.aktif.localeCompare(b.aktif);
-      },
-      render: (value) => {
-        return value ? <CheckOutlined style={{ color: "green" }} /> : <CloseOutlined style={{ color: "red" }} />;
+        if (a.iscilik === null) return -1;
+        if (b.iscilik === null) return 1;
+        return a.iscilik - b.iscilik;
       },
     },
 
     {
-      title: t("aciklama"),
+      title: "Malzeme Maliyeti",
+      dataIndex: "malzeme",
+      key: "malzeme",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.malzeme === null) return -1;
+        if (b.malzeme === null) return 1;
+        return a.malzeme - b.malzeme;
+      },
+    },
+
+    {
+      title: "Diğer Giderler",
+      dataIndex: "diger",
+      key: "diger",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.diger === null) return -1;
+        if (b.diger === null) return 1;
+        return a.diger - b.diger;
+      },
+    },
+    {
+      title: "KDV",
+      dataIndex: "kdv",
+      key: "kdv",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.kdv === null) return -1;
+        if (b.kdv === null) return 1;
+        return a.kdv - b.kdv;
+      },
+    },
+    {
+      title: "İndirim",
+      dataIndex: "indirim",
+      key: "indirim",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.indirim === null) return -1;
+        if (b.indirim === null) return 1;
+        return a.indirim - b.indirim;
+      },
+    },
+
+    {
+      title: "Toplam Maliyet",
+      dataIndex: "toplam",
+      key: "toplam",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.toplam === null) return -1;
+        if (b.toplam === null) return 1;
+        return a.toplam - b.toplam;
+      },
+    },
+
+    {
+      title: "Fatura Tarihi",
+      dataIndex: "faturaTarih",
+      key: "faturaTarih",
+      width: 110,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.faturaTarih === null) return -1;
+        if (b.faturaTarih === null) return 1;
+        return a.faturaTarih.localeCompare(b.faturaTarih);
+      },
+
+      visible: true, // Varsayılan olarak açık
+      render: (text) => formatDate(text),
+    },
+
+    {
+      title: "Fatura No",
+      dataIndex: "faturaNo",
+      key: "faturaNo",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.faturaNo === null) return -1;
+        if (b.faturaNo === null) return 1;
+        return a.faturaNo - b.faturaNo;
+      },
+    },
+
+    {
+      title: "Açıklama",
       dataIndex: "aciklama",
       key: "aciklama",
-      width: 190,
+      width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
@@ -409,32 +492,77 @@ const MainTable = ({ ids }) => {
     },
 
     {
-      title: t("kalanKm"),
-      dataIndex: "kalanKm",
-      key: "kalanKm",
+      title: "Şikayetler",
+      dataIndex: "sikayetler",
+      key: "sikayetler",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.kalanKm === null) return -1;
-        if (b.kalanKm === null) return 1;
-        return a.kalanKm - b.kalanKm;
+        if (a.sikayetler === null) return -1;
+        if (b.sikayetler === null) return 1;
+        return a.sikayetler.localeCompare(b.sikayetler);
       },
     },
 
     {
-      title: t("kalanSure"),
-      dataIndex: "kalanSure",
-      key: "kalanSure",
+      title: "Bölge - ?",
+      dataIndex: "bolge",
+      key: "bolge",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.kalanSure === null) return -1;
-        if (b.kalanSure === null) return 1;
-        return a.kalanSure - b.kalanSure;
+        if (a.bolge === null) return -1;
+        if (b.bolge === null) return 1;
+        return a.bolge.localeCompare(b.bolge);
+      },
+    },
+
+    {
+      title: "Talep No",
+      dataIndex: "talepNo",
+      key: "talepNo",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.talepNo === null) return -1;
+        if (b.talepNo === null) return 1;
+        return a.talepNo - b.talepNo;
+      },
+    },
+
+    {
+      title: "Talep Eden - ?",
+      dataIndex: "talepEden",
+      key: "talepEden",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.talepEden === null) return -1;
+        if (b.talepEden === null) return 1;
+        return a.talepEden.localeCompare(b.talepEden);
+      },
+    },
+
+    {
+      title: "Onay",
+      dataIndex: "onay",
+      key: "onay",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.onay === null) return -1;
+        if (b.onay === null) return 1;
+        return a.onay.localeCompare(b.onay);
       },
     },
 
@@ -556,7 +684,7 @@ const MainTable = ({ ids }) => {
     try {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.post(`PeriodicMaintenance/GetPeriodicMaintenanceByVehicleIds?page=${currentPage}&parameter=${keyword}`, ids);
+      const response = await AxiosInstance.post(`VehicleServices/GetVehicleServicesByVehicleIds?page=${currentPage}&parameter=${keyword}`, ids);
       if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
@@ -660,9 +788,9 @@ const MainTable = ({ ids }) => {
 
   // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz
   const [columns, setColumns] = useState(() => {
-    const savedOrder = localStorage.getItem("columnOrderPeryodikBakim");
-    const savedVisibility = localStorage.getItem("columnVisibilityPeryodikBakim");
-    const savedWidths = localStorage.getItem("columnWidthsPeryodikBakim");
+    const savedOrder = localStorage.getItem("columnOrderServisIslemleri");
+    const savedVisibility = localStorage.getItem("columnVisibilityServisIslemleri");
+    const savedWidths = localStorage.getItem("columnWidthsServisIslemleri");
 
     let order = savedOrder ? JSON.parse(savedOrder) : [];
     let visibility = savedVisibility ? JSON.parse(savedVisibility) : {};
@@ -680,9 +808,9 @@ const MainTable = ({ ids }) => {
       }
     });
 
-    localStorage.setItem("columnOrderPeryodikBakim", JSON.stringify(order));
-    localStorage.setItem("columnVisibilityPeryodikBakim", JSON.stringify(visibility));
-    localStorage.setItem("columnWidthsPeryodikBakim", JSON.stringify(widths));
+    localStorage.setItem("columnOrderServisIslemleri", JSON.stringify(order));
+    localStorage.setItem("columnVisibilityServisIslemleri", JSON.stringify(visibility));
+    localStorage.setItem("columnWidthsServisIslemleri", JSON.stringify(widths));
 
     return order.map((key) => {
       const column = initialColumns.find((col) => col.key === key);
@@ -693,9 +821,9 @@ const MainTable = ({ ids }) => {
 
   // sütunları local storage'a kaydediyoruz
   useEffect(() => {
-    localStorage.setItem("columnOrderPeryodikBakim", JSON.stringify(columns.map((col) => col.key)));
+    localStorage.setItem("columnOrderServisIslemleri", JSON.stringify(columns.map((col) => col.key)));
     localStorage.setItem(
-      "columnVisibilityPeryodikBakim",
+      "columnVisibilityServisIslemleri",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -707,7 +835,7 @@ const MainTable = ({ ids }) => {
       )
     );
     localStorage.setItem(
-      "columnWidthsPeryodikBakim",
+      "columnWidthsServisIslemleri",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -783,10 +911,10 @@ const MainTable = ({ ids }) => {
   // sütunları sıfırlamak için kullanılan fonksiyon
 
   function resetColumns() {
-    localStorage.removeItem("columnOrderPeryodikBakim");
-    localStorage.removeItem("columnVisibilityPeryodikBakim");
-    localStorage.removeItem("columnWidthsPeryodikBakim");
-    localStorage.removeItem("ozelAlanlarPeryodikBakim");
+    localStorage.removeItem("columnOrderServisIslemleri");
+    localStorage.removeItem("columnVisibilityServisIslemleri");
+    localStorage.removeItem("columnWidthsServisIslemleri");
+    localStorage.removeItem("ozelAlanlarServisIslemleri");
     window.location.reload();
   }
 

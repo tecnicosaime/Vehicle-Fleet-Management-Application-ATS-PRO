@@ -42,6 +42,7 @@ const Vehicles = () => {
   const [filterData, setFilterData] = useState({});
   const [ayarlarData, setAyarlarData] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [selectedRowsData, setSelectedRowsData] = useState([]); // Seçilen tüm satır verilerini saklar
   const [country, setCountry] = useState({
     name: "",
     code: "",
@@ -450,29 +451,40 @@ const Vehicles = () => {
   // get selected rows data
   if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
 
+  // Tekli seçim için
   const handleRowSelection = (row, selected) => {
     if (selected) {
+      // Eğer satır seçildiyse, id'yi keys'e, tüm veriyi selectedRowsData'ya ekle
       if (!keys.includes(row.aracId)) {
         setKeys((prevKeys) => [...prevKeys, row.aracId]);
-        setRows((prevRows) => [...prevRows, row]);
+        setSelectedRowsData((prevRows) => [...prevRows, row]);
       }
     } else {
+      // Eğer satır seçimi kaldırıldıysa, id'yi keys'den, veriyi selectedRowsData'dan çıkar
       setKeys((prevKeys) => prevKeys.filter((key) => key !== row.aracId));
-      setRows((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
+      setSelectedRowsData((prevRows) => prevRows.filter((item) => item.aracId !== row.aracId));
     }
+  };
+
+  // Çoklu seçim için
+  const handleRowSelectionChange = (selectedKeys, selectedRows) => {
+    // Çoklu seçimde keys'i ve tüm satır verilerini güncelle
+    setKeys(selectedKeys);
+    setSelectedRowsData(selectedRows); // Tüm satır verilerini selectedRowsData'ya kaydet
   };
 
   useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
 
   useEffect(() => {
-    const newPlakaEntries = rows.map((vehicle) => ({
+    // Seçilen plaka verilerini güncellemek için
+    const newPlakaEntries = selectedRowsData.map((vehicle) => ({
       id: vehicle.aracId,
       plaka: vehicle.plaka,
       lokasyonId: vehicle.lokasyonId,
       lokasyon: vehicle.lokasyon,
     }));
     setPlaka(newPlakaEntries);
-  }, [rows]);
+  }, [selectedRowsData]);
 
   useEffect(() => {
     const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
@@ -523,7 +535,7 @@ const Vehicles = () => {
             <DurumFiltresi />
           </div>
           <div>
-            <OperationsInfo ids={keys} />
+            <OperationsInfo ids={keys} selectedRowsData={selectedRowsData} />
           </div>
         </div>
       </div>
@@ -551,9 +563,9 @@ const Vehicles = () => {
                 size="small"
                 onChange={handleTableChange}
                 rowSelection={{
-                  selectedRowKeys: selectedRowKeys,
-                  onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
-                  onSelect: handleRowSelection,
+                  selectedRowKeys: keys, // selectedRowKeys state ile senkronize
+                  onChange: handleRowSelectionChange, // Çoklu seçim için
+                  onSelect: handleRowSelection, // Tekli seçim için
                 }}
                 components={{
                   header: {

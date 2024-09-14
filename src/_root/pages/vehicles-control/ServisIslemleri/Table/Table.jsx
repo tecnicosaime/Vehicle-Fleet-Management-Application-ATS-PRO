@@ -514,17 +514,17 @@ const Sigorta = () => {
     },
 
     {
-      title: "Bölge - ?",
-      dataIndex: "bolge",
-      key: "bolge",
+      title: "Lokasyon",
+      dataIndex: "lokasyon",
+      key: "lokasyon",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.bolge === null) return -1;
-        if (b.bolge === null) return 1;
-        return a.bolge.localeCompare(b.bolge);
+        if (a.lokasyon === null) return -1;
+        if (b.lokasyon === null) return 1;
+        return a.lokasyon.localeCompare(b.lokasyon);
       },
     },
 
