@@ -4,17 +4,27 @@ import { DownloadDocumentByIdService } from "../../../api/services/upload/servic
 import { InboxOutlined, FileOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button, message, Spin, Upload } from "antd";
 
-const FileUpload = ({ filesUrl, loadingFiles, setFiles }) => {
+const FileUpload = ({ filesUrl, loadingFiles, setFiles, uploadFinished, setUploadFinished }) => {
   const [filesArr, setFilesArr] = useState([]);
+  const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
     setFilesArr(filesUrl);
   }, [filesUrl]);
 
+  useEffect(() => {
+    if (uploadFinished === 2) {
+      setFiles(new FormData()); // file içeriğini temizler
+      setUploadFinished(1);
+      setFileList([]); // fileList'i sıfırlar
+    }
+  }, [uploadFinished, setFiles, setUploadFinished]);
+
   const handleUpload = (file) => {
     const formData = new FormData();
     formData.append("documents", file);
     setFiles(formData);
+    setFileList([file]); // fileList'i günceller
   };
 
   const downloadFile = (file) => {
@@ -71,6 +81,7 @@ const FileUpload = ({ filesUrl, loadingFiles, setFiles }) => {
 
       <Upload.Dragger
         // accept=".txt,.doc,.docs, .pdf, .xlsx"
+        fileList={fileList}
         listType="picture"
         className="upload-list-inline"
         beforeUpload={(file) => {
@@ -96,6 +107,7 @@ const FileUpload = ({ filesUrl, loadingFiles, setFiles }) => {
           // handleUpload(file);
           return false;
         }}
+        onChange={({ fileList }) => setFileList(fileList)}
       >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
@@ -113,6 +125,8 @@ FileUpload.propTypes = {
   filesUrl: PropTypes.array,
   loadingFiles: PropTypes.bool,
   setFiles: PropTypes.func,
+  uploadFinished: PropTypes.number,
+  setUploadFinished: PropTypes.func,
 };
 
 export default FileUpload;

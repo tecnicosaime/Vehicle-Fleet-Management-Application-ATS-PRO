@@ -2,12 +2,34 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { DownloadPhotoByIdService } from "../../../api/services/upload/services";
 import { InboxOutlined, UserOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Image, message, Spin, Upload } from "antd";
+import { Image, message, Spin, Upload, ConfigProvider } from "antd";
+import trTR from "antd/es/locale/tr_TR";
+import enUS from "antd/es/locale/en_US";
+import ruRU from "antd/es/locale/ru_RU";
+import azAZ from "antd/es/locale/az_AZ";
 
 const PhotoUpload = ({ imageUrls, loadingImages, setImages }) => {
   const [imagesArr, setImagesArr] = useState([]);
+  const [locale, setLocale] = useState(trTR); // Default locale
 
   useEffect(() => {
+    // Retrieve the language code from localStorage
+    const language = localStorage.getItem("i18nextLng");
+
+    // Map the language code to the corresponding antd locale object
+    const localeMap = {
+      tr: trTR,
+      en: enUS,
+      ru: ruRU,
+      az: azAZ,
+      // Add other mappings as needed
+    };
+
+    // Set the locale based on the retrieved language code
+    if (language && localeMap[language]) {
+      setLocale(localeMap[language]);
+    }
+
     const fetchImages = async () => {
       try {
         const requests = imageUrls.map((img) => {
@@ -45,7 +67,7 @@ const PhotoUpload = ({ imageUrls, loadingImages, setImages }) => {
   const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <>
+    <ConfigProvider locale={locale}>
       {loadingImages ? (
         <div className="flex gap-1">
           {imagesArr.map((url, i) => {
@@ -102,7 +124,7 @@ const PhotoUpload = ({ imageUrls, loadingImages, setImages }) => {
           Tek seferde bir veya birden fazla resim yüklemeyi destekler. Şirket verileri veya diğer yasaklı resimlerin yüklenmesi kesinlikle yasaktır.
         </p>
       </Upload.Dragger>
-    </>
+    </ConfigProvider>
   );
 };
 
