@@ -311,49 +311,51 @@ export default function MainTabs({ modalOpen }) {
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <Controller
-              name="herKm"
-              control={control}
-              render={({ field }) => (
-                <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
-                  Her
-                </Checkbox>
-              )}
-            />
-            <Controller name="herKmInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
-            <Text>Son Uygulama</Text>
-            <Controller name="herKmInput2" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
-            <Text>Hedef</Text>
-            <Text>{sum}</Text>
-          </div>
-          {/* <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", border: "1px solid #00000024", borderRadius: "5px", padding: "5px", width: "100%", gap: "10px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <Controller
+                name="herKm"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                    Her
+                  </Checkbox>
+                )}
+              />
+              <Controller name="herKmInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} addonAfter="km" />} />
+              <Text>Son Uygulama</Text>
+              <Controller name="herKmInput2" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
+              <Text>Hedef</Text>
+              <Text>{sum}</Text>
+            </div>
+            {/* <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <Text>Hedef</Text>
             <Text>{sum}</Text>
           </div>*/}
-        </div>
+          </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <Controller
-              name="herGun"
-              control={control}
-              render={({ field }) => (
-                <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
-                  Her
-                </Checkbox>
-              )}
-            />
-            <Controller name="herGunInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
-            <Text>Son Uygulama</Text>
-            <Controller
-              name="herTarihi"
-              control={control}
-              render={({ field }) => <DatePicker {...field} style={{ width: "150px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
-            />
-            <Text>Hedef</Text>
-            <Text>{sum1}</Text>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <Controller
+                name="herGun"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                    Her
+                  </Checkbox>
+                )}
+              />
+              <Controller name="herGunInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} addonAfter="gün" />} />
+              <Text>Son Uygulama</Text>
+              <Controller
+                name="herTarihi"
+                control={control}
+                render={({ field }) => <DatePicker {...field} style={{ width: "150px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
+              />
+              <Text>Hedef</Text>
+              <Text>{sum1}</Text>
+            </div>
           </div>
         </div>
       </div>
