@@ -38,6 +38,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
     defaultValues: {
       PlakaID: "",
       Plaka: null,
+      aktif: true,
       duzenlenmeTarihi: null,
       duzenlenmeSaati: null,
       servisKodu: "",
@@ -215,7 +216,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           Ekle
         </Button>
         <Modal
-          width="510px"
+          width="650px"
           centered
           title="Yeni Kayıt Ekle"
           destroyOnClose

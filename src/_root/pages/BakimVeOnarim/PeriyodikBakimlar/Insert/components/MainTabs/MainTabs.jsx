@@ -62,6 +62,8 @@ export default function MainTabs({ modalOpen }) {
   const [localeDateFormat, setLocaleDateFormat] = useState("DD/MM/YYYY"); // Varsayılan format
   const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default time format
   const [selectboxTitle, setSelectboxTitle] = useState("");
+  const [sum, setSum] = useState("0 km");
+  const [sum1, setSum1] = useState("");
 
   const islemiYapan = watch("islemiYapan");
 
@@ -72,6 +74,16 @@ export default function MainTabs({ modalOpen }) {
       setSelectboxTitle("Bakım Departmanı");
     }
   }, [islemiYapan]);
+
+  const herGunInput = watch("herGunInput");
+  const herTarihi = watch("herTarihi");
+
+  useEffect(() => {
+    if (herGunInput && herTarihi) {
+      const targetDate = dayjs(herTarihi).add(herGunInput, "day");
+      setSum1(targetDate.format("DD/MM/YYYY"));
+    }
+  }, [herGunInput, herTarihi]);
 
   useEffect(() => {
     setValue("islemiYapan1", "");
@@ -212,15 +224,37 @@ export default function MainTabs({ modalOpen }) {
 
   // tarih formatlamasını kullanıcının yerel tarih formatına göre ayarlayın sonu
 
+  const herKmInput = watch("herKmInput");
+  const herKmInput2 = watch("herKmInput2");
+
+  useEffect(() => {
+    const calculateSum = () => {
+      const value1 = Number(herKmInput) || 0;
+      const value2 = Number(herKmInput2) || 0;
+      setSum(`${value1 + value2} km`);
+    };
+
+    calculateSum();
+  }, [herKmInput, herKmInput2]);
+
   return (
     <div style={{ display: "flex", marginBottom: "15px", flexDirection: "column", gap: "10px", width: "100%" }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "10px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
-          <div style={{ width: "100%", maxWidth: "330px" }}>
+          <div style={{ display: "flex", width: "100%", maxWidth: "400px", alignItems: "center", gap: "10px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
               <Plaka />
             </StyledDivBottomLine>
+            <Controller
+              name="aktif"
+              control={control}
+              render={({ field }) => (
+                <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                  Aktif
+                </Checkbox>
+              )}
+            />
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px" }}>
             <Text style={{ fontSize: "14px", fontWeight: "600" }}>Servis Kodu:</Text>
@@ -275,6 +309,51 @@ export default function MainTabs({ modalOpen }) {
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
               <Controller name="servisTipi" control={control} render={({ field }) => <Input {...field} disabled style={{ flex: 1 }} />} />
             </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Controller
+              name="herKm"
+              control={control}
+              render={({ field }) => (
+                <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                  Her
+                </Checkbox>
+              )}
+            />
+            <Controller name="herKmInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
+            <Text>Son Uygulama</Text>
+            <Controller name="herKmInput2" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
+            <Text>Hedef</Text>
+            <Text>{sum}</Text>
+          </div>
+          {/* <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <Text>Hedef</Text>
+            <Text>{sum}</Text>
+          </div>*/}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Controller
+              name="herGun"
+              control={control}
+              render={({ field }) => (
+                <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                  Her
+                </Checkbox>
+              )}
+            />
+            <Controller name="herGunInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
+            <Text>Son Uygulama</Text>
+            <Controller
+              name="herTarihi"
+              control={control}
+              render={({ field }) => <DatePicker {...field} style={{ width: "150px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
+            />
+            <Text>Hedef</Text>
+            <Text>{sum1}</Text>
           </div>
         </div>
       </div>
