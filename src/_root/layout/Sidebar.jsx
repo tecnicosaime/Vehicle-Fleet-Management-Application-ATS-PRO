@@ -189,7 +189,7 @@ const items = [
       },
     ],
   },
-  {
+  /*{
     key: "338",
     icon: <HiOutlineDocumentReport />,
     label: t("finansYonetim"),
@@ -207,8 +207,8 @@ const items = [
         label: <Link to={"/hazirlaniyor"}>{t("gelirIslemleri")}</Link>,
       },
     ],
-  },
-  {
+  },*/
+  /*{
     key: "348",
     icon: <HiOutlineDocumentReport />,
     label: t("satinAlmaYonetim"),
@@ -226,12 +226,12 @@ const items = [
         label: <Link to={"/hazirlaniyor"}>{t("siparisler")}</Link>,
       },
     ],
-  },
-  {
+  },*/
+  /*{
     key: "368",
     icon: <HiOutlineDocumentReport />,
     label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
-  },
+  },*/
   {
     key: "38",
     icon: <HiOutlineDocumentReport />,
