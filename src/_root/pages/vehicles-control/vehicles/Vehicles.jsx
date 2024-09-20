@@ -66,11 +66,13 @@ const Vehicles = () => {
       const response = await AxiosInstance.get("ReminderSettings/GetReminderSettingsItems");
       if (response.data) {
         setAyarlarData(response.data);
-        setDataLoaded(true); // Veriler yüklendi
+      } else {
+        setAyarlarData(null); // Or set to an empty array if appropriate
       }
+      setDataLoaded(true); // Always set dataLoaded to true
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
-      setDataLoaded(true); // Hata durumunda da veriler yüklendi
+      setDataLoaded(true); // Ensure dataLoaded is true even if there's an error
     }
   };
 
