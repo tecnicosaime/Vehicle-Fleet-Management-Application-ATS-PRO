@@ -291,95 +291,116 @@ const Sigorta = () => {
     },
 
     {
-      title: t("herKm"),
-      dataIndex: "herKm",
-      key: "herKm",
-      width: 120,
-      ellipsis: true,
+      title: t("sonBakim"),
+      key: "sonBakim",
       visible: true, // Varsayılan olarak açık
+      children: [
+        {
+          title: t("sonKm"),
+          dataIndex: "sonKm",
+          key: "sonKm",
+          width: 120,
+          ellipsis: true,
+          visible: true, // Varsayılan olarak açık
 
-      sorter: (a, b) => {
-        if (a.herKm === null) return -1;
-        if (b.herKm === null) return 1;
-        return a.herKm - b.herKm;
-      },
+          sorter: (a, b) => {
+            if (a.sonKm === null) return -1;
+            if (b.sonKm === null) return 1;
+            return a.sonKm - b.sonKm;
+          },
+        },
+
+        {
+          title: t("sonTarih"),
+          dataIndex: "sonTarih",
+          key: "sonTarih",
+          width: 110,
+          ellipsis: true,
+          sorter: (a, b) => {
+            if (a.sonTarih === null) return -1;
+            if (b.sonTarih === null) return 1;
+            return a.sonTarih.localeCompare(b.sonTarih);
+          },
+
+          visible: true, // Varsayılan olarak açık
+          render: (text) => formatDate(text),
+        },
+      ],
     },
 
     {
-      title: t("herGun"),
-      dataIndex: "herGun",
-      key: "herGun",
-      width: 120,
-      ellipsis: true,
+      title: t("bakimSikligi"),
+      key: "bakimSikligi",
       visible: true, // Varsayılan olarak açık
+      children: [
+        {
+          title: t("herKm"),
+          dataIndex: "herKm",
+          key: "herKm",
+          width: 120,
+          ellipsis: true,
+          visible: true, // Varsayılan olarak açık
 
-      sorter: (a, b) => {
-        if (a.herGun === null) return -1;
-        if (b.herGun === null) return 1;
-        return a.herGun - b.herGun;
-      },
+          sorter: (a, b) => {
+            if (a.herKm === null) return -1;
+            if (b.herKm === null) return 1;
+            return a.herKm - b.herKm;
+          },
+        },
+
+        {
+          title: t("herGun"),
+          dataIndex: "herGun",
+          key: "herGun",
+          width: 120,
+          ellipsis: true,
+          visible: true, // Varsayılan olarak açık
+
+          sorter: (a, b) => {
+            if (a.herGun === null) return -1;
+            if (b.herGun === null) return 1;
+            return a.herGun - b.herGun;
+          },
+        },
+      ],
     },
 
     {
-      title: t("sonKm"),
-      dataIndex: "sonKm",
-      key: "sonKm",
-      width: 120,
-      ellipsis: true,
+      title: t("sonrakiBakimZamani"),
+      key: "sonrakiBakimZamani",
       visible: true, // Varsayılan olarak açık
+      children: [
+        {
+          title: t("hedefKm"),
+          dataIndex: "hedefKm",
+          key: "hedefKm",
+          width: 120,
+          ellipsis: true,
+          visible: true, // Varsayılan olarak açık
 
-      sorter: (a, b) => {
-        if (a.sonKm === null) return -1;
-        if (b.sonKm === null) return 1;
-        return a.sonKm - b.sonKm;
-      },
-    },
+          sorter: (a, b) => {
+            if (a.hedefKm === null) return -1;
+            if (b.hedefKm === null) return 1;
+            return a.hedefKm - b.hedefKm;
+          },
+        },
 
-    {
-      title: t("sonTarih"),
-      dataIndex: "sonTarih",
-      key: "sonTarih",
-      width: 110,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.sonTarih === null) return -1;
-        if (b.sonTarih === null) return 1;
-        return a.sonTarih.localeCompare(b.sonTarih);
-      },
+        {
+          title: t("hedefTarih"),
+          dataIndex: "hedefTarih",
+          key: "hedefTarih",
+          width: 110,
+          ellipsis: true,
+          sorter: (a, b) => {
+            if (a.hedefTarih === null) return -1;
+            if (b.hedefTarih === null) return 1;
+            return a.hedefTarih.localeCompare(b.hedefTarih);
+          },
 
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatDate(text),
-    },
-
-    {
-      title: t("hedefTarih"),
-      dataIndex: "hedefTarih",
-      key: "hedefTarih",
-      width: 110,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.hedefTarih === null) return -1;
-        if (b.hedefTarih === null) return 1;
-        return a.hedefTarih.localeCompare(b.hedefTarih);
-      },
-
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatDate(text),
-    },
-
-    {
-      title: t("hedefKm"),
-      dataIndex: "hedefKm",
-      key: "hedefKm",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.hedefKm === null) return -1;
-        if (b.hedefKm === null) return 1;
-        return a.hedefKm - b.hedefKm;
-      },
+          visible: true, // Varsayılan olarak açık
+          render: (text) => formatDate(text),
+        },
+      ],
     },
 
     {
@@ -950,6 +971,7 @@ const Sigorta = () => {
             components={components}
             rowSelection={rowSelection}
             columns={filteredColumns}
+            bordered
             dataSource={data}
             pagination={{
               current: currentPage,
