@@ -36,68 +36,22 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   //* export
   const methods = useForm({
     defaultValues: {
-      PlakaID: "",
       Plaka: null,
+      PlakaID: null,
       aktif: true,
-      duzenlenmeTarihi: null,
-      duzenlenmeSaati: null,
-      servisKodu: "",
-      servisKoduID: "",
-      servisTanimi: "",
-      servisTipi: "",
-      Surucu: null,
-      SurucuID: "",
-      servisNedeni: null,
-      servisNedeniID: "",
-      faturaTarihi: null,
-      faturaNo: "",
-      hasarNo: "",
-      hasarNoID: "",
-      talepNo: "",
-      onay: null,
-      onayID: "",
-      onayLabel: "",
-      baslamaTarihi: null,
-      baslamaSaati: null,
-      bitisTarihi: null,
-      bitisSaati: null,
-      aracKM: "",
-      islemiYapan: "1",
-      islemiYapan1: "",
-      islemiYapan1ID: "",
-      iscilikUcreti: "",
-      malzemeUcreti: "",
-      digerUcreti: "",
-      kdvUcreti: "",
-      eksiUcreti: "",
-      sigortaBilgileri: false,
-      sigorta: "",
-      sigortaID: "",
-      policeNo: "",
-      firma: "",
-
-      ozelAlan1: "",
-      ozelAlan2: "",
-      ozelAlan3: "",
-      ozelAlan4: "",
-      ozelAlan5: "",
-      ozelAlan6: "",
-      ozelAlan7: "",
-      ozelAlan8: "",
-      ozelAlan9: null,
-      ozelAlan9ID: "",
-      ozelAlan10: null,
-      ozelAlan10ID: "",
-      ozelAlan11: "",
-      ozelAlan12: "",
-
-      durumBilgisi: "",
-      garantiKapsami: false,
-
-      surucuOder: false,
-
-      aciklama: "",
-      sikayetler: "",
+      servisKodu: null,
+      servisKoduID: null,
+      servisTanimi: null,
+      servisTipi: null,
+      herKm: false,
+      herKmInput: null,
+      herKmInput2: null,
+      herGun: false,
+      herGunInput: null,
+      herTarihi: null,
+      aciklama: null,
+      hedefTarih: null,
+      hedefKm: null,
     },
   });
 
@@ -118,56 +72,23 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
     const Body = {
       aracId: Number(data.PlakaID),
       bakimId: Number(data.servisKoduID),
-      kazaId: Number(data.hasarNoID),
-      durumBilgisi: Number(data.durumBilgisi),
-      islemiYapan: Number(data.islemiYapan),
-      servisNedeniKodId: Number(data.servisNedeniID),
-
-      islemiYapanId: Number(data.islemiYapan1ID),
-      surucuId: Number(data.SurucuID),
-      // lokasyonId: data.,
-      km: Number(data.aracKM),
-      indirim: Number(data.eksiUcreti),
-      // toplam: data.,
-      kdv: Number(data.kdvUcreti),
-      diger: Number(data.digerUcreti),
-      malzeme: Number(data.malzemeUcreti),
-      iscilik: Number(data.iscilikUcreti),
-      talepNo: data.talepNo,
-      onayId: Number(data.onayID),
-      tarih: formatDateWithDayjs(data.duzenlenmeTarihi) || null,
-      baslamaTarih: formatDateWithDayjs(data.baslamaTarihi) || null,
-      bitisTarih: formatDateWithDayjs(data.bitisTarihi) || null,
-      faturaTarih: formatDateWithDayjs(data.faturaTarihi) || null,
-      saat: formatTimeWithDayjs(data.duzenlenmeSaati) || null,
-      baslamaSaat: formatTimeWithDayjs(data.baslamaSaati) || null,
-      bitisSaat: formatTimeWithDayjs(data.bitisSaati) || null,
-      faturaNo: data.faturaNo,
+      herKm: Number(data.herKmInput),
+      herGun: Number(data.herGunInput),
+      sonKm: Number(data.herKmInput2),
+      sonTarih: formatDateWithDayjs(data.herTarihi) || null,
+      hedefTarih: formatDateWithDayjs(data.hedefTarih) || null,
+      hedefKm: Number(data.hedefKm),
+      aktif: data.aktif,
       aciklama: data.aciklama,
-      sikayetler: data.sikayetler,
-      sigortaVar: data.sigortaBilgileri,
-      surucuOder: data.surucuOder,
-      garantili: data.garantiKapsami,
-      sigortaId: Number(data.sigortaID),
-      ozelAlan1: data.ozelAlan1,
-      ozelAlan2: data.ozelAlan2,
-      ozelAlan3: data.ozelAlan3,
-      ozelAlan4: data.ozelAlan4,
-      ozelAlan5: data.ozelAlan5,
-      ozelAlan6: data.ozelAlan6,
-      ozelAlan7: data.ozelAlan7,
-      ozelAlan8: data.ozelAlan8,
-      ozelAlanKodId9: Number(data.ozelAlan9ID),
-      ozelAlanKodId10: Number(data.ozelAlan10ID),
-      ozelAlan11: Number(data.ozelAlan11),
-      ozelAlan12: Number(data.ozelAlan12),
+      kalanKm: 0,
+      kalanSure: 0,
     };
 
     // AxiosInstance.post("/api/endpoint", { Body }).then((response) => {
     // handle response
     // });
 
-    AxiosInstance.post("VehicleServices/AddServiceItem", Body)
+    AxiosInstance.post("PeriodicMaintenance/AddPeriodicMaintenance", Body)
       .then((response) => {
         // Handle successful response here, e.g.:
         console.log("Data sent successfully:", response);
@@ -216,7 +137,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           Ekle
         </Button>
         <Modal
-          width="650px"
+          width="700px"
           centered
           title="Yeni Kayıt Ekle"
           destroyOnClose

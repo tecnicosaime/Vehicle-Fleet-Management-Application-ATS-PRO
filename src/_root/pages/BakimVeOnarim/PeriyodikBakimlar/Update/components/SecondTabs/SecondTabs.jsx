@@ -2,10 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Input, Tabs, Typography } from "antd";
 import styled from "styled-components";
 import { Controller, useFormContext } from "react-hook-form";
-import Sigorta from "./components/Sigorta/Sigorta";
-import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar.jsx";
-import IscilikTablo from "./components/Iscilik/IscilikTablo";
-import Malzemeler from "./components/Malzemeler/Malzemeler";
 
 const { Text, Link } = Typography;
 const { TextArea } = Input;
@@ -45,7 +41,7 @@ const StyledTabs = styled(Tabs)`
 
 export default function SecondTabs({ refreshKey, fieldRequirements }) {
   const { watch } = useFormContext();
-  const [activeTabKey, setActiveTabKey] = useState("1"); // Default to the first tab
+  const [activeTabKey, setActiveTabKey] = useState("3"); // Default to the first tab
 
   // Modify the onChange handler to update the active tab state
   const onChange = (key) => {
@@ -56,30 +52,6 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
 
   const items = [
     {
-      key: "1",
-      label: "İş İşçilik",
-      children: <IscilikTablo isActive={activeTabKey === "1"} fieldRequirements={fieldRequirements} />,
-    },
-    {
-      key: "2",
-      label: "Malzemeler",
-      children: <Malzemeler isActive={activeTabKey === "2"} fieldRequirements={fieldRequirements} />,
-    },
-    {
-      key: "3",
-      label: "Sigorta",
-      children: <Sigorta fieldRequirements={fieldRequirements} />,
-    },
-    {
-      key: "4",
-      label: "Şikayetler",
-      children: (
-        <div>
-          <Controller name="sikayetler" render={({ field }) => <TextArea {...field} rows={4} placeholder="Şikayetler" style={{ width: "100%", resize: "none" }} />} />
-        </div>
-      ),
-    },
-    {
       key: "5",
       label: "Açıklama",
       children: (
@@ -87,12 +59,6 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
           <Controller name="aciklama" render={({ field }) => <TextArea {...field} rows={4} placeholder="Açıklama" style={{ width: "100%", resize: "none" }} />} />
         </div>
       ),
-    },
-    {
-      key: "6",
-      label: "Özel Alanlar",
-      // children: <SureBilgileri fieldRequirements={fieldRequirements} />,
-      children: <OzelAlanlar />,
     },
   ];
 

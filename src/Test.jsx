@@ -1,120 +1,242 @@
-import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { DownloadDocumentByIdService } from "../../../api/services/upload/services";
-import { InboxOutlined, FileOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Button, message, Spin, Upload } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Modal, Table, Input } from "antd";
+import AxiosInstance from "../../../../../../../../api/http";
+import { Resizable } from "react-resizable";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
-const FileUpload = ({ filesUrl, loadingFiles, setFiles, uploadFinished, setUploadFinished }) => {
-  const [filesArr, setFilesArr] = useState([]);
-  const [fileList, setFileList] = useState([]);
+const ResizableTitle = (props) => {
+  const { onResize, width, ...restProps } = props;
 
-  useEffect(() => {
-    setFilesArr(filesUrl);
-  }, [filesUrl]);
-
-  useEffect(() => {
-    if (uploadFinished === 2) {
-      setFiles(new FormData()); // file içeriğini temizler
-      setUploadFinished(1);
-      setFileList([]); // fileList'i sıfırlar
-    }
-  }, [uploadFinished, setFiles, setUploadFinished]);
-
-  const handleUpload = (file) => {
-    const formData = new FormData();
-    formData.append("documents", file);
-    setFiles(formData);
-    setFileList([file]); // fileList'i günceller
+  const handleStyle = {
+    position: "absolute",
+    bottom: 0,
+    right: "-5px",
+    width: "20%",
+    height: "100%",
+    zIndex: 2,
+    cursor: "col-resize",
+    padding: "0px",
+    backgroundSize: "0px",
   };
-
-  const downloadFile = (file) => {
-    const data = {
-      fileId: file.tbDosyaId,
-      extension: file.dosyaUzanti,
-      fileName: file.dosyaAd,
-    };
-
-    DownloadDocumentByIdService(data)
-      .then((res) => {
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(res.data);
-        link.download = file.dosyaAd;
-        link.click();
-        window.URL.revokeObjectURL(link.href);
-      })
-      .catch((err) => {
-        console.error("Error downloading file:", err);
-      });
-  };
-
-  // Custom loading icon
-  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
-
+  if (!width) {
+    return <th {...restProps} />;
+  }
   return (
-    <>
-      {loadingFiles ? (
-        <div className="flex gap-1">
-          {filesArr.map((url, i) => {
-            return (
-              <div key={i} className="border p-10 mb-10">
-                <div style={{ margin: "10px", height: "150px", width: "150px", objectFit: "cover", position: "relative" }}>
-                  <Spin spinning={true} indicator={customIcon}></Spin>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="flex gap-1">
-          {filesArr.map((file, i) => {
-            return (
-              <div key={i} className="mb-10">
-                <Button className="btn btn-min file-btn" onClick={() => downloadFile(file)}>
-                  {" "}
-                  <FileOutlined /> {file.dosyaAd}
-                </Button>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <Upload.Dragger
-        fileList={fileList}
-        listType="picture"
-        className="upload-list-inline"
-        beforeUpload={(file) => {
-          const isLt2M = file.size / 1024 / 1024 < 2;
-
-          if (!isLt2M) {
-            message.error("File must be smaller than 2MB!");
-          }
-
-          if (isLt2M) {
-            handleUpload(file);
-          }
-          return false;
-        }}
-        onChange={({ fileList }) => setFileList(fileList)}
-      >
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">Tıklayın veya bu alana dosya sürükleyin</p>
-        <p className="ant-upload-hint">
-          Tek seferde bir veya birden fazla dosya yüklemeyi destekler. Şirket verileri veya diğer yasaklı dosyaların yüklenmesi kesinlikle yasaktır.
-        </p>
-      </Upload.Dragger>
-    </>
+    <Resizable
+      width={width}
+      height={0}
+      handle={
+        <span
+          className="react-resizable-handle"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          style={handleStyle}
+        />
+      }
+      onResize={onResize}
+      draggableOpts={{
+        enableUserSelectHack: false,
+      }}
+    >
+      <th {...restProps} />
+    </Resizable>
   );
 };
 
-FileUpload.propTypes = {
-  filesUrl: PropTypes.array,
-  loadingFiles: PropTypes.bool,
-  setFiles: PropTypes.func,
-  uploadFinished: PropTypes.number,
-  setUploadFinished: PropTypes.func,
-};
+export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-export default FileUpload;
+  const [searchTerm1, setSearchTerm1] = useState("");
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const [columns, setColumns] = useState(() => {
+    const savedWidths = localStorage.getItem("servisTableColumnWidths");
+    const defaultColumns = [
+      {
+        title: "Servis Kodu",
+        dataIndex: "code",
+        key: "code",
+        width: 150,
+        sorter: (a, b) => {
+          if (a.code === null) return -1;
+          if (b.code === null) return 1;
+          return a.code.localeCompare(b.code);
+        },
+      },
+      {
+        title: "Servis Tanımı",
+        dataIndex: "subject",
+        key: "subject",
+        width: 350,
+      },
+      {
+        title: "Km",
+        dataIndex: "km",
+        key: "km",
+        width: 100,
+        render: (text) => <span>{Number(text).toLocaleString()}</span>,
+      },
+      {
+        title: "Gün",
+        dataIndex: "gun",
+        key: "gun",
+        width: 100,
+      },
+      {
+        title: "Servis Tipi",
+        dataIndex: "servisTipi",
+        key: "servisTipi",
+        width: 100,
+      },
+      {
+        title: "Peryodik",
+        dataIndex: "periyodik",
+        key: "periyodik",
+        width: 100,
+        render: (text) => (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {text ? <CheckCircleOutlined style={{ color: "green" }} /> : <CloseCircleOutlined style={{ color: "red" }} />}
+          </div>
+        ),
+      },
+    ];
+
+    if (!savedWidths) {
+      return defaultColumns;
+    }
+
+    const parsedWidths = JSON.parse(savedWidths);
+    return defaultColumns.map((col, index) => ({
+      ...col,
+      width: parsedWidths[index] || col.width,
+    }));
+  });
+
+  const handleResize =
+    (index) =>
+    (_, { size }) => {
+      const newColumns = [...columns];
+      newColumns[index] = {
+        ...newColumns[index],
+        width: size.width,
+      };
+      setColumns(newColumns);
+      localStorage.setItem("servisTableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
+    };
+  const mergedColumns = columns.map((col, index) => ({
+    ...col,
+    onHeaderCell: (column) => ({
+      width: column.width,
+      onResize: handleResize(index),
+    }),
+  }));
+
+  const fetch = useCallback(() => {
+    setLoading(true);
+    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}&parameter=${encodeURIComponent(searchTerm1 || "")}&isPeriodic=true`)
+      .then((response) => {
+        const { list, recordCount } = response.data;
+        const fetchedData = list.map((item) => ({
+          ...item,
+          key: item.bakimId,
+          code: item.bakimKodu,
+          subject: item.tanim,
+        }));
+        setData(fetchedData);
+        setPagination((prev) => ({
+          ...prev,
+          total: recordCount,
+        }));
+      })
+      .finally(() => setLoading(false));
+  }, [pagination.current, searchTerm1]);
+
+  const handleModalToggle = () => {
+    setIsModalVisible((prev) => !prev);
+    if (!isModalVisible) {
+      fetch();
+      setSelectedRowKeys([]);
+    }
+  };
+
+  const handleModalOk = () => {
+    const selectedData = data.find((item) => item.key === selectedRowKeys[0]);
+    if (selectedData) {
+      onSubmit && onSubmit(selectedData);
+    }
+    setIsModalVisible(false);
+  };
+
+  useEffect(() => {
+    setSelectedRowKeys(workshopSelectedId ? [workshopSelectedId] : []);
+  }, [workshopSelectedId]);
+
+  const onRowSelectChange = (selectedKeys) => {
+    setSelectedRowKeys(selectedKeys.length ? [selectedKeys[0]] : []);
+  };
+
+  const handleTableChange = (pagination) => {
+    setPagination((prev) => ({
+      ...prev,
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    }));
+  };
+
+  // Debounce fetch when search term changes
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm1]);
+
+  // Fetch data when pagination changes
+  useEffect(() => {
+    fetch();
+  }, [pagination.current]);
+
+  const handleSearch1 = (e) => {
+    const value = e.target.value;
+    setSearchTerm1(value);
+  };
+
+  return (
+    <div>
+      <Button onClick={handleModalToggle}> + </Button>
+      <Modal width={1200} centered title="Servis Kodları" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
+        <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px", marginBottom: "15px" }} />
+        <Table
+          rowSelection={{
+            type: "radio",
+            selectedRowKeys,
+            onChange: onRowSelectChange,
+          }}
+          bordered
+          components={{
+            header: {
+              cell: ResizableTitle,
+            },
+          }}
+          scroll={{ y: "calc(100vh - 380px)" }}
+          columns={mergedColumns}
+          dataSource={data}
+          loading={loading}
+          pagination={pagination}
+          onChange={handleTableChange}
+        />
+      </Modal>
+    </div>
+  );
+}

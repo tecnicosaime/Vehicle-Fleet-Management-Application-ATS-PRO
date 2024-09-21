@@ -7,14 +7,13 @@ import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
 
-  // You may need to adjust the style to suit your exact needs
   const handleStyle = {
     position: "absolute",
     bottom: 0,
     right: "-5px",
     width: "20%",
-    height: "100%", // this is the area that is draggable, you can adjust it
-    zIndex: 2, // ensure it's above other elements
+    height: "100%",
+    zIndex: 2,
     cursor: "col-resize",
     padding: "0px",
     backgroundSize: "0px",
@@ -45,25 +44,6 @@ const ResizableTitle = (props) => {
   );
 };
 
-// Türkçe karakterleri İngilizce karşılıkları ile değiştiren fonksiyon
-const normalizeText = (text) => {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ğ/g, "g")
-    .replace(/Ğ/g, "G")
-    .replace(/ü/g, "u")
-    .replace(/Ü/g, "U")
-    .replace(/ş/g, "s")
-    .replace(/Ş/g, "S")
-    .replace(/ı/g, "i")
-    .replace(/İ/g, "I")
-    .replace(/ö/g, "o")
-    .replace(/Ö/g, "O")
-    .replace(/ç/g, "c")
-    .replace(/Ç/g, "C");
-};
-
 export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -71,7 +51,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
   const [loading, setLoading] = useState(false);
 
   const [searchTerm1, setSearchTerm1] = useState("");
-  const [filteredData1, setFilteredData1] = useState([]);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -118,7 +98,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         width: 100,
       },
       {
-        title: "Peryodik",
+        title: "Periyodik",
         dataIndex: "periyodik",
         key: "periyodik",
         width: 100,
@@ -162,9 +142,9 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
 
   const fetch = useCallback(() => {
     setLoading(true);
-    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}`)
+    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}&parameter=${encodeURIComponent(debouncedSearchTerm || "")}&isPeriodic=true`)
       .then((response) => {
-        const { list, recordCount } = response.data; // Destructure the list and recordCount from the response
+        const { list, recordCount } = response.data;
         const fetchedData = list.map((item) => ({
           ...item,
           key: item.bakimId,
@@ -172,18 +152,25 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
           subject: item.tanim,
         }));
         setData(fetchedData);
-        setPagination({
-          ...pagination,
-          total: recordCount, // Update the total number of records for pagination
-        });
+        setPagination((prev) => ({
+          ...prev,
+          total: recordCount,
+        }));
       })
       .finally(() => setLoading(false));
-  }, [pagination.current]);
+  }, [pagination.current, debouncedSearchTerm]);
 
   const handleModalToggle = () => {
-    setIsModalVisible((prev) => !prev);
-    if (!isModalVisible) {
-      fetch();
+    const nextVisible = !isModalVisible;
+    setIsModalVisible(nextVisible);
+
+    if (!nextVisible) {
+      // Modal is being closed
+      setSearchTerm1("");
+      setDebouncedSearchTerm("");
+      setPagination({ current: 1, pageSize: 10 }); // Reset pagination
+    } else {
+      // Modal is being opened
       setSelectedRowKeys([]);
     }
   };
@@ -205,23 +192,37 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
   };
 
   const handleTableChange = (newPagination) => {
-    setPagination(newPagination);
+    setPagination((prev) => ({
+      ...prev,
+      current: newPagination.current,
+      pageSize: newPagination.pageSize,
+    }));
   };
 
-  // Arama işlevselliği için handleSearch fonksiyonları
+  // Debounce the search term
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm1);
+      setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
+    }, 2000); // 2000 milliseconds = 2 seconds
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm1]);
+
+  // Fetch data when pagination or debounced search term changes
+  useEffect(() => {
+    if (isModalVisible) {
+      fetch();
+    }
+  }, [pagination.current, debouncedSearchTerm, isModalVisible, fetch]);
+
   const handleSearch1 = (e) => {
     const value = e.target.value;
     setSearchTerm1(value);
-    const normalizedSearchTerm = normalizeText(value);
-    if (value) {
-      const filtered = data.filter((item) =>
-        Object.keys(item).some((key) => item[key] && normalizeText(item[key].toString()).toLowerCase().includes(normalizedSearchTerm.toLowerCase()))
-      );
-      setFilteredData1(filtered);
-    } else {
-      setFilteredData1(data);
-    }
   };
+
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
@@ -241,7 +242,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
           }}
           scroll={{ y: "calc(100vh - 380px)" }}
           columns={mergedColumns}
-          dataSource={filteredData1.length > 0 || searchTerm1 ? filteredData1 : data}
+          dataSource={data}
           loading={loading}
           pagination={pagination}
           onChange={handleTableChange}
