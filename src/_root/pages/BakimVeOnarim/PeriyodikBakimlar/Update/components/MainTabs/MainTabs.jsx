@@ -1,17 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import ServisKoduTablo from "./components/ServisKoduTablo.jsx";
 import styled from "styled-components";
 import Plaka from "./components/Plaka.jsx";
-import Surucu from "./components/Surucu.jsx";
-import ServisNedeni from "./components/ServisNedeni.jsx";
 import dayjs from "dayjs";
-import HasarNoTablo from "./components/HasarNoTablo.jsx";
-import Onay from "./components/Onay.jsx";
-import Maliyetler from "./components/Maliyetler.jsx";
-import SecondTabs from "../SecondTabs/SecondTabs.jsx";
-import IslemYapanTablo from "./components/IslemYapanTablo.jsx";
 
 const { Text, Link } = Typography;
 const { TextArea } = Input;
@@ -69,7 +62,8 @@ export default function MainTabs({ modalOpen }) {
   const [localeDateFormat, setLocaleDateFormat] = useState("DD/MM/YYYY"); // Varsayılan format
   const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default time format
   const [selectboxTitle, setSelectboxTitle] = useState("");
-  const prevIslemiYapanRef = useRef();
+  const [sum, setSum] = useState("0 km");
+  const [sum1, setSum1] = useState("");
 
   const islemiYapan = watch("islemiYapan");
 
@@ -81,13 +75,20 @@ export default function MainTabs({ modalOpen }) {
     }
   }, [islemiYapan]);
 
+  const herGunInput = watch("herGunInput");
+  const herTarihi = watch("herTarihi");
+
   useEffect(() => {
-    const prevIslemiYapan = prevIslemiYapanRef.current;
-    if (prevIslemiYapan !== undefined && prevIslemiYapan !== islemiYapan) {
-      setValue("islemiYapan1", "");
-      setValue("islemiYapan1ID", "");
+    if (herGunInput && herTarihi) {
+      const targetDate = dayjs(herTarihi).add(herGunInput, "day");
+      setSum1(targetDate.format("DD/MM/YYYY"));
+      setValue("hedefTarih", targetDate.format("YYYY-MM-DD"));
     }
-    prevIslemiYapanRef.current = islemiYapan;
+  }, [herGunInput, herTarihi]);
+
+  useEffect(() => {
+    setValue("islemiYapan1", "");
+    setValue("islemiYapan1ID", "");
   }, [islemiYapan, setValue]);
 
   const handleMinusClick = () => {
@@ -96,15 +97,6 @@ export default function MainTabs({ modalOpen }) {
     setValue("servisTanimi", "");
     setValue("servisTipi", "");
     setValue("servisTipiID", "");
-  };
-
-  const handleHasarNoMinusClick = () => {
-    setValue("hasarNo", "");
-    setValue("hasarNoID", "");
-  };
-  const handleIslemiYapan1MinusClick = () => {
-    setValue("islemiYapan1", "");
-    setValue("islemiYapan1ID", "");
   };
 
   // duzenlenmeTarihi ve duzenlenmeSaati alanlarının boş ve ye sistem tarih ve saatinden büyük olup olmadığını kontrol etmek için bir fonksiyon
@@ -127,18 +119,18 @@ export default function MainTabs({ modalOpen }) {
 
   // sistemin o anki tarih ve saatini almak için
 
-  // useEffect(() => {
-  //   if (modalOpen) {
-  //     const currentDate = dayjs(); // Şu anki tarih için dayjs nesnesi
-  //     const currentTime = dayjs(); // Şu anki saat için dayjs nesnesi
-  //
-  //     // Tarih ve saat alanlarını güncelle
-  //     setTimeout(() => {
-  //       setValue("duzenlenmeTarihi", currentDate);
-  //       setValue("duzenlenmeSaati", currentTime);
-  //     }, 50);
-  //   }
-  // }, [modalOpen, setValue]);
+  useEffect(() => {
+    if (modalOpen) {
+      const currentDate = dayjs(); // Şu anki tarih için dayjs nesnesi
+      const currentTime = dayjs(); // Şu anki saat için dayjs nesnesi
+
+      // Tarih ve saat alanlarını güncelle
+      setTimeout(() => {
+        setValue("duzenlenmeTarihi", currentDate);
+        setValue("duzenlenmeSaati", currentTime);
+      }, 50);
+    }
+  }, [modalOpen, setValue]);
 
   // sistemin o anki tarih ve saatini almak sonu
 
@@ -233,54 +225,38 @@ export default function MainTabs({ modalOpen }) {
 
   // tarih formatlamasını kullanıcının yerel tarih formatına göre ayarlayın sonu
 
+  const herKmInput = watch("herKmInput");
+  const herKmInput2 = watch("herKmInput2");
+
+  useEffect(() => {
+    const calculateSum = () => {
+      const value1 = Number(herKmInput) || 0;
+      const value2 = Number(herKmInput2) || 0;
+      setSum(`${value1 + value2} km`);
+      setValue("hedefKm", `${value1 + value2}`);
+    };
+
+    calculateSum();
+  }, [herKmInput, herKmInput2]);
+
   return (
     <div style={{ display: "flex", marginBottom: "15px", flexDirection: "column", gap: "10px", width: "100%" }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "10px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
-          <Controller
-            name="secilenKayitID"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ display: "none" }}
-              />
-            )}
-          />
-          <div style={{ width: "100%", maxWidth: "330px" }}>
+          <div style={{ display: "flex", width: "100%", maxWidth: "400px", alignItems: "center", gap: "10px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
               <Plaka />
             </StyledDivBottomLine>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "450px", gap: "10px", width: "100%", justifyContent: "space-between" }}>
-            <Text style={{ fontSize: "14px", fontWeight: "600" }}>Düzenlenme Tarihi:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller
-                name="duzenlenmeTarihi"
-                control={control}
-                rules={{ validate: validateDateTime }}
-                render={({ field, fieldState: { error } }) => (
-                  <DatePicker {...field} status={error ? "error" : ""} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />
-                )}
-              />
-              {/*{errors.duzenlenmeTarihi && (*/}
-              {/*  <div style={{ color: "red" }}>*/}
-              {/*    {errors.duzenlenmeTarihi.message}*/}
-              {/*  </div>*/}
-              {/*)}*/}
-
-              <Controller
-                name="duzenlenmeSaati"
-                control={control}
-                rules={{ validate: validateDateTime }}
-                render={({ field, fieldState: { error } }) => (
-                  <TimePicker {...field} status={error ? "error" : ""} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />
-                )}
-              />
-              {errors.duzenlenmeSaati && <div style={{ color: "red" }}>{errors.duzenlenmeSaati.message}</div>}
-            </div>
+            <Controller
+              name="aktif"
+              control={control}
+              render={({ field }) => (
+                <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                  Aktif
+                </Checkbox>
+              )}
+            />
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px" }}>
             <Text style={{ fontSize: "14px", fontWeight: "600" }}>Servis Kodu:</Text>
@@ -299,6 +275,7 @@ export default function MainTabs({ modalOpen }) {
                   />
                 )}
               />
+
               <Controller
                 name="servisKoduID"
                 control={control}
@@ -335,324 +312,51 @@ export default function MainTabs({ modalOpen }) {
               <Controller name="servisTipi" control={control} render={({ field }) => <Input {...field} disabled style={{ flex: 1 }} />} />
             </div>
           </div>
-          <div style={{ width: "100%", maxWidth: "330px" }}>
-            <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <Text style={{ fontSize: "14px" }}>Sürücü:</Text>
-              <Surucu />
-            </StyledDivBottomLine>
-          </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
-          <div style={{ width: "100%", maxWidth: "400px" }}>
-            <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <Text style={{ fontSize: "14px" }}>Servis Nedeni:</Text>
-              <ServisNedeni />
-            </StyledDivBottomLine>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "330px", gap: "10px", width: "100%", justifyContent: "space-between" }}>
-            <Text style={{ fontSize: "14px" }}>Fatura Tarihi:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "180px", minWidth: "180px", gap: "10px", width: "100%" }}>
+        <div style={{ display: "flex", flexDirection: "column", border: "1px solid #00000024", borderRadius: "5px", padding: "5px", width: "100%", gap: "10px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Controller
-                name="faturaTarihi"
-                control={control}
-                render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
-              />
-            </div>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
-            <Text style={{ fontSize: "14px" }}>Fatura No:</Text>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                maxWidth: "300px",
-                minWidth: "300px",
-                gap: "10px",
-                width: "100%",
-              }}
-            >
-              <Controller name="faturaNo" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
-            </div>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px" }}>
-            <Text style={{ fontSize: "14px" }}>Hasar No:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
-              <Controller
-                name="hasarNo"
+                name="herKm"
                 control={control}
                 render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text" // Set the type to "text" for name input
-                    style={{ width: "215px" }}
-                    disabled
-                  />
+                  <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                    Her
+                  </Checkbox>
                 )}
               />
+              <Controller name="herKmInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} addonAfter="km" />} />
+              <Text>Son Uygulama</Text>
+              <Controller name="herKmInput2" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} />} />
+              <Text>Hedef</Text>
+              <Text>{sum}</Text>
+            </div>
+            {/* <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <Text>Hedef</Text>
+            <Text>{sum}</Text>
+          </div>*/}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Controller
-                name="hasarNoID"
+                name="herGun"
                 control={control}
                 render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text" // Set the type to "text" for name input
-                    style={{ display: "none" }}
-                  />
+                  <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
+                    Her
+                  </Checkbox>
                 )}
               />
-              <HasarNoTablo
-                onSubmit={(selectedData) => {
-                  setValue("hasarNo", selectedData.hasarNo);
-                  setValue("hasarNoID", selectedData.key);
-                }}
-              />
-              <Button onClick={handleHasarNoMinusClick}> - </Button>
-            </div>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
-            <Text style={{ fontSize: "14px" }}>Talep No:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller name="talepNo" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
-            </div>
-          </div>
-
-          <div style={{ width: "100%", maxWidth: "400px" }}>
-            <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-              <Text style={{ fontSize: "14px" }}>Onay:</Text>
-              <Onay />
-            </StyledDivBottomLine>
-          </div>
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "10px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              maxWidth: "450px",
-              gap: "10px",
-              width: "100%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ fontSize: "14px" }}>Başlama Tarihi:</Text>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                maxWidth: "300px",
-                minWidth: "300px",
-                gap: "10px",
-                width: "100%",
-              }}
-            >
+              <Controller name="herGunInput" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, maxWidth: "150px" }} addonAfter="gün" />} />
+              <Text>Son Uygulama</Text>
               <Controller
-                name="baslamaTarihi"
+                name="herTarihi"
                 control={control}
-                render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
+                render={({ field }) => <DatePicker {...field} style={{ width: "150px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
               />
-              <Controller
-                name="baslamaSaati"
-                control={control}
-                render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              maxWidth: "450px",
-              gap: "10px",
-              width: "100%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ fontSize: "14px" }}>Bitiş Tarihi:</Text>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                maxWidth: "300px",
-                minWidth: "300px",
-                gap: "10px",
-                width: "100%",
-              }}
-            >
-              <Controller
-                name="bitisTarihi"
-                control={control}
-                render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
-              />
-              <Controller
-                name="bitisSaati"
-                control={control}
-                render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
-              />
-            </div>
-          </div>
-          <div style={{ width: "100%", maxWidth: "450px", display: "flex", gap: "5px", flexWrap: "wrap" }}>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                maxWidth: "250px",
-                gap: "10px",
-                rowGap: "0px",
-              }}
-            >
-              <Text style={{ fontSize: "14px" }}>Araç Km:</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  maxWidth: "100px",
-                  minWidth: "100px",
-                  gap: "10px",
-                  width: "100%",
-                }}
-              >
-                <Controller name="aracKM" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-              </div>
-            </div>
-
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
-              <Text style={{ fontSize: "14px" }}>İşlemi Yapan:</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  maxWidth: "300px",
-                  minWidth: "300px",
-                  gap: "10px",
-                  width: "100%",
-                }}
-              >
-                <Controller
-                  name="islemiYapan"
-                  control={control}
-                  render={({ field }) => (
-                    <Radio.Group {...field} style={{ display: "flex", alignItems: "center" }}>
-                      <Radio value="1">Yetkili Servis</Radio>
-                      <Radio value="2">Bakım Departmanı</Radio>
-                    </Radio.Group>
-                  )}
-                />
-              </div>
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
-              <Text style={{ fontSize: "14px" }}>{selectboxTitle}:</Text>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
-                <Controller
-                  name="islemiYapan1"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="text" // Set the type to "text" for name input
-                      style={{ width: "215px" }}
-                      disabled
-                    />
-                  )}
-                />
-                <Controller
-                  name="islemiYapan1ID"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="text" // Set the type to "text" for name input
-                      style={{ display: "none" }}
-                    />
-                  )}
-                />
-                <IslemYapanTablo
-                  onSubmit={(selectedData) => {
-                    setValue("islemiYapan1", selectedData.column1);
-                    setValue("islemiYapan1ID", selectedData.key);
-                  }}
-                />
-                <Button onClick={handleIslemiYapan1MinusClick}> - </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "column", width: "100%", maxWidth: "200px", gap: "10px" }}>
-              <Text style={{ fontSize: "14px" }}>Durum Bilgisi:</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "flex-start",
-                  maxWidth: "300px",
-                  minWidth: "300px",
-                  gap: "10px",
-                  width: "100%",
-                  flexDirection: "column",
-                }}
-              >
-                <Controller
-                  name="durumBilgisi"
-                  control={control}
-                  render={({ field: { onChange, value } }) => {
-                    const handleCheckboxChange = (selectedValue) => {
-                      if (value === selectedValue) {
-                        onChange(null); // Aynı değere tıklanırsa işareti kaldır
-                      } else {
-                        onChange(selectedValue); // Farklı bir checkboxa tıklanırsa yalnızca o işaretlenir
-                      }
-                    };
-
-                    return (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Checkbox checked={value === "1"} onChange={() => handleCheckboxChange("1")}>
-                          Tamamlandi
-                        </Checkbox>
-                        <Checkbox checked={value === "2"} onChange={() => handleCheckboxChange("2")}>
-                          Yapılamadı
-                        </Checkbox>
-                        <Checkbox checked={value === "3"} onChange={() => handleCheckboxChange("3")}>
-                          Tekrarlanacak
-                        </Checkbox>
-                      </div>
-                    );
-                  }}
-                />
-                <Controller
-                  name="garantiKapsami"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
-                      Garanti Kapsamında
-                    </Checkbox>
-                  )}
-                />
-                <Controller
-                  name="surucuOder"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)}>
-                      Sürücü Öder
-                    </Checkbox>
-                  )}
-                />
-              </div>
-            </div>
-            <div>
-              <Maliyetler />
+              <Text>Hedef</Text>
+              <Text>{sum1}</Text>
             </div>
           </div>
         </div>

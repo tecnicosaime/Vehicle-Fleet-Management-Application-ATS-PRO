@@ -82,6 +82,7 @@ export default function MainTabs({ modalOpen }) {
     if (herGunInput && herTarihi) {
       const targetDate = dayjs(herTarihi).add(herGunInput, "day");
       setSum1(targetDate.format("DD/MM/YYYY"));
+      setValue("hedefTarih", targetDate.format("YYYY-MM-DD"));
     }
   }, [herGunInput, herTarihi]);
 
@@ -232,6 +233,7 @@ export default function MainTabs({ modalOpen }) {
       const value1 = Number(herKmInput) || 0;
       const value2 = Number(herKmInput2) || 0;
       setSum(`${value1 + value2} km`);
+      setValue("hedefKm", `${value1 + value2}`);
     };
 
     calculateSum();
@@ -312,7 +314,7 @@ export default function MainTabs({ modalOpen }) {
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", border: "1px solid #00000024", borderRadius: "5px", padding: "5px", width: "100%", gap: "10px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Controller
                 name="herKm"
@@ -335,7 +337,7 @@ export default function MainTabs({ modalOpen }) {
           </div>*/}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "600px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Controller
                 name="herGun"
