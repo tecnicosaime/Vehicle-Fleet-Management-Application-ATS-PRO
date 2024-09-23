@@ -6,6 +6,7 @@ import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, v
 import { CSS } from "@dnd-kit/utilities";
 import { Resizable } from "react-resizable";
 import "./ResizeStyle.css";
+import "./TableStyle.css";
 import AxiosInstance from "../../../../../api/http";
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
@@ -294,6 +295,7 @@ const Sigorta = () => {
       title: t("sonBakim"),
       key: "sonBakim",
       visible: true, // Varsayılan olarak açık
+      className: "parent-column-header parent-column-header-left",
       children: [
         {
           title: t("sonKm"),
@@ -308,6 +310,12 @@ const Sigorta = () => {
             if (b.sonKm === null) return 1;
             return a.sonKm - b.sonKm;
           },
+          onHeaderCell: (column) => ({
+            style: { borderLeft: "2px solid #000" },
+          }),
+          onCell: (record) => ({
+            style: { borderLeft: "2px solid #000" },
+          }),
         },
 
         {
@@ -324,6 +332,12 @@ const Sigorta = () => {
 
           visible: true, // Varsayılan olarak açık
           render: (text) => formatDate(text),
+          onHeaderCell: (column) => ({
+            style: { borderRight: "2px solid #000" },
+          }),
+          onCell: (record) => ({
+            style: { borderRight: "2px solid #000" },
+          }),
         },
       ],
     },
@@ -332,6 +346,7 @@ const Sigorta = () => {
       title: t("bakimSikligi"),
       key: "bakimSikligi",
       visible: true, // Varsayılan olarak açık
+      className: "parent-column-header",
       children: [
         {
           title: t("herKm"),
@@ -361,6 +376,12 @@ const Sigorta = () => {
             if (b.herGun === null) return 1;
             return a.herGun - b.herGun;
           },
+          onHeaderCell: (column) => ({
+            style: { borderRight: "2px solid #000" },
+          }),
+          onCell: (record) => ({
+            style: { borderRight: "2px solid #000" },
+          }),
         },
       ],
     },
@@ -369,6 +390,7 @@ const Sigorta = () => {
       title: t("sonrakiBakimZamani"),
       key: "sonrakiBakimZamani",
       visible: true, // Varsayılan olarak açık
+      className: "parent-column-header",
       children: [
         {
           title: t("hedefKm"),
@@ -399,6 +421,12 @@ const Sigorta = () => {
 
           visible: true, // Varsayılan olarak açık
           render: (text) => formatDate(text),
+          onHeaderCell: (column) => ({
+            style: { borderRight: "2px solid #000" },
+          }),
+          onCell: (record) => ({
+            style: { borderRight: "2px solid #000" },
+          }),
         },
       ],
     },
