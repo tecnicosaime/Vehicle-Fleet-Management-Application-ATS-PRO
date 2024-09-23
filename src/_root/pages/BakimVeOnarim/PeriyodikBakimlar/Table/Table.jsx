@@ -232,36 +232,6 @@ const Sigorta = () => {
     },
 
     {
-      title: t("model"),
-      dataIndex: "model",
-      key: "model",
-      width: 150,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.model === null) return -1;
-        if (b.model === null) return 1;
-        return a.model.localeCompare(b.model);
-      },
-    },
-
-    {
-      title: t("bakimKodu"),
-      dataIndex: "bakimKodu",
-      key: "bakimKodu",
-      width: 150,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.bakimKodu === null) return -1;
-        if (b.bakimKodu === null) return 1;
-        return a.bakimKodu.localeCompare(b.bakimKodu);
-      },
-    },
-
-    {
       title: t("bakimTanimi"),
       dataIndex: "bakimTanimi",
       key: "bakimTanimi",
@@ -273,21 +243,6 @@ const Sigorta = () => {
         if (a.bakimTanimi === null) return -1;
         if (b.bakimTanimi === null) return 1;
         return a.bakimTanimi.localeCompare(b.bakimTanimi);
-      },
-    },
-
-    {
-      title: t("servisTipi"),
-      dataIndex: "servisTipi",
-      key: "servisTipi",
-      width: 190,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.servisTipi === null) return -1;
-        if (b.servisTipi === null) return 1;
-        return a.servisTipi.localeCompare(b.servisTipi);
       },
     },
 
@@ -432,39 +387,6 @@ const Sigorta = () => {
     },
 
     {
-      title: t("aktif"),
-      dataIndex: "aktif",
-      key: "aktif",
-      width: 190,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.aktif === null) return -1;
-        if (b.aktif === null) return 1;
-        return a.aktif.localeCompare(b.aktif);
-      },
-      render: (value) => {
-        return value ? <CheckOutlined style={{ color: "green" }} /> : <CloseOutlined style={{ color: "red" }} />;
-      },
-    },
-
-    {
-      title: t("aciklama"),
-      dataIndex: "aciklama",
-      key: "aciklama",
-      width: 190,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.aciklama === null) return -1;
-        if (b.aciklama === null) return 1;
-        return a.aciklama.localeCompare(b.aciklama);
-      },
-    },
-
-    {
       title: t("kalanKm"),
       dataIndex: "kalanKm",
       key: "kalanKm",
@@ -491,6 +413,84 @@ const Sigorta = () => {
         if (a.kalanSure === null) return -1;
         if (b.kalanSure === null) return 1;
         return a.kalanSure - b.kalanSure;
+      },
+    },
+
+    {
+      title: <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>{t("aciklama")}</div>,
+      dataIndex: "aciklama",
+      key: "aciklama",
+      width: 240,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.aciklama === null) return -1;
+        if (b.aciklama === null) return 1;
+        return a.aciklama.localeCompare(b.aciklama);
+      },
+    },
+
+    {
+      title: t("model"),
+      dataIndex: "model",
+      key: "model",
+      width: 150,
+      ellipsis: true,
+      visible: false, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.model === null) return -1;
+        if (b.model === null) return 1;
+        return a.model.localeCompare(b.model);
+      },
+    },
+
+    {
+      title: t("bakimKodu"),
+      dataIndex: "bakimKodu",
+      key: "bakimKodu",
+      width: 150,
+      ellipsis: true,
+      visible: false, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.bakimKodu === null) return -1;
+        if (b.bakimKodu === null) return 1;
+        return a.bakimKodu.localeCompare(b.bakimKodu);
+      },
+    },
+
+    {
+      title: t("servisTipi"),
+      dataIndex: "servisTipi",
+      key: "servisTipi",
+      width: 190,
+      ellipsis: true,
+      visible: false, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.servisTipi === null) return -1;
+        if (b.servisTipi === null) return 1;
+        return a.servisTipi.localeCompare(b.servisTipi);
+      },
+    },
+
+    {
+      title: t("aktif"),
+      dataIndex: "aktif",
+      key: "aktif",
+      width: 83,
+      ellipsis: true,
+      visible: false, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.aktif === null) return -1;
+        if (b.aktif === null) return 1;
+        return a.aktif.localeCompare(b.aktif);
+      },
+      render: (value) => {
+        return value ? <CheckOutlined style={{ color: "green" }} /> : <CloseOutlined style={{ color: "red" }} />;
       },
     },
 

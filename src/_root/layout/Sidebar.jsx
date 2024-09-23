@@ -30,10 +30,10 @@ const items = [
         key: "4",
         label: <Link to={"/yakit-islemleri"}>{t("yakitIslemleri")}</Link>,
       },
-      {
+      /* {
         key: "5",
         label: <Link to={"/servis-islemleri"}>{t("servisIslemleri")}</Link>,
-      },
+      },*/
       {
         key: "6",
         label: <Link to={"/sefer-islemleri"}>{t("seferler")}</Link>,
