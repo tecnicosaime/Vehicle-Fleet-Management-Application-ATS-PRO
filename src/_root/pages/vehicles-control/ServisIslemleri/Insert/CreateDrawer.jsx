@@ -239,7 +239,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           }
         >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <div style={{ overflow: "auto", height: "calc(100vh - 150px)" }}>
+            <div>
               <MainTabs modalOpen={open} />
               <SecondTabs />
               {/*<Footer />*/}

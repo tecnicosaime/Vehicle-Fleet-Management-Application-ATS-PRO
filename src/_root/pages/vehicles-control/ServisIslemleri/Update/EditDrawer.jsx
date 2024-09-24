@@ -338,7 +338,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
             </div>
           ) : (
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <div style={{ overflow: "auto", height: "calc(100vh - 150px)" }}>
+              <div>
                 <MainTabs />
                 <SecondTabs />
                 {/*<Footer />*/}
