@@ -85,7 +85,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
       icon: <MdSettingsInputComponent className="text-info" />,
     },
     {
-      label: t("peryodikBakimlar"),
+      label: t("periyodikBakimlar"),
       key: "12",
       icon: <MdSettingsInputComponent className="text-info" />,
     },

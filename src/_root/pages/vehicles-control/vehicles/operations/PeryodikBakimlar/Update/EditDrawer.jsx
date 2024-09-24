@@ -6,8 +6,7 @@ import MainTabs from "./components/MainTabs/MainTabs";
 import secondTabs from "./components/SecondTabs/SecondTabs";
 import { useForm, Controller, useFormContext, FormProvider, set } from "react-hook-form";
 import dayjs from "dayjs";
-import AxiosInstance from "../../../../../api/http.jsx";
-import Footer from "../Footer";
+import AxiosInstance from "../../../../../../../api/http.jsx";
 import SecondTabs from "./components/SecondTabs/SecondTabs";
 
 export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {

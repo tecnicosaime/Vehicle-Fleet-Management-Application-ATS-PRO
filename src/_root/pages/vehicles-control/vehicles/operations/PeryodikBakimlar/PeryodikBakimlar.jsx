@@ -20,14 +20,14 @@ function PeryodikBakimlar({ visible, onClose, ids, selectedRowsData }) {
     <FormProvider {...formMethods}>
       <div>
         <Modal
-          title={`Peryodik Bakım Bilgileri - Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+          title={`Periyodik Bakım Bilgileri - Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
           open={visible}
           onCancel={onClose}
           maskClosable={false}
           footer={footer}
           width={1200}
         >
-          <Table ids={ids} />
+          <Table ids={ids} selectedRowsData={selectedRowsData} />
         </Modal>
       </div>
     </FormProvider>

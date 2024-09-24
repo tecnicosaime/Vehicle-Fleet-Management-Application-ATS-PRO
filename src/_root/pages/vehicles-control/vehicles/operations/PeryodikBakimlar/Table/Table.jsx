@@ -12,8 +12,8 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 import { t } from "i18next";
 import ContextMenu from "../../../../../BakimVeOnarim/PeriyodikBakimlar/components/ContextMenu/ContextMenu.jsx";
-import CreateDrawer from "../../../../../BakimVeOnarim/PeriyodikBakimlar/Insert/CreateDrawer.jsx";
-import EditDrawer from "../../../../../BakimVeOnarim/PeriyodikBakimlar/Update/EditDrawer.jsx";
+import CreateDrawer from "../Insert/CreateDrawer.jsx";
+import EditDrawer from "../Update/EditDrawer.jsx";
 
 const { Text } = Typography;
 
@@ -122,7 +122,7 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 
 // Sütunların sürüklenebilir olmasını sağlayan component sonu
 
-const MainTable = ({ ids }) => {
+const MainTable = ({ ids, selectedRowsData }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { setValue } = useFormContext();
   const [data, setData] = useState([]);
@@ -962,7 +962,7 @@ const MainTable = ({ ids }) => {
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
-          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} selectedRowsData={selectedRowsData} />
         </div>
       </div>
 

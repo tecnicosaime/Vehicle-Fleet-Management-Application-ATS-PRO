@@ -1,13 +1,13 @@
 import React, { useState, createRef, useEffect } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Select, Typography, Divider, Spin, Button, Input, message, Space } from "antd";
-import AxiosInstance from "../../../../../../../../api/http";
+import AxiosInstance from "../../../../../../../../../../api/http";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { Text, Link } = Typography;
 const { Option } = Select;
 
-export default function Plaka({ disabled, fieldRequirements }) {
+export default function Plaka({ disabled, fieldRequirements, selectedRowsData }) {
   const {
     control,
     setValue,
@@ -25,71 +25,13 @@ export default function Plaka({ disabled, fieldRequirements }) {
 
   // message end
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const response = await AxiosInstance.get(`Vehicle/GetVehiclePlates`);
-      if (response && response.data) {
-        setOptions(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (selectedRowsData && selectedRowsData.length > 0) {
+      setOptions(selectedRowsData);
     }
-  };
-
-  const onNameChange = (e) => {
-    setName(e.target.value);
-  };
+  }, [selectedRowsData]);
 
   // add new status to selectbox
-
-  const addItem = () => {
-    if (name.trim() !== "") {
-      if (options.some((option) => option.plaka === name)) {
-        messageApi.open({
-          type: "warning",
-          content: "Bu durum zaten var!",
-        });
-        return;
-      }
-
-      setLoading(true);
-      AxiosInstance.post(`AddIsTip?entity=${name}&isTanimId`)
-        .then((response) => {
-          if (response.status_code === 201) {
-            // Assuming 'id' is directly in the response
-            const newId = response.id; // Adjust this line based on your actual response structure
-
-            messageApi.open({
-              type: "success",
-              content: "Ekleme Başarılı",
-            });
-            setOptions((prevOptions) => [...prevOptions, { aracId: newId, plaka: name }]);
-            setSelectKey((prevKey) => prevKey + 1);
-            setName("");
-          } else {
-            // Error handling
-            messageApi.open({
-              type: "error",
-              content: "An error occurred", // Adjust the error message as needed
-            });
-          }
-        })
-        .catch((error) => {
-          // Handle Axios errors
-          console.error("Error adding item to API:", error);
-          messageApi.open({
-            type: "error",
-            content: "An error occurred while adding the item.",
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  };
 
   // add new status to selectbox end
   return (
@@ -112,31 +54,7 @@ export default function Plaka({ disabled, fieldRequirements }) {
               placeholder="Seçim Yapınız"
               optionFilterProp="children"
               filterOption={(input, option) => (option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false)}
-              onDropdownVisibleChange={(open) => {
-                if (open) {
-                  fetchData(); // Fetch data when the dropdown is opened
-                }
-              }}
-              // dropdownRender={(menu) => (
-              //   <Spin spinning={loading}>
-              //     {menu}
-              //     <Divider
-              //       style={{
-              //         margin: "8px 0",
-              //       }}
-              //     />
-              //     <Space
-              //       style={{
-              //         padding: "0 8px 4px",
-              //       }}
-              //     >
-              //       <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
-              //       <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-              //         Ekle
-              //       </Button>
-              //     </Space>
-              //   </Spin>
-              // )}
+              onDropdownVisibleChange={(open) => {}}
               options={options.map((item) => ({
                 value: item.aracId, // Use the ID as the value
                 label: item.plaka, // Display the name in the dropdown

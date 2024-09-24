@@ -5,12 +5,11 @@ import React, { useEffect, useState } from "react";
 import MainTabs from "./components/MainTabs/MainTabs";
 import { useForm, FormProvider } from "react-hook-form";
 import dayjs from "dayjs";
-import AxiosInstance from "../../../../../api/http.jsx";
-import Footer from "../Footer";
+import AxiosInstance from "../../../../../../../api/http.jsx";
 import SecondTabs from "./components/SecondTabs/SecondTabs.jsx";
 // import SecondTabs from "./components/secondTabs/secondTabs";
 
-export default function CreateModal({ selectedLokasyonId, onRefresh }) {
+export default function CreateModal({ selectedLokasyonId, onRefresh, selectedRowsData }) {
   const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);
@@ -34,10 +33,20 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   // back-end'e gönderilecek veriler
 
   //* export
+  const defaultValues =
+    selectedRowsData.length > 1
+      ? {
+          Plaka: null,
+          PlakaID: null,
+        }
+      : {
+          Plaka: selectedRowsData[0].plaka,
+          PlakaID: selectedRowsData[0].aracId,
+        };
+
   const methods = useForm({
     defaultValues: {
-      Plaka: null,
-      PlakaID: null,
+      ...defaultValues,
       aktif: true,
       servisKodu: null,
       servisKoduID: null,
@@ -162,7 +171,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
         >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div>
-              <MainTabs modalOpen={open} />
+              <MainTabs modalOpen={open} selectedRowsData={selectedRowsData} />
               <SecondTabs />
               {/*<Footer />*/}
             </div>
