@@ -11,6 +11,9 @@ import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import dayjs from "dayjs";
 import { t } from "i18next";
+import ContextMenu from "../../../../../BakimVeOnarim/PeriyodikBakimlar/components/ContextMenu/ContextMenu.jsx";
+import CreateDrawer from "../../../../../BakimVeOnarim/PeriyodikBakimlar/Insert/CreateDrawer.jsx";
+import EditDrawer from "../../../../../BakimVeOnarim/PeriyodikBakimlar/Update/EditDrawer.jsx";
 
 const { Text } = Typography;
 
@@ -958,6 +961,9 @@ const MainTable = ({ ids }) => {
           {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
         </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+        </div>
       </div>
 
       <CustomSpin spinning={loading}>
@@ -984,6 +990,7 @@ const MainTable = ({ ids }) => {
           rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
         />
       </CustomSpin>
+      <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
     </>
   );
 };
