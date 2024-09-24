@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Input, Button, Typography, message, InputNumber } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import AxiosInstance from "../../../../../../../../../api/http";
+import AxiosInstance from "../../../../../../../../../../../api/http";
 import OzelAlan9 from "./components/OzelAlan9.jsx";
 import OzelAlan10 from "./components/OzelAlan10.jsx";
 

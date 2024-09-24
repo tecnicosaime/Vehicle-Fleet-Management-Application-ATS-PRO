@@ -52,7 +52,7 @@ const StyledDivMedia = styled.div`
   }
 `;
 
-export default function MainTabs({ modalOpen }) {
+export default function MainTabs({ modalOpen, selectedRowsData }) {
   const {
     control,
     watch,
@@ -246,7 +246,7 @@ export default function MainTabs({ modalOpen }) {
           <div style={{ display: "flex", width: "100%", maxWidth: "400px", alignItems: "center", gap: "10px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
-              <Plaka />
+              <Plaka selectedRowsData={selectedRowsData} />
             </StyledDivBottomLine>
             <Controller
               name="aktif"
