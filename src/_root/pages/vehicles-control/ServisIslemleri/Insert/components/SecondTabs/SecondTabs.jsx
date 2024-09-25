@@ -68,11 +68,11 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
   const secilenIsEmriID = watch("secilenIsEmriID");
 
   const items = [
-    {
+    /*{
       key: "3",
       label: "Sigorta",
       children: <Sigorta fieldRequirements={fieldRequirements} />,
-    },
+    },*/
     {
       key: "4",
       label: "Şikayetler",

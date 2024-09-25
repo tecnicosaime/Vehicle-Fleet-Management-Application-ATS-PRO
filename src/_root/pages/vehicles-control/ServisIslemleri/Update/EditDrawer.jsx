@@ -302,7 +302,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
         <Modal
           width="1300px"
           centered
-          title="Kayıdı Güncelle"
+          title="Servis Güncelleme"
           open={drawerVisible}
           onCancel={onClose}
           footer={

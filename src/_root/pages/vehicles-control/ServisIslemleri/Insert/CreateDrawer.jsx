@@ -217,7 +217,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
         <Modal
           width="1300px"
           centered
-          title="Yeni Kayıt Ekle"
+          title="Yeni Servis Girişi"
           destroyOnClose
           open={open}
           onCancel={onClose}
