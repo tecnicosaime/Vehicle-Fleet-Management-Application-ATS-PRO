@@ -232,7 +232,7 @@ export default function MainTabs({ modalOpen }) {
     <div style={{ display: "flex", marginBottom: "15px", flexDirection: "column", gap: "10px", width: "100%" }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "10px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
-          <div style={{ width: "100%", maxWidth: "330px" }}>
+          <div style={{ width: "100%", maxWidth: "450px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px", fontWeight: "600" }}>Plaka:</Text>
               <Plaka />
@@ -286,20 +286,20 @@ export default function MainTabs({ modalOpen }) {
               {errors.servisKodu && <div style={{ color: "red", marginTop: "5px" }}>{errors.servisKodu.message}</div>}
             </div>
           </div>
-          <div style={{ width: "100%", maxWidth: "330px" }}>
+          <div style={{ width: "100%", maxWidth: "450px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px" }}>Sürücü:</Text>
               <Surucu />
             </StyledDivBottomLine>
           </div>
-          <div style={{ width: "100%", maxWidth: "400px" }}>
+          <div style={{ width: "100%", maxWidth: "450px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px" }}>Servis Nedeni:</Text>
               <ServisNedeni />
             </StyledDivBottomLine>
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "470px" }}>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
             <Text style={{ fontSize: "14px" }}>{selectboxTitle}:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
@@ -351,32 +351,31 @@ export default function MainTabs({ modalOpen }) {
               <Controller name="faturaNo" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
             </div>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "330px", gap: "10px", width: "100%", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "450px", gap: "10px", width: "100%", justifyContent: "space-between" }}>
             <Text style={{ fontSize: "14px" }}>Fatura Tarihi:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "180px", minWidth: "180px", gap: "10px", width: "100%" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "180px", minWidth: "300px", gap: "10px", width: "100%" }}>
               <Controller
                 name="faturaTarihi"
                 control={control}
-                render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
+                render={({ field }) => <DatePicker {...field} style={{ width: "300px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
               />
             </div>
           </div>
-          <div style={{ width: "100%", maxWidth: "400px" }}>
+          <div style={{ width: "100%", maxWidth: "450px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px" }}>Onay:</Text>
               <Onay />
             </StyledDivBottomLine>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "450px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "470px" }}>
             <div style={{ display: "flex" }}>
-              <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "column", width: "100%", maxWidth: "200px", gap: "10px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "column", width: "100%", gap: "10px" }}>
                 <Text style={{ fontSize: "14px" }}>Durum Bilgisi:</Text>
                 <div
                   style={{
                     display: "flex",
                     flexWrap: "wrap",
                     alignItems: "flex-start",
-                    maxWidth: "300px",
                     minWidth: "300px",
                     gap: "10px",
                     width: "100%",
@@ -387,25 +386,43 @@ export default function MainTabs({ modalOpen }) {
                     name="durumBilgisi"
                     control={control}
                     render={({ field: { onChange, value } }) => {
-                      const handleCheckboxChange = (selectedValue) => {
+                      const handleButtonClick = (selectedValue) => {
                         if (value === selectedValue) {
-                          onChange(null); // Aynı değere tıklanırsa işareti kaldır
+                          onChange(null); // Deselect if the same button is clicked
                         } else {
-                          onChange(selectedValue); // Farklı bir checkboxa tıklanırsa yalnızca o işaretlenir
+                          onChange(selectedValue); // Select the new button
                         }
                       };
 
+                      const options = [
+                        { value: "1", label: "Bekliyor", color: "#ff9800" },
+                        { value: "2", label: "Devam Ediyor", color: "#2196f3" },
+                        { value: "3", label: "İptal Edildi", color: "red" },
+                        { value: "4", label: "Tamamlandı", color: "#2bc770" },
+                      ];
+
                       return (
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                          <Checkbox checked={value === "1"} onChange={() => handleCheckboxChange("1")}>
-                            Tamamlandi
-                          </Checkbox>
-                          <Checkbox checked={value === "2"} onChange={() => handleCheckboxChange("2")}>
-                            Yapılamadı
-                          </Checkbox>
-                          <Checkbox checked={value === "3"} onChange={() => handleCheckboxChange("3")}>
-                            Tekrarlanacak
-                          </Checkbox>
+                        <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                          {options.map((option) => {
+                            const isSelected = value === option.value;
+                            return (
+                              <button
+                                key={option.value}
+                                type="button" // Add this line to prevent form submission
+                                onClick={() => handleButtonClick(option.value)}
+                                style={{
+                                  backgroundColor: isSelected ? option.color : "gray",
+                                  color: "white",
+                                  border: "none",
+                                  padding: "10px 20px",
+                                  cursor: "pointer",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                {option.label}
+                              </button>
+                            );
+                          })}
                         </div>
                       );
                     }}
@@ -414,9 +431,6 @@ export default function MainTabs({ modalOpen }) {
               </div>
             </div>
           </div>
-        </div>
-        <div style={{ width: "205px" }}>
-          <Maliyetler />
         </div>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "10px" }}>

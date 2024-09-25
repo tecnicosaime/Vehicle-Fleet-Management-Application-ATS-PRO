@@ -104,7 +104,7 @@ export default function Surucu({ disabled, fieldRequirements }) {
               {...field}
               disabled={disabled}
               key={selectKey}
-              style={{ width: "180px" }}
+              style={{ width: "300px" }}
               showSearch
               allowClear
               placeholder="Seçim Yapınız"

@@ -40,7 +40,7 @@ export default function Onay() {
       <Controller
         name="onay"
         control={control}
-        render={({ field }) => <Select {...field} allowClear placeholder="Seçim Yapınız" style={{ width: "100%", maxWidth: "250px" }} onChange={handleChange} options={options} />}
+        render={({ field }) => <Select {...field} allowClear placeholder="Seçim Yapınız" style={{ width: "100%", maxWidth: "300px" }} onChange={handleChange} options={options} />}
       />
       <Controller
         name="onayID"

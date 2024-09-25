@@ -106,7 +106,7 @@ export default function Plaka({ disabled, fieldRequirements }) {
               status={errors.Plaka ? "error" : ""}
               disabled={disabled}
               key={selectKey}
-              style={{ width: "180px" }}
+              style={{ width: "300px" }}
               showSearch
               allowClear
               placeholder="Seçim Yapınız"

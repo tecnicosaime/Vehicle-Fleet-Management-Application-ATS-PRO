@@ -107,7 +107,7 @@ export default function ServisNedeni({ disabled, fieldRequirements }) {
               {...field}
               disabled={disabled}
               key={selectKey}
-              style={{ width: "250px" }}
+              style={{ width: "300px" }}
               showSearch
               allowClear
               placeholder="Seçim Yapınız"

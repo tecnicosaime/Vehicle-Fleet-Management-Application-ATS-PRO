@@ -6,6 +6,7 @@ import Sigorta from "./components/Sigorta/Sigorta";
 import OzelAlanlar from "./components/OzelAlanlar/OzelAlanlar.jsx";
 import IscilikTablo from "./components/Iscilik/IscilikTablo";
 import Malzemeler from "./components/Malzemeler/Malzemeler";
+import Maliyetler from "../MainTabs/components/Maliyetler.jsx";
 
 const { Text, Link } = Typography;
 const { TextArea } = Input;
@@ -97,8 +98,13 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
   ];
 
   return (
-    <div>
-      <StyledTabs defaultActiveKey={activeTabKey} items={items} onChange={onChange} />
+    <div style={{ display: "flex", width: "100%", gap: "10px", alignItems: "flex-start" }}>
+      <div style={{ flex: 1 }}>
+        <StyledTabs defaultActiveKey={activeTabKey} items={items} onChange={onChange} />
+      </div>
+      <div style={{ width: "205px", flexShrink: 0, marginTop: "50px" }}>
+        <Maliyetler />
+      </div>
     </div>
   );
 }
