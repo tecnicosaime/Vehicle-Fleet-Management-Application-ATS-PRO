@@ -238,12 +238,6 @@ export default function MainTabs({ modalOpen }) {
               <Plaka />
             </StyledDivBottomLine>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
-            <Text style={{ fontSize: "14px" }}>Servis Tanımı:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller name="servisTanimi" control={control} render={({ field }) => <Input {...field} disabled style={{ flex: 1 }} />} />
-            </div>
-          </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px" }}>
             <Text style={{ fontSize: "14px", fontWeight: "600" }}>Servis Kodu:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
@@ -286,6 +280,13 @@ export default function MainTabs({ modalOpen }) {
               {errors.servisKodu && <div style={{ color: "red", marginTop: "5px" }}>{errors.servisKodu.message}</div>}
             </div>
           </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
+            <Text style={{ fontSize: "14px" }}>Servis Tanımı:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller name="servisTanimi" control={control} render={({ field }) => <Input {...field} disabled style={{ flex: 1 }} />} />
+            </div>
+          </div>
+
           <div style={{ width: "100%", maxWidth: "450px" }}>
             <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <Text style={{ fontSize: "14px" }}>Sürücü:</Text>
