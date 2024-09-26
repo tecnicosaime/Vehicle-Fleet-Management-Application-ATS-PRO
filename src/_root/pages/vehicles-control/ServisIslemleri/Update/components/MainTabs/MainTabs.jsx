@@ -68,22 +68,7 @@ export default function MainTabs({ modalOpen }) {
   } = useFormContext();
   const [localeDateFormat, setLocaleDateFormat] = useState("DD/MM/YYYY"); // Varsayılan format
   const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default time format
-  const [selectboxTitle, setSelectboxTitle] = useState("");
-
-  const islemiYapan = watch("islemiYapan");
-
-  useEffect(() => {
-    if (islemiYapan === "1") {
-      setSelectboxTitle("Yetkili Servis");
-    } else if (islemiYapan === "2") {
-      setSelectboxTitle("Bakım Departmanı");
-    }
-  }, [islemiYapan]);
-
-  useEffect(() => {
-    setValue("islemiYapan1", "");
-    setValue("islemiYapan1ID", "");
-  }, [islemiYapan, setValue]);
+  const [selectboxTitle, setSelectboxTitle] = useState("Yetkili Servis");
 
   const handleMinusClick = () => {
     setValue("servisKodu", "");
@@ -301,6 +286,69 @@ export default function MainTabs({ modalOpen }) {
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "470px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "470px" }}>
+            <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "column", width: "100%", gap: "10px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "flex-start",
+                    minWidth: "300px",
+                    gap: "10px",
+                    width: "100%",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Controller
+                    name="durumBilgisi"
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      const handleButtonClick = (selectedValue) => {
+                        if (value === selectedValue) {
+                          onChange(null); // Deselect if the same button is clicked
+                        } else {
+                          onChange(selectedValue); // Select the new button
+                        }
+                      };
+
+                      const options = [
+                        { value: "1", label: "Bekliyor", color: "#ff9800" },
+                        { value: "2", label: "Devam Ediyor", color: "#2196f3" },
+                        { value: "3", label: "İptal Edildi", color: "red" },
+                        { value: "4", label: "Tamamlandı", color: "#2bc770" },
+                      ];
+
+                      return (
+                        <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                          {options.map((option) => {
+                            const isSelected = value === option.value;
+                            return (
+                              <button
+                                key={option.value}
+                                type="button" // Add this line to prevent form submission
+                                onClick={() => handleButtonClick(option.value)}
+                                style={{
+                                  backgroundColor: isSelected ? option.color : "gray",
+                                  color: "white",
+                                  border: "none",
+                                  padding: "10px 20px",
+                                  cursor: "pointer",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                {option.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", gap: "10px", rowGap: "0px" }}>
             <Text style={{ fontSize: "14px" }}>{selectboxTitle}:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "300px" }}>
@@ -367,70 +415,6 @@ export default function MainTabs({ modalOpen }) {
               <Text style={{ fontSize: "14px" }}>Onay:</Text>
               <Onay />
             </StyledDivBottomLine>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", maxWidth: "470px" }}>
-            <div style={{ display: "flex" }}>
-              <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "column", width: "100%", gap: "10px" }}>
-                <Text style={{ fontSize: "14px" }}>Durum Bilgisi:</Text>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "flex-start",
-                    minWidth: "300px",
-                    gap: "10px",
-                    width: "100%",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Controller
-                    name="durumBilgisi"
-                    control={control}
-                    render={({ field: { onChange, value } }) => {
-                      const handleButtonClick = (selectedValue) => {
-                        if (value === selectedValue) {
-                          onChange(null); // Deselect if the same button is clicked
-                        } else {
-                          onChange(selectedValue); // Select the new button
-                        }
-                      };
-
-                      const options = [
-                        { value: "1", label: "Bekliyor", color: "#ff9800" },
-                        { value: "2", label: "Devam Ediyor", color: "#2196f3" },
-                        { value: "3", label: "İptal Edildi", color: "red" },
-                        { value: "4", label: "Tamamlandı", color: "#2bc770" },
-                      ];
-
-                      return (
-                        <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
-                          {options.map((option) => {
-                            const isSelected = value === option.value;
-                            return (
-                              <button
-                                key={option.value}
-                                type="button" // Add this line to prevent form submission
-                                onClick={() => handleButtonClick(option.value)}
-                                style={{
-                                  backgroundColor: isSelected ? option.color : "gray",
-                                  color: "white",
-                                  border: "none",
-                                  padding: "10px 20px",
-                                  cursor: "pointer",
-                                  borderRadius: "5px",
-                                }}
-                              >
-                                {option.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      );
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

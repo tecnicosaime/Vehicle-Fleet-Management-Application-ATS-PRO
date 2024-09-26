@@ -20,7 +20,7 @@ function Servisler({ visible, onClose, ids, selectedRowsData }) {
     <FormProvider {...formMethods}>
       <div>
         <Modal
-          title={`Servis Bilgileri - Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+          title={`Servis İşlemleri - Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
           open={visible}
           onCancel={onClose}
           maskClosable={false}

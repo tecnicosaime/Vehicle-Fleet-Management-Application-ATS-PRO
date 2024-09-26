@@ -47,7 +47,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
 
           // API'den gelen verileri set ederken
           setValue("plaka", item.plaka);
-          setValue("aracID", item.aracID);
+          setValue("aracID", item.aracId);
           setValue("aciklama", item.aciklama);
           setValue("yapilanIs", item.isTanim);
           setValue("yapilanIsID", item.isTanimId);
@@ -144,7 +144,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
   return (
     <FormProvider {...methods}>
       <div>
-        <Modal width="990px" title="Kontrol Listesi Güncelle" open={isModalVisible} onOk={methods.handleSubmit(onSubmited)} onCancel={onModalClose}>
+        <Modal width="990px" title="İşçilik Güncelle" open={isModalVisible} onOk={methods.handleSubmit(onSubmited)} onCancel={onModalClose}>
           {loading ? (
             <Spin
               spinning={loading}
