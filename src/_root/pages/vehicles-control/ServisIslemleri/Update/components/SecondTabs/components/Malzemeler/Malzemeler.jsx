@@ -11,6 +11,7 @@ export default function KontrolListesiTablo({ isActive }) {
   const { control, watch, setValue } = useFormContext();
   const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRowsData, setSelectedRowsData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,6 +59,17 @@ export default function KontrolListesiTablo({ isActive }) {
       key: "malezemeKod",
       width: 120,
       ellipsis: true,
+      render: (text, record) => (
+        <span
+          style={{ cursor: "pointer", color: "#1890ff" }}
+          onClick={() => {
+            setSelectedRow(record);
+            setIsModalVisible(true);
+          }}
+        >
+          {text}
+        </span>
+      ),
     },
     {
       title: "Malzeme Tanımı",
@@ -195,14 +207,14 @@ export default function KontrolListesiTablo({ isActive }) {
 
       <Table
         rowSelection={{
-          type: "radio",
+          type: "checkbox", // Change from 'radio' to 'checkbox'
           selectedRowKeys,
-          onChange: onRowSelectChange,
+          onChange: (selectedKeys, selectedRows) => {
+            setSelectedRowKeys(selectedKeys);
+            setSelectedRowsData(selectedRows); // Store the selected rows' data
+          },
         }}
         size={"small"}
-        onRow={(record) => ({
-          onClick: () => onRowClick(record),
-        })}
         columns={columns}
         dataSource={data}
         pagination={pagination}
