@@ -98,6 +98,7 @@ const AuthLayout = () => {
                   render={({ field }) => (
                     <Input
                       {...field}
+                      style={{ height: "40px", display: "flex", alignItems: "center" }}
                       placeholder={t("password")}
                       type={showPassword ? "text" : "password"}
                       suffix={showPassword ? <EyeTwoTone onClick={() => setShowPassword(false)} /> : <EyeInvisibleOutlined onClick={() => setShowPassword(true)} />}
