@@ -490,33 +490,33 @@ export default function MainTabs({ modalOpen }) {
               />
             </div>
           </div>
-          <div style={{ width: "100%", maxWidth: "450px", display: "flex", gap: "5px", flexWrap: "wrap" }}>
+        </div>
+        <div style={{ width: "100%", maxWidth: "450px", display: "flex", gap: "5px", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              maxWidth: "250px",
+              gap: "10px",
+              rowGap: "0px",
+            }}
+          >
+            <Text style={{ fontSize: "14px" }}>Araç Km:</Text>
             <div
               style={{
                 display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                maxWidth: "250px",
+                maxWidth: "100px",
+                minWidth: "100px",
                 gap: "10px",
-                rowGap: "0px",
+                width: "100%",
               }}
             >
-              <Text style={{ fontSize: "14px" }}>Araç Km:</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  maxWidth: "100px",
-                  minWidth: "100px",
-                  gap: "10px",
-                  width: "100%",
-                }}
-              >
-                <Controller name="aracKM" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-              </div>
+              <Controller name="aracKM" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
             </div>
           </div>
         </div>

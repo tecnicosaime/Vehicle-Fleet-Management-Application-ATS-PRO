@@ -62,9 +62,9 @@ const AuthLayout = () => {
       {isError && <ErrorAlert />}
 
       <div className="grid h-full">
-        <div className="col-span-5 login-card" style={{ display: "flex" }}>
-          <div>
-            <div style={{ marginBottom: "50px" }}>
+        <div className="col-span-5 login-card" style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ width: "450px" }}>
+            <div style={{ marginBottom: "70px" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
                 <LanguageSelectbox />
@@ -118,8 +118,8 @@ const AuthLayout = () => {
             </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "100px" }}>
-            <img src="/images/orjinLogo.png" alt="ats logo" className="login-logo-img self-center" />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", bottom: "20px" }}>
+            <img src="/images/orjinLogo.png" alt="ats logo" style={{ width: "150px" }} className="login-logo-img self-center" />
           </div>
         </div>
         <div className="login-bg-image col-span-7">
