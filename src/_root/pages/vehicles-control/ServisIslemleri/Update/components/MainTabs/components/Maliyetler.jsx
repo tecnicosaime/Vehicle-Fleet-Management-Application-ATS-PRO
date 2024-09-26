@@ -51,7 +51,7 @@ function Maliyetler(props) {
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "200px", maxWidth: "200px" }}>
-        <Text></Text>
+        <Text>Yuvarlama:</Text>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "100px", minWidth: "100px", gap: "10px", width: "100%" }}>
           <Controller name="eksiUcreti" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
         </div>

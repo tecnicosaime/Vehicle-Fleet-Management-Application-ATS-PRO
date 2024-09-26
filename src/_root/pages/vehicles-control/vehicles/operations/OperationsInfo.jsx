@@ -80,13 +80,28 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
       icon: <FaTruckFast className="text-info" />,
     },
     {
-      label: t("parcalar"),
+      label: t("degisenParcalar"),
       key: "11",
       icon: <MdSettingsInputComponent className="text-info" />,
     },
     {
       label: t("periyodikBakimlar"),
       key: "12",
+      icon: <MdSettingsInputComponent className="text-info" />,
+    },
+    {
+      label: t("surucuDegisiklikleri"),
+      key: "13",
+      icon: <MdSettingsInputComponent className="text-info" />,
+    },
+    {
+      label: t("sozlesmeler"),
+      key: "14",
+      icon: <MdSettingsInputComponent className="text-info" />,
+    },
+    {
+      label: t("ekspertiz"),
+      key: "15",
       icon: <MdSettingsInputComponent className="text-info" />,
     },
   ];

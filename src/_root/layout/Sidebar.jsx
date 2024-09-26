@@ -86,10 +86,10 @@ const items = [
         key: "22",
         label: <Link to={"/sefer-islemleri"}>{t("randevuTakibi")}</Link>,
       },
-      {
+      /*{
         key: "23",
         label: <Link to={"/harcama-islemleri"}>{t("servısFaturalari")}</Link>,
-      },
+      },*/
       {
         key: "24",
         label: <Link to={"/malzeme-tanimlari"}>{t("atolyeTanimlari")}</Link>,

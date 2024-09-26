@@ -300,7 +300,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
     <FormProvider {...methods}>
       <ConfigProvider locale={tr_TR}>
         <Modal
-          width="1300px"
+          width="1190px"
           centered
           title="Servis Güncelleme"
           open={drawerVisible}

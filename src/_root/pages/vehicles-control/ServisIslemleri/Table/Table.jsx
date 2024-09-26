@@ -19,7 +19,7 @@ import { t } from "i18next";
 
 const { Text } = Typography;
 
-const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("servisTanimlari") }];
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("servisIslemleri") }];
 
 const StyledButton = styled(Button)`
   display: flex;

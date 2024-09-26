@@ -68,22 +68,7 @@ export default function MainTabs({ modalOpen }) {
   } = useFormContext();
   const [localeDateFormat, setLocaleDateFormat] = useState("DD/MM/YYYY"); // Varsayılan format
   const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default time format
-  const [selectboxTitle, setSelectboxTitle] = useState("");
-
-  const islemiYapan = watch("islemiYapan");
-
-  useEffect(() => {
-    if (islemiYapan === "1") {
-      setSelectboxTitle("Yetkili Servis");
-    } else if (islemiYapan === "2") {
-      setSelectboxTitle("Bakım Departmanı");
-    }
-  }, [islemiYapan]);
-
-  useEffect(() => {
-    setValue("islemiYapan1", "");
-    setValue("islemiYapan1ID", "");
-  }, [islemiYapan, setValue]);
+  const [selectboxTitle, setSelectboxTitle] = useState("Yetkili Servis");
 
   const handleMinusClick = () => {
     setValue("servisKodu", "");

@@ -379,27 +379,18 @@ export default function MainTabs() {
               <Button onClick={handlePersonelMinusClick}> - </Button>
             </div>
           </div>
+
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-            <Text style={{ fontSize: "14px" }}>İşçilik Ücreti:</Text>
+            <Text style={{ fontSize: "14px" }}>İş Tipi:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller
-                name="iscilikUcreti"
-                control={control}
-                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} onChange={(value) => handleIscilikUcretiChange(value)} />}
-              />
+              <IsTipi />
             </div>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-            <Text style={{ fontSize: "14px" }}>KDV Oranı %:</Text>
+            <Text style={{ fontSize: "14px" }}>Saat-Dakika:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller
-                name="kdvOrani"
-                control={control}
-                render={({ field }) => (
-                  <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} onChange={(value) => handleKdvOraniChange(value)} />
-                )}
-              />
-              <Controller name="kdvDegeri" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, display: "none" }} />} />
+              <Controller name="saat" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+              <Controller name="dakika" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
             </div>
           </div>
         </div>
@@ -422,6 +413,18 @@ export default function MainTabs() {
               />
             </div>
           </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
+            <Text style={{ fontSize: "14px" }}>İşçilik Ücreti:</Text>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
+              <Controller
+                name="iscilikUcreti"
+                control={control}
+                render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} onChange={(value) => handleIscilikUcretiChange(value)} />}
+              />
+            </div>
+          </div>
+
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
             <Text style={{ fontSize: "14px" }}>Toplam:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
@@ -430,16 +433,16 @@ export default function MainTabs() {
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-            <Text style={{ fontSize: "14px" }}>İş Tipi:</Text>
+            <Text style={{ fontSize: "14px" }}>KDV Oranı %:</Text>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <IsTipi />
-            </div>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "450px", marginBottom: "10px" }}>
-            <Text style={{ fontSize: "14px" }}>Saat-Dakika:</Text>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", maxWidth: "300px", minWidth: "300px", gap: "10px", width: "100%" }}>
-              <Controller name="saat" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
-              <Controller name="dakika" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1 }} />} />
+              <Controller
+                name="kdvOrani"
+                control={control}
+                render={({ field }) => (
+                  <InputNumber {...field} style={{ flex: 1 }} prefix={<Text style={{ color: "#0091ff" }}>%</Text>} onChange={(value) => handleKdvOraniChange(value)} />
+                )}
+              />
+              <Controller name="kdvDegeri" control={control} render={({ field }) => <InputNumber {...field} style={{ flex: 1, display: "none" }} />} />
             </div>
           </div>
         </div>

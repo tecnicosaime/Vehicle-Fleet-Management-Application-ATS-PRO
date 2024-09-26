@@ -90,7 +90,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       ozelAlan11: "",
       ozelAlan12: "",
 
-      durumBilgisi: "",
+      durumBilgisi: 1,
       garantiKapsami: false,
 
       surucuOder: false,
@@ -118,7 +118,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       aracId: Number(data.PlakaID),
       bakimId: Number(data.servisKoduID),
       kazaId: Number(data.hasarNoID),
-      durumBilgisi: Number(data.durumBilgisi),
+      durumBilgisi: 1,
       islemiYapan: Number(data.islemiYapan),
       servisNedeniKodId: Number(data.servisNedeniID),
 

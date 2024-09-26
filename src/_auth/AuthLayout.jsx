@@ -62,54 +62,64 @@ const AuthLayout = () => {
       {isError && <ErrorAlert />}
 
       <div className="grid h-full">
-        <div className="col-span-5 login-card" style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
-            <LanguageSelectbox />
-          </div>
+        <div className="col-span-5 login-card" style={{ display: "flex" }}>
           <div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
-              <Text style={{ fontSize: "23px", fontWeight: 600 }}>{t("Giris")} !</Text>
-              <Text>{t("hosGeldinizKullaniciKoduVeSifreniziGiriniz")}</Text>
+            <div style={{ marginBottom: "50px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
+                <LanguageSelectbox />
+              </div>
+              <Text>{t("filoYonetimiYazilimi")}</Text>
             </div>
 
-            <div style={{ display: "flex", gap: "5px", flexDirection: "column" }} className="mt-30">
-              <Text>{t("KullaniciKodu")}</Text>
-              <Controller
-                name="username"
-                control={control}
-                rules={{ required: t("usernameValidationErrorMessage") }}
-                render={({ field }) => <Input {...field} placeholder={t("username")} className={errors.username ? "border-red-500" : null} />}
-              />
-              {errors.username && <span className="error-message">{errors.username.message}</span>}
-            </div>
-            <div style={{ display: "flex", gap: "5px", flexDirection: "column" }} className="mt-30 mb-20">
-              <Text>{t("Sifre")}</Text>
+            <div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
+                <Text style={{ fontSize: "23px", fontWeight: 600 }}>{t("Giris")} !</Text>
+                <Text>{t("hosGeldinizKullaniciKoduVeSifreniziGiriniz")}</Text>
+              </div>
 
-              <Controller
-                name="password"
-                control={control}
-                rules={{ required: t("passwordValidationErrorMessage") }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder={t("password")}
-                    type={showPassword ? "text" : "password"}
-                    suffix={showPassword ? <EyeTwoTone onClick={() => setShowPassword(false)} /> : <EyeInvisibleOutlined onClick={() => setShowPassword(true)} />}
-                    className={errors.username ? "border-red-500" : null}
-                  />
-                )}
-              />
-              {errors.password && <span className="error-message">{errors.password.message}</span>}
+              <div style={{ display: "flex", gap: "5px", flexDirection: "column" }} className="mt-30">
+                <Text>{t("KullaniciKodu")}</Text>
+                <Controller
+                  name="username"
+                  control={control}
+                  rules={{ required: t("usernameValidationErrorMessage") }}
+                  render={({ field }) => <Input {...field} placeholder={t("username")} className={errors.username ? "border-red-500" : null} />}
+                />
+                {errors.username && <span className="error-message">{errors.username.message}</span>}
+              </div>
+              <div style={{ display: "flex", gap: "5px", flexDirection: "column" }} className="mt-30 mb-20">
+                <Text>{t("Sifre")}</Text>
+
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{ required: t("passwordValidationErrorMessage") }}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      placeholder={t("password")}
+                      type={showPassword ? "text" : "password"}
+                      suffix={showPassword ? <EyeTwoTone onClick={() => setShowPassword(false)} /> : <EyeInvisibleOutlined onClick={() => setShowPassword(true)} />}
+                      className={errors.username ? "border-red-500" : null}
+                    />
+                  )}
+                />
+                {errors.password && <span className="error-message">{errors.password.message}</span>}
+              </div>
+              <div className="flex justify-end mb-20">
+                <Link to={""} className="login-forget-link">
+                  {t("forgotPassword")}
+                </Link>
+              </div>
+              <Button type="submit" onClick={handleSubmit(onSubmit)} className="login-btn btn mt-6">
+                {isLoading ? <Spin className="text-white" /> : t("login")}
+              </Button>
             </div>
-            <div className="flex justify-end mb-20">
-              <Link to={""} className="login-forget-link">
-                {t("forgotPassword")}
-              </Link>
-            </div>
-            <Button type="submit" onClick={handleSubmit(onSubmit)} className="login-btn btn mt-6">
-              {isLoading ? <Spin className="text-white" /> : t("login")}
-            </Button>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "100px" }}>
+            <img src="/images/orjinLogo.png" alt="ats logo" className="login-logo-img self-center" />
           </div>
         </div>
         <div className="login-bg-image col-span-7">
