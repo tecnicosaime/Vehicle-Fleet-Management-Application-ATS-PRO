@@ -98,7 +98,7 @@ export default function SecondTabs({ refreshKey, fieldRequirements }) {
   ];
 
   return (
-    <div style={{ display: "flex", width: "100%", gap: "10px", alignItems: "flex-start" }}>
+    <div style={{ display: "flex", width: "100%", gap: "30px", alignItems: "flex-start" }}>
       <div style={{ flex: 1 }}>
         <StyledTabs defaultActiveKey={activeTabKey} items={items} onChange={onChange} />
       </div>

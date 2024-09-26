@@ -199,6 +199,7 @@ export default function KontrolListesiTablo({ isActive }) {
           selectedRowKeys,
           onChange: onRowSelectChange,
         }}
+        size={"small"}
         onRow={(record) => ({
           onClick: () => onRowClick(record),
         })}
@@ -209,7 +210,7 @@ export default function KontrolListesiTablo({ isActive }) {
         loading={loading}
         scroll={{
           // x: "auto",
-          y: "calc(100vh - 360px)",
+          y: "100px",
         }}
       />
       {isModalVisible && (

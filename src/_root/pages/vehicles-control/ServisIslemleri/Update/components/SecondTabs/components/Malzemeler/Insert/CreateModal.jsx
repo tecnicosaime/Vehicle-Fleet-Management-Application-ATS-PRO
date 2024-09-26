@@ -14,7 +14,7 @@ export default function CreateModal({ workshopSelectedId, onSubmit, onRefresh, s
       // plaka: plaka,
       aracID: aracID,
       aciklama: "",
-      stokluMalzeme: true,
+      stokluMalzeme: false,
       malzemeKodu: "",
       malzemeKoduID: "",
       malzemeTanimi: "",
