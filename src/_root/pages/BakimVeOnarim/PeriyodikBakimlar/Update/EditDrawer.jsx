@@ -61,10 +61,10 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("servisKoduID", item.bakimId);
           setValue("servisTanimi", item.bakimTanimi);
           setValue("servisTipi", item.servisTipi);
-          setValue("herKm", item.herKm);
+          setValue("herKm", item.isHerKm);
           setValue("herKmInput", item.herKm);
           setValue("herKmInput2", item.sonKm);
-          setValue("herGun", item.herGun);
+          setValue("herGun", item.isHerTarih);
           setValue("herGunInput", item.herGun);
           setValue("herTarihi", item.sonTarih ? (dayjs(item.sonTarih).isValid() ? dayjs(item.sonTarih) : null) : null);
           setValue("aciklama", item.aciklama);
@@ -107,6 +107,8 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       hedefKm: Number(data.hedefKm),
       aktif: data.aktif,
       aciklama: data.aciklama,
+      isHerKm: data.herKm,
+      isHerTarih: data.herGun,
       kalanKm: 0,
       kalanSure: 0,
     };

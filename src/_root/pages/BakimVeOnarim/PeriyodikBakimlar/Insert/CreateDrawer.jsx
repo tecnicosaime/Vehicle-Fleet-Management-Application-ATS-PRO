@@ -80,6 +80,8 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       hedefKm: Number(data.hedefKm),
       aktif: data.aktif,
       aciklama: data.aciklama,
+      isHerKm: data.herKm,
+      isHerTarih: data.herGun,
       kalanKm: 0,
       kalanSure: 0,
     };
@@ -100,6 +102,8 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           reset();
         } else if (response.data.statusCode === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
+        } else if (response.data.statusCode === 403) {
+          message.error("Aynı Servis Birden Fazla Eklenemez!");
         } else {
           message.error("Ekleme Başarısız.");
         }
