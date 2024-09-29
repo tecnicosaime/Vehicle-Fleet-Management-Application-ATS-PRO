@@ -151,6 +151,21 @@ const Sigorta = () => {
 
   const [selectedRows, setSelectedRows] = useState([]);
 
+  const statusTag = (statusId) => {
+    switch (statusId) {
+      case 1:
+        return { color: "#ff9800", text: "Bekliyor" };
+      case 2:
+        return { color: "#2196f3", text: "Devam Ediyor" };
+      case 3:
+        return { color: "#ff0000", text: "İptal Edildi" };
+      case 4:
+        return { color: "#2bc770", text: "Tamamlandı" };
+      default:
+        return { color: "default", text: "" }; // Eğer farklı bir değer gelirse
+    }
+  };
+
   function hexToRGBA(hex, opacity) {
     // hex veya opacity null ise hata döndür
     if (hex === null || opacity === null) {
@@ -260,6 +275,39 @@ const Sigorta = () => {
     },
 
     {
+      title: "Durum",
+      dataIndex: "durumBilgisi",
+      key: "durumBilgisi",
+      width: 150,
+      ellipsis: true,
+      visible: true,
+      render: (_, record) => {
+        const { color, text } = statusTag(record.durumBilgisi);
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Tag
+              style={{
+                textAlign: "center",
+                backgroundColor: hexToRGBA(color, 0.2),
+                border: `1.2px solid ${hexToRGBA(color, 0.7)}`,
+                color: color,
+              }}
+            >
+              {text}
+            </Tag>
+          </div>
+        );
+      },
+      sorter: (a, b) => (a.durumBilgisi || 0) - (b.durumBilgisi || 0),
+    },
+
+    {
       title: "Servis Nedeni",
       dataIndex: "servisNedeni",
       key: "servisNedeni",
@@ -288,6 +336,7 @@ const Sigorta = () => {
         return a.servisFirma.localeCompare(b.servisFirma);
       },
     },
+
     {
       title: "Servis Tipi",
       dataIndex: "servisTipi",
