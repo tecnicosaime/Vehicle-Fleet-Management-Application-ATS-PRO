@@ -211,6 +211,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       bakimId: Number(data.servisKoduID),
       kazaId: Number(data.hasarNoID),
       durumBilgisi: Number(data.durumBilgisi),
+      tamamlandi: data.durumBilgisi === "4" ? true : false,
       islemiYapan: data.islemiYapan,
       servisNedeniKodId: Number(data.servisNedeniID),
 

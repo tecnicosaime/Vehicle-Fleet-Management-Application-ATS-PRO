@@ -64,6 +64,7 @@ export default function MainTabs({ modalOpen }) {
     control,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useFormContext();
   const [localeDateFormat, setLocaleDateFormat] = useState("DD/MM/YYYY"); // Varsayılan format
@@ -212,6 +213,8 @@ export default function MainTabs({ modalOpen }) {
   }, []);
 
   // tarih formatlamasını kullanıcının yerel tarih formatına göre ayarlayın sonu
+
+  const durumBilgisiValue = watch("durumBilgisi");
 
   return (
     <div style={{ display: "flex", marginBottom: "15px", flexDirection: "column", gap: "10px", width: "100%" }}>
@@ -431,7 +434,7 @@ export default function MainTabs({ modalOpen }) {
               justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: "14px" }}>Başlama Tarihi:</Text>
+            <Text style={{ fontSize: "14px", fontWeight: durumBilgisiValue === "4" ? "600" : undefined }}>Başlama Tarihi:</Text>
             <div
               style={{
                 display: "flex",
@@ -446,13 +449,39 @@ export default function MainTabs({ modalOpen }) {
               <Controller
                 name="baslamaTarihi"
                 control={control}
-                render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
+                rules={{
+                  validate: (value) => {
+                    const durumBilgisi = getValues("durumBilgisi");
+                    if (durumBilgisi === "4") {
+                      return value ? true : "Alan Boş Bırakılamaz!";
+                    }
+                    return true;
+                  },
+                }}
+                render={({ field }) => (
+                  <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" status={errors.baslamaTarihi ? "error" : ""} />
+                )}
               />
               <Controller
                 name="baslamaSaati"
                 control={control}
-                render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
+                rules={{
+                  validate: (value) => {
+                    const durumBilgisi = getValues("durumBilgisi");
+                    if (durumBilgisi === "4") {
+                      return value ? true : "Alan Boş Bırakılamaz!";
+                    }
+                    return true;
+                  },
+                }}
+                render={({ field }) => (
+                  <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" status={errors.baslamaSaati ? "error" : ""} />
+                )}
               />
+              <div>
+                {errors.baslamaTarihi && <div style={{ color: "red" }}>{errors.baslamaTarihi.message}</div>}
+                {errors.baslamaSaati && <div style={{ color: "red" }}>{errors.baslamaSaati.message}</div>}
+              </div>
             </div>
           </div>
           <div
@@ -466,7 +495,7 @@ export default function MainTabs({ modalOpen }) {
               justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: "14px" }}>Bitiş Tarihi:</Text>
+            <Text style={{ fontSize: "14px", fontWeight: durumBilgisiValue === "4" ? "600" : undefined }}>Bitiş Tarihi:</Text>
             <div
               style={{
                 display: "flex",
@@ -481,16 +510,43 @@ export default function MainTabs({ modalOpen }) {
               <Controller
                 name="bitisTarihi"
                 control={control}
-                render={({ field }) => <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" />}
+                rules={{
+                  validate: (value) => {
+                    const durumBilgisi = getValues("durumBilgisi");
+                    if (durumBilgisi === "4") {
+                      return value ? true : "Alan Boş Bırakılamaz!";
+                    }
+                    return true;
+                  },
+                }}
+                render={({ field }) => (
+                  <DatePicker {...field} style={{ width: "180px" }} format={localeDateFormat} placeholder="Tarih seçiniz" status={errors.bitisTarihi ? "error" : ""} />
+                )}
               />
               <Controller
                 name="bitisSaati"
                 control={control}
-                render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
+                rules={{
+                  validate: (value) => {
+                    const durumBilgisi = getValues("durumBilgisi");
+                    if (durumBilgisi === "4") {
+                      return value ? true : "Alan Boş Bırakılamaz!";
+                    }
+                    return true;
+                  },
+                }}
+                render={({ field }) => (
+                  <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" status={errors.bitisSaati ? "error" : ""} />
+                )}
               />
+              <div>
+                {errors.bitisTarihi && <div style={{ color: "red" }}>{errors.bitisTarihi.message}</div>}
+                {errors.bitisSaati && <div style={{ color: "red" }}>{errors.bitisSaati.message}</div>}
+              </div>
             </div>
           </div>
         </div>
+
         <div style={{ width: "100%", maxWidth: "450px", display: "flex", gap: "5px", flexWrap: "wrap" }}>
           <div
             style={{
