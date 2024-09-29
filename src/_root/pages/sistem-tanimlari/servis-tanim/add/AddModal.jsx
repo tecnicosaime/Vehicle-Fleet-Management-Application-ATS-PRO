@@ -189,9 +189,21 @@ const AddModal = ({ setStatus }) => {
                   <Controller
                     name="km"
                     control={control}
-                    render={({ field }) => (
+                    rules={{
+                      validate: () => {
+                        if (periyodik) {
+                          const gunValue = getValues("gun");
+                          const kmValue = getValues("km");
+                          if (!kmValue && !gunValue) {
+                            return "Lütfen km veya gün değerlerinden en az birini giriniz.";
+                          }
+                        }
+                        return true;
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
                       <>
-                        <InputNumber {...field} className="w-full" disabled={!periyodik} onChange={(e) => field.onChange(e)} status={errors.km ? "error" : ""} />
+                        <InputNumber {...field} className="w-full" disabled={!periyodik} onChange={(e) => field.onChange(e)} status={error ? "error" : ""} />
                       </>
                     )}
                   />
@@ -205,13 +217,24 @@ const AddModal = ({ setStatus }) => {
                   <Controller
                     name="gun"
                     control={control}
-                    render={({ field }) => (
+                    rules={{
+                      validate: () => {
+                        if (periyodik) {
+                          const kmValue = getValues("km");
+                          const gunValue = getValues("gun");
+                          if (!kmValue && !gunValue) {
+                            return "Lütfen km veya gün değerlerinden en az birini giriniz.";
+                          }
+                        }
+                        return true;
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
                       <>
-                        <InputNumber {...field} className="w-full" disabled={!periyodik} onChange={(e) => field.onChange(e)} status={errors.gun ? "error" : ""} />
+                        <InputNumber {...field} className="w-full" disabled={!periyodik} onChange={(e) => field.onChange(e)} status={error ? "error" : ""} />
                       </>
                     )}
                   />
-
                   <label>{t("gun")}</label>
                 </div>
               </div>
