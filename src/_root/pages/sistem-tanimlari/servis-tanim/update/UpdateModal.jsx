@@ -16,7 +16,21 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   const methods = useForm({
     defaultValues: defaultValues,
   });
-  const { handleSubmit, reset, control, setValue, watch } = methods;
+  const {
+    handleSubmit,
+    reset,
+    control,
+    setValue,
+    watch,
+    getValues,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = methods;
+
+  const periyodik = watch("periyodik");
+  const km = watch("km");
+  const gun = watch("gun");
 
   useEffect(() => {
     if (watch("bakimKodu")) {
@@ -43,6 +57,30 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       setServisId(res.data.bakimId);
     });
   }, [id, updateModal]);
+
+  useEffect(() => {
+    if (periyodik) {
+      const kmValue = getValues("km");
+      const gunValue = getValues("gun");
+      if ((kmValue === undefined || kmValue === null || kmValue === "") && (gunValue === undefined || gunValue === null || gunValue === "")) {
+        const errorMessage = "Lütfen km veya gün değerlerinden en az birini giriniz.";
+        setError("km", {
+          type: "manual",
+          message: errorMessage,
+        });
+        setError("gun", {
+          type: "manual",
+          message: errorMessage,
+        });
+      } else {
+        clearErrors("km");
+        clearErrors("gun");
+      }
+    } else {
+      clearErrors("km");
+      clearErrors("gun");
+    }
+  }, [periyodik, km, gun]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -146,16 +184,34 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
               <h2>Uygulama Periyodu</h2>
             </div>
             <div className="col-span-2">
-              <div className="flex gap-1">
+              <div className="flex gap-1" style={{ display: "flex", alignItems: "center" }}>
                 <label>Her</label>
-                <Controller name="km" control={control} render={({ field }) => <InputNumber {...field} className="w-full" onChange={(e) => field.onChange(e)} />} />
+                <Controller
+                  name="km"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <InputNumber {...field} className="w-full" disabled={!periyodik} onChange={(e) => field.onChange(e)} status={errors.km ? "error" : ""} />
+                    </>
+                  )}
+                />
+
                 <label>{t("km")}</label>
               </div>
             </div>
             <div className="col-span-2">
-              <div className="flex gap-1">
+              <div className="flex gap-1" style={{ display: "flex", alignItems: "center" }}>
                 <label>Her</label>
-                <Controller name="gun" control={control} render={({ field }) => <InputNumber {...field} className="w-full" onChange={(e) => field.onChange(e)} />} />
+                <Controller
+                  name="gun"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <InputNumber {...field} className="w-full" disabled={!periyodik} onChange={(e) => field.onChange(e)} status={errors.gun ? "error" : ""} />
+                    </>
+                  )}
+                />
+
                 <label>{t("gun")}</label>
               </div>
             </div>
