@@ -126,6 +126,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("secilenKayitID", item.siraNo);
           setValue("PlakaID", item.aracId);
           setValue("Plaka", item.plaka);
+          setValue("PlakaLabel", item.plaka);
           setValue("duzenlenmeTarihi", item.tarih ? (dayjs(item.tarih).isValid() ? dayjs(item.tarih) : null) : null);
           setValue("duzenlenmeSaati", item.saat ? (dayjs(item.saat, "HH:mm:ss").isValid() ? dayjs(item.saat, "HH:mm:ss") : null) : null);
           setValue("servisKodu", item.servisKodu);
@@ -265,7 +266,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
         if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
           const formattedDate = dayjs(response.data.targetDate).isValid() ? dayjs(response.data.targetDate).format("DD-MM-YYYY") : response.data.targetDate;
           if (response.data.targetKm !== undefined && response.data.targetDate !== undefined) {
-            message.success("Güncelleme Başarılı. Bir sonraki Periyodik Bakım " + response.data.targetKm + " km ve " + formattedDate + " tarihinde yapılacaktır.");
+            message.success(data.Plaka + " Plakalı Aracın " + " (" + data.servisTanimi + ") " + response.data.targetKm + " km ve " + formattedDate + " Tarihine Güncellenmiştir.");
           } else {
             message.success("Güncelleme Başarılı.");
           }
