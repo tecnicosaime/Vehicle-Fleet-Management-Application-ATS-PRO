@@ -124,7 +124,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         width: 100,
       },
       {
-        title: "Peryodik",
+        title: "Periyodik",
         dataIndex: "periyodik",
         key: "periyodik",
         width: 100,
@@ -242,10 +242,12 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     setSearchTerm1(e.target.value);
   };
 
+  const PlakaLabel = watch("PlakaLabel");
+
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
-      <Modal width={1200} centered title="Servis Kodları" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
+      <Modal width={1200} centered title={`Servis Kodları ${PlakaLabel}`} destroyOnClose open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
         <Input placeholder="Arama..." value={searchTerm1} onChange={handleSearch1} style={{ width: "300px", marginBottom: "15px" }} />
         <Table
           rowSelection={{

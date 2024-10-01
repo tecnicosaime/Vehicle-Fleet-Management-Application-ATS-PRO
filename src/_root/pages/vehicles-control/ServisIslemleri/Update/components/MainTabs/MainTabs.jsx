@@ -466,23 +466,9 @@ export default function MainTabs({ modalOpen }) {
               <Controller
                 name="baslamaSaati"
                 control={control}
-                rules={{
-                  validate: (value) => {
-                    const durumBilgisi = getValues("durumBilgisi");
-                    if (durumBilgisi === "4") {
-                      return value ? true : "Alan Boş Bırakılamaz!";
-                    }
-                    return true;
-                  },
-                }}
-                render={({ field }) => (
-                  <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" status={errors.baslamaSaati ? "error" : ""} />
-                )}
+                render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
               />
-              <div>
-                {errors.baslamaTarihi && <div style={{ color: "red" }}>{errors.baslamaTarihi.message}</div>}
-                {errors.baslamaSaati && <div style={{ color: "red" }}>{errors.baslamaSaati.message}</div>}
-              </div>
+              <div>{errors.baslamaTarihi && <div style={{ color: "red" }}>{errors.baslamaTarihi.message}</div>}</div>
             </div>
           </div>
           <div
@@ -527,23 +513,9 @@ export default function MainTabs({ modalOpen }) {
               <Controller
                 name="bitisSaati"
                 control={control}
-                rules={{
-                  validate: (value) => {
-                    const durumBilgisi = getValues("durumBilgisi");
-                    if (durumBilgisi === "4") {
-                      return value ? true : "Alan Boş Bırakılamaz!";
-                    }
-                    return true;
-                  },
-                }}
-                render={({ field }) => (
-                  <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" status={errors.bitisSaati ? "error" : ""} />
-                )}
+                render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
               />
-              <div>
-                {errors.bitisTarihi && <div style={{ color: "red" }}>{errors.bitisTarihi.message}</div>}
-                {errors.bitisSaati && <div style={{ color: "red" }}>{errors.bitisSaati.message}</div>}
-              </div>
+              <div>{errors.bitisTarihi && <div style={{ color: "red" }}>{errors.bitisTarihi.message}</div>}</div>
             </div>
           </div>
         </div>

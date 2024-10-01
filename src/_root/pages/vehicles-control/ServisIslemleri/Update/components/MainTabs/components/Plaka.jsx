@@ -121,35 +121,37 @@ export default function Plaka({ disabled, fieldRequirements }) {
                   fetchData(); // Fetch data when the dropdown is opened
                 }
               }}
-              // dropdownRender={(menu) => (
-              //   <Spin spinning={loading}>
-              //     {menu}
-              //     <Divider
-              //       style={{
-              //         margin: "8px 0",
-              //       }}
-              //     />
-              //     <Space
-              //       style={{
-              //         padding: "0 8px 4px",
-              //       }}
-              //     >
-              //       <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
-              //       <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-              //         Ekle
-              //       </Button>
-              //     </Space>
-              //   </Spin>
-              // )}
+              dropdownRender={(menu) => (
+                <Spin spinning={loading}>
+                  {menu}
+                  {/*  <Divider
+                    style={{
+                      margin: "8px 0",
+                    }}
+                  />
+                  <Space
+                    style={{
+                      padding: "0 8px 4px",
+                    }}
+                  >
+                    <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
+                    <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                      Ekle
+                    </Button>
+                  </Space> */}
+                </Spin>
+              )}
               options={options.map((item) => ({
                 value: item.aracId, // Use the ID as the value
                 label: item.plaka, // Display the name in the dropdown
               }))}
-              onChange={(value) => {
+              onChange={(value, option) => {
                 // Seçilen değerin ID'sini NedeniID alanına set et
                 // `null` veya `undefined` değerlerini ele al
-                setValue("Plaka", value ?? null);
-                setValue("PlakaID", value ?? null);
+                const selectedLabel = option?.label ?? "";
+                setValue("Plaka", value ?? null); // ID'yi Plaka alanına set et
+                setValue("PlakaID", value ?? null); // ID'yi PlakaID alanına set et
+                setValue("PlakaLabel", selectedLabel); // Label'ı PlakaLabel alanına set et
                 field.onChange(value ?? null);
               }}
               value={field.value ?? null} // Eğer `field.value` `undefined` ise, `null` kullanarak `Select` bileşenine geçir

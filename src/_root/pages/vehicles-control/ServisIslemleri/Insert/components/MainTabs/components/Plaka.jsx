@@ -141,11 +141,13 @@ export default function Plaka({ disabled, fieldRequirements }) {
                 value: item.aracId, // Use the ID as the value
                 label: item.plaka, // Display the name in the dropdown
               }))}
-              onChange={(value) => {
+              onChange={(value, option) => {
                 // Seçilen değerin ID'sini NedeniID alanına set et
                 // `null` veya `undefined` değerlerini ele al
-                setValue("Plaka", value ?? null);
-                setValue("PlakaID", value ?? null);
+                const selectedLabel = option?.label ?? "";
+                setValue("Plaka", value ?? null); // ID'yi Plaka alanına set et
+                setValue("PlakaID", value ?? null); // ID'yi PlakaID alanına set et
+                setValue("PlakaLabel", selectedLabel); // Label'ı PlakaLabel alanına set et
                 field.onChange(value ?? null);
               }}
               value={field.value ?? null} // Eğer `field.value` `undefined` ise, `null` kullanarak `Select` bileşenine geçir
