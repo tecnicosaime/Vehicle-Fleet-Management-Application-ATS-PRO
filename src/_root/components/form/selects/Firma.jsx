@@ -9,7 +9,7 @@ const Firma = ({ name, codeName, checked, required }) => {
   const { setValue, watch, control } = useFormContext();
 
   const handleClick = () => {
-    CodeControlByUrlService("Company/GetCompanyListForSelectInput").then((res) => {
+    CodeControlByUrlService("Company/GetCompanyListForSelectInput?isInsurance=true").then((res) => {
       setData(res?.data);
     });
   };

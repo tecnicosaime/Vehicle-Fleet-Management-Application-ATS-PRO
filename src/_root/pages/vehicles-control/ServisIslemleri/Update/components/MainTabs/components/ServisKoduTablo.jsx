@@ -3,6 +3,7 @@ import { Button, Modal, Table, Input } from "antd";
 import AxiosInstance from "../../../../../../../../api/http";
 import { Resizable } from "react-resizable";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { useFormContext } from "react-hook-form";
 
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
@@ -65,6 +66,12 @@ const normalizeText = (text) => {
 };
 
 export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
+  const {
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
@@ -160,9 +167,12 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     }),
   }));
 
+  const PlakaID = watch("PlakaID");
+
   const fetch = useCallback(() => {
     setLoading(true);
-    AxiosInstance.get(`ServiceDef/GetServiceDefList?page=${pagination.current}`)
+
+    AxiosInstance.get(`ServiceDef/GetServiceDefListRelatedToVehicle?vId=${PlakaID}&page=${pagination.current}`)
       .then((response) => {
         const { list, recordCount } = response.data; // Destructure the list and recordCount from the response
         const fetchedData = list.map((item) => ({
@@ -178,7 +188,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
         });
       })
       .finally(() => setLoading(false));
-  }, [pagination.current]);
+  }, [pagination.current, PlakaID]);
 
   const handleModalToggle = () => {
     setIsModalVisible((prev) => !prev);

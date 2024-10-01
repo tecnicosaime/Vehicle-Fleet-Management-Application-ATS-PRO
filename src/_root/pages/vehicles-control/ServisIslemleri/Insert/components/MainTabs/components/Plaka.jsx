@@ -117,26 +117,26 @@ export default function Plaka({ disabled, fieldRequirements }) {
                   fetchData(); // Fetch data when the dropdown is opened
                 }
               }}
-              // dropdownRender={(menu) => (
-              //   <Spin spinning={loading}>
-              //     {menu}
-              //     <Divider
-              //       style={{
-              //         margin: "8px 0",
-              //       }}
-              //     />
-              //     <Space
-              //       style={{
-              //         padding: "0 8px 4px",
-              //       }}
-              //     >
-              //       <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
-              //       <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-              //         Ekle
-              //       </Button>
-              //     </Space>
-              //   </Spin>
-              // )}
+              dropdownRender={(menu) => (
+                <Spin spinning={loading}>
+                  {menu}
+                  {/* <Divider
+                    style={{
+                      margin: "8px 0",
+                    }}
+                  />
+                  <Space
+                    style={{
+                      padding: "0 8px 4px",
+                    }}
+                  >
+                    <Input placeholder="" ref={inputRef} value={name} onChange={onNameChange} />
+                    <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                      Ekle
+                    </Button>
+                  </Space> */}
+                </Spin>
+              )}
               options={options.map((item) => ({
                 value: item.aracId, // Use the ID as the value
                 label: item.plaka, // Display the name in the dropdown

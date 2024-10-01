@@ -258,7 +258,12 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       .then((response) => {
         console.log("Data sent successfully:", response);
         if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
-          message.success("Ekleme Başarılı.");
+          const formattedDate = dayjs(response.data.targetDate).isValid() ? dayjs(response.data.targetDate).format("DD-MM-YYYY") : response.data.targetDate;
+          if (response.data.targetKm !== undefined && response.data.targetDate !== undefined) {
+            message.success("Güncelleme Başarılı. Bir sonraki Periyodik Bakım " + response.data.targetKm + " km ve " + formattedDate + " tarihinde yapılacaktır.");
+          } else {
+            message.success("Güncelleme Başarılı.");
+          }
           setOpen(false);
           onRefresh();
           methods.reset();
