@@ -78,7 +78,6 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
   const [loading, setLoading] = useState(false);
 
   const [searchTerm1, setSearchTerm1] = useState("");
-  const [filteredData1, setFilteredData1] = useState([]);
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -169,31 +168,36 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
 
   const PlakaID = watch("PlakaID");
 
-  const fetch = useCallback(() => {
-    setLoading(true);
+  const fetch = useCallback(
+    (searchTerm = "") => {
+      if (PlakaID) {
+        setLoading(true);
 
-    AxiosInstance.get(`ServiceDef/GetServiceDefListRelatedToVehicle?vId=${PlakaID}&page=${pagination.current}`)
-      .then((response) => {
-        const { list, recordCount } = response.data; // Destructure the list and recordCount from the response
-        const fetchedData = list.map((item) => ({
-          ...item,
-          key: item.bakimId,
-          code: item.bakimKodu,
-          subject: item.tanim,
-        }));
-        setData(fetchedData);
-        setPagination({
-          ...pagination,
-          total: recordCount, // Update the total number of records for pagination
-        });
-      })
-      .finally(() => setLoading(false));
-  }, [pagination.current, PlakaID]);
+        AxiosInstance.get(`ServiceDef/GetServiceDefListRelatedToVehicle?vId=${PlakaID}&page=${pagination.current}&parameter=${encodeURIComponent(searchTerm)}`)
+          .then((response) => {
+            const { list, recordCount } = response.data;
+            const fetchedData = list.map((item) => ({
+              ...item,
+              key: item.bakimId,
+              code: item.bakimKodu,
+              subject: item.tanim,
+            }));
+            setData(fetchedData);
+            setPagination((prevPagination) => ({
+              ...prevPagination,
+              total: recordCount,
+            }));
+          })
+          .finally(() => setLoading(false));
+      }
+    },
+    [PlakaID, pagination.current]
+  );
 
   const handleModalToggle = () => {
     setIsModalVisible((prev) => !prev);
     if (!isModalVisible) {
-      fetch();
+      fetch(searchTerm1);
       setSelectedRowKeys([]);
     }
   };
@@ -218,20 +222,26 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
     setPagination(newPagination);
   };
 
-  // Arama işlevselliği için handleSearch fonksiyonları
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetch(searchTerm1);
+    }, 2000); // 2-second debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm1, fetch]);
+
+  // Fetch data when pagination changes
+  useEffect(() => {
+    fetch(searchTerm1);
+  }, [pagination.current]);
+
   const handleSearch1 = (e) => {
-    const value = e.target.value;
-    setSearchTerm1(value);
-    const normalizedSearchTerm = normalizeText(value);
-    if (value) {
-      const filtered = data.filter((item) =>
-        Object.keys(item).some((key) => item[key] && normalizeText(item[key].toString()).toLowerCase().includes(normalizedSearchTerm.toLowerCase()))
-      );
-      setFilteredData1(filtered);
-    } else {
-      setFilteredData1(data);
-    }
+    setSearchTerm1(e.target.value);
   };
+
   return (
     <div>
       <Button onClick={handleModalToggle}> + </Button>
@@ -251,7 +261,7 @@ export default function ServisKoduTablo({ workshopSelectedId, onSubmit }) {
           }}
           scroll={{ y: "calc(100vh - 380px)" }}
           columns={mergedColumns}
-          dataSource={filteredData1.length > 0 || searchTerm1 ? filteredData1 : data}
+          dataSource={data}
           loading={loading}
           pagination={pagination}
           onChange={handleTableChange}

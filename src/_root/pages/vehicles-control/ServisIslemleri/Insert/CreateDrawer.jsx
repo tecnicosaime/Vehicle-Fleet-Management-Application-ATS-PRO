@@ -12,6 +12,7 @@ import SecondTabs from "./components/SecondTabs/SecondTabs.jsx";
 
 export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   const [open, setOpen] = useState(false);
+  const [periyodikBakim, setPeriyodikBakim] = useState("");
   const showModal = () => {
     setOpen(true);
   };
@@ -110,7 +111,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
     return formattedTime.isValid() ? formattedTime.format("HH:mm:ss") : "";
   };
 
-  const { setValue, reset } = methods;
+  const { setValue, reset, watch } = methods;
 
   //* export
   const onSubmit = (data) => {
@@ -200,6 +201,16 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
     }
   }, [selectedLokasyonId, methods]);
 
+  const periyodikBilgisi = watch("periyodikBilgisi");
+
+  useEffect(() => {
+    if (periyodikBilgisi === true) {
+      setPeriyodikBakim("[Periyodik Bakım]");
+    } else {
+      setPeriyodikBakim("");
+    }
+  }, [periyodikBilgisi]);
+
   return (
     <FormProvider {...methods}>
       <ConfigProvider locale={tr_TR}>
@@ -217,7 +228,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
         <Modal
           width="1300px"
           centered
-          title="Yeni Servis Girişi"
+          title={`Yeni Servis Girişi ${periyodikBakim}`}
           destroyOnClose
           open={open}
           onCancel={onClose}

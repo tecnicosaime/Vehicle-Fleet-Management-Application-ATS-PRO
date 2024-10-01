@@ -262,6 +262,7 @@ export default function MainTabs({ modalOpen }) {
                   setValue("servisTanimi", selectedData.tanim);
                   setValue("servisTipi", selectedData.servisTipi);
                   setValue("servisTipiID", selectedData.servisTipiKodId);
+                  setValue("periyodikBilgisi", selectedData.periyodik);
                 }}
               />
               <Button onClick={handleMinusClick}> - </Button>
