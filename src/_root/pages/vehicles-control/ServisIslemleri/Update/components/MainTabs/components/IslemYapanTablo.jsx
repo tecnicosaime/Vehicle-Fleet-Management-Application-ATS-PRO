@@ -196,7 +196,7 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
     setLoading(true);
     const body = [plakaID];
 
-    AxiosInstance.get(`Company/GetCompaniesList?page=${pagination.current}&parameter=${searchTerm}`)
+    AxiosInstance.get(`Company/GetCompaniesList?page=${pagination.current}&parameter=${searchTerm}&isService=true`)
       .then((response) => {
         const { list, recordCount } = response.data;
         const fetchedData = list.map((item) => ({
