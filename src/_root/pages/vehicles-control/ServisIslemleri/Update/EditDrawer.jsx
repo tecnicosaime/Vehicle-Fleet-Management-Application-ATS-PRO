@@ -13,6 +13,7 @@ import SecondTabs from "./components/SecondTabs/SecondTabs";
 export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
   const [, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [periyodikBakim, setPeriyodikBakim] = useState("");
   const showModal = () => {
     setOpen(true);
   };
@@ -158,6 +159,10 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           // setValue("kdvUcreti", item.kdv);
           // setValue("eksiUcreti", item.indirim);
 
+          setValue("isPeriyodik", item.isPeriyodik);
+
+          setPeriyodikBakim(item.isPeriyodik ? "[Periyodik Bakım]" : "");
+
           setValue("sigortaBilgileri", item.sigortaVar);
           setValue("sigorta", item.sigortaPolice);
           setValue("sigortaID", item.sigortaId);
@@ -302,13 +307,23 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
     });
   };
 
+  const periyodikBilgisi = watch("periyodikBilgisi");
+
+  useEffect(() => {
+    if (periyodikBilgisi === true) {
+      setPeriyodikBakim("[Periyodik Bakım]");
+    } else {
+      setPeriyodikBakim("");
+    }
+  }, [periyodikBilgisi]);
+
   return (
     <FormProvider {...methods}>
       <ConfigProvider locale={tr_TR}>
         <Modal
           width="1190px"
           centered
-          title="Servis Güncelleme"
+          title={`Servis Güncelleme ${periyodikBakim}`}
           open={drawerVisible}
           onCancel={onClose}
           footer={

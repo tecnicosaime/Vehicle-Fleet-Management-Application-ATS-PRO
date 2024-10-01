@@ -92,6 +92,10 @@ export default function Plaka({ disabled, fieldRequirements }) {
   };
 
   // add new status to selectbox end
+
+  // Watch the value of "isPeriyodik"
+  const isPeriyodik = watch("isPeriyodik");
+
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: "space-between" }}>
       {contextHolder}
@@ -104,7 +108,7 @@ export default function Plaka({ disabled, fieldRequirements }) {
             <Select
               {...field}
               status={errors.Plaka ? "error" : ""}
-              disabled={disabled}
+              disabled={disabled || isPeriyodik} // Disable if either `disabled` prop or `isPeriyodik` is true
               key={selectKey}
               style={{ width: "300px" }}
               showSearch
