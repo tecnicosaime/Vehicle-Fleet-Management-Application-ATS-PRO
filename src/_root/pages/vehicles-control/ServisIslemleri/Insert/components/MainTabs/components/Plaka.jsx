@@ -154,6 +154,7 @@ export default function Plaka({ disabled, fieldRequirements }) {
             />
           )}
         />
+
         <Controller
           name="PlakaID"
           control={control}
