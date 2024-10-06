@@ -180,8 +180,8 @@ function YakitVerimliligi(props) {
   const plakaValues = watch("plakaValues");
   const aracTipiValues = watch("aracTipiValues");
   const departmanValues = watch("departmanValues");
-  const baslangicTarihi = watch("baslangicTarihi");
-  const bitisTarihi = watch("bitisTarihi");
+  const baslangicTarihi = watch("baslangicTarihi") ? dayjs(watch("baslangicTarihi")).format("YYYY-MM-DD") : null;
+  const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
 
   const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : 0;
   const endYear = bitisTarihi ? dayjs(bitisTarihi).year() : 0;

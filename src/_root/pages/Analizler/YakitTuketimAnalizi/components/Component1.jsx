@@ -4,6 +4,7 @@ import { Spin, Typography } from "antd";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../api/http.jsx";
 import { t } from "i18next";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -16,8 +17,8 @@ function Component1() {
   const plakaValues = watch("plakaValues");
   const aracTipiValues = watch("aracTipiValues");
   const departmanValues = watch("departmanValues");
-  const baslangicTarihi = watch("baslangicTarihi");
-  const bitisTarihi = watch("bitisTarihi");
+  const baslangicTarihi = watch("baslangicTarihi") ? dayjs(watch("baslangicTarihi")).format("YYYY-MM-DD") : null;
+  const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
 
   const fetchData = async () => {
     const body = {

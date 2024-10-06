@@ -19,8 +19,8 @@ function YillikYakitTuketimleri() {
   const plakaValues = watch("plakaValues");
   const aracTipiValues = watch("aracTipiValues");
   const departmanValues = watch("departmanValues");
-  const baslangicTarihi = watch("baslangicTarihi");
-  const bitisTarihi = watch("bitisTarihi");
+  const baslangicTarihi = watch("baslangicTarihi") ? dayjs(watch("baslangicTarihi")).format("YYYY-MM-DD") : null;
+  const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
 
   // startYear ve endYear değerlerini burada hesaplıyoruz
   const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : dayjs().year() - 5;
