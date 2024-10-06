@@ -383,7 +383,7 @@ function YakitVerimliligi(props) {
                 showQuickJumper: true,
                 position: ["bottomRight"],
               }}
-              scroll={{ y: "calc(100vh - 660px)" }}
+              scroll={{ y: "270px" }}
             />
           </Spin>
         </div>
