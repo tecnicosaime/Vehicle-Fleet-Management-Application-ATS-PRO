@@ -246,7 +246,7 @@ const items = [
   {
     key: "38",
     icon: <HiOutlineDocumentReport />,
-    label: <Link to={"/raporlar"}>{t("raporlarAnalizler")}</Link>,
+    label: <Link to={"/raporlar"}>{t("raporlar")}</Link>,
   },
   {
     key: "39",
