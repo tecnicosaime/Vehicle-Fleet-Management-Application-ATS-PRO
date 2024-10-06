@@ -33,8 +33,8 @@ function AylikOrtalamaMudaheleSuresi() {
 
   const lokasyonId = watch("locationIds");
   const atolyeId = watch("atolyeIds");
-  const baslangicTarihi = watch("baslangicTarihi");
-  const bitisTarihi = watch("bitisTarihi");
+  const baslangicTarihi = watch("baslangicTarihi") ? dayjs(watch("baslangicTarihi")).format("YYYY-MM-DD") : null;
+  const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
   const makineId = watch("makineIds");
   const yil = baslangicTarihi ? new Date(baslangicTarihi).getFullYear() : "";
 
