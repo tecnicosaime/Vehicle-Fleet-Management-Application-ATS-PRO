@@ -78,7 +78,7 @@ function AylikYakitTuketimleri() {
     <div
       style={{
         width: "100%",
-        height: "100%",
+        height: "470px",
         borderRadius: "5px",
         backgroundColor: "white",
         display: "flex",

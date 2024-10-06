@@ -61,6 +61,7 @@ function Component1() {
       style={{
         flex: "1 1 24%",
         maxWidth: "24%",
+        height: "100px",
         background: backgroundColor || `url(${bg}), linear-gradient(rgb(27 17 92), #007eff)`,
         backgroundPosition: "inherit",
         backgroundSize: "cover",
