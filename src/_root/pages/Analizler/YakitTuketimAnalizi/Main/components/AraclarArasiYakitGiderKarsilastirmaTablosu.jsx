@@ -357,7 +357,7 @@ function AraclarArasiYakitGiderKarsilastirmaTablosu(props) {
             display: "flex",
             flexDirection: "column",
             gap: "7px",
-            overflow: "hidden",
+            overflow: "auto",
             padding: "0px 10px 0 10px",
           }}
         >
@@ -396,7 +396,7 @@ function AraclarArasiYakitGiderKarsilastirmaTablosu(props) {
                 showQuickJumper: true,
                 position: ["bottomRight"],
               }}
-              scroll={{ y: "calc(100vh - 660px)" }}
+              scroll={{ y: "270px" }}
             />
           </Spin>
         </div>
