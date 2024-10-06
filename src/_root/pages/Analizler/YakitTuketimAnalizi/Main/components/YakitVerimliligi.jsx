@@ -30,7 +30,7 @@ const normalizeText = (text) => {
     .replace(/Ç/g, "C");
 };
 
-function LokasyonBazindaYakitTuketimleri(props) {
+function YakitVerimliligi(props) {
   const {
     control,
     watch,
@@ -90,77 +90,88 @@ function LokasyonBazindaYakitTuketimleri(props) {
 
   const columns = [
     {
-      title: t("Lokasyon"),
-      dataIndex: "lokasyon",
+      title: t("plaka"),
+      dataIndex: "plaka",
       width: 200,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.lokasyon === null && b.lokasyon === null) return 0;
-        if (a.lokasyon === null) return 1;
-        if (b.lokasyon === null) return -1;
-        return a.lokasyon.localeCompare(b.lokasyon);
+        if (a.plaka === null && b.plaka === null) return 0;
+        if (a.plaka === null) return 1;
+        if (b.plaka === null) return -1;
+        return a.plaka.localeCompare(b.plaka);
       },
     },
     {
-      title: t("aracSayisi"),
-      dataIndex: "toplamAracSayisi",
-      // width: 100,
+      title: t("model"),
+      dataIndex: "model",
+      width: 200,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.toplamAracSayisi === null && b.toplamAracSayisi === null) return 0;
-        if (a.toplamAracSayisi === null) return 1;
-        if (b.toplamAracSayisi === null) return -1;
-        return a.toplamAracSayisi - b.toplamAracSayisi;
+        if (a.model === null && b.model === null) return 0;
+        if (a.model === null) return 1;
+        if (b.model === null) return -1;
+        return a.model.localeCompare(b.model);
       },
     },
     {
-      title: t("toplamMiktar"),
-      dataIndex: "toplamMiktar",
-      // width: 100,
+      title: t("surucuIsim"),
+      dataIndex: "surucuIsim",
+      width: 200,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.toplamMiktar === null && b.toplamMiktar === null) return 0;
-        if (a.toplamMiktar === null) return 1;
-        if (b.toplamMiktar === null) return -1;
-        return a.toplamMiktar - b.toplamMiktar;
+        if (a.surucuIsim === null && b.surucuIsim === null) return 0;
+        if (a.surucuIsim === null) return 1;
+        if (b.surucuIsim === null) return -1;
+        return a.surucuIsim.localeCompare(b.surucuIsim);
       },
     },
     {
-      title: t("toplamTutar"),
-      dataIndex: "toplamTutar",
-      // width: 100,
+      title: t("beklenenYakit"),
+      dataIndex: "beklenenYakit",
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.toplamTutar === null && b.toplamTutar === null) return 0;
-        if (a.toplamTutar === null) return 1;
-        if (b.toplamTutar === null) return -1;
-        return a.toplamTutar - b.toplamTutar;
+        if (a.beklenenYakit === null && b.beklenenYakit === null) return 0;
+        if (a.beklenenYakit === null) return 1;
+        if (b.beklenenYakit === null) return -1;
+        return a.beklenenYakit - b.beklenenYakit;
+      },
+    },
+    {
+      title: t("gerceklesenYakit"),
+      dataIndex: "gerceklesenYakit",
+      width: 100,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.gerceklesenYakit === null && b.gerceklesenYakit === null) return 0;
+        if (a.gerceklesenYakit === null) return 1;
+        if (b.gerceklesenYakit === null) return -1;
+        return a.gerceklesenYakit - b.gerceklesenYakit;
+      },
+    },
+    {
+      title: t("fark"),
+      dataIndex: "fark",
+      width: 100,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.fark === null && b.fark === null) return 0;
+        if (a.fark === null) return 1;
+        if (b.fark === null) return -1;
+        return a.fark - b.fark;
       },
     },
 
     {
-      title: t("toplamMesafe"),
-      dataIndex: "toplamMesafe",
-      // width: 100,
+      title: t("toplamKm"),
+      dataIndex: "toplamKm",
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
-        if (a.toplamMesafe === null && b.toplamMesafe === null) return 0;
-        if (a.toplamMesafe === null) return 1;
-        if (b.toplamMesafe === null) return -1;
-        return a.toplamMesafe - b.toplamMesafe;
-      },
-    },
-
-    {
-      title: t("ortalamaTuketim"),
-      dataIndex: "toplamTuketim",
-      // width: 100,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.toplamTuketim === null && b.toplamTuketim === null) return 0;
-        if (a.toplamTuketim === null) return 1;
-        if (b.toplamTuketim === null) return -1;
-        return a.toplamTuketim - b.toplamTuketim;
+        if (a.toplamKm === null && b.toplamKm === null) return 0;
+        if (a.toplamKm === null) return 1;
+        if (b.toplamKm === null) return -1;
+        return a.toplamKm - b.toplamKm;
       },
     },
   ];
@@ -190,10 +201,10 @@ function LokasyonBazindaYakitTuketimleri(props) {
       searchTerm: searchTerm || null,
     };
     try {
-      const response = await AxiosInstance.post(`ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=8&page=${currentPage}&pageSize=${pageSize}`, body);
+      const response = await AxiosInstance.post(`ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=10&page=${currentPage}&pageSize=${pageSize}`, body);
       const formattedData = response.data.list.map((item) => ({
         ...item,
-        key: item.tbLokasyonId,
+        key: item.aracId,
       }));
       setData(formattedData);
       setTotalRecords(response.data.recordCount); // Toplam kayıt sayısını set ediyoruz
@@ -241,7 +252,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
   };
 
   // Bileşen başlığını bir değişkene atayın
-  const componentTitle = t("lokasyonBazindaYakitTuketimleri");
+  const componentTitle = t("yakitVerimliligi");
 
   // XLSX indirme fonksiyonunu ekleyin
   const handleXLSXDownload = () => {
@@ -372,7 +383,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
                 showQuickJumper: true,
                 position: ["bottomRight"],
               }}
-              scroll={{ y: "calc(100vh - 640px)" }}
+              scroll={{ y: "calc(100vh - 660px)" }}
             />
           </Spin>
         </div>
@@ -446,4 +457,4 @@ function LokasyonBazindaYakitTuketimleri(props) {
   );
 }
 
-export default LokasyonBazindaYakitTuketimleri;
+export default YakitVerimliligi;

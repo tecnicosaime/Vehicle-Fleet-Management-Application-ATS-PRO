@@ -49,6 +49,9 @@ import Hazirlaniyor from "./_root/pages/Hazirlaniyor";
 
 import ServisIslemleri from "./_root/pages/vehicles-control/ServisIslemleri/ServisIslemleri";
 
+// Analizler
+import YakitTuketimAnalizi from "./_root/pages/Analizler/YakitTuketimAnalizi/YakitTuketimAnalizi.jsx";
+
 const App = () => {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
@@ -106,6 +109,8 @@ const App = () => {
         <Route path="/servis-tanimlari" element={<ServisTanim />} />
         <Route path="/firma-tanimlari" element={<FirmaTanim />} />
         <Route path="/personel-tanimlari" element={<PersonelTanim />} />
+        {/*Analızlar*/}
+        <Route path="/fuel-analysis" element={<YakitTuketimAnalizi />} />
 
         <Route path="/Periodic-Maintenance" element={<PeriyordikBakimlar />} />
 

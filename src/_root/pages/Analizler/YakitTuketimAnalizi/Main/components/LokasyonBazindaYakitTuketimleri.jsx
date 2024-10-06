@@ -104,7 +104,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
     {
       title: t("aracSayisi"),
       dataIndex: "toplamAracSayisi",
-      // width: 100,
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
         if (a.toplamAracSayisi === null && b.toplamAracSayisi === null) return 0;
@@ -116,7 +116,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
     {
       title: t("toplamMiktar"),
       dataIndex: "toplamMiktar",
-      // width: 100,
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
         if (a.toplamMiktar === null && b.toplamMiktar === null) return 0;
@@ -128,7 +128,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
     {
       title: t("toplamTutar"),
       dataIndex: "toplamTutar",
-      // width: 100,
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
         if (a.toplamTutar === null && b.toplamTutar === null) return 0;
@@ -141,7 +141,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
     {
       title: t("toplamMesafe"),
       dataIndex: "toplamMesafe",
-      // width: 100,
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
         if (a.toplamMesafe === null && b.toplamMesafe === null) return 0;
@@ -154,7 +154,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
     {
       title: t("ortalamaTuketim"),
       dataIndex: "toplamTuketim",
-      // width: 100,
+      width: 100,
       ellipsis: true,
       sorter: (a, b) => {
         if (a.toplamTuketim === null && b.toplamTuketim === null) return 0;
@@ -372,7 +372,7 @@ function LokasyonBazindaYakitTuketimleri(props) {
                 showQuickJumper: true,
                 position: ["bottomRight"],
               }}
-              scroll={{ y: "calc(100vh - 640px)" }}
+              scroll={{ y: "calc(100vh - 660px)" }}
             />
           </Spin>
         </div>

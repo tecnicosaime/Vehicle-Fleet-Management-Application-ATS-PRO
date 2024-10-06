@@ -233,6 +233,17 @@ const items = [
     label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
   },*/
   {
+    key: "2v34789",
+    icon: <FaGears />,
+    label: t("analizler"),
+    children: [
+      {
+        key: "2980345df",
+        label: <Link to={"/fuel-analysis"}>{t("yakitTuketimAnalizleri")}</Link>,
+      },
+    ],
+  },
+  {
     key: "38",
     icon: <HiOutlineDocumentReport />,
     label: <Link to={"/raporlar"}>{t("raporlarAnalizler")}</Link>,
