@@ -19,6 +19,7 @@
     "axios": "^1.7.2",
     "chroma-js": "^2.4.2",
     "dayjs": "^1.11.11",
+    "file-saver": "^2.0.5",
     "gridstack": "^10.3.1",
     "html2pdf.js": "^0.10.2",
     "i18next": "^23.11.5",
@@ -37,7 +38,8 @@
     "react-router-dom": "^6.23.1",
     "react-to-print": "^2.15.1",
     "recharts": "^2.12.7",
-    "styled-components": "^6.1.12"
+    "styled-components": "^6.1.12",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
