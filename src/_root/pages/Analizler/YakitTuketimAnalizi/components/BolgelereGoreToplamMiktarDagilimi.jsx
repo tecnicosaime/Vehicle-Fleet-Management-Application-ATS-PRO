@@ -22,8 +22,8 @@ function BolgelereGoreToplamMiktarDagilimi() {
   const baslangicTarihi = watch("baslangicTarihi");
   const bitisTarihi = watch("bitisTarihi");
 
-  const startYear = baslangicTarihi;
-  const endYear = bitisTarihi;
+  const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : 0;
+  const endYear = bitisTarihi ? dayjs(bitisTarihi).year() : 0;
 
   const fetchData = async () => {
     setIsLoading(true);
