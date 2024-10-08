@@ -43,7 +43,7 @@ const PopoverSelectBox = () => {
     <div style={{ width: "400px", height: "200px", overflowY: "auto" }}>
       {loading ? (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-          <Spin /> {/* Loading spinner */}
+          <Spin />
         </div>
       ) : (
         data.map((item) => (
