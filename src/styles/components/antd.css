@@ -79,7 +79,7 @@
 .ant-input-outlined[disabled],
 .ant-picker-outlined.ant-picker-disabled,
 .ant-picker-outlined[disabled] {
-  background-color: rgba(0, 0, 0, 0.14) !important;
+  /*background-color: rgba(0, 0, 0, 0.14) !important;*/
 }
 
 .ant-modal-title {
@@ -267,7 +267,7 @@
 .ant-picker .ant-picker-input > input[disabled],
 .ant-input-number-readonly .ant-input-number-input,
 .ant-input:read-only {
-  background: rgba(0, 0, 0, 0.03) !important;
+  /*background: rgba(0, 0, 0, 0.03) !important;*/
   color: rgba(0, 0, 0, 0.7) !important;
 }
 

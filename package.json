@@ -20,6 +20,8 @@
     "chroma-js": "^2.4.2",
     "dayjs": "^1.11.11",
     "file-saver": "^2.0.5",
+    "flexsearch": "^0.7.43",
+    "fuse.js": "^7.0.0",
     "gridstack": "^10.3.1",
     "html2pdf.js": "^0.10.2",
     "i18next": "^23.11.5",
