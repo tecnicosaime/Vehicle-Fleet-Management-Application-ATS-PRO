@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import bg from "../../../../../../public/images/bg-card.png";
+import bg from "/images/bg-card.png";
 import { Spin, Typography } from "antd";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../api/http.jsx";
