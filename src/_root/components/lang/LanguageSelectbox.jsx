@@ -12,6 +12,17 @@ const CustomSelect = styled(Select)`
   }
 `;
 
+const OptionContent = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Flag = styled.img`
+  margin-right: 8px;
+  width: 24px;
+  height: auto;
+`;
+
 const LanguageSelector = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
 
@@ -35,11 +46,27 @@ const LanguageSelector = () => {
   };
 
   return (
-    <CustomSelect value={selectedLanguage} style={{ width: 120 }} onChange={changeLanguage}>
-      <Option value="en">English</Option>
-      <Option value="tr">Türkçe</Option>
-      <Option value="ru">Русский</Option>
-      <Option value="az">Azərbaycan</Option>
+    <CustomSelect value={selectedLanguage} style={{ width: 150 }} onChange={changeLanguage}>
+      <Option value="en">
+        <OptionContent>
+          <Flag src="/public/images/English.svg" alt="English" /> English
+        </OptionContent>
+      </Option>
+      <Option value="tr">
+        <OptionContent>
+          <Flag src="/public/images/Turkey.svg" alt="Türkçe" /> Türkçe
+        </OptionContent>
+      </Option>
+      <Option value="ru">
+        <OptionContent>
+          <Flag src="/public/images/Russian.svg" alt="Русский" /> Русский
+        </OptionContent>
+      </Option>
+      <Option value="az">
+        <OptionContent>
+          <Flag src="/public/images/Azerbaijan.svg" alt="Azərbaycan" /> Azərbaycan
+        </OptionContent>
+      </Option>
     </CustomSelect>
   );
 };

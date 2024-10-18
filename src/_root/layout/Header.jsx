@@ -9,6 +9,7 @@ import { t } from "i18next";
 import AxiosInstance from "../../api/http";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import LanguageSelectbox from "../components/lang/LanguageSelectbox";
 
 const { Header } = Layout;
 
@@ -82,7 +83,7 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
       }}
     >
       <div className="flex justify-between align-center gap-1 header">
-        <div className="flex gap-1 justify-between align-baseline">
+        <div className="flex gap-1 justify-between align-baseline" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -94,7 +95,8 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
             }}
           />
           <HomeOutlined />
-          <LanguageSelector />
+          {/* <LanguageSelector /> */}
+          <LanguageSelectbox />
         </div>
         <div style={{ gap: "10px" }} className="flex gap-1 justify-between align-center">
           <CustomSpin spinning={loading}>
