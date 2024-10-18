@@ -17,7 +17,6 @@ function Main(props) {
     getValues,
     formState: { errors },
   } = useFormContext();
-
   const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 850);
   const [isScrolled, setIsScrolled] = useState(false);
 
