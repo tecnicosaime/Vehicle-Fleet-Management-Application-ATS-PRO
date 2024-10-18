@@ -49,22 +49,22 @@ const LanguageSelector = () => {
     <CustomSelect value={selectedLanguage} style={{ width: 150 }} onChange={changeLanguage}>
       <Option value="en">
         <OptionContent>
-          <Flag src="/public/images/English.svg" alt="English" /> English
+          <Flag src="/images/English.svg" alt="English" /> English
         </OptionContent>
       </Option>
       <Option value="tr">
         <OptionContent>
-          <Flag src="/public/images/Turkey.svg" alt="Türkçe" /> Türkçe
+          <Flag src="/images/Turkey.svg" alt="Türkçe" /> Türkçe
         </OptionContent>
       </Option>
       <Option value="ru">
         <OptionContent>
-          <Flag src="/public/images/Russian.svg" alt="Русский" /> Русский
+          <Flag src="/images/Russian.svg" alt="Русский" /> Русский
         </OptionContent>
       </Option>
       <Option value="az">
         <OptionContent>
-          <Flag src="/public/images/Azerbaijan.svg" alt="Azərbaycan" /> Azərbaycan
+          <Flag src="/images/Azerbaijan.svg" alt="Azərbaycan" /> Azərbaycan
         </OptionContent>
       </Option>
     </CustomSelect>
