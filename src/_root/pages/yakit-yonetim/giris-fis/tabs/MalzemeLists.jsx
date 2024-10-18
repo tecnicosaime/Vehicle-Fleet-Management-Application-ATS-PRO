@@ -246,7 +246,7 @@ const MalzemeLists = ({ setTableData, tableData, isSuccess, setIsSuccess }) => {
         indirimTutar: values.edit_indirimTutari,
         kdvDH: values.edit_kdv,
         kdvTutar: values.edit_kdvTutar,
-        plaka: values.malzeme_plaka,
+        // plaka: values.malzeme_plaka,
         mlzAracId: values.edit_plakaId,
         lokasyonId: values.edit_lokasyonId,
         lokasyon: values.edit_lokasyon,
