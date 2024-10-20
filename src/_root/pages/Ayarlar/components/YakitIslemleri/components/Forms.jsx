@@ -45,7 +45,11 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="gidilenMesafeMin" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller
+              name="gidilenMesafeMin"
+              control={control}
+              render={({ field }) => <InputNumber {...field} disabled={gidilenMesafeIslemDisabled} min={0} style={{ flex: 1 }} />}
+            />
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
@@ -59,10 +63,15 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="gidilenMesafeMax" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller
+              name="gidilenMesafeMax"
+              control={control}
+              render={({ field }) => <InputNumber {...field} disabled={gidilenMesafeIslemDisabled} min={0} style={{ flex: 1 }} />}
+            />
           </div>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "flex-end", gap: "8px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
+          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("islem")}</Text>
           <div
             style={{
               display: "flex",
@@ -94,7 +103,11 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="yakitMiktarMin" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller
+              name="yakitMiktarMin"
+              control={control}
+              render={({ field }) => <InputNumber {...field} disabled={yakitMiktarIslemDisabled} min={0} style={{ flex: 1 }} />}
+            />
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
@@ -108,10 +121,15 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="yakitMiktarMax" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller
+              name="yakitMiktarMax"
+              control={control}
+              render={({ field }) => <InputNumber {...field} disabled={yakitMiktarIslemDisabled} min={0} style={{ flex: 1 }} />}
+            />
           </div>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "flex-end", gap: "8px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
+          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("islem")}</Text>
           <div
             style={{
               display: "flex",
@@ -143,7 +161,7 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="yakitTutarMin" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller name="yakitTutarMin" control={control} render={({ field }) => <InputNumber {...field} disabled={yakitTutarIslemDisabled} min={0} style={{ flex: 1 }} />} />
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
@@ -157,10 +175,11 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="yakitTutarMax" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller name="yakitTutarMax" control={control} render={({ field }) => <InputNumber {...field} disabled={yakitTutarIslemDisabled} min={0} style={{ flex: 1 }} />} />
           </div>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "flex-end", gap: "8px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
+          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("islem")}</Text>
           <div
             style={{
               display: "flex",
@@ -189,7 +208,10 @@ function Forms() {
 
       <Divider style={{ margin: "0" }} />
 
-      <Text style={{ fontSize: "14px", color: "#000000ff", marginBottom: "10px", fontWeight: "600" }}>{t("yakitFormatlari")}</Text>
+      <div style={{ display: "flex", gap: "5px", alignItems: "center", flexDirection: "row", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px", color: "#000000ff", fontWeight: "600" }}>{t("yakitFormatlari")}</Text>
+        <Text style={{ fontSize: "13px", color: "#000000a4" }}>({t("ondalikHassasiyet")})</Text>
+      </div>
 
       <div style={{ display: "flex", gap: "15px", width: "100%" }}>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
