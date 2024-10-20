@@ -8,6 +8,7 @@ import HatirlaticiAyarlari from "./HatirlaticiAyarlari/HatirlaticiAyarlari";
 import Araclar from "./Araclar/Araclar";
 import StokIslemleri from "./StokIslemleri/StokIslemleri";
 import OtomatikKodlar from "./OtomatikKodlar/OtomatikKodlar";
+import YakitIslemleri from "./YakitIslemleri/YakitIslemleri";
 
 const StyledTabs = styled(Tabs)`
   .ant-tabs-tab-active {
@@ -83,7 +84,7 @@ function AyarlarTabs() {
           <div style={{ paddingTop: "2px" }}>{t("yakitIslemleri")}</div>
         </div>
       ),
-      children: activeKey === "6" && <FirmaBilgileri />,
+      children: activeKey === "6" && <YakitIslemleri />,
     },
   ];
 

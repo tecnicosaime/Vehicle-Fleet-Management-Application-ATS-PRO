@@ -349,10 +349,10 @@ const Sidebar = () => {
       icon: <FaGears />,
       label: "Sistem Ayarları",
       children: [
-        {
-          key: "534",
-          label: <Link to={"/ayarlar"}>{t("ayarlar")}</Link>,
-        },
+        // {
+        //   key: "534",
+        //   label: <Link to={"/ayarlar"}>{t("ayarlar")}</Link>,
+        // },
         {
           key: "51",
           label: <div onClick={showModal}>{t("ayarlar")}</div>,

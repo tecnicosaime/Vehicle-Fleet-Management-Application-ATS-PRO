@@ -18,31 +18,8 @@ function Forms() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-      <Text style={{ fontSize: "14px", color: "#000000ff", fontWeight: "600" }}>{t("aracAyarlari")}</Text>
-      <Divider style={{ margin: "0" }} />
       <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("kilometreGuncellemesi")}</Text>
       <KilometreGuncellemesiSelectbox />
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", border: "1px solid rgba(5, 5, 5, 0.151)", padding: "10px", borderRadius: "5px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("formatliPlakaGirisi")}</Text>
-          <Controller name="formatliPlakaGirisi" control={control} render={({ field }) => <Switch {...field} />} />
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
-          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("ayrac")}</Text>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              minWidth: "300px",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
-            <Controller name="ayrac" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
-          </div>
-        </div>
-      </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
         <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("konumTakibiYapilacak")}</Text>

@@ -49,8 +49,10 @@ function Forms() {
       </div>
 
       <Divider style={{ marginTop: "10px", marginBottom: "5px" }} />
-
-      <Text style={{ fontSize: "14px", color: "#000000ff", marginBottom: "10px", fontWeight: "600" }}>{t("formatlar")}</Text>
+      <div style={{ display: "flex", gap: "5px", alignItems: "center", flexDirection: "row", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px", color: "#000000ff", fontWeight: "600" }}>{t("formatlar")}</Text>
+        <Text style={{ fontSize: "13px", color: "#000000a4" }}>({t("ondalikHassasiyet")})</Text>
+      </div>
 
       <div style={{ display: "flex", gap: "15px", width: "100%" }}>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>

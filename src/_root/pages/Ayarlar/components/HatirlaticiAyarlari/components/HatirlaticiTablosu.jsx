@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Button, Form, Input, InputNumber, Popconfirm, Table, Switch } from "antd";
+import { Button, Form, Input, InputNumber, Popconfirm, Table, Switch, message } from "antd";
 import AxiosInstance from "../../../../../../api/http";
 import { t } from "i18next";
 import styled from "styled-components";
@@ -120,7 +120,7 @@ const HatirlaticiTablosu = ({ setLoading }) => {
 
   const defaultColumns = [
     {
-      title: t("grupAciklama"),
+      title: t("hatirlatici"),
       dataIndex: "grupAciklama",
       width: "150px",
       ellipsis: true,
@@ -160,13 +160,16 @@ const HatirlaticiTablosu = ({ setLoading }) => {
 
     // Send the updated data to the API
     try {
-      await AxiosInstance.post(`ReminderSettings/UpdateReminderSettingsItems`, {
+      const response = await AxiosInstance.post(`ReminderSettings/UpdateReminderSettingsItems`, {
         hatirlaticiAyarId: Number(row.key),
         hatirlat: row.hatirlat,
         uyariSuresi: Number(row.uyariSuresi),
         kritikSure: Number(row.kritikSure),
         ekranYenilemeSuresi: row.ekranYenilemeSuresi || 0, // Assuming ekranYenilemeSuresi is not editable and default to 0
       });
+      if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
+        message.success(t("kayitGuncellendi"));
+      }
     } catch (error) {
       console.error("Güncelleme sırasında hata oluştu:", error);
     }
