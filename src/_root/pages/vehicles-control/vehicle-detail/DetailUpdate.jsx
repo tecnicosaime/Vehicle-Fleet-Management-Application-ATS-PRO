@@ -231,9 +231,9 @@ const DetailUpdate = () => {
       setValue("sozlesmeTarih", res?.data.sozlesmeTarih && res?.data.sozlesmeTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.sozlesmeTarih) : null);
       setValue("vergiTarih", res?.data.vergiTarih && res?.data.vergiTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.vergiTarih) : null);
       setValue("egzosTarih", res?.data.egzosTarih && res?.data.egzosTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.egzosTarih) : null);
-      setValue("onGorulen", res?.data.onGorulen);
-      setValue("onGorulenMin", res?.data.onGorulenMin);
-      setValue("gerceklesen", res?.data.gerceklesen.toFixed(2));
+      setValue("onGorulen", res?.data.onGorulenFormattedValue);
+      setValue("onGorulenMin", res?.data.onGorulenMinFormattedValue);
+      setValue("gerceklesen", res?.data.gerceklesenFormattedValue);
       setValue("ozelAlan1", res?.data.ozelAlan1);
       setValue("ozelAlan2", res?.data.ozelAlan2);
       setValue("ozelAlan3", res?.data.ozelAlan3);

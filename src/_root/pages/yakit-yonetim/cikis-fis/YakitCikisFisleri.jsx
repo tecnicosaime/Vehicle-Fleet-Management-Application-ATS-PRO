@@ -82,17 +82,17 @@ const YakitCikisFisleri = () => {
     },
     {
       title: t("araToplam"),
-      dataIndex: "araToplam",
+      dataIndex: "araToplamFormattedValue",
       key: 7,
     },
     {
       title: t("kdvToplam"),
-      dataIndex: "kdvToplam",
+      dataIndex: "kdvToplamFormattedValue",
       key: 8,
     },
     {
       title: t("genelToplam"),
-      dataIndex: "genelToplam",
+      dataIndex: "genelToplamFormattedValue",
       key: 9,
     },
     {
