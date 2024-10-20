@@ -44,9 +44,9 @@ function YakitIslemleri() {
         setValue("yakitMaxTuketimFazlaIslem", item.yakitMaxTuketimFazlaIslem);
         setValue("yakitMinTuketimDusukIslem", item.yakitMinTuketimDusukIslem);
         setValue("yakitTankKapasiteAsimIslem", item.yakitTankKapasiteAsimIslem);
-        setValue("yakitMiktarFormat", item.yakitMiktarFormat);
-        setValue("yakitTutarFormat", item.yakitTutarFormat);
-        setValue("yakitOrtalamaFormat", item.yakitOrtalamaFormat);
+        setValue("yakitMiktarFormat", item.yakitMiktarFormat === 0 ? null : item.yakitMiktarFormat);
+        setValue("yakitTutarFormat", item.yakitTutarFormat === 0 ? null : item.yakitTutarFormat);
+        setValue("yakitOrtalamaFormat", item.yakitOrtalamaFormat === 0 ? null : item.yakitOrtalamaFormat);
       }
     } catch (error) {
       console.error("Veri çekilirken hata oluştu:", error);
@@ -91,9 +91,9 @@ function YakitIslemleri() {
       yakitMaxTuketimFazlaIslem: data.yakitMaxTuketimFazlaIslem,
       yakitMinTuketimDusukIslem: data.yakitMinTuketimDusukIslem,
       yakitTankKapasiteAsimIslem: data.yakitTankKapasiteAsimIslem,
-      yakitMiktarFormat: String(data.yakitMiktarFormat),
-      yakitTutarFormat: String(data.yakitTutarFormat),
-      yakitOrtalamaFormat: String(data.yakitOrtalamaFormat),
+      yakitMiktarFormat: Number(data.yakitMiktarFormat),
+      yakitTutarFormat: Number(data.yakitTutarFormat),
+      yakitOrtalamaFormat: Number(data.yakitOrtalamaFormat),
     };
 
     setLoading(true);
