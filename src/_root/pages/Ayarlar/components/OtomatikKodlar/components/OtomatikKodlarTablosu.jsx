@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Table, Tag, message } from "antd";
 import AxiosInstance from "../../../../../../api/http";
 import { LockOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { t } from "i18next";
+import EditModal from "./Update/EditModal";
 
 function OtomatikKodlarTablosu({ setLoading }) {
   const [data, setData] = useState([]);
+  // edit drawer için
+  const [drawer, setDrawer] = useState({
+    visible: false,
+    data: null,
+  });
+  // edit drawer için son
 
   const fetchData = async () => {
     try {
@@ -26,6 +33,14 @@ function OtomatikKodlarTablosu({ setLoading }) {
     fetchData();
   }, []);
 
+  // Handler for opening the EditModal with the selected row's data
+  const handleRowClick = (record) => {
+    setDrawer({
+      visible: true,
+      data: record,
+    });
+  };
+
   const columns = [
     {
       title: t("tanim"),
@@ -33,7 +48,7 @@ function OtomatikKodlarTablosu({ setLoading }) {
       key: "tanim",
       width: "150px",
       ellipsis: true,
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => <a onClick={() => handleRowClick(record)}>{text}</a>,
     },
     {
       title: (
@@ -82,7 +97,16 @@ function OtomatikKodlarTablosu({ setLoading }) {
     },
   ];
 
-  return <Table columns={columns} dataSource={data} scroll={{ x: "max-content" }} />;
+  const refreshTableData = useCallback(() => {
+    fetchData();
+  }, []);
+
+  return (
+    <div>
+      <Table columns={columns} dataSource={data} scroll={{ x: "max-content" }} />
+      <EditModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
+    </div>
+  );
 }
 
 export default OtomatikKodlarTablosu;
