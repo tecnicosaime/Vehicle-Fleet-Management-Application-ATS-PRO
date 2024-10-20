@@ -239,7 +239,7 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="yakitTutarFormat" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller name="yakitOrtalamaFormat" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
           </div>
         </div>
 
@@ -254,7 +254,7 @@ function Forms() {
               width: "100%",
             }}
           >
-            <Controller name="yakitOrtalamaFormat" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
+            <Controller name="yakitTutarFormat" control={control} render={({ field }) => <InputNumber {...field} min={0} style={{ flex: 1 }} />} />
           </div>
         </div>
       </div>
