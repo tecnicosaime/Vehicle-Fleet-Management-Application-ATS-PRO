@@ -76,7 +76,7 @@ const Yakit = () => {
 
     {
       title: t("miktar"),
-      dataIndex: "miktarFormattedValue",
+      dataIndex: "miktar",
       key: 6,
       ellipsis: true,
       width: 100,
@@ -89,7 +89,7 @@ const Yakit = () => {
     },
     {
       title: t("tutar"),
-      dataIndex: "tutarFormattedValue",
+      dataIndex: "tutar",
       key: 7,
       ellipsis: true,
       width: 100,
