@@ -63,17 +63,17 @@ const YakitTransferler = () => {
     },
     {
       title: t("araToplam"),
-      dataIndex: "araToplamFormattedValue",
+      dataIndex: "araToplam",
       key: 7,
     },
     {
       title: t("kdvToplam"),
-      dataIndex: "kdvToplamFormattedValue",
+      dataIndex: "kdvToplam",
       key: 8,
     },
     {
       title: t("genelToplam"),
-      dataIndex: "genelToplamFormattedValue",
+      dataIndex: "genelToplam",
       key: 9,
     },
   ];
