@@ -52,6 +52,10 @@ import ServisIslemleri from "./_root/pages/vehicles-control/ServisIslemleri/Serv
 // Analizler
 import YakitTuketimAnalizi from "./_root/pages/Analizler/YakitTuketimAnalizi/YakitTuketimAnalizi.jsx";
 
+// sistem Ayarlari
+
+import KullaniciTanimlari from "./_root/pages/SistemAyarlari/KullaniciTanimlari/KullaniciTanimlari.jsx";
+
 const App = () => {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
@@ -117,6 +121,9 @@ const App = () => {
         <Route path="/surucu-tanimlari" element={<Suruculer />} />
         <Route path="/raporlar" element={<Raporlar />} />
         <Route path="/hazirlaniyor" element={<Hazirlaniyor />} />
+
+        {/* Sistem Ayarlari */}
+        <Route path="/user_definitions" element={<KullaniciTanimlari />} />
       </Route>
       {hasToken && <Route path="/login" element={<AuthLayout />} />}
     </Routes>
