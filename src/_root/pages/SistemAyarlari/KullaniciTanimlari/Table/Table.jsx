@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message } from "antd";
+import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message, Divider } from "antd";
 import { HolderOutlined, SearchOutlined, MenuOutlined, CheckOutlined, CloseOutlined, HomeOutlined } from "@ant-design/icons";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -19,7 +19,7 @@ import { t } from "i18next";
 
 const { Text } = Typography;
 
-const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("servisIslemleri") }];
+const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("KullaniciTanimlari") }];
 
 const StyledButton = styled(Button)`
   display: flex;
@@ -198,7 +198,7 @@ const Sigorta = () => {
   //   const fetchData = async () => {
   //     try {
   //       const response = await AxiosInstance.get("OzelAlan?form=ISEMRI"); // API URL'niz
-  //       localStorage.setItem("ozelAlanlarServisIslemleri", JSON.stringify(response));
+  //       localStorage.setItem("ozelAlanlarKullaniciTanimlari", JSON.stringify(response));
   //       setLabel(response); // Örneğin, API'den dönen yanıt doğrudan etiket olacak
   //     } catch (error) {
   //       console.error("API isteğinde hata oluştu:", error);
@@ -209,7 +209,7 @@ const Sigorta = () => {
   //   fetchData();
   // }, [drawer.visible]);
 
-  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarServisIslemleri"));
+  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarKullaniciTanimlari"));
 
   // Özel Alanların nameleri backend çekmek için api isteği sonu
   const initialColumns = [
@@ -844,9 +844,9 @@ const Sigorta = () => {
 
   // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz
   const [columns, setColumns] = useState(() => {
-    const savedOrder = localStorage.getItem("columnOrderServisIslemleri");
-    const savedVisibility = localStorage.getItem("columnVisibilityServisIslemleri");
-    const savedWidths = localStorage.getItem("columnWidthsServisIslemleri");
+    const savedOrder = localStorage.getItem("columnOrderKullaniciTanimlari");
+    const savedVisibility = localStorage.getItem("columnVisibilityKullaniciTanimlari");
+    const savedWidths = localStorage.getItem("columnWidthsKullaniciTanimlari");
 
     let order = savedOrder ? JSON.parse(savedOrder) : [];
     let visibility = savedVisibility ? JSON.parse(savedVisibility) : {};
@@ -864,9 +864,9 @@ const Sigorta = () => {
       }
     });
 
-    localStorage.setItem("columnOrderServisIslemleri", JSON.stringify(order));
-    localStorage.setItem("columnVisibilityServisIslemleri", JSON.stringify(visibility));
-    localStorage.setItem("columnWidthsServisIslemleri", JSON.stringify(widths));
+    localStorage.setItem("columnOrderKullaniciTanimlari", JSON.stringify(order));
+    localStorage.setItem("columnVisibilityKullaniciTanimlari", JSON.stringify(visibility));
+    localStorage.setItem("columnWidthsKullaniciTanimlari", JSON.stringify(widths));
 
     return order.map((key) => {
       const column = initialColumns.find((col) => col.key === key);
@@ -877,9 +877,9 @@ const Sigorta = () => {
 
   // sütunları local storage'a kaydediyoruz
   useEffect(() => {
-    localStorage.setItem("columnOrderServisIslemleri", JSON.stringify(columns.map((col) => col.key)));
+    localStorage.setItem("columnOrderKullaniciTanimlari", JSON.stringify(columns.map((col) => col.key)));
     localStorage.setItem(
-      "columnVisibilityServisIslemleri",
+      "columnVisibilityKullaniciTanimlari",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -891,7 +891,7 @@ const Sigorta = () => {
       )
     );
     localStorage.setItem(
-      "columnWidthsServisIslemleri",
+      "columnWidthsKullaniciTanimlari",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -967,10 +967,10 @@ const Sigorta = () => {
   // sütunları sıfırlamak için kullanılan fonksiyon
 
   function resetColumns() {
-    localStorage.removeItem("columnOrderServisIslemleri");
-    localStorage.removeItem("columnVisibilityServisIslemleri");
-    localStorage.removeItem("columnWidthsServisIslemleri");
-    localStorage.removeItem("ozelAlanlarServisIslemleri");
+    localStorage.removeItem("columnOrderKullaniciTanimlari");
+    localStorage.removeItem("columnVisibilityKullaniciTanimlari");
+    localStorage.removeItem("columnWidthsKullaniciTanimlari");
+    localStorage.removeItem("ozelAlanlarKullaniciTanimlari");
     window.location.reload();
   }
 
@@ -978,7 +978,7 @@ const Sigorta = () => {
 
   return (
     <>
-      <div
+      {/*  <div
         style={{
           backgroundColor: "white",
           marginBottom: "15px",
@@ -988,7 +988,7 @@ const Sigorta = () => {
         }}
       >
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
       <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
         <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
         <div
@@ -1117,7 +1117,7 @@ const Sigorta = () => {
         style={{
           backgroundColor: "white",
           padding: "10px",
-          height: "calc(100vh - 270px)",
+          height: "calc(100vh - 195px)",
           borderRadius: "8px 8px 8px 8px",
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
@@ -1141,7 +1141,7 @@ const Sigorta = () => {
               showQuickJumper: true,
             }}
             // onRow={onRowClick}
-            scroll={{ y: "calc(100vh - 400px)" }}
+            scroll={{ y: "calc(100vh - 300px)" }}
             onChange={handleTableChange}
             rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
           />
