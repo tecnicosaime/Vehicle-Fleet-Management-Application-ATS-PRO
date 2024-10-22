@@ -214,9 +214,9 @@ const Sigorta = () => {
   // Özel Alanların nameleri backend çekmek için api isteği sonu
   const initialColumns = [
     {
-      title: "Plaka",
-      dataIndex: "plaka",
-      key: "plaka",
+      title: t("kullaniciKod"),
+      dataIndex: "kullaniciKod",
+      key: "kullaniciKod",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
@@ -224,404 +224,43 @@ const Sigorta = () => {
         <a onClick={() => onRowClick(record)}>{text}</a> // Updated this line
       ),
       sorter: (a, b) => {
-        if (a.plaka === null) return -1;
-        if (b.plaka === null) return 1;
-        return a.plaka.localeCompare(b.plaka);
-      },
-    },
-    {
-      title: "Tarihi",
-      dataIndex: "tarih",
-      key: "tarih",
-      width: 110,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.tarih === null) return -1;
-        if (b.tarih === null) return 1;
-        return a.tarih.localeCompare(b.tarih);
-      },
-
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatDate(text),
-    },
-    {
-      title: "Saat",
-      dataIndex: "saat",
-      key: "saat",
-      width: 90,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.saat === null) return -1;
-        if (b.saat === null) return 1;
-        return a.saat.localeCompare(b.saat);
-      },
-
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatTime(text),
-    },
-    {
-      title: "Servis Tanımı",
-      dataIndex: "servisTanimi",
-      key: "servisTanimi",
-      width: 190,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.servisTanimi === null) return -1;
-        if (b.servisTanimi === null) return 1;
-        return a.servisTanimi.localeCompare(b.servisTanimi);
+        if (a.kullaniciKod === null) return -1;
+        if (b.kullaniciKod === null) return 1;
+        return a.kullaniciKod.localeCompare(b.kullaniciKod);
       },
     },
 
     {
-      title: "Durum",
-      dataIndex: "durumBilgisi",
-      key: "durumBilgisi",
-      width: 150,
-      ellipsis: true,
-      visible: true,
-      render: (_, record) => {
-        const { color, text } = statusTag(record.durumBilgisi);
-        return (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Tag
-              style={{
-                textAlign: "center",
-                backgroundColor: hexToRGBA(color, 0.2),
-                border: `1.2px solid ${hexToRGBA(color, 0.7)}`,
-                color: color,
-              }}
-            >
-              {text}
-            </Tag>
-          </div>
-        );
-      },
-      sorter: (a, b) => (a.durumBilgisi || 0) - (b.durumBilgisi || 0),
-    },
-
-    {
-      title: "Servis Nedeni",
-      dataIndex: "servisNedeni",
-      key: "servisNedeni",
+      title: t("isim"),
+      dataIndex: "isim",
+      key: "isim",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.servisNedeni === null) return -1;
-        if (b.servisNedeni === null) return 1;
-        return a.servisNedeni.localeCompare(b.servisNedeni);
+        if (a.isim === null) return -1;
+        if (b.isim === null) return 1;
+        return a.isim.localeCompare(b.isim);
       },
     },
-
     {
-      title: "Firma",
-      dataIndex: "servisFirma",
-      key: "servisFirma",
-      width: 190,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.servisFirma === null) return -1;
-        if (b.servisFirma === null) return 1;
-        return a.servisFirma.localeCompare(b.servisFirma);
-      },
-    },
-
-    {
-      title: "Servis Tipi",
-      dataIndex: "servisTipi",
-      key: "servisTipi",
+      title: t("aktif"),
+      dataIndex: "aktif",
+      key: "aktif",
       width: 120,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
       sorter: (a, b) => {
-        if (a.servisTipi === null) return -1;
-        if (b.servisTipi === null) return 1;
-        return a.servisTipi.localeCompare(b.servisTipi);
+        if (a.aktif === null) return -1;
+        if (b.aktif === null) return 1;
+        return a.aktif === b.aktif ? 0 : a.aktif ? -1 : 1;
+      },
+      render: (text, record) => {
+        return record.aktif ? <CheckOutlined style={{ color: "green" }} /> : <CloseOutlined style={{ color: "red" }} />;
       },
     },
-    {
-      title: "Sürücü",
-      dataIndex: "surucuIsim",
-      key: "surucuIsim",
-      width: 160,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.surucuIsim === null) return -1;
-        if (b.surucuIsim === null) return 1;
-        return a.surucuIsim.localeCompare(b.surucuIsim);
-      },
-    },
-
-    {
-      title: "Başlama Tarihi",
-      dataIndex: "baslamaTarih",
-      key: "baslamaTarih",
-      width: 110,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.baslamaTarih === null) return -1;
-        if (b.baslamaTarih === null) return 1;
-        return a.baslamaTarih.localeCompare(b.baslamaTarih);
-      },
-
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatDate(text),
-    },
-
-    {
-      title: "Bitiş Tarihi",
-      dataIndex: "bitisTarih",
-      key: "bitisTarih",
-      width: 110,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.bitisTarih === null) return -1;
-        if (b.bitisTarih === null) return 1;
-        return a.bitisTarih.localeCompare(b.bitisTarih);
-      },
-
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatDate(text),
-    },
-
-    {
-      title: "Servis Km.",
-      dataIndex: "km",
-      key: "km",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.km === null) return -1;
-        if (b.km === null) return 1;
-        return a.km - b.km;
-      },
-    },
-
-    {
-      title: "İşçilik Ücreti",
-      dataIndex: "iscilik",
-      key: "iscilik",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.iscilik === null) return -1;
-        if (b.iscilik === null) return 1;
-        return a.iscilik - b.iscilik;
-      },
-    },
-
-    {
-      title: "Malzeme Maliyeti",
-      dataIndex: "malzeme",
-      key: "malzeme",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.malzeme === null) return -1;
-        if (b.malzeme === null) return 1;
-        return a.malzeme - b.malzeme;
-      },
-    },
-
-    {
-      title: "Diğer Giderler",
-      dataIndex: "diger",
-      key: "diger",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.diger === null) return -1;
-        if (b.diger === null) return 1;
-        return a.diger - b.diger;
-      },
-    },
-    {
-      title: "KDV",
-      dataIndex: "kdv",
-      key: "kdv",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.kdv === null) return -1;
-        if (b.kdv === null) return 1;
-        return a.kdv - b.kdv;
-      },
-    },
-    {
-      title: "İndirim",
-      dataIndex: "indirim",
-      key: "indirim",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.indirim === null) return -1;
-        if (b.indirim === null) return 1;
-        return a.indirim - b.indirim;
-      },
-    },
-
-    {
-      title: "Toplam Maliyet",
-      dataIndex: "toplam",
-      key: "toplam",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.toplam === null) return -1;
-        if (b.toplam === null) return 1;
-        return a.toplam - b.toplam;
-      },
-    },
-
-    {
-      title: "Fatura Tarihi",
-      dataIndex: "faturaTarih",
-      key: "faturaTarih",
-      width: 110,
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.faturaTarih === null) return -1;
-        if (b.faturaTarih === null) return 1;
-        return a.faturaTarih.localeCompare(b.faturaTarih);
-      },
-
-      visible: true, // Varsayılan olarak açık
-      render: (text) => formatDate(text),
-    },
-
-    {
-      title: "Fatura No",
-      dataIndex: "faturaNo",
-      key: "faturaNo",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.faturaNo === null) return -1;
-        if (b.faturaNo === null) return 1;
-        return a.faturaNo - b.faturaNo;
-      },
-    },
-
-    {
-      title: "Açıklama",
-      dataIndex: "aciklama",
-      key: "aciklama",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.aciklama === null) return -1;
-        if (b.aciklama === null) return 1;
-        return a.aciklama.localeCompare(b.aciklama);
-      },
-    },
-
-    {
-      title: "Şikayetler",
-      dataIndex: "sikayetler",
-      key: "sikayetler",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.sikayetler === null) return -1;
-        if (b.sikayetler === null) return 1;
-        return a.sikayetler.localeCompare(b.sikayetler);
-      },
-    },
-
-    {
-      title: "Lokasyon",
-      dataIndex: "lokasyon",
-      key: "lokasyon",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.lokasyon === null) return -1;
-        if (b.lokasyon === null) return 1;
-        return a.lokasyon.localeCompare(b.lokasyon);
-      },
-    },
-
-    {
-      title: "Talep No",
-      dataIndex: "talepNo",
-      key: "talepNo",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.talepNo === null) return -1;
-        if (b.talepNo === null) return 1;
-        return a.talepNo - b.talepNo;
-      },
-    },
-
-    {
-      title: "Talep Eden - ?",
-      dataIndex: "talepEden",
-      key: "talepEden",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.talepEden === null) return -1;
-        if (b.talepEden === null) return 1;
-        return a.talepEden.localeCompare(b.talepEden);
-      },
-    },
-
-    {
-      title: "Onay",
-      dataIndex: "onay",
-      key: "onay",
-      width: 120,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-
-      sorter: (a, b) => {
-        if (a.onay === null) return -1;
-        if (b.onay === null) return 1;
-        return a.onay.localeCompare(b.onay);
-      },
-    },
-
     // Diğer kolonlarınız...
   ];
 
@@ -740,14 +379,14 @@ const Sigorta = () => {
     try {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.get(`VehicleServices/GetVehicleServices?page=${currentPage}&parameter=${keyword}`);
+      const response = await AxiosInstance.get(`Login/GetUsers?page=${currentPage}&parameter=${keyword}`);
       if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
         setTotalDataCount(response.data.recordCount);
 
         // Gelen veriyi formatla ve state'e ata
-        const formattedData = response.data.list.map((item) => ({
+        const formattedData = response.data.users.map((item) => ({
           ...item,
           key: item.siraNo,
           // Diğer alanlarınız...
