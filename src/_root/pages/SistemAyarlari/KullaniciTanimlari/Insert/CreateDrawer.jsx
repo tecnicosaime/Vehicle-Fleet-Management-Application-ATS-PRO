@@ -6,9 +6,7 @@ import MainTabs from "./components/MainTabs/MainTabs";
 import { useForm, FormProvider } from "react-hook-form";
 import dayjs from "dayjs";
 import AxiosInstance from "../../../../../api/http.jsx";
-import Footer from "../Footer";
-import SecondTabs from "./components/SecondTabs/SecondTabs.jsx";
-// import SecondTabs from "./components/secondTabs/secondTabs";
+import { t } from "i18next";
 
 export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   const [open, setOpen] = useState(false);
@@ -37,67 +35,15 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   //* export
   const methods = useForm({
     defaultValues: {
-      PlakaID: "",
-      Plaka: null,
-      duzenlenmeTarihi: null,
-      duzenlenmeSaati: null,
-      servisKodu: "",
-      servisKoduID: "",
-      servisTanimi: "",
-      servisTipi: "",
-      Surucu: null,
-      SurucuID: "",
-      servisNedeni: null,
-      servisNedeniID: "",
-      faturaTarihi: null,
-      faturaNo: "",
-      hasarNo: "",
-      hasarNoID: "",
-      talepNo: "",
-      onay: null,
-      onayID: "",
-      onayLabel: "",
-      baslamaTarihi: null,
-      baslamaSaati: null,
-      bitisTarihi: null,
-      bitisSaati: null,
-      aracKM: "",
-      islemiYapan: "1",
-      islemiYapan1: "",
-      islemiYapan1ID: "",
-      iscilikUcreti: "",
-      malzemeUcreti: "",
-      digerUcreti: "",
-      kdvUcreti: "",
-      eksiUcreti: "",
-      sigortaBilgileri: false,
-      sigorta: "",
-      sigortaID: "",
-      policeNo: "",
-      firma: "",
-
-      ozelAlan1: "",
-      ozelAlan2: "",
-      ozelAlan3: "",
-      ozelAlan4: "",
-      ozelAlan5: "",
-      ozelAlan6: "",
-      ozelAlan7: "",
-      ozelAlan8: "",
-      ozelAlan9: null,
-      ozelAlan9ID: "",
-      ozelAlan10: null,
-      ozelAlan10ID: "",
-      ozelAlan11: "",
-      ozelAlan12: "",
-
-      durumBilgisi: 1,
-      garantiKapsami: false,
-
-      surucuOder: false,
-
-      aciklama: "",
-      sikayetler: "",
+      rolSelect: null,
+      mail: "",
+      kullaniciKod: "",
+      isim: "",
+      soyisim: "",
+      telefonNo: "",
+      sifre: "",
+      paraf: "",
+      color: null,
     },
   });
 
@@ -116,58 +62,17 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
   //* export
   const onSubmit = (data) => {
     const Body = {
-      aracId: Number(data.PlakaID),
-      bakimId: Number(data.servisKoduID),
-      kazaId: Number(data.hasarNoID),
-      durumBilgisi: 1,
-      islemiYapan: Number(data.islemiYapan),
-      servisNedeniKodId: Number(data.servisNedeniID),
-
-      islemiYapanId: Number(data.islemiYapan1ID),
-      surucuId: Number(data.SurucuID),
-      // lokasyonId: data.,
-      km: Number(data.aracKM),
-      indirim: Number(data.eksiUcreti),
-      // toplam: data.,
-      kdv: Number(data.kdvUcreti),
-      diger: Number(data.digerUcreti),
-      malzeme: Number(data.malzemeUcreti),
-      iscilik: Number(data.iscilikUcreti),
-      talepNo: data.talepNo,
-      onayId: Number(data.onayID),
-      tarih: formatDateWithDayjs(data.duzenlenmeTarihi) || null,
-      baslamaTarih: formatDateWithDayjs(data.baslamaTarihi) || null,
-      bitisTarih: formatDateWithDayjs(data.bitisTarihi) || null,
-      faturaTarih: formatDateWithDayjs(data.faturaTarihi) || null,
-      saat: formatTimeWithDayjs(data.duzenlenmeSaati) || null,
-      baslamaSaat: formatTimeWithDayjs(data.baslamaSaati) || null,
-      bitisSaat: formatTimeWithDayjs(data.bitisSaati) || null,
-      faturaNo: data.faturaNo,
-      aciklama: data.aciklama,
-      sikayetler: data.sikayetler,
-      sigortaVar: data.sigortaBilgileri,
-      surucuOder: data.surucuOder,
-      garantili: data.garantiKapsami,
-      sigortaId: Number(data.sigortaID),
-      ozelAlan1: data.ozelAlan1,
-      ozelAlan2: data.ozelAlan2,
-      ozelAlan3: data.ozelAlan3,
-      ozelAlan4: data.ozelAlan4,
-      ozelAlan5: data.ozelAlan5,
-      ozelAlan6: data.ozelAlan6,
-      ozelAlan7: data.ozelAlan7,
-      ozelAlan8: data.ozelAlan8,
-      ozelAlanKodId9: Number(data.ozelAlan9ID),
-      ozelAlanKodId10: Number(data.ozelAlan10ID),
-      ozelAlan11: Number(data.ozelAlan11),
-      ozelAlan12: Number(data.ozelAlan12),
+      kullaniciKod: data.kullaniciKod,
+      isim: data.isim,
+      sifre: data.sifre,
+      aktif: true,
     };
 
     // AxiosInstance.post("/api/endpoint", { Body }).then((response) => {
     // handle response
     // });
 
-    AxiosInstance.post("VehicleServices/AddServiceItem", Body)
+    AxiosInstance.post("User/AddUser", Body)
       .then((response) => {
         // Handle successful response here, e.g.:
         console.log("Data sent successfully:", response);
@@ -226,15 +131,15 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           Ekle
         </Button>
         <Modal
-          width="1300px"
+          width="600px"
           centered
-          title={`Yeni Servis Girişi ${periyodikBakim}`}
+          title={t("kullaniciTanimlama")}
           destroyOnClose
           open={open}
           onCancel={onClose}
           footer={
             <Space>
-              <Button onClick={onClose}>İptal</Button>
+              <Button onClick={onClose}>{t("iptal")}</Button>
               <Button
                 type="submit"
                 onClick={methods.handleSubmit(onSubmit)}
@@ -244,7 +149,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
                   color: "#ffffff",
                 }}
               >
-                Kaydet
+                {t("kaydet")}
               </Button>
             </Space>
           }
@@ -252,8 +157,6 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div>
               <MainTabs modalOpen={open} />
-              <SecondTabs />
-              {/*<Footer />*/}
             </div>
           </form>
         </Modal>
