@@ -66,6 +66,11 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       isim: data.isim,
       sifre: data.sifre,
       aktif: true,
+      soyAd: data.soyisim,
+      email: data.mail,
+      telefon: data.telefonNo,
+      paraf: data.paraf,
+      kullaniciRengi: data.color.toHexString(),
     };
 
     // AxiosInstance.post("/api/endpoint", { Body }).then((response) => {

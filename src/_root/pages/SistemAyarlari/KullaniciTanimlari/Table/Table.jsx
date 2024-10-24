@@ -379,7 +379,7 @@ const Sigorta = () => {
     try {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.get(`Login/GetUsers?page=${currentPage}&parameter=${keyword}`);
+      const response = await AxiosInstance.get(`User/GetUsers?page=${currentPage}&parameter=${keyword}`);
       if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
