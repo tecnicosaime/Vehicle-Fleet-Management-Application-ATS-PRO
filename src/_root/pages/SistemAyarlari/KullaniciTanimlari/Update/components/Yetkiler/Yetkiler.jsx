@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Typography, Checkbox, message } from "antd";
+import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, ColorPicker, Spin, message, Divider } from "antd";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../../../api/http.jsx";
+
+const { Text, Link } = Typography;
+const { TextArea } = Input;
 
 function Yetkiler() {
   const [loading, setLoading] = useState(true);
@@ -75,7 +78,6 @@ function Yetkiler() {
       setLoading(true);
       const response = await AxiosInstance.get(`Authority/GetUserAuthListById?id=${userID}`);
       if (response.data) {
-        console.log("API'den Gelen Veri:", response.data);
         const formattedData = response.data.map((item) => {
           return {
             ...item,
@@ -83,7 +85,6 @@ function Yetkiler() {
             yetkiTanim: customYetkiTanimlari[item.yetkiKod] || item.yetkiTanim,
           };
         });
-        console.log("Formatlanmış Veri:", formattedData);
         setData(formattedData);
         setLoading(false);
       }
@@ -108,16 +109,18 @@ function Yetkiler() {
         <Spin />
       ) : (
         data.map((item) => {
-          console.log("Yetki Kod:", item.yetkiKod, "Yetki Tanım:", item.yetkiTanim);
           return (
-            <div key={item.key} style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-              <Typography.Title level={4}>{item.yetkiTanim}</Typography.Title>
-              <div>
-                <Checkbox checked={item.ekle}>Ekle</Checkbox>
-                <Checkbox checked={item.gor}>Gör</Checkbox>
-                <Checkbox checked={item.sil}>Sil</Checkbox>
-                <Checkbox checked={item.degistir}>Değiştir</Checkbox>
+            <div key={item.key}>
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <Text>{item.yetkiTanim}</Text>
+                <div>
+                  <Checkbox checked={item.ekle}>Ekle</Checkbox>
+                  <Checkbox checked={item.gor}>Gör</Checkbox>
+                  <Checkbox checked={item.sil}>Sil</Checkbox>
+                  <Checkbox checked={item.degistir}>Değiştir</Checkbox>
+                </div>
               </div>
+              <Divider />
             </div>
           );
         })
