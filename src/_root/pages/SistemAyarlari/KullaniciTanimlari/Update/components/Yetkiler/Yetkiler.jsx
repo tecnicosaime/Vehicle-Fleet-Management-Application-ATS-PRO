@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, ColorPicker, Spin, message, Divider } from "antd";
+import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, ColorPicker, Spin, message, Divider, Pagination } from "antd";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../../../api/http.jsx";
 
-const { Text, Link } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 function Yetkiler() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Mevcut sayfa
+  const itemsPerPage = 10; // Sayfa başına öğe sayısı
+
   const { watch } = useFormContext();
 
   const userID = watch("siraNo");
@@ -103,27 +106,48 @@ function Yetkiler() {
     fetchData();
   }, [userID]);
 
+  // Sayfalama için gösterilecek veriyi hesaplayın
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = data.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div>
       {loading ? (
         <Spin />
       ) : (
-        data.map((item) => {
-          return (
-            <div key={item.key}>
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                <Text>{item.yetkiTanim}</Text>
-                <div>
-                  <Checkbox checked={item.ekle}>Ekle</Checkbox>
-                  <Checkbox checked={item.gor}>Gör</Checkbox>
-                  <Checkbox checked={item.sil}>Sil</Checkbox>
-                  <Checkbox checked={item.degistir}>Değiştir</Checkbox>
+        <>
+          {currentData.map((item) => {
+            return (
+              <div key={item.key}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text>{item.yetkiTanim}</Text>
+                  <div>
+                    <Checkbox checked={item.ekle}>Ekle</Checkbox>
+                    <Checkbox checked={item.gor}>Gör</Checkbox>
+                    <Checkbox checked={item.sil}>Sil</Checkbox>
+                    <Checkbox checked={item.degistir}>Değiştir</Checkbox>
+                  </div>
                 </div>
+                <Divider />
               </div>
-              <Divider />
-            </div>
-          );
-        })
+            );
+          })}
+          <Pagination
+            current={currentPage}
+            total={data.length}
+            pageSize={itemsPerPage}
+            onChange={(page) => setCurrentPage(page)}
+            style={{ textAlign: "right", marginTop: "20px" }}
+          />
+        </>
       )}
     </div>
   );
