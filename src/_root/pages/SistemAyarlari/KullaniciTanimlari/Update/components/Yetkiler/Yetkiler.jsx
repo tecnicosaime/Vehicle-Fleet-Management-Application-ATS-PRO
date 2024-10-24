@@ -253,11 +253,13 @@ function Yetkiler() {
   return (
     <div>
       {loading ? (
-        <Spin />
+        <div style={{ minHeight: "50px" }}>
+          <Spin style={{ marginTop: "40px" }} />
+        </div>
       ) : (
         <>
           {/* Search Input and Buttons */}
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", marginTop: "-10px", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", justifyContent: "space-between" }}>
             <Input placeholder={t("aramaYap")} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: "200px" }} />
             <div>
               <Button color="primary" variant="solid" onClick={handleGrantAllPermissions} disabled={allPermissionsGranted} style={{ marginLeft: "10px" }}>
