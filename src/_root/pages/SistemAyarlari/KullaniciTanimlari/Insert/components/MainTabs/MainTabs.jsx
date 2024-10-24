@@ -219,20 +219,6 @@ export default function MainTabs({ modalOpen }) {
       </div>
       <div style={{ display: "flex", gap: "15px", width: "100%", alignItems: "flex-start" }}>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
-          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("mail")}</Text>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
-            <Controller name="mail" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
-          </div>
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
           <Text style={{ fontSize: "14px", color: "#000000a4", display: "flex" }}>
             {t("kullaniciKodu")}
             <div style={{ color: "red" }}>*</div>
@@ -253,6 +239,20 @@ export default function MainTabs({ modalOpen }) {
               render={({ field }) => <Input {...field} status={errors.kullaniciKod ? "error" : ""} style={{ flex: 1 }} />}
             />
             {errors.kullaniciKod && <div style={{ color: "red", marginTop: "5px" }}>{errors.kullaniciKod.message}</div>}
+          </div>
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
+          <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("mail")}</Text>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: "10px",
+              width: "100%",
+            }}
+          >
+            <Controller name="mail" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
           </div>
         </div>
       </div>
