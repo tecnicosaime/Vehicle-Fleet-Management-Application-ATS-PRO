@@ -131,9 +131,9 @@ function Yetkiler() {
                   <Text>{item.yetkiTanim}</Text>
                   <div>
                     <Checkbox checked={item.ekle}>Ekle</Checkbox>
-                    <Checkbox checked={item.gor}>Gör</Checkbox>
                     <Checkbox checked={item.sil}>Sil</Checkbox>
                     <Checkbox checked={item.degistir}>Değiştir</Checkbox>
+                    <Checkbox checked={item.gor}>Gör</Checkbox>
                   </div>
                 </div>
                 <Divider />
