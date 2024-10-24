@@ -222,10 +222,10 @@
   height: unset;
 }
 
-.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+/* .ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
   color: var(--info);
   border-color: var(--info);
-}
+} */
 
 .ant-checkbox-indeterminate .ant-checkbox-inner:after {
   background-color: var(--info);

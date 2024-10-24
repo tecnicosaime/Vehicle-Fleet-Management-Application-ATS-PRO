@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, ColorPicker } from "antd";
+import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, ColorPicker, Switch } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import RolSelectBox from "./components/RolSelectBox";
 import styled from "styled-components";
@@ -202,6 +202,10 @@ export default function MainTabs({ modalOpen }) {
 
   return (
     <div style={{ display: "flex", marginBottom: "15px", flexDirection: "column", gap: "10px", width: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+        <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("hesabinDurumunuAktifVeYaPasifYap")}</Text>
+        <Controller name="aktif" control={control} render={({ field }) => <Switch {...field} />} />
+      </div>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
         <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("rolTanimi")}</Text>
         <div

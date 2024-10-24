@@ -55,6 +55,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           setValue("sifre", item.sifre);
           setValue("paraf", item.paraf);
           setValue("color", item.kullaniciRengi);
+          setValue("aktif", item.aktif);
           // ... Diğer setValue çağrıları
 
           setLoading(false); // Yükleme tamamlandığında
@@ -85,7 +86,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       kullaniciKod: data.kullaniciKod,
       isim: data.isim,
       sifre: data.sifre,
-      aktif: true,
+      aktif: data.aktif,
       soyAd: data.soyisim,
       email: data.mail,
       telefon: data.telefonNo,

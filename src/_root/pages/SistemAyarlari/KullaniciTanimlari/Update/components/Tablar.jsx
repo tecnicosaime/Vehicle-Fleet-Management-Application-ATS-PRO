@@ -2,6 +2,7 @@ import React from "react";
 import { Tabs } from "antd";
 import MainTabs from "./MainTabs/MainTabs";
 import Yetkiler from "./Yetkiler/Yetkiler";
+import LokasyonYetkileri from "./LokasyonYetkileri/LokasyonYetkileri";
 import { t } from "i18next";
 
 function Tablar() {
@@ -14,7 +15,7 @@ function Tablar() {
     {
       key: "2",
       label: t("lokasyonlar"),
-      children: "Content of Tab Pane 2",
+      children: <LokasyonYetkileri />,
     },
     {
       key: "3",

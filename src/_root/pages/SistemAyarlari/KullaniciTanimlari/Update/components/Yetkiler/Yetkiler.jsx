@@ -1,79 +1,79 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, ColorPicker, Spin, message, Divider, Pagination } from "antd";
+import { Typography, Input, Spin, message, Divider, Pagination, Tag, Button } from "antd";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../../../api/http.jsx";
+import { t } from "i18next";
 
 const { Text } = Typography;
-const { TextArea } = Input;
 
 function Yetkiler() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // Mevcut sayfa
-  const itemsPerPage = 10; // Sayfa başına öğe sayısı
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const itemsPerPage = 10; // Items per page
+  const [searchTerm, setSearchTerm] = useState(""); // Search term
 
   const { watch } = useFormContext();
 
   const userID = watch("siraNo");
 
-  // Kendi yetki tanımlarınızı burada tanımlayın
   const customYetkiTanimlari = {
-    "00001": "Özel Program Ayarları",
-    "00003": "Özel Servis Kayıtları",
-    "00004": "Özel Periyodik Bakım",
-    "00005": "Özel Yakıt Kayıtları",
-    "00006": "Özel Sefer Kayıtları",
-    "00007": "Özel Harcamalar",
-    "00008": "Özel Kazalar/Cezalar",
-    "00009": "Özel Araç Lastikleri",
-    "00010": "Özel Araç Sigortaları",
-    "00011": "Özel Araç Analizi",
-    "00012": "Özel Araç",
-    "00013": "Özel Sürücüler",
-    "00014": "Özel Firmalar",
-    "00015": "Özel Personel",
-    "00016": "Özel Güzergah",
-    "00017": "Özel Servisler",
-    "00018": "Özel Malzemeler",
-    "00019": "Özel Malzeme Giriş Fişleri",
-    "00020": "Özel Malzeme Çıkış Fişleri",
-    "00021": "Özel Malzeme Hareketleri",
-    "00022": "Özel Raporlar",
-    "00023": "Özel Kod Yönetimi",
-    "00024": "Özel Araç Marka/Modelleri",
-    "00025": "Özel Araç Sürücü Değişikliği",
-    "00026": "Özel Araç Yolcu Bilgileri",
-    "00027": "Özel Hatırlatıcı",
-    "00028": "Özel Yedekleme",
-    "00029": "Özel Yedeği Geri Yükleme",
-    "00030": "Özel Güncelleme",
-    "00031": "Özel Kullanıcı Tanımları",
-    "00032": "Özel Hızlı Yakıt Girişi",
-    "00033": "Özel Sistem Güvenliği",
-    "00034": "Özel Sürücü Değişikliği",
-    "00036": "Özel Lastikler",
-    "00037": "Özel Malzeme Transfer Fişleri",
-    "00038": "Özel Yakıt Giriş Fişleri",
-    "00039": "Özel Yakıt Çıkış Fişleri",
-    "00040": "Özel Yakıt Transfer Fişleri",
-    "00041": "Özel Yakıt Hareketleri",
-    "00042": "Özel Yakıt Tankları",
-    "00043": "Özel Malzeme Depoları",
-    "00044": "Özel Araç Bölge Değişikliği",
-    "00045": "Özel Malzeme Talep Fişleri",
-    "00050": "Özel Gelir İşlemleri",
-    "00051": "Özel Ceza Tanımları",
-    "00052": "Özel Şehir /Yer Tanımlamaları",
-    "00053": "Özel İş Kartları",
-    "00054": "Özel Aktarımlar",
-    "00055": "Özel Yakıtlar",
-    "00056": "Özel Hızlı Km Güncelleme",
-    "00057": "Özel Form Tasarımları",
-    "00058": "Özel Yazıcı Ayarları",
-    "00059": "Özel Programı İlk Ayarlarına Döndür",
-    "00061": "Özel Hızlı Sefer Girişi",
-    "00062": "Özel Analizler",
-    // Diğer yetki kodları ve tanımları...
+    "00001": t("programAyarlari"),
+    "00003": t("servisKayitlari"),
+    "00004": t("periyodikBakim"),
+    "00005": t("yakitKayitlari"),
+    "00006": t("seferKayitlari"),
+    "00007": t("harcamalar"),
+    "00008": t("kazalarCezalar"),
+    "00009": t("aracLastikleri"),
+    "00010": t("aracSigortalari"),
+    "00011": t("aracAnalizi"),
+    "00012": t("arac"),
+    "00013": t("suruculer"),
+    "00014": t("firmalar"),
+    "00015": t("personel"),
+    "00016": t("guzergah"),
+    "00017": t("servisler"),
+    "00018": t("malzemeler"),
+    "00019": t("malzemeGirisFisleri"),
+    "00020": t("malzemeCikisFisleri"),
+    "00021": t("malzemeHareketleri"),
+    "00022": t("raporlar"),
+    "00023": t("kodYonetimi"),
+    "00024": t("aracMarkaModelleri"),
+    "00025": t("aracSurucuDegisikligi"),
+    "00026": t("aracYolcuBilgileri"),
+    "00027": t("hatirlatici"),
+    "00028": t("yedekleme"),
+    "00029": t("yedegiGeriYukleme"),
+    "00030": t("guncelleme"),
+    "00031": t("kullaniciTanimlari"),
+    "00032": t("hizliYakitGirisi"),
+    "00033": t("sistemGuvenligi"),
+    "00034": t("surucuDegisikligi"),
+    "00036": t("lastikler"),
+    "00037": t("malzemeTransferFisleri"),
+    "00038": t("yakitGirisFisleri"),
+    "00039": t("yakitCikisFisleri"),
+    "00040": t("yakitTransferFisleri"),
+    "00041": t("yakitHareketleri"),
+    "00042": t("yakitTanklari"),
+    "00043": t("malzemeDepolari"),
+    "00044": t("aracBolgeDegisikligi"),
+    "00045": t("malzemeTalepFisleri"),
+    "00050": t("gelirIslemleri"),
+    "00051": t("cezaTanimlari"),
+    "00052": t("sehirYerTanimlamalari"),
+    "00053": t("isKartlari"),
+    "00054": t("aktarimlar"),
+    "00055": t("yakitlar"),
+    "00056": t("hizliKmGuncelleme"),
+    "00057": t("formTasarimlari"),
+    "00058": t("yaziciAyarlari"),
+    "00059": t("programiIlkAyarlarinaDondur"),
+    "00061": t("hizliSeferGirisi"),
+    "00062": t("analizler"),
+    // Other permission codes and definitions...
   };
 
   const fetchData = async () => {
@@ -103,13 +103,152 @@ function Yetkiler() {
   };
 
   useEffect(() => {
-    fetchData();
+    if (userID) {
+      fetchData();
+    }
   }, [userID]);
 
-  // Sayfalama için gösterilecek veriyi hesaplayın
+  // Reset current page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  // Filter data based on search term
+  const filteredData = data.filter((item) => item.yetkiTanim.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  // Calculate items for current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = data.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Compute whether all permissions are granted or removed
+  const allPermissionsGranted = data.length > 0 && data.every((item) => item.gor && item.ekle && item.sil && item.degistir);
+
+  const allPermissionsRemoved = data.length > 0 && data.every((item) => !item.gor && !item.ekle && !item.sil && !item.degistir);
+
+  // Function to handle toggling permissions
+  const handleToggle = (key, field) => {
+    // Find the item to update
+    const itemToUpdate = data.find((item) => item.key === key);
+    if (!itemToUpdate) return;
+
+    const newValue = !itemToUpdate[field];
+    let updatedItem = { ...itemToUpdate, [field]: newValue };
+
+    // If 'gor' permission is set to false, set other permissions to false
+    if (field === "gor" && newValue === false) {
+      updatedItem = {
+        ...updatedItem,
+        ekle: false,
+        sil: false,
+        degistir: false,
+      };
+    }
+
+    // Optimistically update state
+    setData((prevData) => prevData.map((item) => (item.key === key ? updatedItem : item)));
+
+    // API request body
+    const body = {
+      userId: userID,
+      yetkiKod: updatedItem.key,
+      ekle: updatedItem.ekle,
+      gor: updatedItem.gor,
+      sil: updatedItem.sil,
+      degistir: updatedItem.degistir,
+    };
+
+    // Make API call
+    AxiosInstance.post("Authority/UpdateUserAuths", body)
+      .then((response) => {
+        message.success(t("izinBasariylaGuncellendi"));
+      })
+      .catch((error) => {
+        message.error(t("izinGuncellenirkenBirHataOlustu"));
+        console.error(error);
+        // Revert changes in case of error
+        setData((prevData) => prevData.map((item) => (item.key === key ? itemToUpdate : item)));
+      });
+  };
+
+  // Function to grant all permissions
+  const handleGrantAllPermissions = () => {
+    // Optimistically update state
+    const updatedData = data.map((item) => ({
+      ...item,
+      gor: true,
+      ekle: true,
+      sil: true,
+      degistir: true,
+    }));
+    setData(updatedData);
+
+    // Make API calls for each item
+    updatedData.forEach((item) => {
+      const body = {
+        userId: userID,
+        yetkiKod: item.key,
+        ekle: item.ekle,
+        gor: item.gor,
+        sil: item.sil,
+        degistir: item.degistir,
+      };
+
+      AxiosInstance.post("Authority/UpdateUserAuths", body).catch((error) => {
+        console.error(error);
+        message.error(t("izinGuncellenirkenBirHataOlustu"));
+      });
+    });
+
+    message.success(t("tumIzinlerVerildi"));
+  };
+
+  // Function to remove all permissions
+  const handleRemoveAllPermissions = () => {
+    // Optimistically update state
+    const updatedData = data.map((item) => ({
+      ...item,
+      gor: false,
+      ekle: false,
+      sil: false,
+      degistir: false,
+    }));
+    setData(updatedData);
+
+    // Make API calls for each item
+    updatedData.forEach((item) => {
+      const body = {
+        userId: userID,
+        yetkiKod: item.key,
+        ekle: item.ekle,
+        gor: item.gor,
+        sil: item.sil,
+        degistir: item.degistir,
+      };
+
+      AxiosInstance.post("Authority/UpdateUserAuths", body).catch((error) => {
+        console.error(error);
+        message.error(t("izinGuncellenirkenBirHataOlustu"));
+      });
+    });
+
+    message.success(t("tumIzinlerKaldirildi"));
+  };
+
+  // Permission labels and colors
+  const permissionLabels = {
+    ekle: t("ekle"),
+    sil: t("sil"),
+    degistir: t("degistir"),
+    gor: t("gor"),
+  };
+
+  const permissionColors = {
+    ekle: "success", // green
+    sil: "error", // red
+    degistir: "processing", // blue
+    gor: "warning", // orange
+  };
 
   return (
     <div>
@@ -117,6 +256,19 @@ function Yetkiler() {
         <Spin />
       ) : (
         <>
+          {/* Search Input and Buttons */}
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", marginTop: "-10px", justifyContent: "space-between" }}>
+            <Input placeholder={t("aramaYap")} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: "200px" }} />
+            <div>
+              <Button color="primary" variant="solid" onClick={handleGrantAllPermissions} disabled={allPermissionsGranted} style={{ marginLeft: "10px" }}>
+                {t("tumIzinleriVer")}
+              </Button>
+              <Button color="danger" variant="solid" onClick={handleRemoveAllPermissions} disabled={allPermissionsRemoved} style={{ marginLeft: "10px" }}>
+                {t("tumIzinleriKaldir")}
+              </Button>
+            </div>
+          </div>
+
           {currentData.map((item) => {
             return (
               <div key={item.key}>
@@ -130,10 +282,27 @@ function Yetkiler() {
                 >
                   <Text>{item.yetkiTanim}</Text>
                   <div>
-                    <Checkbox checked={item.ekle}>Ekle</Checkbox>
-                    <Checkbox checked={item.sil}>Sil</Checkbox>
-                    <Checkbox checked={item.degistir}>Değiştir</Checkbox>
-                    <Checkbox checked={item.gor}>Gör</Checkbox>
+                    {Object.keys(permissionLabels).map((permission) => {
+                      const isDisabled = !item.gor && permission !== "gor";
+                      return (
+                        <Tag
+                          key={permission}
+                          color={item[permission] ? permissionColors[permission] : "default"}
+                          onClick={() => {
+                            if (!isDisabled) {
+                              handleToggle(item.key, permission);
+                            }
+                          }}
+                          style={{
+                            cursor: isDisabled ? "not-allowed" : "pointer",
+                            marginRight: "5px",
+                            opacity: isDisabled ? 0.5 : 1,
+                          }}
+                        >
+                          {permissionLabels[permission]}
+                        </Tag>
+                      );
+                    })}
                   </div>
                 </div>
                 <Divider />
@@ -142,10 +311,11 @@ function Yetkiler() {
           })}
           <Pagination
             current={currentPage}
-            total={data.length}
+            align="end"
+            total={filteredData.length}
             pageSize={itemsPerPage}
             onChange={(page) => setCurrentPage(page)}
-            style={{ textAlign: "right", marginTop: "20px" }}
+            style={{ marginTop: "20px" }}
           />
         </>
       )}
