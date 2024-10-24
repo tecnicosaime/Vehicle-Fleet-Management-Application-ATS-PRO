@@ -6,12 +6,12 @@ import MainTabs from "./components/MainTabs/MainTabs";
 import { useForm, Controller, useFormContext, FormProvider } from "react-hook-form";
 import dayjs from "dayjs";
 import AxiosInstance from "../../../../../api/http.jsx";
+import Tablar from "./components/Tablar.jsx";
 import { t } from "i18next";
 
 export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
   const [, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const [periyodikBakim, setPeriyodikBakim] = useState("");
   const showModal = () => {
     setOpen(true);
   };
@@ -43,72 +43,18 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
         setOpen(true); // İşlemler tamamlandıktan sonra drawer'ı aç
         setLoading(true); // Yükleme başladığında
         try {
-          const response = await AxiosInstance.get(`VehicleServices/GetVehicleServiceById?id=${selectedRow.key}`);
+          const response = await AxiosInstance.get(`User/GetUser?id=${selectedRow.key}`);
           const item = response.data; // Veri dizisinin ilk elemanını al
           // Form alanlarını set et
           setValue("siraNo", item.siraNo);
-          setValue("PlakaID", item.aracId);
-          setValue("Plaka", item.plaka);
-          setValue("PlakaLabel", item.plaka);
-          setValue("duzenlenmeTarihi", item.tarih ? (dayjs(item.tarih).isValid() ? dayjs(item.tarih) : null) : null);
-          setValue("duzenlenmeSaati", item.saat ? (dayjs(item.saat, "HH:mm:ss").isValid() ? dayjs(item.saat, "HH:mm:ss") : null) : null);
-          setValue("servisKodu", item.servisKodu);
-          setValue("servisKoduID", item.bakimId);
-          setValue("servisTanimi", item.servisTanimi);
-          setValue("servisTipi", item.servisTipi);
-          setValue("Surucu", item.surucuIsim ? item.surucuIsim : null);
-          setValue("SurucuID", item.surucuId);
-          setValue("baslamaTarihi", item.baslamaTarih ? (dayjs(item.baslamaTarih).isValid() ? dayjs(item.baslamaTarih) : null) : null);
-          setValue("baslamaSaati", item.baslamaSaat ? (dayjs(item.baslamaSaat, "HH:mm:ss").isValid() ? dayjs(item.baslamaSaat, "HH:mm:ss") : null) : null);
-          setValue("bitisTarihi", item.bitisTarih ? (dayjs(item.bitisTarih).isValid() ? dayjs(item.bitisTarih) : null) : null);
-          setValue("bitisSaati", item.bitisSaat ? (dayjs(item.bitisSaat, "HH:mm:ss").isValid() ? dayjs(item.bitisSaat, "HH:mm:ss") : null) : null);
-          setValue("aracKM", item.km ? item.km : null);
-          setValue("islemiYapan", String(item.islemiYapan));
-          setValue("islemiYapan1", item.islemiYapanText);
-          setValue("islemiYapan1ID", item.islemiYapanId);
-          setValue("servisNedeni", item.servisNedeni ? item.servisNedeni : null);
-          setValue("servisNedeniID", item.servisNedeniKodId);
-          setValue("faturaTarihi", item.faturaTarih ? (dayjs(item.faturaTarih).isValid() ? dayjs(item.faturaTarih) : null) : null);
-          setValue("faturaNo", item.faturaNo);
-          setValue("hasarNo", item.hasarNo);
-          setValue("hasarNoID", item.kazaId);
-          setValue("talepNo", item.talepNo);
-          setValue("onayID", item.onayId);
-          setValue("durumBilgisi", String(item.durumBilgisi));
-          setValue("garantiKapsami", item.garantili);
-          setValue("surucuOder", item.surucuOder);
-          // setValue("iscilikUcreti", item.iscilik);
-          // setValue("malzemeUcreti", item.malzeme);
-          setValue("digerUcreti", item.diger);
-          // setValue("kdvUcreti", item.kdv);
-          // setValue("eksiUcreti", item.indirim);
-
-          setValue("isPeriyodik", item.isPeriyodik);
-
-          setPeriyodikBakim(item.isPeriyodik ? "[Periyodik Bakım]" : "");
-
-          setValue("sigortaBilgileri", item.sigortaVar);
-          setValue("sigorta", item.sigortaPolice);
-          setValue("sigortaID", item.sigortaId);
-          setValue("policeNo", item.policeNo);
-          setValue("firma", item.sigortaFirmaUnvan);
-          setValue("aciklama", item.aciklama);
-          setValue("sikayetler", item.sikayetler);
-
-          setValue("ozelAlan1", item.ozelAlan1);
-          setValue("ozelAlan2", item.ozelAlan2);
-          setValue("ozelAlan3", item.ozelAlan3);
-          setValue("ozelAlan4", item.ozelAlan4);
-          setValue("ozelAlan5", item.ozelAlan5);
-          setValue("ozelAlan6", item.ozelAlan6);
-          setValue("ozelAlan7", item.ozelAlan7);
-          setValue("ozelAlan8", item.ozelAlan8);
-          setValue("ozelAlan9", item.ozelAlan9 ? item.ozelAlan9 : null);
-          setValue("ozelAlan9ID", item.ozelAlanKodId9);
-          setValue("ozelAlan10", item.ozelAlan10 ? item.ozelAlan10 : null);
-          setValue("ozelAlan10ID", item.ozelAlanKodId10);
-          setValue("ozelAlan11", item.ozelAlan11);
-          setValue("ozelAlan12", item.ozelAlan12);
+          setValue("mail", item.email);
+          setValue("kullaniciKod", item.kullaniciKod);
+          setValue("isim", item.isim);
+          setValue("soyisim", item.soyAd);
+          setValue("telefonNo", item.telefon);
+          setValue("sifre", item.sifre);
+          setValue("paraf", item.paraf);
+          setValue("color", item.kullaniciRengi);
           // ... Diğer setValue çağrıları
 
           setLoading(false); // Yükleme tamamlandığında
@@ -140,6 +86,11 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       isim: data.isim,
       sifre: data.sifre,
       aktif: true,
+      soyAd: data.soyisim,
+      email: data.mail,
+      telefon: data.telefonNo,
+      paraf: data.paraf,
+      kullaniciRengi: /^#[0-9A-F]{6}$/i.test(data.color) ? data.color : data.color.toHexString(),
     };
 
     // API'ye POST isteği gönder
@@ -191,16 +142,6 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
     });
   };
 
-  const periyodikBilgisi = watch("periyodikBilgisi");
-
-  useEffect(() => {
-    if (periyodikBilgisi === true) {
-      setPeriyodikBakim("[Periyodik Bakım]");
-    } else {
-      setPeriyodikBakim("");
-    }
-  }, [periyodikBilgisi]);
-
   return (
     <FormProvider {...methods}>
       <ConfigProvider locale={tr_TR}>
@@ -244,7 +185,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           ) : (
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div>
-                <MainTabs />
+                <Tablar />
               </div>
             </form>
           )}
