@@ -80,6 +80,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
   };
 
   const onSubmit = (data) => {
+    console.log(data.color);
     // Form verilerini API'nin beklediği formata dönüştür
     const Body = {
       siraNo: Number(data.siraNo),
@@ -91,7 +92,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
       email: data.mail,
       telefon: data.telefonNo,
       paraf: data.paraf,
-      kullaniciRengi: /^#[0-9A-F]{6}$/i.test(data.color) ? data.color : data.color.toHexString(),
+      kullaniciRengi: data.color ? (/^#[0-9A-F]{6}$/i.test(data.color) ? data.color : data.color.toHexString()) : null,
     };
 
     // API'ye POST isteği gönder
