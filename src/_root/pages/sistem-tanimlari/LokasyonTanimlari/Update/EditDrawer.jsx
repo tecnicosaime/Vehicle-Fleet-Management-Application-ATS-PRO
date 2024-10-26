@@ -104,10 +104,11 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
     const Body = {
       lokasyonId: data.selectedLokasyonId,
       lokasyonTanim: data.lokasyonTanimi,
-      anaLokasyonId: data.anaLokasyonID,
+      anaLokasyonId: Number(data.anaLokasyonID),
       lokasyonTipId: data.LokasyonTipiID || 0,
       lokasyonAciklama: data.lokasyonAciklama,
       lokasyonAktif: data.lokasyonAktif,
+      lokasyonTumYol: data.anaLokasyonTumYol ? `${data.anaLokasyonTumYol}/${data.lokasyonTanimi}` : data.lokasyonTanimi,
 
       // LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
       // LOK_PERSONEL_ID: data.lokasyonYoneticiID,

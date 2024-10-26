@@ -77,6 +77,7 @@ export default function MainTabs() {
   const handleAnaLokasyonMinusClick = () => {
     setValue("anaLokasyonTanim", "");
     setValue("anaLokasyonID", "");
+    setValue("anaLokasyonTumYol", "");
   };
 
   const selectedLokasyonId = watch("selectedLokasyonId");
@@ -374,8 +375,9 @@ export default function MainTabs() {
           />
           <LokasyonTablo
             onSubmit={(selectedData) => {
-              setValue("anaLokasyonTanim", selectedData.LOK_TANIM);
+              setValue("anaLokasyonTanim", selectedData.lokasyonTanim);
               setValue("anaLokasyonID", selectedData.key);
+              setValue("anaLokasyonTumYol", selectedData.lokasyonTumYol);
             }}
           />
           <Button onClick={handleAnaLokasyonMinusClick}> - </Button>
