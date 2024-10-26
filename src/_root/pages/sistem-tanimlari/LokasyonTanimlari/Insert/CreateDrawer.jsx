@@ -83,6 +83,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       lokasyonTipId: data.LokasyonTipiID || 0,
       lokasyonAciklama: data.lokasyonAciklama,
       lokasyonAktif: data.lokasyonAktif,
+      lokasyonTumYol: data.anaLokasyonTumYol ? `${data.anaLokasyonTumYol}/${data.lokasyonTanimi}` : data.lokasyonTanimi,
 
       // LOK_MASRAF_MERKEZ_KOD_ID: data.lokasyonMasrafMerkeziID,
       // LOK_PERSONEL_ID: data.lokasyonYoneticiID,

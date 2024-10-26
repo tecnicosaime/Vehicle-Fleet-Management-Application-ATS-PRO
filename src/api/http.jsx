@@ -5,7 +5,7 @@ const http = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
   headers: {
     "Content-type": "application/json",
-    "User-Id": JSON.parse(localStorage.getItem("id")),
+    // "User-Id": JSON.parse(localStorage.getItem("id")),
   },
 });
 
