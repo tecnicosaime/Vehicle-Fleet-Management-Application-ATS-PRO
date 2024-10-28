@@ -84,13 +84,23 @@ const Sigorta = ({ visible, onClose, ids }) => {
       title: t("baslangicTarih"),
       dataIndex: "baslangicTarih",
       key: 4,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("bitisTarih"),
       dataIndex: "bitisTarih",
       key: 5,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: `${t("kalanSure")} (${t("gun")})`,

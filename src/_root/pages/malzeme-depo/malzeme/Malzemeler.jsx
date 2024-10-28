@@ -113,7 +113,12 @@ const Malzemeler = () => {
       title: t("sonAlisTarihi"),
       dataIndex: "sonAlisTarih",
       key: 14,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("sonAlinanFirma"),

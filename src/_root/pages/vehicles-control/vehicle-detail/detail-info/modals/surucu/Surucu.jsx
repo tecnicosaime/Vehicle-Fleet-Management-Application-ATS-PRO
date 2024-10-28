@@ -47,7 +47,12 @@ const Surucu = ({ visible, onClose, id }) => {
       title: t("teslimTarih"),
       dataIndex: "teslimTarih",
       key: 2,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("teslimSaat"),

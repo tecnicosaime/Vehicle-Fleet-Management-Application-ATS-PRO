@@ -84,7 +84,12 @@ const Lastik = ({ visible, onClose, ids }) => {
       title: t("cikisTarih"),
       dataIndex: "cikisTarih",
       key: 4,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("cikisSaat"),
@@ -95,7 +100,12 @@ const Lastik = ({ visible, onClose, ids }) => {
       title: t("varisTarih"),
       dataIndex: "varisTarih",
       key: 6,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("varisSaat"),
@@ -106,7 +116,12 @@ const Lastik = ({ visible, onClose, ids }) => {
       title: "cikisKm",
       dataIndex: "cikisKm",
       key: 8,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("varisKm"),

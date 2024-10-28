@@ -214,7 +214,7 @@ const Satinalma = ({ visible, onClose, id }) => {
                 <div className="col-span-12">
                   <Divider />
                 </div>
-                <div className="col-span-12">
+                {/* <div className="col-span-12">
                   <div className="flex flex-col gap-1">
                     <label>{t("amorTismanTutar")} -- ?</label>
                     <ReadonlyInput name="" checked={true} />
@@ -231,7 +231,7 @@ const Satinalma = ({ visible, onClose, id }) => {
                     <label>{t("kalanSure")} -- ?</label>
                     <ReadonlyInput name="" checked={true} />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="col-span-12">

@@ -99,13 +99,23 @@ const Suruculer = () => {
       title: t("dogumTarihi"),
       dataIndex: "dogumTarihi",
       key: 11,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("iseBaslamaTarihi"),
       dataIndex: "iseBaslamaTarihi",
       key: 12,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: `${t("telefon")} 1`,

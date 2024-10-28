@@ -61,7 +61,7 @@ const GeneralInfo = ({ isValid }) => {
                 <CodeControl name="malzemeTipKodText" codeName="malzemeTipKodId" id={301} />
               </div>
             </div>
-            <div className="col-span-4">
+            {/* <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("marka")} -- ?</label>
                 <TextInput name="" readonly={true} />
@@ -72,7 +72,7 @@ const GeneralInfo = ({ isValid }) => {
                 <label>{t("model")} -- ?</label>
                 <TextInput name="" readonly={true} />
               </div>
-            </div>
+            </div> */}
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("fiyat")}</label>

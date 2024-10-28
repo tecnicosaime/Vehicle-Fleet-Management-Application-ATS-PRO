@@ -29,7 +29,12 @@ const SigortaList = ({ setSigorta, open, key }) => {
       title: t("baslamaTarih"),
       dataIndex: "baslangicTarih",
       key: "baslangicTarih",
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("policeNo"),

@@ -53,7 +53,12 @@ const YakitCikisFisleri = () => {
       title: t("tarih"),
       dataIndex: "tarih",
       key: 2,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("firmaTanimi"),
