@@ -1,34 +1,89 @@
-import React, { useState } from "react";
-import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, Table } from "antd";
-import { Controller, useFormContext } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import { Input, Table } from "antd";
+import { useFormContext } from "react-hook-form";
 import LokasyonTablo from "./components/LokasyonTablo";
+import AxiosInstance from "../../../../../../../api/http.jsx";
 import { t } from "i18next";
 
-const { Text, Link } = Typography;
-const { TextArea } = Input;
-
 function LokasyonYetkileri() {
-  const { control, watch, setValue } = useFormContext();
+  const { watch } = useFormContext();
   const [data, setData] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleAnaLokasyonMinusClick = () => {
-    setValue("anaLokasyonTanim", "");
-    setValue("anaLokasyonID", "");
-  };
+  const currentUserId = watch("siraNo");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  const [searchText, setSearchText] = useState("");
+  const [debouncedSearchText, setDebouncedSearchText] = useState("");
 
   const columns = [
     {
       title: t("yetkiliOlunanLokasyon"),
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "lokasyon",
+      key: "lokasyon",
       render: (text) => <a>{text}</a>,
+    },
+    {
+      title: t("tumYol"),
+      dataIndex: "tumLokasyon",
+      key: "tumLokasyon",
     },
   ];
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+    }, 2000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchText]);
+
+  const fetchData = async (page = 1, pageSize = 10, parameter = debouncedSearchText) => {
+    try {
+      const response = await AxiosInstance.get(`UserLocation/GetUserLocationList?userId=${currentUserId}&page=${page}&pageSize=${pageSize}&parameter=${parameter}`);
+      const formattedData = response.data.list.map((item) => ({
+        ...item,
+        key: item.siraNo,
+      }));
+      setData(formattedData);
+      setTotal(response.data.recordCount); // Adjusted to match the API response
+    } catch (error) {
+      console.error("Veri çekme hatası:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUserId) {
+      fetchData(currentPage, pageSize);
+    }
+  }, [currentUserId, currentPage, pageSize, refreshKey, debouncedSearchText]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [currentUserId]);
+
+  const handleTableChange = (pagination) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
-        <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("lokasyonlar")}</Text>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "flex-start",
+          width: "100%",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          gap: "8px",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -36,41 +91,23 @@ function LokasyonYetkileri() {
             minWidth: "300px",
             gap: "10px",
             width: "100%",
+            justifyContent: "space-between",
           }}
         >
-          <Controller
-            name="anaLokasyonTanim"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ width: "100%", maxWidth: "630px" }}
-                disabled
-              />
-            )}
-          />
-          <Controller
-            name="anaLokasyonID"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text" // Set the type to "text" for name input
-                style={{ display: "none" }}
-              />
-            )}
-          />
-          <LokasyonTablo
-            onSubmit={(selectedData) => {
-              setValue("anaLokasyonTanim", selectedData.lokasyonTanim);
-              setValue("anaLokasyonID", selectedData.key);
-            }}
-          />
-          <Button onClick={handleAnaLokasyonMinusClick}> - </Button>
+          <Input placeholder={t("arama")} value={searchText} onChange={(e) => setSearchText(e.target.value)} style={{ width: 200 }} />
+          <LokasyonTablo currentUserId={currentUserId} setRefreshKey={setRefreshKey} />
         </div>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: total,
+          onChange: handleTableChange,
+        }}
+      />
     </div>
   );
 }
