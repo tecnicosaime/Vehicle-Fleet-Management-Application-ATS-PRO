@@ -90,7 +90,7 @@ const Sefer = () => {
       title: "cikisKm",
       dataIndex: "cikisKm",
       key: 9,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      // render: (text) => dayjs(text).format("DD.MM.YYYY"),
     },
     {
       title: t("varisKm"),

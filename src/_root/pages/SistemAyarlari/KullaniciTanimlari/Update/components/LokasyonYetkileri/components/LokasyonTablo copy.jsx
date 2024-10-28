@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+// satır önündeki artı işaretine bastığımda yeni api isteği ile children ları çekmesi için
+
+import React, { useEffect, useState } from "react";
 import { Button, Modal, Table, Input, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import AxiosInstance from "../../../../../../../../api/http.jsx";
-import styled from "styled-components";
 import { t } from "i18next";
 
 export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUserId, setRefreshKey }) {
@@ -18,54 +19,36 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
   const columns = [
     {
       title: "",
-      key: "lokasyonBilgisi",
-      render: (text, record) => <div>{record.lokasyonTanim}</div>,
+      key: "locationInfo",
+      render: (text, record) => <div>{record.location}</div>,
     },
-    // Other columns...
+    // Diğer sütunlar...
   ];
 
+  // API'den gelen veriyi tabloya uygun formata dönüştürme fonksiyonu
   const formatDataForTable = (data) => {
-    let nodes = {};
-    let tree = [];
-
-    data.forEach((item) => {
-      nodes[item.lokasyonId] = {
-        ...item,
-        key: item.lokasyonId,
-        children: [],
-      };
-    });
-
-    data.forEach((item) => {
-      if (item.anaLokasyonId && nodes[item.anaLokasyonId]) {
-        nodes[item.anaLokasyonId].children.push(nodes[item.lokasyonId]);
-      } else {
-        tree.push(nodes[item.lokasyonId]);
-      }
-    });
-
-    Object.values(nodes).forEach((node) => {
-      if (node.children.length === 0) {
-        delete node.children;
-      }
-    });
-
-    return tree;
+    return data.map((item) => ({
+      ...item,
+      key: item.locationId,
+      title: item.location,
+      children: item.hasChild ? [] : undefined, // hasChild true ise children boş dizi
+    }));
   };
 
+  // Türkçe karakterleri küçük harfe çeviren fonksiyon
   const toLowerTurkish = (str) => {
     return str.replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase();
   };
 
+  // Ağaç yapısını filtreleyen fonksiyon
   const filterTree = (nodeList, searchTerm, path = []) => {
     let isMatchFound = false;
     let expandedKeys = [];
-
     const lowerSearchTerm = toLowerTurkish(searchTerm);
 
     const filtered = nodeList
       .map((node) => {
-        let nodeMatch = toLowerTurkish(node.lokasyonTanim).includes(lowerSearchTerm);
+        let nodeMatch = toLowerTurkish(node.location).includes(lowerSearchTerm);
         let childrenMatch = false;
         let filteredChildren = [];
 
@@ -89,6 +72,7 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
     return { filtered, isMatch: isMatchFound, expandedKeys };
   };
 
+  // Arama terimini gecikmeli olarak ayarlama
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -97,6 +81,14 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
     return () => clearTimeout(timerId);
   }, [searchTerm]);
 
+  // treeData değiştiğinde, arama terimi yoksa filteredData'yı güncelle
+  useEffect(() => {
+    if (!debouncedSearchTerm) {
+      setFilteredData(treeData);
+    }
+  }, [treeData]);
+
+  // debouncedSearchTerm değiştiğinde filteredData ve expandedRowKeys'i güncelle
   useEffect(() => {
     if (debouncedSearchTerm) {
       const result = filterTree(treeData, debouncedSearchTerm);
@@ -104,29 +96,75 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
       setExpandedRowKeys([...new Set(result.expandedKeys)]);
     } else {
       setFilteredData(treeData);
-      setExpandedRowKeys([]);
+      // expandedRowKeys'i sıfırlamıyoruz
     }
-  }, [debouncedSearchTerm, treeData]);
+  }, [debouncedSearchTerm]);
 
+  // Tablodaki satırı genişletme ve çocuklarını yükleme fonksiyonu
   const onTableRowExpand = (expanded, record) => {
-    const keys = expanded ? [...expandedRowKeys, record.key] : expandedRowKeys.filter((k) => k !== record.key);
-    setExpandedRowKeys(keys);
+    // expandedRowKeys'i hemen güncelle
+    setExpandedRowKeys((prevKeys) => {
+      if (expanded) {
+        return [...prevKeys, record.key];
+      } else {
+        return prevKeys.filter((key) => key !== record.key);
+      }
+    });
+
+    if (expanded && record.hasChild && record.children.length === 0 && record.locationId) {
+      setLoading(true);
+
+      AxiosInstance.get(`Location/GetChildLocationListByParentId?parentID=${record.locationId}`)
+        .then((response) => {
+          const childrenData = formatDataForTable(response.data);
+          const newData = [...treeData];
+
+          const updateTreeData = (data) => {
+            return data.map((item) => {
+              if (item.key === record.key) {
+                return {
+                  ...item,
+                  children: childrenData,
+                };
+              } else if (item.children) {
+                return {
+                  ...item,
+                  children: updateTreeData(item.children),
+                };
+              } else {
+                return item;
+              }
+            });
+          };
+
+          const updatedTreeData = updateTreeData(newData);
+          setTreeData(updatedTreeData);
+
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("API Hatası:", error);
+          setLoading(false);
+        });
+    }
   };
 
+  // İlk veri çekme fonksiyonu
   const fetchData = () => {
     setLoading(true);
-    AxiosInstance.get("Location/GetLocationList")
+    AxiosInstance.get("Location/GetChildLocationListByParentId?parentID=0")
       .then((response) => {
         const tree = formatDataForTable(response.data);
         setTreeData(tree);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("API Error:", error);
+        console.error("API Hatası:", error);
         setLoading(false);
       });
   };
 
+  // Ağaç yapısında belirli bir öğeyi bulma fonksiyonu
   const findItemInTree = (key, tree) => {
     for (const item of tree) {
       if (item.key === key) return item;
@@ -138,10 +176,11 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
     return null;
   };
 
+  // Modal açma/kapatma fonksiyonu
   const handleModalToggle = () => {
     setIsModalVisible((prev) => !prev);
     if (!isModalVisible) {
-      fetchData();
+      fetchData(); // Modal açıldığında verileri çek
       setSelectedRowKeys([]);
       setSearchTerm("");
       setDebouncedSearchTerm("");
@@ -150,26 +189,24 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
     }
   };
 
+  // Modal onaylama fonksiyonu
   const handleModalOk = () => {
     const selectedData = findItemInTree(selectedRowKeys[0], treeData);
     if (selectedData) {
       const body = {
-        lokasyonId: selectedData.lokasyonId,
+        lokasyonId: selectedData.locationId,
         kullaniciId: currentUserId,
       };
 
       AxiosInstance.post("UserLocation/AddUserLocationItem", body)
         .then((response) => {
-          console.log("API Response:", response);
           if (response.data.statusCode == 201 || response.data.statusCode == 200 || response.data.statusCode == 202) {
             message.success(t("islemBasarili"));
-            setRefreshKey((prev) => prev + 1); // Trigger data refresh
+            setRefreshKey((prev) => prev + 1); // Verileri yenile
           }
-          // Handle success as needed
         })
         .catch((error) => {
-          console.error("API Error:", error);
-          // Handle error as needed
+          console.error("API Hatası:", error);
         });
 
       onSubmit && onSubmit(selectedData);
@@ -177,14 +214,17 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
     setIsModalVisible(false);
   };
 
+  // Seçili satır anahtarlarını ayarlama
   useEffect(() => {
     setSelectedRowKeys(workshopSelectedId ? [workshopSelectedId] : []);
   }, [workshopSelectedId]);
 
+  // Satır seçimi değiştiğinde çağrılan fonksiyon
   const onRowSelectChange = (selectedKeys) => {
     setSelectedRowKeys(selectedKeys.length ? [selectedKeys[0]] : []);
   };
 
+  // Satır seçimi ayarları
   const rowSelection = {
     type: "radio",
     selectedRowKeys,
@@ -194,7 +234,7 @@ export default function LokasyonTablo({ workshopSelectedId, onSubmit, currentUse
   return (
     <div>
       <Button type="primary" onClick={handleModalToggle}>
-        {t("lokasyonEkle")}{" "}
+        {t("lokasyonEkle")}
       </Button>
       <Modal width="1200px" title={t("lokasyon")} open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
         <Input
