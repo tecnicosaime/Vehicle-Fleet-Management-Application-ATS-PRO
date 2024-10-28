@@ -98,12 +98,12 @@ const GeneralInfo = ({ isValid }) => {
                 <CodeControl name="renk" codeName="aracRenkId" id={111} />
               </div>
             </div>
-            <div className="col-span-4">
+            {/* <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("mulkiyet")} -- ?</label>
                 <TextInput name="mulkiyet" readonly={true} />
               </div>
-            </div>
+            </div> */}
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("departman")}</label>

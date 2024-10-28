@@ -435,12 +435,12 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               <label>{t("stoktanKullanim")}</label>
               <CheckboxInput name="stokKullanimi" />
             </div>
-            <div className="col-span-6">
+            {/* <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("yakitTank")} -- ?</label>
                 <YakitTank />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

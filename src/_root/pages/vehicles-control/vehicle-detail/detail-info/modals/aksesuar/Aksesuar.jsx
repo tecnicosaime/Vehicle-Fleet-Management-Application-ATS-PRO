@@ -62,7 +62,12 @@ const Aksesuar = ({ visible, onClose, id }) => {
       title: t("degistirmeTarih"),
       dataIndex: "degistirmeTarih",
       key: 5,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
   ];
 

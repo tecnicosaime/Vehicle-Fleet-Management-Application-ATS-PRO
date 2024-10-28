@@ -73,7 +73,12 @@ const Ceza = ({ visible, onClose, ids }) => {
       title: t("tarih"),
       dataIndex: "tarih",
       key: 2,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("saat"),
@@ -104,7 +109,12 @@ const Ceza = ({ visible, onClose, ids }) => {
       title: "odemeTarihi",
       dataIndex: "odemeTarih",
       key: 8,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("cezaMaddesi"),

@@ -379,12 +379,12 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 <CheckboxInput name="stokKullanimi" />
               </div>
             </div>
-            <div className="col-span-6">
+            {/* <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("yakitTank")} --- ?</label>
                 <YakitTank />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="col-span-6">
@@ -663,12 +663,12 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 <DateInput name="faturaTarih" />
               </div>
             </div>
-            <div className="col-span-6">
+            {/* <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("gorevNo")} -- ?</label>
                 <TextInput name="" readonly={true} />
               </div>
-            </div>
+            </div> */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("ozelKullanim")}</label>
@@ -679,12 +679,12 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         </div>
         <div className="col-span-6 p-20">
           <div className="grid gap-1">
-            <div className="col-span-4">
+            {/* <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("masrafMerkezi")} -- ?</label>
                 <TextInput name="" readonly={true} />
               </div>
-            </div>
+            </div> */}
             <div className="col-span-4">
               <div className="flex flex-col gap-1">
                 <label>{t("guzergah")}</label>

@@ -93,7 +93,7 @@ const GeneralInfo = () => {
                 </div>
               </div>
 
-              <div className="col-span-4">
+              {/* <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label>{t("proje")} -- ?</label>
                   <TextInput name="" readonly={true} />
@@ -110,7 +110,7 @@ const GeneralInfo = () => {
                   <label>{t("havuz")} -- ?</label>
                   <TextInput name="havuzGrup" readonly={true} />
                 </div>
-              </div>
+              </div> */}
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label>{t("kullanimAmaci")}</label>

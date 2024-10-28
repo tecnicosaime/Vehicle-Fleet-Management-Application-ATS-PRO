@@ -37,7 +37,12 @@ const Hareketler = () => {
       title: t("tarih"),
       dataIndex: "tarih",
       key: 1,
-      render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      render: (text) => {
+        if (text === null || text === undefined) {
+          return null;
+        }
+        return dayjs(text).format("DD.MM.YYYY");
+      },
     },
     {
       title: t("malzemeKodu"),
