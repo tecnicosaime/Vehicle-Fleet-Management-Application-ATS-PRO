@@ -196,13 +196,13 @@
   z-index: 1000 !important;
 }
 
-.ant-spin-spinning {
+/* .ant-spin-spinning {
   position: absolute;
   display: inline-block;
   top: 50%;
   opacity: 1;
   left: 50%;
-}
+} */
 
 .ant-input-outlined:focus,
 .ant-input-outlined:focus-within,
@@ -271,9 +271,9 @@
   color: rgba(0, 0, 0, 0.7) !important;
 }
 
-.ant-spin-nested-loading .ant-spin-blur {
+/* .ant-spin-nested-loading .ant-spin-blur {
   opacity: 0.3;
-}
+} */
 
 .profile .ant-upload.ant-upload-select {
   padding: 10px !important;
@@ -315,6 +315,6 @@
   font-weight: bold !important;
 }
 
-.ant-spin-nested-loading {
+/* .ant-spin-nested-loading {
   z-index: 1000;
-}
+} */

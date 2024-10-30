@@ -10,6 +10,7 @@ import AxiosInstance from "../../api/http";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import LanguageSelectbox from "../components/lang/LanguageSelectbox";
+import KullaniciProfil from "../pages/KullaniciProfil/KullaniciProfil";
 
 const { Header } = Layout;
 
@@ -64,17 +65,17 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
     getHatirlatici1();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("token_expire");
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("token_expire");
+  //   navigate("/login");
+  // };
 
-  const popoverContent = (
-    <Button type="primary" onClick={handleLogout}>
-      {t("logout")}
-    </Button>
-  );
+  // const popoverContent = (
+  //   <Button type="primary" onClick={handleLogout}>
+  //     {t("logout")}
+  //   </Button>
+  // );
 
   return (
     <Header
@@ -104,9 +105,10 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
           </CustomSpin>
           <Bildirim />
           <Input className="search-input" placeholder={t("arama")} allowClear />
-          <Popover content={popoverContent} trigger="click">
+          {/* <Popover content={popoverContent} trigger="click">
             <Avatar className="header-avatar" icon={<AntDesignOutlined />} />
-          </Popover>
+          </Popover> */}
+          <KullaniciProfil />
         </div>
       </div>
     </Header>
