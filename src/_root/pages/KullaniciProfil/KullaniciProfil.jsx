@@ -18,6 +18,7 @@ function KullaniciProfil() {
     AxiosInstance.get(`User/GetUser?id=${id}`)
       .then((response) => {
         setUserData(response.data);
+
         if (response.data.defPhotoInfo.tbResimId > 0) {
           const photoData = {
             photoId: response.data.defPhotoInfo.tbResimId,
