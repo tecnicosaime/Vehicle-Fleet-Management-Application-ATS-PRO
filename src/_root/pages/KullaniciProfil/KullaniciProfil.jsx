@@ -55,7 +55,7 @@ function KullaniciProfil() {
 
   const popoverContent = (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "10px" }}>
-      <Text style={{ cursor: "pointer" }} onClick={() => navigate("/profiliDuzenle")}>
+      <Text style={{ cursor: "pointer" }} onClick={() => navigate("/edit_profile", { state: { userData } })}>
         {t("profiliDuzenle")}
       </Text>
       <Text style={{ cursor: "pointer", color: "#ff4d4f" }} onClick={handleLogout}>
