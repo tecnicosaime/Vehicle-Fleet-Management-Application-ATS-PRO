@@ -55,7 +55,9 @@ import YakitTuketimAnalizi from "./_root/pages/Analizler/YakitTuketimAnalizi/Yak
 // sistem Ayarlari
 
 import KullaniciTanimlari from "./_root/pages/SistemAyarlari/KullaniciTanimlari/KullaniciTanimlari.jsx";
+
 // Profil Duzenleme
+
 import ProfiliDuzenleTabs from "./_root/pages/KullaniciProfil/components/ProfiliDuzenle/ProfiliDuzenleTabs.jsx";
 
 const App = () => {
