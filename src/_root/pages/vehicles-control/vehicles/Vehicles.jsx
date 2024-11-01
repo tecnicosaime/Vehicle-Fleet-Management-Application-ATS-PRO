@@ -157,7 +157,7 @@ const Vehicles = () => {
         }
 
         // Ondalıklı sayıyı 2 basamağa yuvarla ve 2 basamaklı hale getir
-        const formattedGerceklesen = gerceklesen.toFixed(2);
+        const formattedGerceklesen = gerceklesen.toFixed(Number(record?.ortalamaFormat));
 
         let icon = null;
         if (onGorulenMin !== null && onGorulenMin !== 0) {

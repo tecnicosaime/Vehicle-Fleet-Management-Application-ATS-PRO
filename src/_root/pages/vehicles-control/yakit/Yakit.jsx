@@ -87,7 +87,7 @@ const Yakit = () => {
       width: 100,
       render: (text, record) => (
         <div className="">
-          <span>{text} </span>
+          <span>{Number(text).toFixed(Number(record?.miktarFormat))} </span>
           <span style={{ fontSize: "14px", color: "rgb(147 147 147)" }}>{record.birim === "LITRE" && "lt"}</span>
         </div>
       ),
@@ -98,6 +98,11 @@ const Yakit = () => {
       key: 7,
       ellipsis: true,
       width: 100,
+      render: (text, record) => (
+        <div className="">
+          <span>{Number(text).toFixed(Number(record?.tutarFormat))} </span>
+        </div>
+      ),
     },
 
     {
@@ -115,7 +120,7 @@ const Yakit = () => {
         }
 
         // Ondalıklı sayıyı 2 basamağa yuvarla ve 2 basamaklı hale getir
-        const formattedGerceklesen = tuketim.toFixed(2);
+        const formattedGerceklesen = tuketim.toFixed(Number(record?.ortalamaFormat));
 
         let icon = null;
         if (aracOnGorulenMinYakit !== null && aracOnGorulenMinYakit !== 0) {
