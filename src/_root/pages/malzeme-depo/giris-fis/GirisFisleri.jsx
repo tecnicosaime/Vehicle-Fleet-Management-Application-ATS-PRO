@@ -89,16 +89,31 @@ const GirisFisleri = () => {
       title: t("araToplam"),
       dataIndex: "araToplam",
       key: 7,
+      render: (text, record) => (
+        <div className="">
+          <span>{Number(text).toFixed(Number(record?.tutarFormat))} </span>
+        </div>
+      ),
     },
     {
       title: t("kdvToplam"),
       dataIndex: "kdvToplam",
       key: 8,
+      render: (text, record) => (
+        <div className="">
+          <span>{Number(text).toFixed(Number(record?.tutarFormat))} </span>
+        </div>
+      ),
     },
     {
       title: t("genelToplam"),
       dataIndex: "genelToplam",
       key: 9,
+      render: (text, record) => (
+        <div className="">
+          <span>{Number(text).toFixed(Number(record?.tutarFormat))} </span>
+        </div>
+      ),
     },
   ];
 
