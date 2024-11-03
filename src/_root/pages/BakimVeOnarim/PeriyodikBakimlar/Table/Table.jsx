@@ -15,6 +15,7 @@ import CreateDrawer from "../Insert/CreateDrawer";
 import EditDrawer from "../Update/EditDrawer";
 import dayjs from "dayjs";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 import { t } from "i18next";
 
@@ -128,6 +129,7 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 // Sütunların sürüklenebilir olmasını sağlayan component sonu
 
 const Sigorta = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { setValue } = useFormContext();
   const [data, setData] = useState([]);
@@ -613,7 +615,9 @@ const Sigorta = () => {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
       const response = await AxiosInstance.get(`PeriodicMaintenance/GetPeriodicMaintenanceList?page=${currentPage}&parameter=${keyword}`);
-      if (response.data) {
+      if (response.data.statusCode == 401) {
+        navigate("/unauthorized");
+      } else if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
         setTotalDataCount(response.data.recordCount);
