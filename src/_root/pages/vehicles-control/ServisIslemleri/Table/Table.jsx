@@ -743,10 +743,9 @@ const Sigorta = () => {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
       const response = await AxiosInstance.get(`VehicleServices/GetVehicleServices?page=${currentPage}&parameter=${keyword}`);
-      if (response.data) {
-        if (response.data.statusCode == 401) {
-          navigate("/unauthorized");
-        }
+      if (response.data.statusCode == 401) {
+        navigate("/unauthorized");
+      } else if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
         setTotalDataCount(response.data.recordCount);
