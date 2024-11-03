@@ -60,6 +60,10 @@ import KullaniciTanimlari from "./_root/pages/SistemAyarlari/KullaniciTanimlari/
 
 import ProfiliDuzenleTabs from "./_root/pages/KullaniciProfil/components/ProfiliDuzenle/ProfiliDuzenleTabs.jsx";
 
+// Yetkısız İşlem
+
+import YetkisizIslem from "./_root/pages/YekisizIslem";
+
 const App = () => {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
@@ -131,6 +135,7 @@ const App = () => {
 
         {/* Profil Düzenleme */}
         <Route path="/edit_profile" element={<ProfiliDuzenleTabs />} />
+        <Route path="/unauthorized" element={<YetkisizIslem />} />
       </Route>
       {hasToken && <Route path="/login" element={<AuthLayout />} />}
     </Routes>
