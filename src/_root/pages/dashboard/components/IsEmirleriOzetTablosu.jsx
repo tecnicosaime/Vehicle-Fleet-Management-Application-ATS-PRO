@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Typography, Spin, Button, Popover, Modal, DatePicker, ConfigProvider } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { Controller, useFormContext } from "react-hook-form";
 import jsPDF from "jspdf";
@@ -14,6 +14,7 @@ import trTR from "antd/lib/locale/tr_TR";
 const { Text } = Typography;
 
 function IsEmirleriOzetTablosu(props) {
+  const navigate = useNavigate(); // Initialize navigate
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -193,13 +194,18 @@ function IsEmirleriOzetTablosu(props) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetIsEmriOzetTable?startDate=${baslamaTarihi}&endDate=${bitisTarihi}`);
-      const formattedData = response.map((item) => {
-        return {
-          ...item,
-          key: Math.random(),
-        };
-      });
-      setData(formattedData);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const formattedData = response.map((item) => {
+          return {
+            ...item,
+            key: Math.random(),
+          };
+        });
+        setData(formattedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Typography, Spin, Button, Popover, Modal, DatePicker, ConfigProvider, Input } from "antd";
 import { DownloadOutlined, MoreOutlined } from "@ant-design/icons";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import trTR from "antd/lib/locale/tr_TR";
 import { Controller, useFormContext } from "react-hook-form";
@@ -33,6 +33,7 @@ const normalizeText = (text) => {
 };
 
 function ArizaliMakineler(props) {
+  const navigate = useNavigate(); // Initialize navigate
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [loadings, setLoadings] = useState([]);
@@ -106,13 +107,18 @@ function ArizaliMakineler(props) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetArizaliMakineler`);
-      const formattedData = response.map((item) => {
-        return {
-          ...item,
-          key: Math.random(),
-        };
-      });
-      setData(formattedData);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized"); // Redirect to /unauthorized
+        return; // Stop further execution
+      } else {
+        const formattedData = response.map((item) => {
+          return {
+            ...item,
+            key: Math.random(),
+          };
+        });
+        setData(formattedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

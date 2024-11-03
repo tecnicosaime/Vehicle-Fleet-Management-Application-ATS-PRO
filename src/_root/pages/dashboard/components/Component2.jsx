@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, DatePicker, Modal, Popover, Spin, Typography } from "antd";
 import { FormOutlined, MoreOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import styled from "styled-components";
 import http from "../../../../api/http.jsx";
 import dayjs from "dayjs";
@@ -19,6 +20,7 @@ const StyledClockCircleOutlined = styled(FormOutlined)`
 `;
 
 function Component2(props) {
+  const navigate = useNavigate(); // Initialize navigate
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,14 +60,20 @@ function Component2(props) {
     };
     try {
       const response = await http.post("Graphs/GetGraphInfoByType?type=2", body);
-      let responseData = response.data;
-      if (typeof responseData === "number") {
-        // Ondalık kısmı yuvarlama
-        responseData = Math.round(responseData);
-        // Sayıyı 100'lük basamaklara ayırma
-        responseData = responseData.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized"); // Redirect to /unauthorized
+        return; // Stop further execution
+      } else {
+        let responseData = response.data;
+        if (typeof responseData === "number") {
+          // Ondalık kısmı yuvarlama
+          responseData = Math.round(responseData);
+          // Sayıyı 100'lük basamaklara ayırma
+          responseData = responseData.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        setData(responseData);
       }
-      setData(responseData);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

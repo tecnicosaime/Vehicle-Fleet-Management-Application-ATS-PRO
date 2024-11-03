@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from "recharts";
 import { Button, Popover, Spin, Typography, Modal, DatePicker, Tour } from "antd";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
@@ -13,6 +13,7 @@ const { Text } = Typography;
 const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
 function TamamlanmaOranlari(props = {}) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
@@ -53,19 +54,23 @@ function TamamlanmaOranlari(props = {}) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetTamamlanmisIsEmirleriIsTalepleri?ID=2&year=${baslamaTarihi}`);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const transformedData = response.reduce((acc, item) => {
+          const monthName = monthNames[item.AY];
+          const month = acc.find((el) => el.AY === monthName);
+          if (month) {
+            month[item.TIP] = item.DEGER;
+          } else {
+            acc.push({ AY: monthName, [item.TIP]: item.DEGER });
+          }
+          return acc;
+        }, []);
 
-      const transformedData = response.reduce((acc, item) => {
-        const monthName = monthNames[item.AY];
-        const month = acc.find((el) => el.AY === monthName);
-        if (month) {
-          month[item.TIP] = item.DEGER;
-        } else {
-          acc.push({ AY: monthName, [item.TIP]: item.DEGER });
-        }
-        return acc;
-      }, []);
-
-      setData(transformedData);
+        setData(transformedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

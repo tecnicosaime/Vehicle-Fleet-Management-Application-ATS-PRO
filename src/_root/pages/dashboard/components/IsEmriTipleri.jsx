@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { PieChart, Pie, Sector, ResponsiveContainer, Cell, Legend } from "recharts";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { Spin, Typography, Tooltip, Popover, Button, Modal, Tour } from "antd";
 import chroma from "chroma-js";
@@ -29,6 +29,7 @@ const StyledResponsiveContainer = styled(ResponsiveContainer)`
 `;
 
 function IsEmriTipleri(props) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -43,18 +44,23 @@ function IsEmriTipleri(props) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetIsEmriTipEnvanter?ID=2`);
-      const transformedData = response.map((item) => ({
-        name: item.ISEMRI_TIPI,
-        value: Number(item.ISEMRI_SAYISI),
-      }));
-      setData(transformedData);
-      setColors(generateColors(transformedData.length));
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const transformedData = response.map((item) => ({
+          name: item.ISEMRI_TIPI,
+          value: Number(item.ISEMRI_SAYISI),
+        }));
+        setData(transformedData);
+        setColors(generateColors(transformedData.length));
 
-      const initialVisibleSeries = transformedData.reduce((acc, item) => {
-        acc[item.name] = true;
-        return acc;
-      }, {});
-      setVisibleSeries(initialVisibleSeries);
+        const initialVisibleSeries = transformedData.reduce((acc, item) => {
+          acc[item.name] = true;
+          return acc;
+        }, {});
+        setVisibleSeries(initialVisibleSeries);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -65,19 +71,24 @@ function IsEmriTipleri(props) {
   const fetchData1 = async () => {
     setIsLoading(true);
     try {
-      const response = await AxiosInstance.get(`GetIsEmriDurumEnvanter?ID=2`);
-      const transformedData = response.map((item) => ({
-        name: item.ISEMRI_DURUMU,
-        value: Number(item.ISEMRI_SAYISI),
-      }));
-      setData(transformedData);
-      setColors(generateColors(transformedData.length));
+      const response = await http.get(`GetIsEmriDurumEnvanter?ID=2`);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const transformedData = response.map((item) => ({
+          name: item.ISEMRI_DURUMU,
+          value: Number(item.ISEMRI_SAYISI),
+        }));
+        setData(transformedData);
+        setColors(generateColors(transformedData.length));
 
-      const initialVisibleSeries = transformedData.reduce((acc, item) => {
-        acc[item.name] = true;
-        return acc;
-      }, {});
-      setVisibleSeries(initialVisibleSeries);
+        const initialVisibleSeries = transformedData.reduce((acc, item) => {
+          acc[item.name] = true;
+          return acc;
+        }, {});
+        setVisibleSeries(initialVisibleSeries);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -252,8 +263,8 @@ function IsEmriTipleri(props) {
           </p>
           <p>
             <strong>Bilgi :</strong> Bu pasta grafikte, farklı iş emri tiplerinin / durumlarının toplam iş emirleri içindeki oranları gösterilmektedir. Her bir dilim, belirli bir
-            iş emri tipinin / durumunun toplam iş emirleri içindeki oranını temsil etmektedir. Örneğin, pasta grafiğinde "Arıza" iş emri tipi için ayrılan dilim, toplam iş
-            emirlerinin yüzde 40'ını oluşturuyorsa, bu tip iş emirlerinin diğerlerine göre daha fazla olduğunu gösterir. Bu grafik, iş emirlerinin dağılımını hızlıca
+            iş emri tipinin / durumunun toplam iş emirleri içindeki oranını temsil etmektedir. Örneğin, pasta grafiğinde Arıza iş emri tipi için ayrılan dilim, toplam iş
+            emirlerinin yüzde 40ını oluşturuyorsa, bu tip iş emirlerinin diğerlerine göre daha fazla olduğunu gösterir. Bu grafik, iş emirlerinin dağılımını hızlıca
             görselleştirerek analiz etmenize yardımcı olabilir.
           </p>
         </div>

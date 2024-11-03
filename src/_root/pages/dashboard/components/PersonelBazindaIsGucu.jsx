@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, LabelList, Bar } from "recharts";
 import { Button, Popover, Spin, Typography, Modal, DatePicker, Checkbox, Tour } from "antd";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { FilterOutlined, MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
@@ -13,6 +13,7 @@ const { Text } = Typography;
 const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
 function PersonelBazindaIsGucu(props = {}) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -168,14 +169,18 @@ function PersonelBazindaIsGucu(props = {}) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetPersonelBazindaHarcananGuc?startDate=${baslamaTarihi}&endDate=${bitisTarihi}`);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        // Transform the data
+        const transformedData = response.map((item) => ({
+          ISIM: item.ISIM,
+          DAKIKA: Number(item.DAKIKA),
+        }));
 
-      // Transform the data
-      const transformedData = response.map((item) => ({
-        ISIM: item.ISIM,
-        DAKIKA: Number(item.DAKIKA),
-      }));
-
-      setData(transformedData);
+        setData(transformedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -319,8 +324,8 @@ function PersonelBazindaIsGucu(props = {}) {
           }}
         >
           <p>
-            "Personel Bazında Harcanan İş Gücü," bir işletmede belirli bir çalışan veya çalışan grubu tarafından ve belirli bir süre zarfında harcanan toplam iş gücünü ifade eder.
-            Bu grafik genellikle şu amaçlar için kullanılır:
+            Personel Bazında Harcanan İş Gücü, bir işletmede belirli bir çalışan veya çalışan grubu tarafından ve belirli bir süre zarfında harcanan toplam iş gücünü ifade eder. Bu
+            grafik genellikle şu amaçlar için kullanılır:
           </p>
           <ol>
             <li>

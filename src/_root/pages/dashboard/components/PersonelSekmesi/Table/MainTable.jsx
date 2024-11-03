@@ -3,7 +3,7 @@ import { Button, Input, Modal, Table } from "antd";
 import { CSVLink } from "react-csv";
 import { CheckOutlined, CloseOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useFormContext } from "react-hook-form";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../../../api/http.jsx";
 // import CreateModal from "./Insert/CreateModal";
 import EditModal from "../IkinciTablo/IkinciTablo.jsx";
@@ -28,6 +28,7 @@ const normalizeText = (text) => {
 };
 
 export default function MainTable({ isActive }) {
+  const navigate = useNavigate(); // Initialize navigate
   const [loading, setLoading] = useState(false);
   const { control, watch, setValue } = useFormContext();
   const [data, setData] = useState([]);
@@ -164,12 +165,17 @@ export default function MainTable({ isActive }) {
     setLoading(true);
     try {
       const response = await http.get(`PersonelRaporGetTip?RaporTipID=1`);
-      const fetchedData = response.map((item) => ({
-        ...item,
-        key: item.TB_PERSONEL_ID,
-        ORTALAMA_CALISMA_SURESI: item.TOPLAM_CALISMA_SURESI && item.ISEMRI_SAYISI ? (item.TOPLAM_CALISMA_SURESI / item.ISEMRI_SAYISI).toFixed(2) : "",
-      }));
-      setData(fetchedData);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const fetchedData = response.map((item) => ({
+          ...item,
+          key: item.TB_PERSONEL_ID,
+          ORTALAMA_CALISMA_SURESI: item.TOPLAM_CALISMA_SURESI && item.ISEMRI_SAYISI ? (item.TOPLAM_CALISMA_SURESI / item.ISEMRI_SAYISI).toFixed(2) : "",
+        }));
+        setData(fetchedData);
+      }
     } catch (error) {
       console.error("API isteği sırasında hata oluştu:", error);
     } finally {
