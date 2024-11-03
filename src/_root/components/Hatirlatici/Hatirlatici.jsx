@@ -61,8 +61,19 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
     setOpen(false); // Modal açıldığında popover'ı kapat
   };
 
-  const totalReminders =
-    (data ? Object.values(data).reduce((acc, currentValue) => acc + currentValue, 0) : 0) + (data1 ? Object.values(data1).reduce((acc, currentValue) => acc + currentValue, 0) : 0);
+  const totalReminders = (() => {
+    const sumDataValues = (dataObj) => {
+      if (dataObj && typeof dataObj === "object") {
+        return Object.values(dataObj)
+          .map((value) => Number(value))
+          .filter((value) => !isNaN(value))
+          .reduce((acc, currentValue) => acc + currentValue, 0);
+      }
+      return 0;
+    };
+
+    return sumDataValues(data) + sumDataValues(data1);
+  })();
 
   const content = (
     <ContentWrapper>
