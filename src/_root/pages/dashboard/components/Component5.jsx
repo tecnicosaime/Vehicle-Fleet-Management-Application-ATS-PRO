@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Typography, Spin } from "antd";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 import http from "../../../../api/http.jsx";
 
 const { Text } = Typography;
 
 function Component5(updateApi) {
+  const navigate = useNavigate(); // Initialize navigate
+
   const [data, setData] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +22,12 @@ function Component5(updateApi) {
     };
     try {
       const response = await http.post("Graphs/GetGraphInfoByType?type=6", body);
-      setData(response.data);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized"); // Redirect to /unauthorized
+        return; // Stop further execution
+      } else {
+        setData(response.data);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

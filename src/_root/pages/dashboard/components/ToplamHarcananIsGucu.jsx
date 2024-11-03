@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import html2pdf from "html2pdf.js";
 import chroma from "chroma-js";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const { Text } = Typography;
 
@@ -22,6 +23,7 @@ const StyledResponsiveContainer = styled(ResponsiveContainer)`
 `;
 
 function ToplamHarcananIsGucu(props = {}) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
@@ -185,23 +187,27 @@ function ToplamHarcananIsGucu(props = {}) {
     };
     try {
       const response = await http.post("Graphs/GetGraphInfoByType?type=5", body);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        // Transform the data
+        const transformedData = response.data.map((item) => ({
+          name: item.aracTipi,
+          value: Number(item.aracSayisi),
+        }));
 
-      // Transform the data
-      const transformedData = response.data.map((item) => ({
-        name: item.aracTipi,
-        value: Number(item.aracSayisi),
-      }));
+        // Generate colors
+        const colors = generateColors(transformedData.length);
 
-      // Generate colors
-      const colors = generateColors(transformedData.length);
+        // Add colors to the transformed data
+        const dataWithColors = transformedData.map((item, index) => ({
+          ...item,
+          color: colors[index],
+        }));
 
-      // Add colors to the transformed data
-      const dataWithColors = transformedData.map((item, index) => ({
-        ...item,
-        color: colors[index],
-      }));
-
-      setData(dataWithColors);
+        setData(dataWithColors);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

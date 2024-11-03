@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from "recharts";
 import { Button, Popover, Spin, Typography, Modal, DatePicker, Tour } from "antd";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
@@ -13,6 +13,7 @@ const { Text } = Typography;
 const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
 function AylikKM(props = {}) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
@@ -56,16 +57,21 @@ function AylikKM(props = {}) {
     try {
       const response = await http.post("Graphs/GetGraphInfoByType?type=11", body);
 
-      // Sort the response by month number
-      const apiResponse = response.data;
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized"); // Redirect to /unauthorized
+        return; // Stop further execution
+      } else {
+        // Sort the response by month number
+        const apiResponse = response.data;
 
-      // Transform the data
-      const transformedData = Object.keys(apiResponse).map((month) => ({
-        AY: monthNames[parseInt(month)],
-        AYLIK_BAKIM_ISEMRI_MALIYET: parseFloat(apiResponse[month].toFixed(2)), // Noktadan sonrası 2 rakam kalacak şekilde yuvarlanıyor
-      }));
+        // Transform the data
+        const transformedData = Object.keys(apiResponse).map((month) => ({
+          AY: monthNames[parseInt(month)],
+          AYLIK_BAKIM_ISEMRI_MALIYET: parseFloat(apiResponse[month].toFixed(2)), // Noktadan sonrası 2 rakam kalacak şekilde yuvarlanıyor
+        }));
 
-      setData(transformedData);
+        setData(transformedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

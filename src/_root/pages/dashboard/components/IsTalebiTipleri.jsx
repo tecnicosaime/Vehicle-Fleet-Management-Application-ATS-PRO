@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { Spin, Typography, Popover, Button, Modal, Tour } from "antd";
 import chroma from "chroma-js";
@@ -27,6 +27,7 @@ const StyledResponsiveContainer = styled(ResponsiveContainer)`
 `;
 
 const IsTalebiTipleri = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [colors, setColors] = useState([]);
@@ -41,17 +42,22 @@ const IsTalebiTipleri = () => {
     setIsLoading(true);
     try {
       const response = await http.get(`GetIsTalepTipEnvanter?ID=2`);
-      const transformedData = response.map((item) => ({
-        name: item.TALEP_TIPI,
-        value: Number(item.TALEP_SAYISI),
-      }));
-      setData(transformedData);
-      setColors(generateColors(transformedData.length));
-      const initialVisibleSeries = transformedData.reduce((acc, item) => {
-        acc[item.name] = true;
-        return acc;
-      }, {});
-      setVisibleSeries(initialVisibleSeries);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const transformedData = response.map((item) => ({
+          name: item.TALEP_TIPI,
+          value: Number(item.TALEP_SAYISI),
+        }));
+        setData(transformedData);
+        setColors(generateColors(transformedData.length));
+        const initialVisibleSeries = transformedData.reduce((acc, item) => {
+          acc[item.name] = true;
+          return acc;
+        }, {});
+        setVisibleSeries(initialVisibleSeries);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -82,18 +88,23 @@ const IsTalebiTipleri = () => {
   const fetchData1 = async () => {
     setIsLoading(true);
     try {
-      const response = await AxiosInstance.get(`GetIsTalepDurumEnvanter?ID=2`);
-      const transformedData = response.map((item) => ({
-        name: statusTag(item.IST_DURUM_ID).text,
-        value: Number(item.IS_TALEP_SAYISI),
-      }));
-      setData(transformedData);
-      setColors(generateColors(transformedData.length));
-      const initialVisibleSeries = transformedData.reduce((acc, item) => {
-        acc[item.name] = true;
-        return acc;
-      }, {});
-      setVisibleSeries(initialVisibleSeries);
+      const response = await http.get(`GetIsTalepDurumEnvanter?ID=2`);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const transformedData = response.map((item) => ({
+          name: statusTag(item.IST_DURUM_ID).text,
+          value: Number(item.IS_TALEP_SAYISI),
+        }));
+        setData(transformedData);
+        setColors(generateColors(transformedData.length));
+        const initialVisibleSeries = transformedData.reduce((acc, item) => {
+          acc[item.name] = true;
+          return acc;
+        }, {});
+        setVisibleSeries(initialVisibleSeries);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

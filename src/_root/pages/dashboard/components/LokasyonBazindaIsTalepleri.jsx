@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Table, Typography, Spin, Button, Popover, Modal, DatePicker, ConfigProvider, Tour, Input } from "antd";
 import { DownloadOutlined, MoreOutlined } from "@ant-design/icons";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { Controller, useFormContext } from "react-hook-form";
 import jsPDF from "jspdf";
@@ -33,6 +33,7 @@ const normalizeText = (text) => {
 };
 
 function LokasyonBazindaIsTalepleri(props) {
+  const navigate = useNavigate(); // Initialize navigate
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -192,13 +193,18 @@ function LokasyonBazindaIsTalepleri(props) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetLokasyonBazindaIsEmriTalebi?startDate=${baslamaTarihi}&endDate=${bitisTarihi}`);
-      const formattedData = response.map((item) => {
-        return {
-          ...item,
-          key: item.ID,
-        };
-      });
-      setData(formattedData);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const formattedData = response.map((item) => {
+          return {
+            ...item,
+            key: item.ID,
+          };
+        });
+        setData(formattedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

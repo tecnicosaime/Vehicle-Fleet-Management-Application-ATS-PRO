@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Button, Popover, Spin, Typography, Modal, DatePicker, Tour } from "antd";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../api/http.jsx";
 import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
@@ -13,6 +13,7 @@ const { Text } = Typography;
 const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
 function IsEmriZamanDagilimi(props = {}) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
@@ -167,15 +168,19 @@ function IsEmriZamanDagilimi(props = {}) {
     setIsLoading(true);
     try {
       const response = await http.get(`GetIsEmirleriByTarih?startDate=${baslamaTarihi}&endDate=${bitisTarihi}`);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        // Transform the data
+        const transformedData = response.map((item) => ({
+          AY: formatDate(item.TARIH),
+          GUN: dayjs(item.TARIH).format("dddd"), // Day of the week in Turkish
+          AYLIK_BAKIM_ISEMRI_MALIYET: Number(item.DEGER),
+        }));
 
-      // Transform the data
-      const transformedData = response.map((item) => ({
-        AY: formatDate(item.TARIH),
-        GUN: dayjs(item.TARIH).format("dddd"), // Day of the week in Turkish
-        AYLIK_BAKIM_ISEMRI_MALIYET: Number(item.DEGER),
-      }));
-
-      setData(transformedData);
+        setData(transformedData);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

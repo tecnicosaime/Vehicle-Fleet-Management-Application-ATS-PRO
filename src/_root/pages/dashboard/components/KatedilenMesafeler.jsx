@@ -58,18 +58,18 @@ function KatedilenMesafeler(props = {}) {
       if (response.data.statusCode === 401) {
         navigate("/unauthorized"); // Redirect to /unauthorized
         return; // Stop further execution
+      } else {
+        // Sort the response by month number
+        const sortedResponse = response.data.sort((a, b) => a.AY - b.AY);
+
+        // Transform the data
+        const transformedData = sortedResponse.map((item) => ({
+          AY: monthNames[item.ay],
+          AYLIK_BAKIM_ISEMRI_MALIYET: Math.round(item.deger),
+        }));
+
+        setData(transformedData);
       }
-
-      // Sort the response by month number
-      const sortedResponse = response.data.sort((a, b) => a.AY - b.AY);
-
-      // Transform the data
-      const transformedData = sortedResponse.map((item) => ({
-        AY: monthNames[item.ay],
-        AYLIK_BAKIM_ISEMRI_MALIYET: Math.round(item.deger),
-      }));
-
-      setData(transformedData);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

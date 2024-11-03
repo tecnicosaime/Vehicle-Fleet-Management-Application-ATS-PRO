@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, DatePicker, Modal, Popover, Spin, Typography } from "antd";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { HistoryOutlined, MoreOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
 import styled from "styled-components";
@@ -19,6 +20,7 @@ const StyledClockCircleOutlined = styled(HistoryOutlined)`
 `;
 
 function Component4(props) {
+  const navigate = useNavigate(); // Initialize navigate
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,11 +60,17 @@ function Component4(props) {
     };
     try {
       const response = await http.post("Graphs/GetGraphInfoByType?type=4", body);
-      let responseData = response.data;
-      if (typeof responseData === "number") {
-        responseData = responseData % 1 === 0 ? responseData : responseData.toFixed(2);
+
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized"); // Redirect to /unauthorized
+        return; // Stop further execution
+      } else {
+        let responseData = response.data;
+        if (typeof responseData === "number") {
+          responseData = responseData % 1 === 0 ? responseData : responseData.toFixed(2);
+        }
+        setData(responseData);
       }
-      setData(responseData);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {

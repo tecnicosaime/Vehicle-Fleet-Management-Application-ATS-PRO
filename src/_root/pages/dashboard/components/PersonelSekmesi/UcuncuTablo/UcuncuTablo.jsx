@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Modal, Input, Typography, Tabs, message, Table } from "antd";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../../../../../../api/http.jsx";
 import { Controller, useForm, FormProvider, useFormContext } from "react-hook-form";
 import dayjs from "dayjs";
@@ -29,6 +29,7 @@ const normalizeText = (text) => {
 };
 
 export default function UcuncuTablo({ selectedRowIkinciTablo, isModalVisibleIkinciTablo, onModalClose, onRefresh, secilenIsEmriID }) {
+  const navigate = useNavigate(); // Initialize navigate
   const [loading, setLoading] = useState(false);
   const { control, watch, setValue } = useFormContext();
   const [data, setData] = useState([]);
@@ -169,12 +170,17 @@ export default function UcuncuTablo({ selectedRowIkinciTablo, isModalVisibleIkin
     setLoading(true);
     try {
       const response = await http.get(`RaporGetPersonelDetay?PersonelID=${selectedRowIkinciTablo.TB_PERSONEL_ID}&RaporIsTipID=${selectedRowIkinciTablo.TB_ISEMRI_TIP_ID}`);
-      const fetchedData = response.map((item) => ({
-        ...item,
-        key: Math.random(),
-        ORTALAMA_CALISMA_SURESI: item.TOPLAM_CALISMA_SURESI && item.IS_EMRI_SAYISI ? (item.TOPLAM_CALISMA_SURESI / item.IS_EMRI_SAYISI).toFixed(2) : "",
-      }));
-      setData(fetchedData);
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized");
+        return;
+      } else {
+        const fetchedData = response.map((item) => ({
+          ...item,
+          key: Math.random(),
+          ORTALAMA_CALISMA_SURESI: item.TOPLAM_CALISMA_SURESI && item.IS_EMRI_SAYISI ? (item.TOPLAM_CALISMA_SURESI / item.IS_EMRI_SAYISI).toFixed(2) : "",
+        }));
+        setData(fetchedData);
+      }
     } catch (error) {
       console.error("API isteği sırasında hata oluştu:", error);
     } finally {
