@@ -274,7 +274,7 @@ export default function EditModal({ selectedRow, onDrawerClose, drawerVisible, o
           onRefresh();
           methods.reset();
           onDrawerClose();
-        } else if (response.status_code === 401) {
+        } else if (response.data.statusCode === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
         } else {
           message.error("Ekleme Başarısız.");

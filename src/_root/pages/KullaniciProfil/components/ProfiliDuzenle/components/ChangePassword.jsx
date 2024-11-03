@@ -59,7 +59,7 @@ function ChangePassword(props) {
       if (response.status_code === 200 || response.status_code === 201) {
         message.success("Şifre Güncellendi.");
         reset(); // Reset form fields
-      } else if (response.status_code === 401) {
+      } else if (response.data.statusCode === 401) {
         message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
       } else {
         message.error("Eski Şifrenizi Yanlış Girdiniz.");

@@ -49,7 +49,7 @@ function HesapBilgilerim({ userData }) {
             message.success("Güncelleme Başarılı.");
             /* setIsButtonClicked((prev) => !prev); // Başarılı yüklemeden sonra resim listesini yenile */
             setImageUrl(null);
-          } else if (response.status_code === 401) {
+          } else if (response.data.statusCode === 401) {
             message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
           } else {
             message.error("Güncelleme Başarısız Oldu.");
