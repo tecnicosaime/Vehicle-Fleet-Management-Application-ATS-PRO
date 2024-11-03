@@ -14,6 +14,7 @@ import CreateDrawer from "../Insert/CreateDrawer";
 import EditDrawer from "../Update/EditDrawer";
 import dayjs from "dayjs";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import { t } from "i18next";
 
@@ -141,6 +142,7 @@ const Sigorta = () => {
   const [pageSize, setPageSize] = useState(10); // Başlangıçta sayfa başına 10 kayıt göster
   const [editDrawer1Visible, setEditDrawer1Visible] = useState(false);
   const [editDrawer1Data, setEditDrawer1Data] = useState(null);
+  const navigate = useNavigate();
 
   // edit drawer için
   const [drawer, setDrawer] = useState({
@@ -742,6 +744,9 @@ const Sigorta = () => {
       // API isteğinde keyword ve currentPage kullanılıyor
       const response = await AxiosInstance.get(`VehicleServices/GetVehicleServices?page=${currentPage}&parameter=${keyword}`);
       if (response.data) {
+        if (response.data.statusCode == 401) {
+          navigate("/unauthorized");
+        }
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
         setTotalDataCount(response.data.recordCount);

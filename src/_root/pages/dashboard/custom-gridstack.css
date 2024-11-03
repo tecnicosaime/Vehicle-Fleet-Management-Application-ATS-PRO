@@ -30,7 +30,7 @@
 }
 
 .grid-stack-item .widget-body {
-    inset: 10px;
+    inset: 0px;
     overflow-x: hidden;
     overflow-y: auto;
     width: auto;

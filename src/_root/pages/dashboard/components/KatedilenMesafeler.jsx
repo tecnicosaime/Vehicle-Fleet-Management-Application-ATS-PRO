@@ -6,12 +6,14 @@ import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
 import dayjs from "dayjs";
 import html2pdf from "html2pdf.js";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const { Text } = Typography;
 
 const monthNames = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
 function KatedilenMesafeler(props = {}) {
+  const navigate = useNavigate(); // Initialize navigate
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
@@ -52,6 +54,11 @@ function KatedilenMesafeler(props = {}) {
     };
     try {
       const response = await http.post("Graphs/GetGraphInfoByType?type=9", body);
+
+      if (response.data.statusCode === 401) {
+        navigate("/unauthorized"); // Redirect to /unauthorized
+        return; // Stop further execution
+      }
 
       // Sort the response by month number
       const sortedResponse = response.data.sort((a, b) => a.AY - b.AY);

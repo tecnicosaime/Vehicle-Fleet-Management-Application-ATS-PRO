@@ -3,6 +3,10 @@ import { GridStack } from "gridstack";
 import "gridstack/dist/gridstack.css";
 import { Button, Checkbox, Popover, Typography, Switch, Tooltip, ConfigProvider } from "antd";
 import { DownOutlined, QuestionCircleOutlined, ReloadOutlined } from "@ant-design/icons";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../../../utils/i18n.js";
 import trTR from "antd/lib/locale/tr_TR";
 import { useForm, FormProvider } from "react-hook-form";
 import Component3 from "./components/Component3.jsx";
@@ -186,54 +190,80 @@ function MainDashboard() {
           case "widget1":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <Component1 />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <Component1 />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget2":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <Component2 />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <Component2 />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget3":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <Component3 />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <Component3 />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget4":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <Component4 />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  {" "}
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <Component4 />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget5":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <Component5 />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  {" "}
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <Component5 />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget6":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <Component6 />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <Component6 />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
@@ -241,9 +271,13 @@ function MainDashboard() {
           case "widget11":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <AylikBakimMaliyetleri />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <AylikBakimMaliyetleri />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
@@ -251,9 +285,14 @@ function MainDashboard() {
           case "widget14":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <ToplamHarcananIsGucu />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  {" "}
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <ToplamHarcananIsGucu />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
@@ -261,36 +300,55 @@ function MainDashboard() {
           case "widget18":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <AylikAracBakimMaliyetleri />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  {" "}
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <AylikAracBakimMaliyetleri />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget19":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <KatedilenMesafeler />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  {" "}
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <KatedilenMesafeler />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget20":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <AylikMaliyetler />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  {" "}
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <AylikMaliyetler />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
           case "widget21":
             root.render(
               <FormProvider {...methods}>
-                <ConfigProvider locale={trTR}>
-                  <AylikKM />
-                </ConfigProvider>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <AylikKM />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
               </FormProvider>
             );
             break;
