@@ -85,7 +85,7 @@ export default function EditModal({ selectedRow, isModalVisible, onModalClose, o
           reset();
           onModalClose(); // Modal'ı kapat
           onRefresh(); // Tabloyu yenile
-        } else if (response.status_code === 401) {
+        } else if (response.data.statusCode === 401) {
           message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
         } else {
           message.error("Ekleme Başarısız.");
