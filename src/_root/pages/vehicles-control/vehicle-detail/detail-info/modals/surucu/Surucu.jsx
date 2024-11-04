@@ -170,7 +170,7 @@ const Surucu = ({ visible, onClose, id }) => {
           <AddModal setStatus={setStatus} />
         </div>
       </div>
-      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} status={status} id={accId} />
+      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} status={status} id={accId} aracID={id} />
       <div className="mt-20">
         <DragAndDropContext items={columns} setItems={setColumns}>
           <Spin spinning={loading || isInitialLoading} indicator={customIcon}>

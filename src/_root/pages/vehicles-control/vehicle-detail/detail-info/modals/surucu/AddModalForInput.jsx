@@ -16,12 +16,11 @@ import TimeInput from "../../../../../../components/form/date/TimeInput";
 import Driver from "../../../../../../components/form/selects/Driver";
 import Tutanak from "./Tutanak";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, onSurucuTeslimUpdated }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { plaka, aracId, printData } = useContext(PlakaContext);
   const isFirstRender = useRef(true);
   const [isValid, setIsValid] = useState("normal");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [surucuIsValid, setSurucuIsValid] = useState(false);
   const [data, setData] = useState(null);
 
@@ -34,6 +33,13 @@ const AddModal = ({ setStatus }) => {
   });
 
   const { handleSubmit, reset, setValue, watch } = methods;
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setValue("surucuTeslimEden", surucu);
+      setValue("surucuTeslimEdenId", surucuId);
+    }
+  }, [surucu, surucuId, isModalOpen]);
 
   useEffect(() => {
     if (isModalOpen && isFirstRender.current) {
@@ -70,6 +76,12 @@ const AddModal = ({ setStatus }) => {
     try {
       const res = await AddDriverSubstitutionItemService(body);
       if (res?.data.statusCode === 200) {
+        // Extract the values from the form
+        const surucuTeslimAlan = values.surucuTeslimAlan;
+        const surucuTeslimAlanId = values.surucuTeslimAlanId;
+
+        // Invoke the callback function
+        onSurucuTeslimUpdated(surucuTeslimAlan, surucuTeslimAlanId);
         setIsModalOpen(false);
         setStatus(true);
         reset();
@@ -129,9 +141,9 @@ const AddModal = ({ setStatus }) => {
 
   return (
     <div>
-      <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
+      {/* <Button className="btn primary-btn" onClick={() => setIsModalOpen(true)}>
         <PlusOutlined /> {t("ekle")}
-      </Button>
+      </Button> */}
       <Modal title={t("yeniSurucuBilgi")} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)} maskClosable={false} footer={footer} width={600}>
         <FormProvider {...methods}>
           <form>
