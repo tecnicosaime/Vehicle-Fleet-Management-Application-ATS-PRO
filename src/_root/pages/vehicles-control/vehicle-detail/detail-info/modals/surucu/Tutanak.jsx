@@ -8,6 +8,11 @@ class ComponentToPrint extends React.Component {
 
     return (
       <div style={{ padding: "20px 40px" }}>
+        <style>
+          {`@page {
+            size: portrait;
+          }`}
+        </style>
         <h1 style={{ textAlign: "center", marginBottom: 20 }}>Araç Teslim Tutanağı</h1>
         <p style={{ fontWeight: 600 }}>
           Aşağıda bilgilerine yer verilen aracı sağlam olarak teslim aldığımı, araç kullanım politikasında yer verilen esasları okuduğumu, anladığımı ve kabul ettiğimi beyan

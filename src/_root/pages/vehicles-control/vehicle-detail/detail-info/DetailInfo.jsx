@@ -52,11 +52,11 @@ const DetailInfo = ({ id }) => {
       key: "4",
       icon: <CarOutlined className="text-info" />,
     },
-    {
-      label: t("ustYapiBilgiler"),
-      key: "5",
-      icon: <ApartmentOutlined className="text-info" />,
-    },
+    // {
+    //   label: t("ustYapiBilgiler"),
+    //   key: "5",
+    //   icon: <ApartmentOutlined className="text-info" />,
+    // },
     {
       label: t("aksesuarlar"),
       key: "6",
