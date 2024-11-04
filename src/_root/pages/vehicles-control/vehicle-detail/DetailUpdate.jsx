@@ -7,7 +7,7 @@ import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 import { IoLocationSharp } from "react-icons/io5";
 import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { FaCircle } from "react-icons/fa";
-import { Button, message, Modal, Spin, Tabs } from "antd";
+import { Button, message, Modal, Spin, Tabs, Typography } from "antd";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetVehicleByIdService, UpdateVehicleService } from "../../../../api/services/vehicles/vehicles/services";
 import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
@@ -27,6 +27,10 @@ import KmLog from "../../../components/table/KmLog";
 import GeneralInfo from "./tabs/GeneralInfo";
 import DetailInfo from "./detail-info/DetailInfo";
 import ProfilePhoto from "./tabs/ProfilePhoto";
+import SurucuInput from "../../../components/form/inputs/SurucuInput";
+import AddSurucu from "./detail-info/modals/surucu/AddModalForInput";
+
+const { Text, Link } = Typography;
 
 const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { href: "/araclar", title: t("araclar") }, { title: t("aracDetayKarti") }];
 
@@ -57,6 +61,11 @@ const DetailUpdate = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
   const [images, setImages] = useState([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Optional: Local state if needed elsewhere
+  const [surucu, setSurucu] = useState("");
+  const [surucuId, setSurucuId] = useState(null);
 
   const [fields, setFields] = useState([
     {
@@ -175,7 +184,7 @@ const DetailUpdate = () => {
     defaultValues: defaultValues,
   });
 
-  const { setValue, handleSubmit } = methods;
+  const { setValue, handleSubmit, watch } = methods;
 
   useEffect(() => {
     setLoading(true);
@@ -380,6 +389,23 @@ const DetailUpdate = () => {
     },
   ];
 
+  const surucuValue = watch("surucu");
+  const surucuIdValue = watch("surucuId");
+
+  const handlePlusClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleSurucuTeslimUpdated = (surucuTeslimAlan, surucuTeslimAlanId) => {
+    // Update the form values using setValue
+    setValue("surucu", surucuTeslimAlan);
+    setValue("surucuId", surucuTeslimAlanId);
+
+    // Update local state if necessary
+    setSurucu(surucuTeslimAlan);
+    setSurucuId(surucuTeslimAlanId);
+  };
+
   const footer = [
     <Button key="back" className="btn cancel-btn" onClick={() => setKmHistryModal(false)}>
       {t("kapat")}
@@ -415,7 +441,9 @@ const DetailUpdate = () => {
         <div className="content">
           <div className="grid">
             <div className="col-span-3">
-              <ProfilePhoto setImages={setProfile} urls={urls} imageUrls={imageUrls} />
+              <div style={{ minHeight: "190px" }}>
+                <ProfilePhoto setImages={setProfile} urls={urls} imageUrls={imageUrls} />
+              </div>
               <div className="flex gap-1 justify-between mt-10">
                 <p className="flex gap-1 align-center">
                   <span>
@@ -505,7 +533,17 @@ const DetailUpdate = () => {
                 <div className="col-span-4">
                   <div className="flex flex-col gap-1">
                     <label htmlFor="surucuId">{t("surucu")}</label>
-                    <Driver />
+                    {/* <Driver /> */}
+                    <SurucuInput name="surucu" readonly={true} onPlusClick={handlePlusClick} />
+                    <AddSurucu
+                      isModalOpen={isModalOpen}
+                      setIsModalOpen={setIsModalOpen}
+                      setStatus={setStatus}
+                      surucu={surucuValue}
+                      surucuId={surucuIdValue}
+                      onSurucuTeslimUpdated={handleSurucuTeslimUpdated}
+                    />
+                    {/* <Text>Anar</Text> */}
                   </div>
                 </div>
                 <div className="col-span-4">

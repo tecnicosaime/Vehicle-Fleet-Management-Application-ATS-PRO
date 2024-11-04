@@ -15,12 +15,14 @@ import Driver from "../../../../../../components/form/selects/Driver";
 import Textarea from "../../../../../../components/form/inputs/Textarea";
 import Tutanak from "./Tutanak";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, aracID }) => {
   const { printData } = useContext(PlakaContext);
   const [isValid, setIsValid] = useState("normal");
   const [surucuIsValid, setSurucuIsValid] = useState(false);
   const [data, setData] = useState(null);
   const [code, setCode] = useState("normal");
+
+  console.log(id);
 
   const defaultValues = {};
   const methods = useForm({
@@ -86,6 +88,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
   const onSubmit = handleSubmit((values) => {
     const body = {
+      asAracId: aracID,
       siraNo: id,
       surucuTeslimAlanId: values.surucuTeslimAlanId || -1,
       surucuTeslimEdenId: values.surucuTeslimEdenId || -1,
