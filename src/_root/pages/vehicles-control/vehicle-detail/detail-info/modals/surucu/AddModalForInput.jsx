@@ -16,7 +16,7 @@ import TimeInput from "../../../../../../components/form/date/TimeInput";
 import Driver from "../../../../../../components/form/selects/Driver";
 import Tutanak from "./Tutanak";
 
-const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, onSurucuTeslimUpdated }) => {
+const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, onSurucuTeslimUpdated, guncelKm }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { plaka, aracId, printData } = useContext(PlakaContext);
   const isFirstRender = useRef(true);
@@ -26,6 +26,8 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, on
 
   const defaultValues = {
     checked: true,
+    teslimTarih: dayjs(),
+    teslimSaat: dayjs(),
   };
 
   const methods = useForm({
@@ -38,8 +40,12 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, on
     if (isModalOpen) {
       setValue("surucuTeslimEden", surucu);
       setValue("surucuTeslimEdenId", surucuId);
+      setValue("km", guncelKm);
+      // Set teslimTarih and teslimSaat to current date and time each time the modal opens
+      setValue("teslimTarih", dayjs());
+      setValue("teslimSaat", dayjs());
     }
-  }, [surucu, surucuId, isModalOpen]);
+  }, [surucu, surucuId, isModalOpen, guncelKm]);
 
   useEffect(() => {
     if (isModalOpen && isFirstRender.current) {
@@ -113,26 +119,48 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, on
     !watch("surucuTeslimAlanId") || watch("surucuTeslimAlanId") === watch("surucuTeslimEdenId") ? setSurucuIsValid(true) : setSurucuIsValid(false);
   }, [watch("surucuTeslimEdenId"), watch("surucuTeslimAlanId")]);
 
+  const teslimTarih = watch("teslimTarih");
+  const teslimSaat = watch("teslimSaat");
+  const surucuTeslimAlanId = watch("surucuTeslimAlanId");
+
+  const isButtonDisabled = isLoading || !teslimTarih || !teslimSaat || !surucuTeslimAlanId || isValid !== "success" || surucuIsValid;
+
   const footer = [
-    <Button
-      key="submit"
-      className="btn btn-min primary-btn"
-      onClick={handleOk}
-      loading={isLoading}
-      disabled={isValid === "success" && !surucuIsValid ? false : isValid === "error" || surucuIsValid ? true : false}
-    >
-      {t("kaydet")}
-    </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => {
-        setIsModalOpen(false);
-        reset();
-      }}
-    >
-      {t("kapat")}
-    </Button>,
+    // <Button
+    //   key="submit"
+    //   className="btn btn-min primary-btn"
+    //   onClick={handleOk}
+    //   loading={isLoading}
+    //   disabled={isValid === "success" && !surucuIsValid ? false : isValid === "error" || surucuIsValid ? true : false}
+    // >
+    //   {t("kaydet")}
+    // </Button>,
+    <div key="" style={{ display: "flex", justifyContent: "space-between" }}>
+      <div key="">
+        <Tutanak data={data} />
+      </div>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <Button
+          key="submit"
+          className="btn btn-min primary-btn"
+          onClick={handleOk}
+          loading={isLoading}
+          disabled={isLoading || !teslimTarih || !teslimSaat || !surucuTeslimAlanId || isValid !== "success" || surucuIsValid}
+        >
+          {t("kaydet")}
+        </Button>
+        <Button
+          key="back"
+          className="btn btn-min cancel-btn"
+          onClick={() => {
+            setIsModalOpen(false);
+            reset();
+          }}
+        >
+          {t("kapat")}
+        </Button>
+      </div>
+    </div>,
   ];
 
   const validateStyle = {
@@ -156,20 +184,24 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, on
               </div>
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
-                  <label>{t("teslimTarih")}</label>
+                  <label>
+                    {t("teslimTarih")} <span style={{ color: "red" }}>*</span>
+                  </label>
                   <DateInput name="teslimTarih" />
                 </div>
               </div>
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
-                  <label>{t("teslimSaat")}</label>
+                  <label>
+                    {t("teslimSaat")} <span style={{ color: "red" }}>*</span>
+                  </label>
                   <TimeInput name="teslimSaat" />
                 </div>
               </div>
               <div className="col-span-12">
                 <div className="flex flex-col gap-1">
                   <label>{t("teslimEden")}</label>
-                  <Driver name="surucuTeslimEden" codeName="surucuTeslimEdenId" />
+                  <Driver name="surucuTeslimEden" codeName="surucuTeslimEdenId" disabled={true} />
                 </div>
               </div>
               <div className="col-span-12">
@@ -189,9 +221,6 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, surucu, surucuId, on
                   <label>{t("aciklama")}</label>
                   <Textarea name="aciklama" />
                 </div>
-              </div>
-              <div className="col-span-12 mt-14">
-                <Tutanak data={data} />
               </div>
             </div>
           </form>
