@@ -391,6 +391,7 @@ const DetailUpdate = () => {
 
   const surucuValue = watch("surucu");
   const surucuIdValue = watch("surucuId");
+  const guncelKm = watch("guncelKm");
 
   const handlePlusClick = () => {
     setIsModalOpen(true);
@@ -541,6 +542,7 @@ const DetailUpdate = () => {
                       setStatus={setStatus}
                       surucu={surucuValue}
                       surucuId={surucuIdValue}
+                      guncelKm={guncelKm}
                       onSurucuTeslimUpdated={handleSurucuTeslimUpdated}
                     />
                     {/* <Text>Anar</Text> */}

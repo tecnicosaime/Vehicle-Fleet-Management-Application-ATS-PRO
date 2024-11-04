@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Select } from "antd";
 import { CodeControlByUrlService } from "../../../../api/services/code/services";
 
-const Driver = ({ name, codeName, required }) => {
+const Driver = ({ name, codeName, required, disabled }) => {
   const [data, setData] = useState([]);
   const { watch, setValue, control } = useFormContext();
 
@@ -25,6 +25,7 @@ const Driver = ({ name, codeName, required }) => {
             {...field}
             showSearch
             allowClear
+            disabled={disabled ?? false}
             optionFilterProp="children"
             className={fieldState.error ? "input-error" : ""}
             filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
