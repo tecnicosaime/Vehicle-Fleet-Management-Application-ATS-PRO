@@ -34,12 +34,12 @@ const TasitKarti = ({ visible, onClose, id }) => {
       setValue("tkYbNo", res.data.tkYbNo);
       setValue("ykTuruKodId", res.data.ykTuruKodId);
       setValue("tkYkturu", res.data.tkYkturu);
-      setValue("tkVerilisTarih", res.data.tkVerilisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkVerilisTarih));
-      setValue("tkBitisTarih", res.data.tkBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkBitisTarih));
-      setValue("tkIptalTarih", res.data.tkIptalTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkIptalTarih));
-      setValue("tkYbVerilisTarih", res.data.tkYbVerilisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkYbVerilisTarih));
-      setValue("tkYbBitisTarih", res.data.tkYbBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.tkYbBitisTarih));
-      setValue("ybIptalTarih", res.data.ybIptalTarih !== "0001-01-01T00:00:00" && dayjs(res.data.ybIptalTarih));
+      setValue("tkVerilisTarih", res.data.tkVerilisTarih ? dayjs(res.data.tkVerilisTarih) : null);
+      setValue("tkBitisTarih", res.data.tkBitisTarih ? dayjs(res.data.tkBitisTarih) : null);
+      setValue("tkIptalTarih", res.data.tkIptalTarih ? dayjs(res.data.tkIptalTarih) : null);
+      setValue("tkYbVerilisTarih", res.data.tkYbVerilisTarih ? dayjs(res.data.tkYbVerilisTarih) : null);
+      setValue("tkYbBitisTarih", res.data.tkYbBitisTarih ? dayjs(res.data.tkYbBitisTarih) : null);
+      setValue("ybIptalTarih", res.data.ybIptalTarih ? dayjs(res.data.ybIptalTarih) : null);
     });
   }, [id, status]);
 
@@ -83,7 +83,7 @@ const TasitKarti = ({ visible, onClose, id }) => {
   ];
 
   return (
-    <Modal title={t("satisBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("tasitKartiBilgileri")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <div className="grid gap-1">
           <div className="col-span-6">
