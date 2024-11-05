@@ -1,10 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Modal, Table, Input } from "antd";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
+import { Button, Modal, Table, Input, message } from "antd";
 import AxiosInstance from "../../../../../../../../api/http";
 import { Resizable } from "react-resizable";
-import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useFormContext } from "react-hook-form";
+import useDebounce from "../../../../../../../../hooks/useDebounceNew"; // Doğru yolu ayarlayın
 
+/**
+ * Resizable table header component.
+ */
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
 
@@ -47,25 +51,63 @@ const ResizableTitle = (props) => {
   );
 };
 
+/**
+ * Main component for displaying and managing the table within a modal.
+ */
+/**
+ * Main component for displaying and managing the table within a modal.
+ */
 export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
+  // Modal visibility state
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debounceTimer, setDebounceTimer] = useState(null);
 
+  // Selected row keys for the table
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  // Data source for the table
+  const [data, setData] = useState([]);
+
+  // Loading state for API requests
+  const [loading, setLoading] = useState(false);
+
+  // Search input value
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Debounced search term to prevent excessive API calls
+  const debouncedSearchTerm = useDebounce(searchTerm, 2000); // 500ms debounce
+
+  // Form context to watch form fields
   const { watch } = useFormContext();
 
-  const [pagination, setPagination] = useState({
-    current: 1,
+  // Initialize query state with useReducer
+  const queryReducer = (state, action) => {
+    switch (action.type) {
+      case "SET_SEARCH_TERM":
+        return { ...state, searchTerm: action.payload, currentPage: 1 };
+      case "SET_PAGINATION":
+        return { ...state, currentPage: action.payload.currentPage, pageSize: action.payload.pageSize };
+      case "SET_TOTAL":
+        return { ...state, total: action.payload };
+      default:
+        return state;
+    }
+  };
+
+  const [query, dispatch] = useReducer(queryReducer, {
+    searchTerm: "",
+    currentPage: 1,
     pageSize: 10,
+    total: 0,
   });
 
+  // Watch form fields
   const islemiYapan = watch("islemiYapan");
+  const plakaID = watch("PlakaID"); // Assuming 'PlakaID' is used elsewhere
 
-  const modalTitle = parseInt(islemiYapan) === 1 ? "Yetkili Servis" : parseInt(islemiYapan) === 2 ? "Bakım Departmanı" : "Kaza Kayıtları";
+  // Determine modal title based on 'islemiYapan' value
+  const modalTitle = parseInt(islemiYapan, 10) === 1 ? "Yetkili Servis" : parseInt(islemiYapan, 10) === 2 ? "Bakım Departmanı" : "Kaza Kayıtları";
 
+  // Table columns state
   const [columns, setColumns] = useState(() => {
     const savedWidths = localStorage.getItem("islemYapanTableColumnWidths");
     const defaultColumns = [
@@ -76,6 +118,7 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
         ellipsis: true,
         width: 350,
       },
+      // Add more columns if needed
     ];
 
     if (!savedWidths) {
@@ -89,28 +132,37 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
     }));
   });
 
-  // Update columns when islemiYapan or modalTitle changes
+  /**
+   * Update table columns when 'islemiYapan' or 'modalTitle' changes.
+   */
   useEffect(() => {
-    setColumns((prevColumns) => {
-      return prevColumns.map((col) => ({
+    setColumns((prevColumns) =>
+      prevColumns.map((col) => ({
         ...col,
         title: modalTitle,
-      }));
-    });
+      }))
+    );
   }, [islemiYapan, modalTitle]);
 
+  /**
+   * Handle column resizing.
+   *
+   * @param {number} index The index of the column being resized.
+   */
   const handleResize =
     (index) =>
-    (_, { size }) => {
+    (e, { size }) => {
       const newColumns = [...columns];
       newColumns[index] = {
         ...newColumns[index],
         width: size.width,
       };
       setColumns(newColumns);
+      // Save the new widths to localStorage
       localStorage.setItem("islemYapanTableColumnWidths", JSON.stringify(newColumns.map((col) => col.width)));
     };
 
+  // Merge columns with resize handlers
   const mergedColumns = columns.map((col, index) => ({
     ...col,
     onHeaderCell: (column) => ({
@@ -119,123 +171,116 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
     }),
   }));
 
-  // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için
+  /**
+   * Fetch data based on 'islemiYapan' value, search term, and pagination.
+   */
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    let endpoint = "";
+    let params = {};
 
-  // Intl.DateTimeFormat kullanarak tarih formatlama
-  const formatDate = (date) => {
-    if (!date) return "";
-
-    // Örnek bir tarih formatla ve ay formatını belirle
-    const sampleDate = new Date(2021, 0, 21); // Ocak ayı için örnek bir tarih
-    const sampleFormatted = new Intl.DateTimeFormat(navigator.language).format(sampleDate);
-
-    let monthFormat;
-    if (sampleFormatted.includes("January")) {
-      monthFormat = "long"; // Tam ad ("January")
-    } else if (sampleFormatted.includes("Jan")) {
-      monthFormat = "short"; // Üç harfli kısaltma ("Jan")
+    if (parseInt(islemiYapan, 10) === 1) {
+      // Yetkili Servis
+      endpoint = `Company/GetCompaniesList`;
+      params = {
+        page: query.currentPage,
+        pageSize: query.pageSize,
+        parameter: query.searchTerm,
+        isService: true,
+      };
+    } else if (parseInt(islemiYapan, 10) === 2) {
+      // Bakım Departmanı
+      endpoint = `Code/GetCodeTextById`;
+      params = {
+        codeNumber: 114,
+        page: query.currentPage,
+        pageSize: query.pageSize,
+      };
     } else {
-      monthFormat = "2-digit"; // Sayısal gösterim ("01")
+      // Kaza Kayıtları
+      endpoint = `Accident/GetAccidentRecords`; // Adjust endpoint as needed
+      params = {
+        page: query.currentPage,
+        pageSize: query.pageSize,
+        parameter: query.searchTerm, // Assuming similar structure
+      };
     }
 
-    // Kullanıcı için tarihi formatla
-    const formatter = new Intl.DateTimeFormat(navigator.language, {
-      year: "numeric",
-      month: monthFormat,
-      day: "2-digit",
-    });
-    return formatter.format(new Date(date));
-  };
+    AxiosInstance.get(endpoint, { params })
+      .then((response) => {
+        let fetchedData = [];
+        let recordCount = 0;
 
-  const formatTime = (time) => {
-    if (!time || time.trim() === "") return ""; // `trim` metodu ile baştaki ve sondaki boşlukları temizle
+        if (parseInt(islemiYapan, 10) === 1) {
+          const { list, recordCount: count } = response.data;
+          fetchedData = list.map((item) => ({
+            ...item,
+            key: item.firmaId,
+            column1: item.unvan,
+          }));
+          recordCount = count;
+        } else if (parseInt(islemiYapan, 10) === 2) {
+          const { list, recordCount: count } = response.data;
+          fetchedData = list.map((item) => ({
+            ...item,
+            key: item.siraNo,
+            column1: item.codeText,
+          }));
+          recordCount = count;
+        } else {
+          // Handle Kaza Kayıtları similarly
+          const { list, recordCount: count } = response.data;
+          fetchedData = list.map((item) => ({
+            ...item,
+            key: item.recordId, // Adjust key as per data
+            column1: item.recordName, // Adjust column data as per data
+          }));
+          recordCount = count;
+        }
 
-    try {
-      // Saati ve dakikayı parçalara ayır, boşlukları temizle
-      const [hours, minutes] = time
-        .trim()
-        .split(":")
-        .map((part) => part.trim());
+        setData(fetchedData);
+        dispatch({ type: "SET_TOTAL", payload: recordCount });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        message.error("Veriler çekilirken bir hata oluştu.");
+      })
+      .finally(() => setLoading(false));
+  }, [islemiYapan, query.currentPage, query.pageSize, query.searchTerm]);
 
-      // Saat ve dakika değerlerinin geçerliliğini kontrol et
-      const hoursInt = parseInt(hours, 10);
-      const minutesInt = parseInt(minutes, 10);
-      if (isNaN(hoursInt) || isNaN(minutesInt) || hoursInt < 0 || hoursInt > 23 || minutesInt < 0 || minutesInt > 59) {
-        // throw new Error("Invalid time format"); // hata fırlatır ve uygulamanın çalışmasını durdurur
-        console.error("Invalid time format:", time);
-        // return time; // Hatalı formatı olduğu gibi döndür
-        return ""; // Hata durumunda boş bir string döndür
-      }
+  /**
+   * Handle debounced search term changes.
+   * Resets the current page to 1 and updates the search term in query state.
+   */
+  useEffect(() => {
+    dispatch({ type: "SET_SEARCH_TERM", payload: debouncedSearchTerm });
+  }, [debouncedSearchTerm]);
 
-      // Geçerli tarih ile birlikte bir Date nesnesi oluştur ve sadece saat ve dakika bilgilerini ayarla
-      const date = new Date();
-      date.setHours(hoursInt, minutesInt, 0);
-
-      // Kullanıcının lokal ayarlarına uygun olarak saat ve dakikayı formatla
-      // `hour12` seçeneğini belirtmeyerek Intl.DateTimeFormat'ın kullanıcının yerel ayarlarına göre otomatik seçim yapmasına izin ver
-      const formatter = new Intl.DateTimeFormat(navigator.language, {
-        hour: "numeric",
-        minute: "2-digit",
-        // hour12 seçeneği burada belirtilmiyor; böylece otomatik olarak kullanıcının sistem ayarlarına göre belirleniyor
-      });
-
-      // Formatlanmış saati döndür
-      return formatter.format(date);
-    } catch (error) {
-      console.error("Error formatting time:", error);
-      return ""; // Hata durumunda boş bir string döndür
-      // return time; // Hatalı formatı olduğu gibi döndür
+  /**
+   * Fetch data whenever 'query.searchTerm', 'query.currentPage', 'query.pageSize', or 'isModalVisible' changes.
+   */
+  useEffect(() => {
+    if (isModalVisible) {
+      fetchData();
     }
-  };
+  }, [fetchData, isModalVisible]);
 
-  // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için sonu
-
-  const plakaID = watch("PlakaID");
-
-  const fetch = useCallback(() => {
-    setLoading(true);
-    const body = [plakaID];
-
-    AxiosInstance.get(`Company/GetCompaniesList?page=${pagination.current}&parameter=${searchTerm}&isService=true`)
-      .then((response) => {
-        const { list, recordCount } = response.data;
-        const fetchedData = list.map((item) => ({
-          ...item,
-          key: item.firmaId,
-          column1: item.unvan,
-        }));
-        setData(fetchedData);
-        setPagination((prev) => ({
-          ...prev,
-          total: recordCount,
-        }));
-      })
-      .finally(() => setLoading(false));
-  }, [pagination.current, searchTerm, plakaID]);
-
-  const fetch1 = useCallback(() => {
-    setLoading(true);
-    const body = [plakaID];
-
-    AxiosInstance.get(`Code/GetCodeTextById?codeNumber=114`)
-      .then((response) => {
-        const fetchedData = response.data.map((item) => ({
-          ...item,
-          key: item.siraNo,
-          column1: item.codeText,
-        }));
-        setData(fetchedData);
-      })
-      .finally(() => setLoading(false));
-  }, [pagination.current, searchTerm, plakaID]);
-
+  /**
+   * Reset the modal state to its initial values.
+   */
   const resetModalState = () => {
-    setSearchTerm(""); // Clear the search input value
-    setSelectedRowKeys([]); // Reset the selected row keys
-    setData([]); // Clear the data
-    setPagination({ current: 1, pageSize: 10 }); // Reset the pagination to the first page
+    setSearchTerm(""); // Clear the search input
+    setSelectedRowKeys([]); // Reset selected rows
+    setData([]); // Clear table data
+    dispatch({
+      type: "SET_PAGINATION",
+      payload: { currentPage: 1, pageSize: 10 },
+    }); // Reset pagination
   };
 
+  /**
+   * Toggle the modal visibility.
+   */
   const handleModalToggle = () => {
     setIsModalVisible((prev) => {
       const newVisibility = !prev;
@@ -246,60 +291,70 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
     });
 
     if (!isModalVisible) {
-      if (parseInt(islemiYapan) === 1) {
-        fetch();
-      } else if (parseInt(islemiYapan) === 2) {
-        fetch1();
-      }
+      // Fetch data when the modal is opened
+      fetchData();
     }
   };
 
+  /**
+   * Handle the OK action in the modal.
+   */
   const handleModalOk = () => {
     const selectedData = data.find((item) => item.key === selectedRowKeys[0]);
     if (selectedData) {
       onSubmit && onSubmit(selectedData);
     }
-    resetModalState(); // Reset the state after the modal is confirmed
+    resetModalState(); // Reset state after confirmation
     setIsModalVisible(false);
   };
 
+  /**
+   * Update selected row keys when `workshopSelectedId` changes.
+   */
   useEffect(() => {
     setSelectedRowKeys(workshopSelectedId ? [workshopSelectedId] : []);
   }, [workshopSelectedId]);
 
+  /**
+   * Handle row selection changes.
+   *
+   * @param {Array} selectedKeys The selected row keys.
+   */
   const onRowSelectChange = (selectedKeys) => {
     setSelectedRowKeys(selectedKeys.length ? [selectedKeys[0]] : []);
   };
 
-  const handleTableChange = (newPagination) => {
-    setPagination(newPagination);
+  /**
+   * Handle table pagination changes.
+   *
+   * @param {Object} paginationObj The new pagination object.
+   */
+  const handleTableChange = (paginationObj) => {
+    dispatch({
+      type: "SET_PAGINATION",
+      payload: { currentPage: paginationObj.current, pageSize: paginationObj.pageSize },
+    });
   };
 
+  /**
+   * Fetch data when the modal is opened and dependencies change.
+   */
+  // Already handled in useEffect above
+
+  /**
+   * Optional: Handle empty data gracefully.
+   * If there's no data after search, inform the user.
+   */
   useEffect(() => {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
+    if (isModalVisible && data.length === 0 && !loading) {
+      message.info("Aramanıza uygun veri bulunamadı.");
     }
-
-    const timeout = setTimeout(() => {
-      if (searchTerm !== "") {
-        if (parseInt(islemiYapan) === 1) {
-          fetch(); // Fetch function for islemiYapan value 1
-        } else if (parseInt(islemiYapan) === 2) {
-          fetch1(); // Fetch1 function for islemiYapan value 2
-        }
-        setPagination((prev) => ({ ...prev, current: 1 })); // Reset to page 1 when search term changes
-      }
-    }, 2000);
-
-    setDebounceTimer(timeout);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm, islemiYapan]); // Add islemiYapan to the dependency array
+  }, [data, isModalVisible, loading]);
 
   return (
     <div>
       <Button onClick={handleModalToggle}>+</Button>
-      <Modal width={1200} centered title={modalTitle} open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle}>
+      <Modal width={1200} centered title={modalTitle} visible={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle} destroyOnClose>
         <Input
           style={{ width: "250px", marginBottom: "10px" }}
           type="text"
@@ -324,7 +379,13 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
           columns={mergedColumns}
           dataSource={data}
           loading={loading}
-          pagination={pagination}
+          pagination={{
+            current: query.currentPage,
+            pageSize: query.pageSize,
+            total: query.total,
+            showTotal: (total) => `Toplam ${total} kayıt`,
+            showSizeChanger: true,
+          }}
           onChange={handleTableChange}
         />
       </Modal>
