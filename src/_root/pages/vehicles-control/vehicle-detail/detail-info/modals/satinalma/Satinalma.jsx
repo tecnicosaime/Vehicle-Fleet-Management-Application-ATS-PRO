@@ -49,13 +49,13 @@ const Satinalma = ({ visible, onClose, id }) => {
       setValue("saFaturaNo", res.data.saFaturaNo);
       setValue("saAracKm", res.data.saAracKm);
       setValue("saNoterSozlesmeNo", res.data.saNoterSozlesmeNo);
-      setValue("amortisManTarih", res.data.amortisManTarih !== "0001-01-01T00:00:00" && dayjs(res.data.amortisManTarih));
-      setValue("krediIlkOdTarih", res.data.krediIlkOdTarih !== "0001-01-01T00:00:00" && dayjs(res.data.krediIlkOdTarih));
-      setValue("kiraBitis", res.data.kiraBitis !== "0001-01-01T00:00:00" && dayjs(res.data.kiraBitis));
-      setValue("kiraBaslangic", res.data.kiraBaslangic !== "0001-01-01T00:00:00" && dayjs(res.data.kiraBaslangic));
-      setValue("saFaturaTarih", res.data.saFaturaTarih !== "0001-01-01T00:00:00" && dayjs(res.data.saFaturaTarih));
-      setValue("saTarih", res.data.saTarih !== "0001-01-01T00:00:00" && dayjs(res.data.saTarih));
-      setValue("saNoterSatisTarih", res.data.saNoterSatisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.saNoterSatisTarih));
+      setValue("amortisManTarih", res.data.amortisManTarih ? dayjs(res.data.amortisManTarih) : null);
+      setValue("krediIlkOdTarih", res.data.krediIlkOdTarih ? dayjs(res.data.krediIlkOdTarih) : null);
+      setValue("kiraBitis", res.data.kiraBitis ? dayjs(res.data.kiraBitis) : null);
+      setValue("kiraBaslangic", res.data.kiraBaslangic ? dayjs(res.data.kiraBaslangic) : null);
+      setValue("saFaturaTarih", res.data.saFaturaTarih ? dayjs(res.data.saFaturaTarih) : null);
+      setValue("saTarih", res.data.saTarih ? dayjs(res.data.saTarih) : null);
+      setValue("saNoterSatisTarih", res.data.saNoterSatisTarih ? dayjs(res.data.saNoterSatisTarih) : null);
     });
   }, [id, status]);
 
