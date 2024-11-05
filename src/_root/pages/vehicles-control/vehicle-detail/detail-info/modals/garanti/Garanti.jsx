@@ -25,8 +25,8 @@ const Garanti = ({ visible, onClose, id }) => {
       setValue("garantiBaslamaKm", res.data.garantiBaslamaKm);
       setValue("garantiBitisKm", res.data.garantiBitisKm);
       setValue("garantiPeriyod", res.data.garantiPeriyod);
-      setValue("garantiBaslamaTarih", res.data.garantiBaslamaTarih !== "0001-01-01T00:00:00" && dayjs(res.data.garantiBaslamaTarih));
-      setValue("garantiBitisTarih", res.data.garantiBitisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.garantiBitisTarih));
+      setValue("garantiBaslamaTarih", res.data.garantiBaslamaTarih ? dayjs(res.data.garantiBaslamaTarih) : null);
+      setValue("garantiBitisTarih", res.data.garantiBitisTarih ? dayjs(res.data.garantiBitisTarih) : null);
     });
   }, [id, status, setValue]);
 

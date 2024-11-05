@@ -18,6 +18,7 @@ import Bakim from "./bakim/Bakim";
 import KmTakibi from "./KmTakibi/KmTakibi.jsx";
 import PeryodikBakimlar from "./PeryodikBakimlar/PeryodikBakimlar.jsx";
 import Servisler from "./Servisler/Servisler";
+import Surucu from "../../vehicle-detail/detail-info/modals/surucu/Surucu.jsx";
 
 const OperationsInfo = ({ ids, selectedRowsData }) => {
   const { setPlaka } = useContext(PlakaContext);
@@ -25,8 +26,8 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
 
   const items = [
     {
-      label: t("servisler"),
-      key: "13",
+      label: t("servisIslemleri"),
+      key: "3",
       icon: <FaWrench className="text-info" />,
     },
     // {
@@ -89,11 +90,15 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
       key: "12",
       icon: <MdSettingsInputComponent className="text-info" />,
     },
-    {
-      label: t("surucuDegisiklikleri"),
-      key: "13",
-      icon: <MdSettingsInputComponent className="text-info" />,
-    },
+    ...(ids.length <= 1
+      ? [
+          {
+            label: t("surucuDegisiklikleri"),
+            key: "13",
+            icon: <MdSettingsInputComponent className="text-info" />,
+          },
+        ]
+      : []),
     {
       label: t("sozlesmeler"),
       key: "14",
@@ -226,15 +231,27 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             ids={ids}
           />
         );
-      case "13":
+      case "3":
         return (
           <Servisler
-            visible={selectedItem === "13"}
+            visible={selectedItem === "3"}
             onClose={() => {
               setSelectedItem(null);
               setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
+          />
+        );
+      case "13":
+        return (
+          <Surucu
+            visible={selectedItem === "13"}
+            onClose={() => {
+              setSelectedItem(null);
+              setPlaka([]);
+            }}
+            id={ids[0]}
             selectedRowsData={selectedRowsData}
           />
         );

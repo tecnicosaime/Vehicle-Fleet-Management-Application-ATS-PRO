@@ -123,8 +123,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       GetInsuranceItemByIdService(id).then((res) => {
         setValue("acenta", res?.data.acenta);
         setValue("acentaKodId", res?.data.acentaKodId);
-        setValue("baslangicTarih", res?.data.baslangicTarih && res?.data.baslangicTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.baslangicTarih) : null);
-        setValue("bitisTarih", res?.data.bitisTarih && res?.data.bitisTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.bitisTarih) : null);
+        setValue("baslangicTarih", res?.data.baslangicTarih ? dayjs(res?.data.baslangicTarih) : null);
+        setValue("bitisTarih", res?.data.bitisTarih ? dayjs(res?.data.bitisTarih) : null);
         setValue("aciklama", res?.data.aciklama);
         setValue("adres", res?.data.adres);
         setValue("aktif", !res?.data.aktif);

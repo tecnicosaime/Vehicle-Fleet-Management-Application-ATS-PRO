@@ -162,8 +162,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
         setValue("fullDepo", res?.data.fullDepo);
         setValue("stokKullanimi", res?.data.stokKullanimi);
         setValue("aciklama", res?.data.aciklama);
-        setValue("faturaTarih", res?.data.faturaTarih && res?.data.faturaTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.faturaTarih) : null);
-        setValue("tarih", res?.data.tarih && res?.data.tarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.tarih) : null);
+        setValue("faturaTarih", res?.data.faturaTarih ? dayjs(res?.data.faturaTarih) : null);
+        setValue("tarih", res?.data.tarih ? dayjs(res?.data.tarih) : null);
         setValue("saat", dayjs(res?.data.saat, "HH:mm:ss"));
         setValue("ozelAlan1", res?.data.ozelAlan1);
         setValue("ozelAlan2", res?.data.ozelAlan2);
