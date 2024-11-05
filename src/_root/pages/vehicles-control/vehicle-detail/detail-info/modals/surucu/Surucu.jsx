@@ -11,7 +11,7 @@ import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
 import Content from "../../../../../../components/drag-drop-table/DraggableCheckbox";
 
-const Surucu = ({ visible, onClose, id }) => {
+const Surucu = ({ visible, onClose, id, selectedRowsData }) => {
   const [dataSource, setDataSource] = useState([]);
   const [tableParams, setTableParams] = useState({
     pagination: {
@@ -26,6 +26,15 @@ const Surucu = ({ visible, onClose, id }) => {
   const [openRowHeader, setOpenRowHeader] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [accId, setAccId] = useState(0);
+  const [plaka, setPlaka] = useState("");
+
+  useEffect(() => {
+    if (selectedRowsData && selectedRowsData.length > 0) {
+      setPlaka(selectedRowsData.map((row) => row.plaka));
+    } else {
+      setPlaka([]);
+    }
+  }, [selectedRowsData]);
 
   const baseColumns = [
     {
@@ -158,7 +167,19 @@ const Surucu = ({ visible, onClose, id }) => {
   const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal title={t("surucuBilgiler")} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+    <Modal
+      title={
+        <div style={{ fontSize: "24px" }}>
+          {t("surucuBilgiler")}
+          {plaka.length > 0 && ` [${plaka.join(", ")}]`}
+        </div>
+      }
+      open={visible}
+      onCancel={onClose}
+      maskClosable={false}
+      footer={footer}
+      width={1200}
+    >
       <div className="flex justify-between align-center">
         <div className="flex align-center gap-1">
           <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>

@@ -236,10 +236,10 @@ const DetailUpdate = () => {
       setValue("durumKodId", res?.data.durumKodId ? res?.data.durumKodId : null);
       setValue("durum", res?.data.durum);
       setValue("tts", res?.data.tts);
-      setValue("muayeneTarih", res?.data.muayeneTarih && res?.data.muayeneTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.muayeneTarih) : null);
-      setValue("sozlesmeTarih", res?.data.sozlesmeTarih && res?.data.sozlesmeTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.sozlesmeTarih) : null);
-      setValue("vergiTarih", res?.data.vergiTarih && res?.data.vergiTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.vergiTarih) : null);
-      setValue("egzosTarih", res?.data.egzosTarih && res?.data.egzosTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.egzosTarih) : null);
+      setValue("muayeneTarih", res?.data.muayeneTarih ? dayjs(res?.data.muayeneTarih) : null);
+      setValue("sozlesmeTarih", res?.data.sozlesmeTarih ? dayjs(res?.data.sozlesmeTarih) : null);
+      setValue("vergiTarih", res?.data.vergiTarih ? dayjs(res?.data.vergiTarih) : null);
+      setValue("egzosTarih", res?.data.egzosTarih ? dayjs(res?.data.egzosTarih) : null);
       setValue("onGorulen", res?.data.onGorulen.toFixed(Number(res?.data.ortalamaFormat)));
       setValue("onGorulenMin", res?.data.onGorulenMin.toFixed(Number(res?.data.ortalamaFormat)));
       setValue("gerceklesen", res?.data.gerceklesen.toFixed(Number(res?.data.ortalamaFormat)));

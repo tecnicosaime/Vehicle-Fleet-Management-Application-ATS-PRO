@@ -145,8 +145,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
     if (updateModal) {
       GetExpeditionItemByIdService(id).then((res) => {
         setValue("plaka", res?.data.plaka);
-        setValue("cikisTarih", res?.data.cikisTarih && res?.data.cikisTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.cikisTarih) : null);
-        setValue("varisTarih", res?.data.varisTarih && res?.data.varisTarih !== "0001-01-01T00:00:00" ? dayjs(res?.data.varisTarih) : null);
+        setValue("cikisTarih", res?.data.cikisTarih ? dayjs(res?.data.cikisTarih) : null);
+        setValue("varisTarih", res?.data.varisTarih ? dayjs(res?.data.varisTarih) : null);
         setValue("cikisSaat", dayjs(res?.data.cikisSaat, "HH:mm:ss"));
         setValue("varisSaat", dayjs(res?.data.varisSaat, "HH:mm:ss"));
         setValue("aciklama", res?.data.aciklama);

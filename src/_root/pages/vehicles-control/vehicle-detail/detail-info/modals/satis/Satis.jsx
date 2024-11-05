@@ -33,9 +33,9 @@ const Satis = ({ visible, onClose, id }) => {
       setValue("stFaturaTutar", res.data.stFaturaTutar);
       setValue("stFirmaId", res.data.stFirmaId);
       setValue("stFirma", res.data.stFirma);
-      setValue("stNoterSatisTarih", res.data.stNoterSatisTarih !== "0001-01-01T00:00:00" && dayjs(res.data.stNoterSatisTarih));
-      setValue("stTarih", res.data.stTarih !== "0001-01-01T00:00:00" && dayjs(res.data.stTarih));
-      setValue("stFaturaTarih", res.data.stFaturaTarih !== "0001-01-01T00:00:00" && dayjs(res.data.stFaturaTarih));
+      setValue("stNoterSatisTarih", res.data.stNoterSatisTarih ? dayjs(res.data.stNoterSatisTarih) : null);
+      setValue("stTarih", res.data.stTarih ? dayjs(res.data.stTarih) : null);
+      setValue("stFaturaTarih", res.data.stFaturaTarih ? dayjs(res.data.stFaturaTarih) : null);
     });
   }, [id, status]);
 
