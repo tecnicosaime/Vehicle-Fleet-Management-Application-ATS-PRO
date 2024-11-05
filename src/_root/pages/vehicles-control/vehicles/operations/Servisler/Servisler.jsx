@@ -27,7 +27,7 @@ function Servisler({ visible, onClose, ids, selectedRowsData }) {
           footer={footer}
           width={1200}
         >
-          <Table ids={ids} />
+          <Table ids={ids} selectedRowsData={selectedRowsData} />
         </Modal>
       </div>
     </FormProvider>

@@ -126,7 +126,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "1"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -137,7 +137,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "12"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
             selectedRowsData={selectedRowsData}
@@ -149,7 +149,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "2"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -160,7 +160,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "4"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -171,7 +171,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "5"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -182,7 +182,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "6"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -193,7 +193,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "7"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -204,7 +204,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "8"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -215,7 +215,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "9"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -226,7 +226,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "10"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
           />
@@ -237,7 +237,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "3"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             ids={ids}
             selectedRowsData={selectedRowsData}
@@ -249,7 +249,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             visible={selectedItem === "13"}
             onClose={() => {
               setSelectedItem(null);
-              setPlaka([]);
+              // setPlaka([]);
             }}
             id={ids[0]}
             selectedRowsData={selectedRowsData}

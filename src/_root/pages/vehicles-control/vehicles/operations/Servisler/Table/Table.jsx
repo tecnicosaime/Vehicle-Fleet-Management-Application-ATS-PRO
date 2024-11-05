@@ -9,6 +9,7 @@ import "./ResizeStyle.css";
 import AxiosInstance from "../../../../../../../api/http";
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
+import CreateDrawer from "../Insert/CreateDrawer";
 import dayjs from "dayjs";
 import { t } from "i18next";
 
@@ -119,7 +120,7 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 
 // Sütunların sürüklenebilir olmasını sağlayan component sonu
 
-const MainTable = ({ ids }) => {
+const MainTable = ({ ids, selectedRowsData }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { setValue } = useFormContext();
   const [data, setData] = useState([]);
@@ -1037,6 +1038,9 @@ const MainTable = ({ ids }) => {
           />
           {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
+        </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} selectedRowsData={selectedRowsData} />
         </div>
       </div>
 
