@@ -91,8 +91,8 @@ const HeaderComp = ({ collapsed, colorBgContainer, setCollapsed }) => {
             onClick={() => setCollapsed(!collapsed)}
             style={{
               fontSize: "16px",
-              width: 64,
-              height: 64,
+              width: 32,
+              height: 32,
             }}
           />
           <HomeOutlined />

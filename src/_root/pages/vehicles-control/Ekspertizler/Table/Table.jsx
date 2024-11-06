@@ -795,10 +795,10 @@ const Sigorta = () => {
           {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
         </div>
-        <div style={{ display: "flex", gap: "10px" }}>
+        {/*  <div style={{ display: "flex", gap: "10px" }}>
           <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
-        </div>
+        </div> */}
       </div>
       <div
         style={{
