@@ -87,7 +87,13 @@ const Yakit = () => {
       width: 100,
       render: (text, record) => (
         <div className="">
-          <span>{Number(text).toFixed(Number(record?.miktarFormat))} </span>
+          {/* <span>{Number(text).toFixed(Number(record?.miktarFormat))} </span> */}
+          <span>
+            {Number(text).toLocaleString(localStorage.getItem("i18nextLng"), {
+              minimumFractionDigits: Number(record?.miktarFormat),
+              maximumFractionDigits: Number(record?.miktarFormat),
+            })}
+          </span>
           <span style={{ fontSize: "14px", color: "rgb(147 147 147)" }}>{record.birim === "LITRE" && "lt"}</span>
         </div>
       ),
@@ -100,7 +106,12 @@ const Yakit = () => {
       width: 100,
       render: (text, record) => (
         <div className="">
-          <span>{Number(text).toFixed(Number(record?.tutarFormat))} </span>
+          <span>
+            {Number(text).toLocaleString(localStorage.getItem("i18nextLng"), {
+              minimumFractionDigits: Number(record?.tutarFormat),
+              maximumFractionDigits: Number(record?.tutarFormat),
+            })}
+          </span>
         </div>
       ),
     },
@@ -120,7 +131,12 @@ const Yakit = () => {
         }
 
         // Ondalıklı sayıyı 2 basamağa yuvarla ve 2 basamaklı hale getir
-        const formattedGerceklesen = tuketim.toFixed(Number(record?.ortalamaFormat));
+        // const formattedGerceklesen = tuketim.toFixed(Number(record?.ortalamaFormat));
+
+        const formattedGerceklesen = Number(tuketim).toLocaleString(localStorage.getItem("i18nextLng"), {
+          minimumFractionDigits: Number(record?.ortalamaFormat),
+          maximumFractionDigits: Number(record?.ortalamaFormat),
+        });
 
         let icon = null;
         if (aracOnGorulenMinYakit !== null && aracOnGorulenMinYakit !== 0) {

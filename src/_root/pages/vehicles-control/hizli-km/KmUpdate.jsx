@@ -7,6 +7,7 @@ import { AddKmLogService, GetKmUpdateListService, ValidateKmLogForAddService } f
 import BreadcrumbComp from "../..//../components/breadcrumb/Breadcrumb";
 import Filter from "./filter/Filter";
 import ContextMenu from "./context-menu/ContextMenu";
+import FormattedNumber from "../../../../hooks/FormattedNumber";
 
 const breadcrumb = [
   {
@@ -202,29 +203,6 @@ const EditableCell = ({ editable, children, dataIndex, record, handleSave, error
   );
 };
 
-// Function to format the km value
-const formatNum = (num) => {
-  if (num === null || num === undefined) {
-    return "-";
-  }
-  const language = localStorage.getItem("i18nextLng");
-  let locale = "en-US";
-  switch (language) {
-    case "tr":
-      locale = "tr-TR";
-      break;
-    case "ru":
-      locale = "ru-RU";
-      break;
-    case "az":
-      locale = "az-AZ";
-      break;
-    default:
-      locale = "en-US";
-  }
-  return Number(num).toLocaleString(locale);
-};
-
 const defaultColumns = [
   {
     title: t("plaka"),
@@ -249,7 +227,8 @@ const defaultColumns = [
   {
     title: t("guncelKm"),
     dataIndex: "guncelKm",
-    render: (text) => formatNum(text),
+    // render: (text) => <FormattedNumber num={text} />,
+    render: (text) => (text ? text.toLocaleString(localStorage.getItem("i18nextLng")) : null),
   },
   {
     title: t("yeniKm"),
