@@ -25,9 +25,9 @@
   border-radius: 3px !important;
 }
 
-.ant-btn {
+/* .ant-btn {
   height: unset !important;
-}
+} */
 
 .ant-pagination .ant-pagination-item-active a {
   color: var(--primary) !important;
@@ -174,9 +174,9 @@
   padding: 4px 16px !important;
 }
 
-.km .ant-btn {
+/* .km .ant-btn {
   height: fit-content !important;
-}
+} */
 
 .ant-btn-primary {
   background-color: var(--primary) !important;

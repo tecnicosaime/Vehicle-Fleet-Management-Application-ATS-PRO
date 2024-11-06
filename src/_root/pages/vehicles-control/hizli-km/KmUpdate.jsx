@@ -54,8 +54,8 @@ const EditableCell = ({ editable, children, dataIndex, record, handleSave, error
         dataIndex === "tarih" && record[dataIndex]
           ? dayjs(record[dataIndex], "DD.MM.YYYY")
           : dataIndex === "saat" && record[dataIndex]
-          ? dayjs(record[dataIndex], "HH:mm:ss")
-          : record[dataIndex],
+            ? dayjs(record[dataIndex], "HH:mm:ss")
+            : record[dataIndex],
     });
   };
 
@@ -72,10 +72,10 @@ const EditableCell = ({ editable, children, dataIndex, record, handleSave, error
               ? dayjs(values[dataIndex]).format("DD.MM.YYYY")
               : ""
             : dataIndex === "saat" && values[dataIndex]
-            ? dayjs(values[dataIndex]).isValid()
-              ? dayjs(values[dataIndex]).format("HH:mm:ss")
-              : ""
-            : values[dataIndex],
+              ? dayjs(values[dataIndex]).isValid()
+                ? dayjs(values[dataIndex]).format("HH:mm:ss")
+                : ""
+              : values[dataIndex],
       });
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
@@ -202,6 +202,29 @@ const EditableCell = ({ editable, children, dataIndex, record, handleSave, error
   );
 };
 
+// Function to format the km value
+const formatNum = (num) => {
+  if (num === null || num === undefined) {
+    return "-";
+  }
+  const language = localStorage.getItem("i18nextLng");
+  let locale = "en-US";
+  switch (language) {
+    case "tr":
+      locale = "tr-TR";
+      break;
+    case "ru":
+      locale = "ru-RU";
+      break;
+    case "az":
+      locale = "az-AZ";
+      break;
+    default:
+      locale = "en-US";
+  }
+  return Number(num).toLocaleString(locale);
+};
+
 const defaultColumns = [
   {
     title: t("plaka"),
@@ -226,6 +249,7 @@ const defaultColumns = [
   {
     title: t("guncelKm"),
     dataIndex: "guncelKm",
+    render: (text) => formatNum(text),
   },
   {
     title: t("yeniKm"),

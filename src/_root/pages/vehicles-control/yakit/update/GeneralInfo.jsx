@@ -679,16 +679,16 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 <TextInput name="" readonly={true} />
               </div>
             </div> */}
-            <div className="col-span-4">
-              <div className="flex flex-col gap-1">
-                <label>{t("guzergah")}</label>
-                <Guzergah />
-              </div>
-            </div>
-            <div className="col-span-4">
+            <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label htmlFor="lokasyonId">{t("lokasyon")}</label>
                 <Location />
+              </div>
+            </div>
+            <div className="col-span-6">
+              <div className="flex flex-col gap-1">
+                <label>{t("guzergah")}</label>
+                <Guzergah />
               </div>
             </div>
             <div className="col-span-6">
