@@ -140,7 +140,7 @@ const Sidebar = () => {
         },
       ],
     },
-    {
+    /* {
       key: "345",
       icon: <FaGears />,
       label: t("lastikYonetimi"),
@@ -166,7 +166,7 @@ const Sidebar = () => {
           label: <Link to={`/aksTanimlari`}>{t("aksTanimlari")}</Link>,
         },
       ],
-    },
+    }, */
     {
       key: "31",
       icon: <LuWarehouse />,
