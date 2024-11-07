@@ -519,10 +519,9 @@ const Vehicles = () => {
 
   return (
     <>
-      <div className="content">
+      {/* <div className="content">
         <BreadcrumbComp items={breadcrumb} />
-      </div>
-
+      </div> */}
       <div className="content">
         <div className="flex justify-between align-center">
           <div className="flex align-center gap-1">
@@ -541,7 +540,6 @@ const Vehicles = () => {
           </div>
         </div>
       </div>
-
       <div className="content">
         <DragAndDropContext items={columns} setItems={setColumns}>
           <Spin spinning={!dataLoaded || loading} indicator={customIcon}>

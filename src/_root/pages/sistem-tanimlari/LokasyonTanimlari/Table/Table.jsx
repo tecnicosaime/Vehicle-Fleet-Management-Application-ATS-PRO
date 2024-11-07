@@ -233,7 +233,7 @@ export default function MainTable() {
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           backgroundColor: "white",
           marginBottom: "15px",
@@ -243,7 +243,7 @@ export default function MainTable() {
         }}
       >
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
       <div
         style={{
           backgroundColor: "white",

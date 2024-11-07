@@ -854,7 +854,7 @@ const Sigorta = () => {
 
   return (
     <>
-      <div
+      {/* <div
         style={{
           backgroundColor: "white",
           marginBottom: "15px",
@@ -864,7 +864,7 @@ const Sigorta = () => {
         }}
       >
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
       <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
         <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
         <div

@@ -329,7 +329,7 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           backgroundColor: "white",
           marginBottom: "15px",
@@ -339,7 +339,7 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
         }}
       >
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
       <div
         style={{
           backgroundColor: "white",

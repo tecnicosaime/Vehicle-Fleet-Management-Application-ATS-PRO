@@ -330,9 +330,9 @@ const ServisTanim = () => {
 
   return (
     <>
-      <div className="content">
+      {/* <div className="content">
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
 
       <div className="content">
         <div className="flex justify-between align-center">

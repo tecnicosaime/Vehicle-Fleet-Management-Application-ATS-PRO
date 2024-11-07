@@ -434,9 +434,9 @@ const DetailUpdate = () => {
         </div>
       )}
 
-      <div className="content">
+      {/* <div className="content">
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
 
       <FormProvider {...methods}>
         <div className="content">
