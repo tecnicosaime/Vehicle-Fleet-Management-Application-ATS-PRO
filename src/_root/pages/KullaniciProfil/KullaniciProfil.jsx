@@ -15,7 +15,7 @@ function KullaniciProfil() {
 
   useEffect(() => {
     const id = localStorage.getItem("id");
-    AxiosInstance.get(`User/GetUser?id=${id}`)
+    AxiosInstance.get(`Profile/GetUserInfoById?id=${id}`)
       .then((response) => {
         setUserData(response.data);
 

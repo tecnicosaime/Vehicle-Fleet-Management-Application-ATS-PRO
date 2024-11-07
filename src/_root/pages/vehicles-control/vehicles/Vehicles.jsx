@@ -6,7 +6,7 @@ import { Table, Popover, Button, Input, Spin, Typography, Tooltip } from "antd";
 import { MenuOutlined, HomeOutlined, LoadingOutlined, ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetVehiclesListService } from "../../../../api/services/vehicles/vehicles/services";
-import { DemoService } from "../../../../api/service";
+// import { DemoService } from "../../../../api/service";
 import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
 import DragAndDropContext from "../../../components/drag-drop-table/DragAndDropContext";
 import SortableHeaderCell from "../../../components/drag-drop-table/SortableHeaderCell";
@@ -382,7 +382,7 @@ const Vehicles = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      DemoService().then((res) => res.data);
+      // DemoService().then((res) => res.data);
 
       setLoading(true);
       const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);

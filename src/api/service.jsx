@@ -20,9 +20,9 @@ export const LoginUserService = (data) => {
 };
 
 // Vehicle/GetUserId   demo
-export const DemoService = () => {
-  return http.get(`/Vehicle/GetUserId`);
-};
+// export const DemoService = () => {
+//   return http.get(`/Vehicle/GetUserId`);
+// };
 
 // custom inputs
 export const CustomInputsReadService = (form) => {

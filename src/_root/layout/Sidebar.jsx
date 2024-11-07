@@ -98,10 +98,10 @@ const Sidebar = () => {
           key: "10",
           label: <Link to={"/ceza-islemleri"}>{t("cezalar")}</Link>,
         },
-        {
+        /*  {
           key: "11",
           label: <Link to={"/lastik-tanimlari"}>{t("lastikler")}</Link>,
-        },
+        }, */
         {
           key: "121",
           label: <Link to={"/ekspertizler"}>{t("ekspertizler")}</Link>,
