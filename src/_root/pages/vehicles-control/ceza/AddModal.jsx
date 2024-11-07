@@ -99,7 +99,7 @@ const AddModal = ({ setStatus }) => {
   const methods = useForm({
     defaultValues: defaultValues,
   });
-  const { handleSubmit, reset, setValue } = methods;
+  const { handleSubmit, reset, setValue, watch } = methods;
 
   useEffect(() => {
     if (plaka.length === 1) {
@@ -111,7 +111,7 @@ const AddModal = ({ setStatus }) => {
 
   const onSubmit = handleSubmit((values) => {
     const body = {
-      aracId: plaka[0].aracId,
+      aracId: values.plaka,
       tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
       saat: dayjs(values.saat).format("HH:mm:ss"),
       cezaTuruKodId: values.cezaTuruKodId || 0,

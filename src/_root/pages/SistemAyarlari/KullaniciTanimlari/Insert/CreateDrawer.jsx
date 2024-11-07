@@ -43,7 +43,7 @@ export default function CreateModal({ selectedLokasyonId, onRefresh }) {
       telefonNo: "",
       sifre: "",
       paraf: "",
-      color: null,
+      color: "#ffffff",
     },
   });
 

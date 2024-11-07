@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { Input, Table } from "antd";
 import { GetActiveInsuranceListService } from "../../../../../api/services/vehicles/operations_services";
 import { PlakaContext } from "../../../../../context/plakaSlice";
+import { Controller, useFormContext } from "react-hook-form";
 
 const SigortaList = ({ setSigorta, open, key }) => {
   const { plaka } = useContext(PlakaContext);
@@ -17,7 +18,16 @@ const SigortaList = ({ setSigorta, open, key }) => {
       pageSize: 10,
     },
   });
+  const {
+    control,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useFormContext();
   const [loading, setLoading] = useState(false);
+
+  const aracId = watch("aracId");
 
   const columns = [
     {
@@ -53,7 +63,7 @@ const SigortaList = ({ setSigorta, open, key }) => {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const res = await GetActiveInsuranceListService(plaka[0].id, search, tableParams.pagination.current);
+          const res = await GetActiveInsuranceListService(aracId, search, tableParams.pagination.current);
           setData(res?.data.list || []);
           setTableParams({
             ...tableParams,
@@ -70,7 +80,7 @@ const SigortaList = ({ setSigorta, open, key }) => {
       };
       fetchData();
     }
-  }, [open, plaka, search, tableParams.pagination.current, key]);
+  }, [open, plaka, search, tableParams.pagination.current, key, aracId]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
