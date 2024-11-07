@@ -55,9 +55,9 @@ const Settings = () => {
 
   return (
     <div>
-      <div className="content">
+      {/* <div className="content">
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
 
       <div className="content">
         <Tabs defaultActiveKey="1" tabPosition="left" items={items} />

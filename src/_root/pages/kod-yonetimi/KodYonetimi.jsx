@@ -150,9 +150,9 @@ const KodYonetimi = () => {
 
   return (
     <>
-      <div className="content">
+      {/* <div className="content">
         <BreadcrumbComp items={breadcrumb} />
-      </div>
+      </div> */}
       <div className="sistem">
         <Layout style={{ height: "90vh" }}>
           <Sider width={200} style={{ padding: "10px" }}>
