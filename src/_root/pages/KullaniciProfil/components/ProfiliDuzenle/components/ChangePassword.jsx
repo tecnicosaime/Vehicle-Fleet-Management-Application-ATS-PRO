@@ -5,7 +5,7 @@ import AxiosInstance from "../../../../../../api/http.jsx";
 
 const { Text } = Typography;
 
-function ChangePassword(props) {
+function ChangePassword({ userData }) {
   const {
     control,
     handleSubmit,
@@ -14,19 +14,10 @@ function ChangePassword(props) {
     reset,
   } = useForm();
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [isStrongPasswordRequired, setIsStrongPasswordRequired] = useState(true);
+  const [isStrongPasswordRequired, setIsStrongPasswordRequired] = useState(false);
 
   useEffect(() => {
-    const fetchPasswordPolicy = async () => {
-      try {
-        const response = await AxiosInstance.get("/password-policy-endpoint"); // API endpointinizi buraya girin
-        setIsStrongPasswordRequired(response.data.GUCLENDIRILMIS_SIFRE_KULLAN);
-      } catch (error) {
-        console.error("Error fetching password policy:", error);
-      }
-    };
-
-    fetchPasswordPolicy();
+    setIsStrongPasswordRequired(userData?.gucluSifreAktif);
   }, []);
 
   const calculatePasswordStrength = (password) => {
@@ -52,15 +43,20 @@ function ChangePassword(props) {
     }
 
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log(user.userId);
-      const response = await AxiosInstance.post(`UpdateUserPass?oldPass=${data.oldPassword}&updatePass=${data.newPassword}`);
+      const body = {
+        userId: userData?.siraNo,
+        previousPassword: data.oldPassword,
+        updatedPassword: data.newPassword,
+      };
+      const response = await AxiosInstance.post(`Profile/ModifyUserPassword`, body);
       console.log("Data sent successfully:", response);
-      if (response.status_code === 200 || response.status_code === 201) {
+      if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202) {
         message.success("Şifre Güncellendi.");
         reset(); // Reset form fields
       } else if (response.data.statusCode === 401) {
         message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
+      } else if (response.data.statusCode === 403) {
+        message.error("Eski Şifrenizi Yanlış Girdiniz.");
       } else {
         message.error("Eski Şifrenizi Yanlış Girdiniz.");
       }

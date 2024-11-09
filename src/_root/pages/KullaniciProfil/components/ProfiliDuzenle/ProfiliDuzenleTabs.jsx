@@ -94,7 +94,7 @@ function ProfiliDuzenleTabs() {
       ),
       children: (
         <FormProvider {...methods}>
-          <ChangePassword />
+          <ChangePassword userData={userData} />
         </FormProvider>
       ),
     },
