@@ -25,6 +25,7 @@ function FirmaBilgileri() {
       vergiDairesi: null,
       vergiNumarasi: null,
       aciklama: null,
+      gucluSifreAktif: "false",
     },
   });
 
@@ -50,6 +51,7 @@ function FirmaBilgileri() {
         setValue("vergiDairesi", item.vergiDaire);
         setValue("vergiNumarasi", item.vergiNo);
         setValue("aciklama", item.aciklama);
+        setValue("gucluSifreAktif", item.gucluSifreAktif);
       }
     } catch (error) {
       console.error("Veri çekilirken hata oluştu:", error);
@@ -91,6 +93,7 @@ function FirmaBilgileri() {
       vergiDaire: data.vergiDairesi,
       vergiNo: data.vergiNumarasi,
       aciklama: data.aciklama,
+      gucluSifreAktif: data.gucluSifreAktif,
     };
 
     setLoading(true);

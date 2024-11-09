@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, Divider, Image, Switch } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import { t, use } from "i18next";
+import { t } from "i18next";
 import KilometreGuncellemesiSelectbox from "./KilometreGuncellemesiSelectbox";
 
 const { Text, Link } = Typography;

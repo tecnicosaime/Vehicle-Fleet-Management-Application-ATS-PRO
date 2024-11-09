@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, Divider, Image } from "antd";
+import { Drawer, Typography, Button, Input, Select, DatePicker, TimePicker, Row, Col, Checkbox, InputNumber, Radio, Divider, Image, Switch } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import { t } from "i18next";
 
@@ -124,6 +124,10 @@ function Forms() {
             <Controller name="ulke" control={control} render={({ field }) => <Input {...field} style={{ flex: 1 }} />} />
           </div>
         </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0px", marginTop: "10px" }}>
+        <Text style={{ fontSize: "14px", color: "#000000a4" }}>{t("guclendirilmiSifreKullanimiZorunlu")}</Text>
+        <Controller name="gucluSifreAktif" control={control} render={({ field }) => <Switch {...field} />} />
       </div>
       <Divider style={{ marginTop: "15px" }} />
       <div style={{ display: "flex", gap: "15px", width: "100%" }}>
