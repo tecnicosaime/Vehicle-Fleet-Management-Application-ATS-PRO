@@ -188,7 +188,7 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, lokasyon, lokasyonId
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
                   <label>
-                    {t("teslimTarih")} <span style={{ color: "red" }}>*</span>
+                    {t("tarih")} <span style={{ color: "red" }}>*</span>
                   </label>
                   <DateInput name="teslimTarih" />
                 </div>
@@ -196,7 +196,7 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, lokasyon, lokasyonId
               <div className="col-span-6">
                 <div className="flex flex-col gap-1">
                   <label>
-                    {t("teslimSaat")} <span style={{ color: "red" }}>*</span>
+                    {t("saat")} <span style={{ color: "red" }}>*</span>
                   </label>
                   <TimeInput name="teslimSaat" />
                 </div>
