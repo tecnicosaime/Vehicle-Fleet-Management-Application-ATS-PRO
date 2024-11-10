@@ -27,6 +27,7 @@ import TasitKarti from "./modals/tasit-karti/TasitKarti";
 import Kapasite from "./modals/kapasite/Kapasite";
 import Aksesuar from "./modals/aksesuar/Aksesuar";
 import Surucu from "./modals/surucu/Surucu";
+import Lokasyonlar from "./modals/lokasyon/Surucu";
 
 const DetailInfo = ({ id }) => {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -45,6 +46,11 @@ const DetailInfo = ({ id }) => {
     {
       label: t("aracSuruculeri"),
       key: "3",
+      icon: <UserOutlined className="text-info" />,
+    },
+    {
+      label: t("lokasyonlar"),
+      key: "13",
       icon: <UserOutlined className="text-info" />,
     },
     {
@@ -131,6 +137,8 @@ const DetailInfo = ({ id }) => {
         return <Lastik visible={selectedItem === "11"} onClose={() => setSelectedItem(null)} id={id} />;
       case "12":
         return <Satis visible={selectedItem === "12"} onClose={() => setSelectedItem(null)} id={id} />;
+      case "13":
+        return <Lokasyonlar visible={selectedItem === "13"} onClose={() => setSelectedItem(null)} id={id} />;
       // default:
       //     return null;
     }

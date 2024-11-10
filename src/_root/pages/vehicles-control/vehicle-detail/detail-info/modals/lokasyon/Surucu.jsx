@@ -6,7 +6,7 @@ import { MenuOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, Popover, Spin, Table } from "antd";
 import DragAndDropContext from "../../../../../../components/drag-drop-table/DragAndDropContext";
 import SortableHeaderCell from "../../../../../../components/drag-drop-table/SortableHeaderCell";
-import { GetDriverSubstitutionListByVehicleIdService } from "../../../../../../../api/services/vehicles/vehicles/services";
+import { GetVehicleLocationService } from "../../../../../../../api/services/vehicles/vehicles/services";
 import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
 import Content from "../../../../../../components/drag-drop-table/DraggableCheckbox";
@@ -38,13 +38,13 @@ const Surucu = ({ visible, onClose, id, selectedRowsData }) => {
 
   const baseColumns = [
     {
-      title: t("tutanakNo"),
-      dataIndex: "tutanakNo",
+      title: t("plaka"),
+      dataIndex: "plaka",
       key: 1,
       render: (text, record) => (
         <Button
           onClick={() => {
-            setAccId(record.siraNo);
+            setAccId(record.aracBolgeLogId);
             setUpdateModal(true);
           }}
         >
@@ -53,8 +53,8 @@ const Surucu = ({ visible, onClose, id, selectedRowsData }) => {
       ),
     },
     {
-      title: t("teslimTarih"),
-      dataIndex: "teslimTarih",
+      title: t("tarih"),
+      dataIndex: "tarih",
       key: 2,
       render: (text) => {
         if (text === null || text === undefined) {
@@ -64,23 +64,23 @@ const Surucu = ({ visible, onClose, id, selectedRowsData }) => {
       },
     },
     {
-      title: t("teslimSaat"),
-      dataIndex: "teslimSaat",
+      title: t("saat"),
+      dataIndex: "saat",
       key: 3,
     },
     {
-      title: t("teslimEden"),
-      dataIndex: "surucuIsimTeslimEden",
+      title: t("eskiLokasyon"),
+      dataIndex: "bulunduguLokasyon",
       key: 4,
     },
     {
-      title: t("teslimAlan"),
-      dataIndex: "surucuIsimTeslimAlan",
+      title: t("yeniLokasyon"),
+      dataIndex: "transferEdilenLokasyon",
       key: 5,
     },
     {
       title: t("aracKm"),
-      dataIndex: "km",
+      dataIndex: "aracKm",
       key: 6,
     },
     {
@@ -107,7 +107,8 @@ const Surucu = ({ visible, onClose, id, selectedRowsData }) => {
     const fetchData = async () => {
       setLoading(true);
       setIsInitialLoading(true);
-      const res = await GetDriverSubstitutionListByVehicleIdService(id, search, tableParams.pagination.current);
+      const body = [id];
+      const res = await GetVehicleLocationService(search, tableParams.pagination.current, body);
       setLoading(false);
       setIsInitialLoading(false);
       setDataSource(res?.data.list);
@@ -170,7 +171,7 @@ const Surucu = ({ visible, onClose, id, selectedRowsData }) => {
     <Modal
       title={
         <div style={{ fontSize: "24px" }}>
-          {t("surucuBilgiler")}
+          {t("lokasyonBilgileri")}
           {plaka.length > 0 && ` [${plaka.join(", ")}]`}
         </div>
       }
