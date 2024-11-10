@@ -66,6 +66,9 @@ export const UpdateAccItemService = async (data) => {
 export const GetDriverSubstitutionListByVehicleIdService = async (id, search, page) => {
   return await http.get(`/DriverSubstitution/GetDriverSubstitutionListByVehicleId?vehicleId=${id}&parameter=${search}&page=${page}`);
 };
+export const GetVehicleLocationService = async (search, page, body) => {
+  return await http.post(`LocationTransfer/GetLocationLogsByVehicleId?parameter=${search}&page=${page}`, body);
+};
 
 export const AddDriverSubstitutionItemService = async (data) => {
   return await http.post(`DriverSubstitution/AddDriverSubstitutionItem`, data);
