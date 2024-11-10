@@ -18,7 +18,7 @@ import PhotoUpload from "../../../components/upload/PhotoUpload";
 import FileUpload from "../../../components/upload/FileUpload";
 import TextInput from "../../../components/form/inputs/TextInput";
 import CodeControl from "../../../components/form/selects/CodeControl";
-import Location from "../../../components/form/tree/Location";
+// import Location from "../../../components/form/tree/Location";
 import Marka from "../../../components/form/selects/Marka";
 import Model from "../../../components/form/selects/Model";
 import Driver from "../../../components/form/selects/Driver";
@@ -29,6 +29,7 @@ import DetailInfo from "./detail-info/DetailInfo";
 import ProfilePhoto from "./tabs/ProfilePhoto";
 import SurucuInput from "../../../components/form/inputs/SurucuInput";
 import AddSurucu from "./detail-info/modals/surucu/AddModalForInput";
+import AddLokasyon from "./detail-info/modals/lokasyon/AddModalForInput";
 
 const { Text, Link } = Typography;
 
@@ -63,6 +64,7 @@ const DetailUpdate = () => {
   const [images, setImages] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLokasyonModalOpen, setIsLokasyonModalOpen] = useState(false);
   // Optional: Local state if needed elsewhere
   const [surucu, setSurucu] = useState("");
   const [surucuId, setSurucuId] = useState(null);
@@ -396,6 +398,9 @@ const DetailUpdate = () => {
   const handlePlusClick = () => {
     setIsModalOpen(true);
   };
+  const handleLokasyonPlusClick = () => {
+    setIsLokasyonModalOpen(true);
+  };
 
   const handleSurucuTeslimUpdated = (surucuTeslimAlan, surucuTeslimAlanId) => {
     // Update the form values using setValue
@@ -405,6 +410,11 @@ const DetailUpdate = () => {
     // Update local state if necessary
     setSurucu(surucuTeslimAlan);
     setSurucuId(surucuTeslimAlanId);
+  };
+  const handleLokasyonUpdated = (yeniLokasyon, yeniLokasyonID) => {
+    // Update the form values using setValue
+    setValue("lokasyon", yeniLokasyon);
+    setValue("lokasyonId", yeniLokasyonID);
   };
 
   const footer = [
@@ -512,7 +522,17 @@ const DetailUpdate = () => {
                     <label htmlFor="lokasyonId">
                       {t("lokasyon")} <span className="text-danger">*</span>
                     </label>
-                    <Location required={true} />
+                    {/* <Location required={true} /> */}
+                    <SurucuInput name="lokasyon" readonly={true} required={true} onPlusClick={handleLokasyonPlusClick} />
+                    <AddLokasyon
+                      isModalOpen={isLokasyonModalOpen}
+                      setIsModalOpen={setIsLokasyonModalOpen}
+                      setStatus={setStatus}
+                      lokasyon={watch("lokasyon")}
+                      lokasyonId={watch("lokasyonId")}
+                      guncelKm={guncelKm}
+                      onYeniLokasyonUpdated={handleLokasyonUpdated}
+                    />
                   </div>
                 </div>
                 <div className="col-span-4">
@@ -535,7 +555,7 @@ const DetailUpdate = () => {
                   <div className="flex flex-col gap-1">
                     <label htmlFor="surucuId">{t("surucu")}</label>
                     {/* <Driver /> */}
-                    <SurucuInput name="surucu" readonly={true} onPlusClick={handlePlusClick} />
+                    <SurucuInput name="surucu" readonly={true} required={false} onPlusClick={handlePlusClick} />
                     <AddSurucu
                       isModalOpen={isModalOpen}
                       setIsModalOpen={setIsModalOpen}

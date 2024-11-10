@@ -70,6 +70,9 @@ export const GetDriverSubstitutionListByVehicleIdService = async (id, search, pa
 export const AddDriverSubstitutionItemService = async (data) => {
   return await http.post(`DriverSubstitution/AddDriverSubstitutionItem`, data);
 };
+export const AddLokasyonTransferService = async (data) => {
+  return await http.post(`LocationTransfer/AddLocationLog`, data);
+};
 
 export const GetDriverSubstitutionByIdService = async (id) => {
   return await http.get(`/DriverSubstitution/GetDriverSubstitutionById?id=${id}`);
