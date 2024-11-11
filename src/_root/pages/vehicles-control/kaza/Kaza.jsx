@@ -55,7 +55,7 @@ const Kaza = () => {
       dataIndex: "kazaTarih",
       key: 1,
       render: (text) => {
-        dayjs(text).format("DD.MM.YYYY");
+        return text ? dayjs(text).format("DD.MM.YYYY") : "";
       },
     },
     {
