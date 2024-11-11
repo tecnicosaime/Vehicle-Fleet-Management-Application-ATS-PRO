@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { t } from "i18next";
 import { Button, Dropdown, Space } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FaWrench, FaGear, FaBuildingShield, FaTruckFast } from "react-icons/fa6";
 import { FaFire, FaWallet, FaCarCrash } from "react-icons/fa";
 import { MdFormatListBulleted, MdHealthAndSafety, MdSettingsInputComponent } from "react-icons/md";
@@ -19,6 +19,7 @@ import KmTakibi from "./KmTakibi/KmTakibi.jsx";
 import PeryodikBakimlar from "./PeryodikBakimlar/PeryodikBakimlar.jsx";
 import Servisler from "./Servisler/Servisler";
 import Surucu from "../../vehicle-detail/detail-info/modals/surucu/Surucu.jsx";
+import Sil from "./Sil/Sil.jsx";
 
 const OperationsInfo = ({ ids, selectedRowsData }) => {
   const { setPlaka } = useContext(PlakaContext);
@@ -108,6 +109,11 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
       label: t("ekspertiz"),
       key: "15",
       icon: <MdSettingsInputComponent className="text-info" />,
+    },
+    {
+      label: t("sil"),
+      key: "16",
+      icon: <DeleteOutlined className="text-info" />,
     },
   ];
 
@@ -253,6 +259,20 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             }}
             id={ids[0]}
             selectedRowsData={selectedRowsData}
+          />
+        );
+      case "16":
+        return (
+          <Sil
+            key={`Sil-${ids.join("-")}-${Date.now()}`} // Assign a unique key to force remounting
+            ids={ids}
+            onDeleteSuccess={() => {
+              setSelectedItem(null);
+              // Refresh data or perform other actions
+            }}
+            onCancel={() => {
+              setSelectedItem(null);
+            }}
           />
         );
       default:
