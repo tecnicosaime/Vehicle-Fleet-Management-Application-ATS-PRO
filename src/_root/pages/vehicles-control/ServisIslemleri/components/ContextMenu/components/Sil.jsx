@@ -12,8 +12,6 @@ export default function Sil({ selectedRows, refreshTableData, disabled, hidePopo
   // Sil düğmesini gizlemek için koşullu stil
   const buttonStyle = disabled ? { display: "none" } : {};
 
-  console.log(selectedRows);
-
   // Silme işlemini tetikleyecek fonksiyon
   const handleDelete = async () => {
     let isError = false;
