@@ -21,7 +21,7 @@ import Servisler from "./Servisler/Servisler";
 import Surucu from "../../vehicle-detail/detail-info/modals/surucu/Surucu.jsx";
 import Sil from "./Sil/Sil.jsx";
 
-const OperationsInfo = ({ ids, selectedRowsData }) => {
+const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
   const { setPlaka } = useContext(PlakaContext);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -268,6 +268,7 @@ const OperationsInfo = ({ ids, selectedRowsData }) => {
             ids={ids}
             onDeleteSuccess={() => {
               setSelectedItem(null);
+              onRefresh();
               // Refresh data or perform other actions
             }}
             onCancel={() => {
