@@ -380,26 +380,24 @@ const Vehicles = () => {
   const defaultCheckedList = columns.map((item) => item.key);
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
+  const fetchData = async () => {
+    setLoading(true);
+    const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);
+    setLoading(false);
+    setIsInitialLoading(false);
+
+    // Set dataSource and tableParams
+    setDataSource(res?.data.vehicleList || []);
+    setTableParams((prevTableParams) => ({
+      ...prevTableParams,
+      pagination: {
+        ...prevTableParams.pagination,
+        total: res?.data.vehicleCount || 0,
+      },
+    }));
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      // DemoService().then((res) => res.data);
-
-      setLoading(true);
-      const res = await GetVehiclesListService(search, tableParams.pagination.current, tableParams.pagination.pageSize, filterData);
-      setLoading(false);
-      setIsInitialLoading(false);
-
-      // Set dataSource and tableParams
-      setDataSource(res?.data.vehicleList || []);
-      setTableParams((prevTableParams) => ({
-        ...prevTableParams,
-        pagination: {
-          ...prevTableParams.pagination,
-          total: res?.data.vehicleCount || 0,
-        },
-      }));
-    };
-
     if (ayarlarData) {
       fetchData();
     }
@@ -514,6 +512,11 @@ const Vehicles = () => {
     );
   }, [country]);
 
+  // Define a function to refresh data
+  const refreshData = () => {
+    fetchData();
+  };
+
   // Custom loading icon
   const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
@@ -536,7 +539,7 @@ const Vehicles = () => {
             <DurumFiltresi />
           </div>
           <div>
-            <OperationsInfo ids={keys} selectedRowsData={selectedRowsData} />
+            <OperationsInfo ids={keys} selectedRowsData={selectedRowsData} onRefresh={refreshData} />
           </div>
         </div>
       </div>
