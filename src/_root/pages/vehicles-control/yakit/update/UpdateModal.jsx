@@ -13,7 +13,7 @@ import GeneralInfo from "./GeneralInfo";
 import PhotoUpload from "../../../../components/upload/PhotoUpload";
 import FileUpload from "../../../../components/upload/FileUpload";
 
-const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const { data, plaka, setData } = useContext(PlakaContext);
   const [isValid, setIsValid] = useState(false);
   const [response, setResponse] = useState("normal");
@@ -130,68 +130,70 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const { handleSubmit, reset, watch, setValue } = methods;
 
   useEffect(() => {
-    GetFuelCardInfoByFuelIdService(id).then((res) => {
-      setValue("aracId", res?.data.aracId);
-      setValue("plaka", res?.data.plaka);
-      setValue("surucuId", res?.data.surucuId);
-      setValue("surucu", res?.data.surucuAdi);
-      setValue("yakitTipId", res?.data.yakitTipId);
-      setValue("yakitTip", res?.data.yakitTip);
-      setValue("lokasyonId", res?.data.lokasyonId);
-      setValue("lokasyon", res?.data.lokasyon);
-      setValue("firmaId", res?.data.firmaId);
-      setValue("firma", res?.data.firma);
-      setValue("istasyonKodId", res?.data.istasyonKodId);
-      setValue("istasyon", res?.data.istasyon);
-      setValue("sonAlinanKm", res?.data.sonAlinanKm);
-      setValue("alinanKm", res?.data.alinanKm);
-      setValue("farkKm", res?.data.farkKm);
-      setValue("tuketim", res?.data.tuketim);
-      setValue("miktar", res?.data.miktar);
-      setValue("tutar", res?.data.tutar);
-      setValue("litreFiyat", res?.data.litreFiyat);
-      setValue("kdvOran", res?.data.kdv);
-      const kdvAmount = (watch("tutar") * (100 - res?.data.kdv)) / 100;
-      setValue("kdv", kdvAmount);
-      setValue("faturaNo", res?.data.faturaNo);
-      setValue("guzergahId", res?.data.guzergahId);
-      setValue("guzergah", res?.data.guzergah);
-      setValue("ozelKullanim", res?.data.ozelKullanim);
-      setValue("fullDepo", res?.data.fullDepo);
-      setValue("stokKullanimi", res?.data.stokKullanimi);
-      setValue("aciklama", res?.data.aciklama);
-      setValue("faturaTarih", res?.data.faturaTarih ? dayjs(res?.data.faturaTarih) : null);
-      setValue("tarih", res?.data.tarih ? dayjs(res?.data.tarih) : null);
-      setValue("saat", dayjs(res?.data.saat, "HH:mm:ss"));
-      setValue("ozelAlan1", res?.data.ozelAlan1);
-      setValue("ozelAlan2", res?.data.ozelAlan2);
-      setValue("ozelAlan3", res?.data.ozelAlan3);
-      setValue("ozelAlan4", res?.data.ozelAlan4);
-      setValue("ozelAlan5", res?.data.ozelAlan5);
-      setValue("ozelAlan6", res?.data.ozelAlan6);
-      setValue("ozelAlan7", res?.data.ozelAlan7);
-      setValue("ozelAlan8", res?.data.ozelAlan8);
-      setValue("ozelAlan9", res?.data.ozelAlan9);
-      setValue("ozelAlanKodId9", res?.data.ozelAlanKodId9);
-      setValue("ozelAlan10", res?.data.ozelAlan10);
-      setValue("ozelAlanKodId10", res?.data.ozelAlanKodId10);
-      setValue("ozelAlan11", res?.data.ozelAlan11);
-      setValue("ozelAlan12", res?.data.ozelAlan12);
-      setValue("siraNo", res?.data.siraNo);
-      setValue("kmLogId", res?.data.kmLogId);
-      setValue("eskiKm", res?.data.kmLogEskiKm);
-      setValue("engelle", res?.data.hasToInsertKmLog);
-      setValue("yakitHacmi", res?.data.yakitHacmi);
-    });
+    if (drawerVisible && selectedRow) {
+      GetFuelCardInfoByFuelIdService(selectedRow?.key).then((res) => {
+        setValue("aracId", res?.data.aracId);
+        setValue("plaka", res?.data.plaka);
+        setValue("surucuId", res?.data.surucuId);
+        setValue("surucu", res?.data.surucuAdi);
+        setValue("yakitTipId", res?.data.yakitTipId);
+        setValue("yakitTip", res?.data.yakitTip);
+        setValue("lokasyonId", res?.data.lokasyonId);
+        setValue("lokasyon", res?.data.lokasyon);
+        setValue("firmaId", res?.data.firmaId);
+        setValue("firma", res?.data.firma);
+        setValue("istasyonKodId", res?.data.istasyonKodId);
+        setValue("istasyon", res?.data.istasyon);
+        setValue("sonAlinanKm", res?.data.sonAlinanKm);
+        setValue("alinanKm", res?.data.alinanKm);
+        setValue("farkKm", res?.data.farkKm);
+        setValue("tuketim", res?.data.tuketim);
+        setValue("miktar", res?.data.miktar);
+        setValue("tutar", res?.data.tutar);
+        setValue("litreFiyat", res?.data.litreFiyat);
+        setValue("kdvOran", res?.data.kdv);
+        const kdvAmount = (watch("tutar") * (100 - res?.data.kdv)) / 100;
+        setValue("kdv", kdvAmount);
+        setValue("faturaNo", res?.data.faturaNo);
+        setValue("guzergahId", res?.data.guzergahId);
+        setValue("guzergah", res?.data.guzergah);
+        setValue("ozelKullanim", res?.data.ozelKullanim);
+        setValue("fullDepo", res?.data.fullDepo);
+        setValue("stokKullanimi", res?.data.stokKullanimi);
+        setValue("aciklama", res?.data.aciklama);
+        setValue("faturaTarih", res?.data.faturaTarih ? dayjs(res?.data.faturaTarih) : null);
+        setValue("tarih", res?.data.tarih ? dayjs(res?.data.tarih) : null);
+        setValue("saat", dayjs(res?.data.saat, "HH:mm:ss"));
+        setValue("ozelAlan1", res?.data.ozelAlan1);
+        setValue("ozelAlan2", res?.data.ozelAlan2);
+        setValue("ozelAlan3", res?.data.ozelAlan3);
+        setValue("ozelAlan4", res?.data.ozelAlan4);
+        setValue("ozelAlan5", res?.data.ozelAlan5);
+        setValue("ozelAlan6", res?.data.ozelAlan6);
+        setValue("ozelAlan7", res?.data.ozelAlan7);
+        setValue("ozelAlan8", res?.data.ozelAlan8);
+        setValue("ozelAlan9", res?.data.ozelAlan9);
+        setValue("ozelAlanKodId9", res?.data.ozelAlanKodId9);
+        setValue("ozelAlan10", res?.data.ozelAlan10);
+        setValue("ozelAlanKodId10", res?.data.ozelAlanKodId10);
+        setValue("ozelAlan11", res?.data.ozelAlan11);
+        setValue("ozelAlan12", res?.data.ozelAlan12);
+        setValue("siraNo", res?.data.siraNo);
+        setValue("kmLogId", res?.data.kmLogId);
+        setValue("eskiKm", res?.data.kmLogEskiKm);
+        setValue("engelle", res?.data.hasToInsertKmLog);
+        setValue("yakitHacmi", res?.data.yakitHacmi);
+      });
 
-    GetPhotosByRefGroupService(id, "YAKIT").then((res) => setImageUrls(res.data));
-    GetDocumentsByRefGroupService(id, "YAKIT").then((res) => setFilesUrl(res.data));
-  }, [id, updateModal]);
+      GetPhotosByRefGroupService(selectedRow?.key, "YAKIT").then((res) => setImageUrls(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "YAKIT").then((res) => setFilesUrl(res.data));
+    }
+  }, [selectedRow, drawerVisible]);
 
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "YAKIT", images, false);
+      const data = uploadPhoto(selectedRow?.key, "YAKIT", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -203,7 +205,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "YAKIT", files);
+      uploadFile(selectedRow?.key, "YAKIT", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -228,12 +230,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       : null;
 
     const body = {
-      siraNo: id,
+      siraNo: selectedRow?.key,
       aracId: values.aracId,
       plaka: values.plaka,
-      tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
-      faturaTarih: dayjs(values.faturaTarih).format("YYYY-MM-DD"),
-      saat: dayjs(values.saat).format("HH:mm:ss"),
+      tarih: values.tarih ? dayjs(values.tarih).format("YYYY-MM-DD") : null,
+      faturaTarih: values.faturaTarih ? dayjs(values.faturaTarih).format("YYYY-MM-DD") : null,
+      saat: values.saat ? dayjs(values.saat).format("HH:mm:ss") : null,
       aciklama: values.aciklama,
       faturaNo: values.faturaNo,
       sonAlinanKm: values.sonAlinanKm,
@@ -275,9 +277,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     UpdateFuelService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
+        onDrawerClose();
         setResponse("normal");
-        setStatus(true);
+        onRefresh();
         setActiveKey("1");
         if (plaka.length === 1) {
           reset({
@@ -304,7 +306,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
           reset();
         }
         if (plaka.length === 1) {
-          GetFuelCardContentByIdService(plaka[0].id).then((res) => {
+          GetFuelCardContentByIdService(plaka[0].selectedRow?.key).then((res) => {
             setData(res.data);
           });
         }
@@ -313,7 +315,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     uploadImages();
     uploadFiles();
-    setStatus(false);
+    // setStatus(false);
   });
 
   const personalProps = {
@@ -353,9 +355,9 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         setResponse("normal");
-        setStatus(true);
+        onRefresh();
         setActiveKey("1");
       }}
     >
@@ -365,7 +367,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
   return (
     <>
-      <Modal title={t("yakitBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+      <Modal title={t("yakitBilgisiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
