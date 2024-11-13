@@ -10,7 +10,7 @@ import { AddFuelService, GetFuelCardContentByIdService } from "../../../../../ap
 import GeneralInfo from "./GeneralInfo";
 import PersonalFields from "../../../../components/form/personal-fields/PersonalFields";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const { data, plaka, setData, setHistory } = useContext(PlakaContext);
 
   const [openModal, setopenModal] = useState(false);
@@ -200,8 +200,8 @@ const AddModal = ({ setStatus }) => {
 
     AddFuelService(body)
       .then((res) => {
-        if (res?.data.statusCode === 200) {
-          setStatus(true);
+        if (res?.data.statusCode == 200) {
+          onRefresh();
           setResponse("normal");
           setopenModal(false);
           if (plaka.length === 1) {
@@ -262,7 +262,7 @@ const AddModal = ({ setStatus }) => {
       .finally(() => {
         setLoading(false);
       });
-    setStatus(false);
+    // setStatus(false);
   });
 
   const personalProps = {
