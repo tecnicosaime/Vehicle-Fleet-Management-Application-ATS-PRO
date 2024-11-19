@@ -66,18 +66,23 @@ import YetkisizIslem from "./_root/pages/YekisizIslem";
 
 import DenemeTable from "./_root/pages/Deneme/DenemeTable.jsx";
 
+import CompanyKeyPage from "./_auth/CompanyKeyPage.jsx";
+
 const App = () => {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = getItemWithExpiration("token");
+    const companyKey = localStorage.getItem("companyKey");
 
-    if (token) {
-      setHasToken(false);
-    } else {
+    if (!token && !companyKey) {
+      navigate("/CompanyKeyPage");
+    } else if (!token && companyKey) {
       setHasToken(true);
       navigate("/login");
+    } else {
+      setHasToken(false);
     }
   }, [navigate]);
 
@@ -142,6 +147,7 @@ const App = () => {
         <Route path="/deneme" element={<DenemeTable />} />
       </Route>
       {hasToken && <Route path="/login" element={<AuthLayout />} />}
+      <Route path="/CompanyKeyPage" element={<CompanyKeyPage />} />
     </Routes>
   );
 };

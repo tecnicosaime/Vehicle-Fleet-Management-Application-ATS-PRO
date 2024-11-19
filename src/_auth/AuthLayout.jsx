@@ -31,11 +31,19 @@ const AuthLayout = () => {
     },
   });
 
+  const handleChangeCompanyKey = () => {
+    localStorage.removeItem("companyKey");
+    navigate("/CompanyKeyPage");
+  };
+
+  const companyKey = localStorage.getItem("companyKey");
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     const body = {
       KULLANICIKOD: data.username,
       SIFRE: data.password,
+      firmaSifre: companyKey,
     };
 
     try {
@@ -115,6 +123,9 @@ const AuthLayout = () => {
               </div>
               <Button type="submit" onClick={handleSubmit(onSubmit)} className="login-btn btn mt-6">
                 {isLoading ? <Spin className="text-white" /> : t("login")}
+              </Button>
+              <Button style={{ marginTop: "10px", width: "100%" }} danger onClick={handleChangeCompanyKey}>
+                {t("anahtarDegistir")}
               </Button>
             </div>
           </div>
