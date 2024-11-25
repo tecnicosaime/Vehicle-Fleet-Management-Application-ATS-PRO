@@ -17,7 +17,7 @@ function Forms() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
       <div style={{ width: "100%", height: "100px", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Image style={{ width: "100%", height: "100%" }} src="/images/ats_login_image.jpg" />
+        <Image style={{ width: "100%", height: "100%" }} src="/images/ats_login_image.webp" />
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%", flexDirection: "column", justifyContent: "space-between", gap: "8px" }}>
