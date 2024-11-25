@@ -63,7 +63,7 @@ const FirmaSettings = () => {
     <FormProvider {...methods}>
       <div className="grid gap-1">
         <div className="col-span-2 text-center">
-          <img src="/images/ats_login_image.jpg" alt="ats" className="w-full" />
+          <img src="/images/ats_login_image.webp" alt="ats" className="w-full" />
         </div>
         <div className="col-span-10">
           <div className="grid gap-1 p-10">

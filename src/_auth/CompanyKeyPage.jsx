@@ -35,7 +35,7 @@ function CompanyKeyPage() {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('/images/ats_login_image.jpg')`,
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('/images/ats_login_image.webp')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
