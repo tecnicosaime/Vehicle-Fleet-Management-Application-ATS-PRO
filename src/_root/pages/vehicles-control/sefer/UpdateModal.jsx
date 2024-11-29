@@ -14,7 +14,7 @@ import PersonalFields from "../../../components/form/personal-fields/PersonalFie
 import FileUpload from "../../../components/upload/FileUpload";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 
-const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const { data, plaka } = useContext(PlakaContext);
   const [isValid, setIsValid] = useState("normal");
   const [code, setCode] = useState("normal");
@@ -142,8 +142,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   }, [watch("varisKm"), watch("cikisKm")]);
 
   useEffect(() => {
-    if (updateModal) {
-      GetExpeditionItemByIdService(id).then((res) => {
+    if (drawerVisible && selectedRow) {
+      GetExpeditionItemByIdService(selectedRow?.key).then((res) => {
         setValue("plaka", res?.data.plaka);
         setValue("seferNo", res?.data.seferNo);
         setCode(res?.data.seferNo);
@@ -184,16 +184,16 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "SEFER").then((res) => setImageUrls(res.data));
+      GetPhotosByRefGroupService(selectedRow?.key, "SEFER").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "SEFER").then((res) => setFilesUrl(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "SEFER").then((res) => setFilesUrl(res.data));
     }
-  }, [id, updateModal]);
+  }, [selectedRow, drawerVisible]);
 
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "SEFER", files);
+      uploadFile(selectedRow?.key, "SEFER", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -204,7 +204,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "SEFER", images, false);
+      const data = uploadPhoto(selectedRow?.key, "SEFER", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -220,7 +220,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
   const onSubmit = handleSubmit((values) => {
     const body = {
-      siraNo: id,
+      siraNo: selectedRow?.key,
       surucuId1: values.surucuId1 || 0,
       surucuId2: values.surucuId2 || 0,
       aciklama: values.aciklama,
@@ -252,8 +252,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     UpdateExpeditionItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
         if (plaka.length === 1) {
           reset();
@@ -265,7 +265,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     uploadFiles();
     uploadImages();
-    setStatus(false);
+    onRefresh();
   });
 
   const personalProps = {
@@ -305,8 +305,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
       }}
     >
@@ -315,7 +315,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   ];
 
   return (
-    <Modal title={t("seferBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("seferBilgisiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />

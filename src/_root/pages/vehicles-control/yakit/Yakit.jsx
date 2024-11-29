@@ -817,7 +817,7 @@ const Yakit = () => {
               showQuickJumper: true,
               onChange: handleTableChange,
             }}
-            scroll={{ y: "calc(100vh - 300px)" }}
+            scroll={{ y: "calc(100vh - 335px)" }}
           />
         </Spin>
         <UpdateModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />

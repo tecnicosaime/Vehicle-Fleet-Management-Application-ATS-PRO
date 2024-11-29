@@ -1,314 +1,740 @@
-import { useEffect, useState } from "react";
-import { t } from "i18next";
-import dayjs from "dayjs";
-import { Table, Popover, Button, Input, Spin } from "antd";
-import { MenuOutlined, HomeOutlined, LoadingOutlined } from "@ant-design/icons";
-import { GetExpeditionsListService } from "../../../../api/services/vehicles/operations_services";
-import DragAndDropContext from "../../../components/drag-drop-table/DragAndDropContext";
-import SortableHeaderCell from "../../../components/drag-drop-table/SortableHeaderCell";
-import Content from "../../../components/drag-drop-table/DraggableCheckbox";
-import BreadcrumbComp from "../../../components/breadcrumb/Breadcrumb";
+import React, { useCallback, useEffect, useState } from "react";
+import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip } from "antd";
+import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
+import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Resizable } from "react-resizable";
+import "./ResizeStyle.css";
+import AxiosInstance from "../../../../api/http";
+import { useFormContext } from "react-hook-form";
+import styled from "styled-components";
+import ContextMenu from "./components/ContextMenu/ContextMenu";
 import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+import { t } from "i18next";
 
-const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("seferIslemleri") }];
+const { Text } = Typography;
 
-const Sefer = () => {
-  const [dataSource, setDataSource] = useState([]);
-  const [tableParams, setTableParams] = useState({
-    pagination: {
-      current: 1,
-      pageSize: 10,
-    },
-  });
-  const [loading, setLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState(false);
-  const [openRowHeader, setOpenRowHeader] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
-  const [id, setId] = useState(0);
-  const [filterData, setFilterData] = useState({});
+const StyledButton = styled(Button)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 8px;
+  height: 32px !important;
+`;
+
+// Sütunların boyutlarını ayarlamak için kullanılan component
+
+const ResizableTitle = (props) => {
+  const { onResize, width, ...restProps } = props;
+
+  // tabloyu genişletmek için kullanılan alanın stil özellikleri
+  const handleStyle = {
+    position: "absolute",
+    bottom: 0,
+    right: "-5px",
+    width: "20%",
+    height: "100%", // this is the area that is draggable, you can adjust it
+    zIndex: 2, // ensure it's above other elements
+    cursor: "col-resize",
+    padding: "0px",
+    backgroundSize: "0px",
+  };
+
+  if (!width) {
+    return <th {...restProps} />;
+  }
+  return (
+    <Resizable
+      width={width}
+      height={0}
+      handle={
+        <span
+          className="react-resizable-handle"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          style={handleStyle}
+        />
+      }
+      onResize={onResize}
+      draggableOpts={{
+        enableUserSelectHack: false,
+      }}
+    >
+      <th {...restProps} />
+    </Resizable>
+  );
+};
+// Sütunların boyutlarını ayarlamak için kullanılan component sonu
+
+// Sütunların sürüklenebilir olmasını sağlayan component
+
+const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onVisibilityChange, ...restProps }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const styleWithTransform = {
+    ...style,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    backgroundColor: isDragging ? "#f0f0f0" : "",
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  };
+
+  return (
+    <div ref={setNodeRef} style={styleWithTransform} {...restProps} {...attributes}>
+      {/* <Checkbox
+        checked={visible}
+        onChange={(e) => onVisibilityChange(index, e.target.checked)}
+        style={{ marginLeft: "auto" }}
+      /> */}
+      <div
+        {...listeners}
+        style={{
+          cursor: "grab",
+          flexGrow: 1,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <HolderOutlined style={{ marginRight: 8 }} />
+        {text}
+      </div>
+    </div>
+  );
+};
+
+// Sütunların sürüklenebilir olmasını sağlayan component sonu
+
+const Yakit = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [keys, setKeys] = useState([]);
-  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false); // Set initial loading state to false
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0); // Total data count
+  const [pageSize, setPageSize] = useState(10); // Page size
+  const [drawer, setDrawer] = useState({
+    visible: false,
+    data: null,
+  });
+  const navigate = useNavigate();
 
-  const baseColumns = [
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  // API Data Fetching with diff and setPointId
+  const fetchData = async (diff, targetPage) => {
+    setLoading(true);
+    try {
+      let currentSetPointId = 0;
+
+      if (diff > 0) {
+        // Moving forward
+        currentSetPointId = data[data.length - 1]?.orderId || 0;
+      } else if (diff < 0) {
+        // Moving backward
+        currentSetPointId = data[0]?.orderId || 0;
+      } else {
+        currentSetPointId = 0;
+      }
+
+      const response = await AxiosInstance.get(`Expeditions/GetExpeditionsList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`);
+
+      const total = response.data.recordCount;
+      setTotalCount(total);
+      setCurrentPage(targetPage);
+
+      const newData = response.data.list.map((item) => ({
+        ...item,
+        key: item.siraNo, // Assign key directly from siraNo
+      }));
+
+      if (newData.length > 0) {
+        setData(newData);
+      } else {
+        message.warning("No data found.");
+        setData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      message.error("An error occurred while fetching data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Search handling
+  // Define handleSearch function
+  const handleSearch = () => {
+    fetchData(0, 1);
+  };
+
+  const handleTableChange = (page) => {
+    const diff = page - currentPage;
+    fetchData(diff, page);
+  };
+
+  const onSelectChange = (newSelectedRowKeys) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+
+    // Find selected rows data
+    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
+    setSelectedRows(newSelectedRows);
+  };
+
+  const rowSelection = {
+    type: "checkbox",
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const onRowClick = (record) => {
+    setDrawer({ visible: true, data: record });
+  };
+
+  const refreshTableData = useCallback(() => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    fetchData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Columns definition (adjust as needed)
+  const initialColumns = [
     {
       title: t("plaka"),
       dataIndex: "plaka",
-      key: 1,
-      render: (text, record) => (
-        <Button
-          onClick={() => {
-            setUpdateModal(true);
-            setId(record.siraNo);
-          }}
-        >
-          <span>{text}</span>
-        </Button>
-      ),
+      key: "plaka",
+      width: 120,
+      ellipsis: true,
+      visible: true,
+      render: (text, record) => <a onClick={() => onRowClick(record)}>{text}</a>,
+      sorter: (a, b) => {
+        if (a.plaka === null) return -1;
+        if (b.plaka === null) return 1;
+        return a.plaka.localeCompare(b.plaka);
+      },
     },
     {
       title: t("surucu"),
       dataIndex: "surucuIsim1",
-      key: 2,
+      key: "surucuIsim1",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.surucuIsim1 === null) return -1;
+        if (b.surucuIsim1 === null) return 1;
+        return a.surucuIsim1.localeCompare(b.surucuIsim1);
+      },
     },
     {
       title: t("seferAdedi"),
       dataIndex: "seferAdedi",
-      key: 3,
+      key: "seferAdedi",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.seferAdedi === null) return -1;
+        if (b.seferAdedi === null) return 1;
+        return a.seferAdedi - b.seferAdedi;
+      },
     },
+
     {
       title: t("guzergah"),
       dataIndex: "guzergah",
-      key: 4,
+      key: "guzergah",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.guzergah === null) return -1;
+        if (b.guzergah === null) return 1;
+        return a.guzergah.localeCompare(b.guzergah);
+      },
     },
+
     {
       title: t("cikisTarih"),
       dataIndex: "cikisTarih",
-      key: 5,
-      render: (text) => {
-        if (text === null || text === undefined) {
-          return null;
-        }
-        return dayjs(text).format("DD.MM.YYYY");
+      key: "cikisTarih",
+      width: 110,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.cikisTarih === null) return -1;
+        if (b.cikisTarih === null) return 1;
+        return a.cikisTarih.localeCompare(b.cikisTarih);
       },
+
+      visible: true, // Varsayılan olarak açık
+      render: (text) => formatDate(text),
     },
+
     {
       title: t("cikisSaat"),
       dataIndex: "cikisSaat",
-      key: 6,
-    },
-    {
-      title: t("varisTarih"),
-      dataIndex: "varisTarih",
-      key: 7,
-      render: (text) => {
-        if (text === null || text === undefined) {
-          return null;
-        }
-        return dayjs(text).format("DD.MM.YYYY");
+      key: "cikisSaat",
+      width: 110,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.cikisSaat === null) return -1;
+        if (b.cikisSaat === null) return 1;
+        return a.cikisSaat.localeCompare(b.cikisSaat);
       },
+
+      visible: true, // Varsayılan olarak açık
+      render: (text) => formatTime(text),
     },
+
     {
       title: t("varisSaat"),
       dataIndex: "varisSaat",
-      key: 8,
+      key: "varisSaat",
+      width: 110,
+      ellipsis: true,
+      sorter: (a, b) => {
+        if (a.varisSaat === null) return -1;
+        if (b.varisSaat === null) return 1;
+        return a.varisSaat.localeCompare(b.varisSaat);
+      },
+
+      visible: true, // Varsayılan olarak açık
+      render: (text) => formatTime(text),
     },
+
     {
-      title: "cikisKm",
+      title: t("cikisKm"),
       dataIndex: "cikisKm",
-      key: 9,
-      // render: (text) => dayjs(text).format("DD.MM.YYYY"),
+      key: "cikisKm",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.cikisKm === null) return -1;
+        if (b.cikisKm === null) return 1;
+        return a.cikisKm - b.cikisKm;
+      },
     },
+
     {
       title: t("varisKm"),
       dataIndex: "varisKm",
-      key: 10,
+      key: "varisKm",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.varisKm === null) return -1;
+        if (b.varisKm === null) return 1;
+        return a.varisKm - b.varisKm;
+      },
     },
+
     {
       title: t("farkKm"),
       dataIndex: "farkKm",
-      key: 11,
+      key: "farkKm",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.farkKm === null) return -1;
+        if (b.farkKm === null) return 1;
+        return a.farkKm - b.farkKm;
+      },
     },
+
     {
       title: t("aciklama"),
       dataIndex: "aciklama",
-      key: 12,
+      key: "aciklama",
+      width: 180,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+
+      sorter: (a, b) => {
+        if (a.aciklama === null) return -1;
+        if (b.aciklama === null) return 1;
+        return a.aciklama.localeCompare(b.aciklama);
+      },
     },
-    // {
-    //   title: "",
-    //   dataIndex: "delete",
-    //   key: 11,
-    //   render: (_, record) => (
-    //     <Popconfirm
-    //       title={t("confirmQuiz")}
-    //       cancelText={t("cancel")}
-    //       okText={t("ok")}
-    //       onConfirm={() => handleDelete(record)}
-    //     >
-    //       <DeleteOutlined style={{ color: "#dc3545" }} />
-    //     </Popconfirm>
-    //   ),
-    // },
+
+    // Add other columns as needed
   ];
 
-  const [columns, setColumns] = useState(() =>
-    baseColumns.map((column, i) => ({
-      ...column,
-      key: `${i}`,
-      onHeaderCell: () => ({
-        id: `${i}`,
-      }),
-    }))
-  );
+  // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için
 
-  const defaultCheckedList = columns.map((item) => item.key);
-  const [checkedList, setCheckedList] = useState(defaultCheckedList);
+  // Intl.DateTimeFormat kullanarak tarih formatlama
+  const formatDate = (date) => {
+    if (!date) return "";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setIsInitialLoading(true);
-      const res = await GetExpeditionsListService(search, tableParams.pagination.current, filterData);
-      setLoading(false);
-      setIsInitialLoading(false);
-      setDataSource(res?.data.list);
-      setTableParams((prevTableParams) => ({
-        ...prevTableParams,
-        pagination: {
-          ...prevTableParams.pagination,
-          total: res?.data.recordCount,
-        },
-      }));
-    };
+    // Örnek bir tarih formatla ve ay formatını belirle
+    const sampleDate = new Date(2021, 0, 21); // Ocak ayı için örnek bir tarih
+    const sampleFormatted = new Intl.DateTimeFormat(navigator.language).format(sampleDate);
 
-    fetchData();
-  }, [search, tableParams.pagination.current, status, filterData]);
+    let monthFormat;
+    if (sampleFormatted.includes("January")) {
+      monthFormat = "long"; // Tam ad ("January")
+    } else if (sampleFormatted.includes("Jan")) {
+      monthFormat = "short"; // Üç harfli kısaltma ("Jan")
+    } else {
+      monthFormat = "2-digit"; // Sayısal gösterim ("01")
+    }
 
-  const handleTableChange = (pagination, filters, sorter) => {
-    setLoading(true);
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
+    // Kullanıcı için tarihi formatla
+    const formatter = new Intl.DateTimeFormat(navigator.language, {
+      year: "numeric",
+      month: monthFormat,
+      day: "2-digit",
+    });
+    return formatter.format(new Date(date));
+  };
+
+  const formatTime = (time) => {
+    if (!time || time.trim() === "") return ""; // `trim` metodu ile baştaki ve sondaki boşlukları temizle
+
+    try {
+      // Saati ve dakikayı parçalara ayır, boşlukları temizle
+      const [hours, minutes] = time
+        .trim()
+        .split(":")
+        .map((part) => part.trim());
+
+      // Saat ve dakika değerlerinin geçerliliğini kontrol et
+      const hoursInt = parseInt(hours, 10);
+      const minutesInt = parseInt(minutes, 10);
+      if (isNaN(hoursInt) || isNaN(minutesInt) || hoursInt < 0 || hoursInt > 23 || minutesInt < 0 || minutesInt > 59) {
+        // throw new Error("Invalid time format"); // hata fırlatır ve uygulamanın çalışmasını durdurur
+        console.error("Invalid time format:", time);
+        // return time; // Hatalı formatı olduğu gibi döndür
+        return ""; // Hata durumunda boş bir string döndür
+      }
+
+      // Geçerli tarih ile birlikte bir Date nesnesi oluştur ve sadece saat ve dakika bilgilerini ayarla
+      const date = new Date();
+      date.setHours(hoursInt, minutesInt, 0);
+
+      // Kullanıcının lokal ayarlarına uygun olarak saat ve dakikayı formatla
+      // `hour12` seçeneğini belirtmeyerek Intl.DateTimeFormat'ın kullanıcının yerel ayarlarına göre otomatik seçim yapmasına izin ver
+      const formatter = new Intl.DateTimeFormat(navigator.language, {
+        hour: "numeric",
+        minute: "2-digit",
+        // hour12 seçeneği burada belirtilmiyor; böylece otomatik olarak kullanıcının sistem ayarlarına göre belirleniyor
+      });
+
+      // Formatlanmış saati döndür
+      return formatter.format(date);
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return ""; // Hata durumunda boş bir string döndür
+      // return time; // Hatalı formatı olduğu gibi döndür
+    }
+  };
+
+  // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için sonu
+
+  // Manage columns from localStorage or default
+  const [columns, setColumns] = useState(() => {
+    const savedOrder = localStorage.getItem("columnOrderSeferler");
+    const savedVisibility = localStorage.getItem("columnVisibilitySeferler");
+    const savedWidths = localStorage.getItem("columnWidthsSeferler");
+
+    let order = savedOrder ? JSON.parse(savedOrder) : [];
+    let visibility = savedVisibility ? JSON.parse(savedVisibility) : {};
+    let widths = savedWidths ? JSON.parse(savedWidths) : {};
+
+    initialColumns.forEach((col) => {
+      if (!order.includes(col.key)) {
+        order.push(col.key);
+      }
+      if (visibility[col.key] === undefined) {
+        visibility[col.key] = col.visible;
+      }
+      if (widths[col.key] === undefined) {
+        widths[col.key] = col.width;
+      }
     });
 
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      setDataSource([]);
-    }
+    localStorage.setItem("columnOrderSeferler", JSON.stringify(order));
+    localStorage.setItem("columnVisibilitySeferler", JSON.stringify(visibility));
+    localStorage.setItem("columnWidthsSeferler", JSON.stringify(widths));
+
+    return order.map((key) => {
+      const column = initialColumns.find((col) => col.key === key);
+      return { ...column, visible: visibility[key], width: widths[key] };
+    });
+  });
+
+  // Save columns to localStorage
+  useEffect(() => {
+    localStorage.setItem("columnOrderSeferler", JSON.stringify(columns.map((col) => col.key)));
+    localStorage.setItem(
+      "columnVisibilitySeferler",
+      JSON.stringify(
+        columns.reduce(
+          (acc, col) => ({
+            ...acc,
+            [col.key]: col.visible,
+          }),
+          {}
+        )
+      )
+    );
+    localStorage.setItem(
+      "columnWidthsSeferler",
+      JSON.stringify(
+        columns.reduce(
+          (acc, col) => ({
+            ...acc,
+            [col.key]: col.width,
+          }),
+          {}
+        )
+      )
+    );
+  }, [columns]);
+
+  // Handle column resize
+  const handleResize =
+    (key) =>
+    (_, { size }) => {
+      setColumns((prev) => prev.map((col) => (col.key === key ? { ...col, width: size.width } : col)));
+    };
+
+  const components = {
+    header: {
+      cell: ResizableTitle,
+    },
   };
 
-  const filter = (data) => {
-    setLoading(true);
-    setStatus(true);
-    setFilterData(data);
-  };
-
-  const clear = () => {
-    setLoading(true);
-    setFilterData({});
-  };
-
-  const newColumns = columns.map((col) => ({
+  const mergedColumns = columns.map((col) => ({
     ...col,
-    hidden: !checkedList.includes(col.key),
+    onHeaderCell: (column) => ({
+      width: column.width,
+      onResize: handleResize(column.key),
+    }),
   }));
 
-  const options = columns.map(({ key, title }) => ({
-    label: title,
-    value: key,
-  }));
+  // Filtered columns
+  const filteredColumns = mergedColumns.filter((col) => col.visible);
 
-  const moveCheckbox = (fromIndex, toIndex) => {
-    const updatedColumns = [...columns];
-    const [removed] = updatedColumns.splice(fromIndex, 1);
-    updatedColumns.splice(toIndex, 0, removed);
-
-    setColumns(updatedColumns);
-    setCheckedList(updatedColumns.map((col) => col.key));
-  };
-
-  const content = <Content options={options} checkedList={checkedList} setCheckedList={setCheckedList} moveCheckbox={moveCheckbox} />;
-
-  // Custom loading icon
-  const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
-
-  // get selected rows data
-  if (!localStorage.getItem("selectedRowKeys")) localStorage.setItem("selectedRowKeys", JSON.stringify([]));
-
-  const handleRowSelection = (row, selected) => {
-    if (selected) {
-      if (!keys.includes(row.siraNo)) {
-        setKeys((prevKeys) => [...prevKeys, row.siraNo]);
-        setRows((prevRows) => [...prevRows, row]);
+  // Handle drag and drop
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = columns.findIndex((column) => column.key === active.id);
+      const newIndex = columns.findIndex((column) => column.key === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        setColumns((columns) => arrayMove(columns, oldIndex, newIndex));
+      } else {
+        console.error(`Column with key ${active.id} or ${over.id} does not exist.`);
       }
-    } else {
-      setKeys((prevKeys) => prevKeys.filter((key) => key !== row.siraNo));
-      setRows((prevRows) => prevRows.filter((item) => item.siraNo !== row.siraNo));
     }
   };
 
-  useEffect(() => localStorage.setItem("selectedRowKeys", JSON.stringify(keys)), [keys]);
-
-  useEffect(() => {
-    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
-    if (storedSelectedKeys.length) {
-      setKeys(storedSelectedKeys);
+  // Toggle column visibility
+  const toggleVisibility = (key, checked) => {
+    const index = columns.findIndex((col) => col.key === key);
+    if (index !== -1) {
+      const newColumns = [...columns];
+      newColumns[index].visible = checked;
+      setColumns(newColumns);
+    } else {
+      console.error(`Column with key ${key} does not exist.`);
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    const storedSelectedKeys = JSON.parse(localStorage.getItem("selectedRowKeys"));
-    if (storedSelectedKeys.length) {
-      setSelectedRowKeys(storedSelectedKeys);
-    }
-  }, [tableParams.pagination.current]);
+  // Reset columns
+  const resetColumns = () => {
+    localStorage.removeItem("columnOrderSeferler");
+    localStorage.removeItem("columnVisibilitySeferler");
+    localStorage.removeItem("columnWidthsSeferler");
+    window.location.reload();
+  };
 
   return (
     <>
-      {/* <div className="content">
-        <BreadcrumbComp items={breadcrumb} />
-      </div> */}
+      {/* Modal for managing columns */}
+      <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
+        <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            marginTop: "10px",
+          }}
+        >
+          <Button onClick={resetColumns} style={{ marginBottom: "15px" }}>
+            Sütunları Sıfırla
+          </Button>
+        </div>
 
-      <div className="content">
-        <div className="flex justify-between align-center">
-          <div className="flex align-center gap-1">
-            <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
-              <Button className="btn primary-btn">
-                <MenuOutlined />
-              </Button>
-            </Popover>
-            <Input placeholder={t("arama")} onChange={(e) => setSearch(e.target.value)} />
-            <AddModal setStatus={setStatus} />
-            {/* <Filter filter={filter} clearFilters={clear} /> */}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div
+            style={{
+              width: "46%",
+              border: "1px solid #8080806e",
+              borderRadius: "8px",
+              padding: "10px",
+            }}
+          >
+            <div
+              style={{
+                marginBottom: "20px",
+                borderBottom: "1px solid #80808051",
+                padding: "8px 8px 12px 8px",
+              }}
+            >
+              <Text style={{ fontWeight: 600 }}>Sütunları Göster / Gizle</Text>
+            </div>
+            <div style={{ height: "400px", overflow: "auto" }}>
+              {initialColumns.map((col) => (
+                <div style={{ display: "flex", gap: "10px" }} key={col.key}>
+                  <Checkbox checked={columns.find((column) => column.key === col.key)?.visible || false} onChange={(e) => toggleVisibility(col.key, e.target.checked)} />
+                  {col.title}
+                </div>
+              ))}
+            </div>
           </div>
+
+          <DndContext
+            onDragEnd={handleDragEnd}
+            sensors={useSensors(
+              useSensor(PointerSensor),
+              useSensor(KeyboardSensor, {
+                coordinateGetter: sortableKeyboardCoordinates,
+              })
+            )}
+          >
+            <div
+              style={{
+                width: "46%",
+                border: "1px solid #8080806e",
+                borderRadius: "8px",
+                padding: "10px",
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: "20px",
+                  borderBottom: "1px solid #80808051",
+                  padding: "8px 8px 12px 8px",
+                }}
+              >
+                <Text style={{ fontWeight: 600 }}>Sütunların Sıralamasını Ayarla</Text>
+              </div>
+              <div style={{ height: "400px", overflow: "auto" }}>
+                <SortableContext items={columns.filter((col) => col.visible).map((col) => col.key)} strategy={verticalListSortingStrategy}>
+                  {columns
+                    .filter((col) => col.visible)
+                    .map((col, index) => (
+                      <DraggableRow key={col.key} id={col.key} index={index} text={col.title} />
+                    ))}
+                </SortableContext>
+              </div>
+            </div>
+          </DndContext>
+        </div>
+      </Modal>
+
+      {/* Toolbar */}
+      <div
+        style={{
+          backgroundColor: "white",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          marginBottom: "15px",
+          gap: "10px",
+          padding: "15px",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            alignItems: "center",
+            width: "100%",
+            maxWidth: "935px",
+            flexWrap: "wrap",
+          }}
+        >
+          <StyledButton onClick={() => setIsModalVisible(true)}>
+            <MenuOutlined />
+          </StyledButton>
+          <Input
+            style={{ width: "250px" }}
+            type="text"
+            placeholder="Arama yap..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onPressEnter={handleSearch}
+            // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+            suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
+          />
+          {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
+          {/* Other toolbar components */}
+        </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
+          <AddModal selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
         </div>
       </div>
 
-      <UpdateModal updateModal={updateModal} setUpdateModal={setUpdateModal} setStatus={setStatus} id={id} />
-
-      <div className="content">
-        <DragAndDropContext items={columns} setItems={setColumns}>
-          <Spin spinning={loading || isInitialLoading} indicator={customIcon}>
-            <Table
-              rowKey={(record) => record.siraNo}
-              columns={newColumns}
-              dataSource={dataSource}
-              pagination={{
-                ...tableParams.pagination,
-                showTotal: (total) => (
-                  <p className="text-info">
-                    [{total} {t("kayit")}]
-                  </p>
-                ),
-                locale: {
-                  items_per_page: `/ ${t("sayfa")}`,
-                },
-              }}
-              loading={loading}
-              size="small"
-              onChange={handleTableChange}
-              rowSelection={{
-                selectedRowKeys: selectedRowKeys,
-                onChange: (selectedKeys) => setSelectedRowKeys(selectedKeys),
-                onSelect: handleRowSelection,
-              }}
-              components={{
-                header: {
-                  cell: SortableHeaderCell,
-                },
-              }}
-              locale={{
-                emptyText: "Veri Bulunamadı",
-              }}
-            />
-          </Spin>
-        </DragAndDropContext>
+      {/* Table */}
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "10px",
+          height: "calc(100vh - 200px)",
+          borderRadius: "8px 8px 8px 8px",
+          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+        }}
+      >
+        <Spin spinning={loading}>
+          <Table
+            components={components}
+            rowSelection={rowSelection}
+            columns={filteredColumns}
+            dataSource={data}
+            pagination={{
+              current: currentPage,
+              total: totalCount,
+              pageSize: 10,
+              showSizeChanger: false,
+              showQuickJumper: true,
+              onChange: handleTableChange,
+            }}
+            scroll={{ y: "calc(100vh - 335px)" }}
+          />
+        </Spin>
+        <UpdateModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
       </div>
     </>
   );
 };
 
-export default Sefer;
+export default Yakit;
