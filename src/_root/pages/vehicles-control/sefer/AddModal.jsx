@@ -12,7 +12,7 @@ import { CodeItemValidateService } from "../../../../api/service";
 import PersonalFields from "../../../components/form/personal-fields/PersonalFields";
 import GeneralInfo from "./tabs/GeneralInfo";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const isFirstRender = useRef(true);
   const { data, plaka } = useContext(PlakaContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -178,7 +178,7 @@ const AddModal = ({ setStatus }) => {
     setLoading(true);
     AddExpeditionItemService(body).then((res) => {
       if (res?.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         setIsOpen(false);
         setLoading(false);
         setActiveKey("1");
@@ -192,7 +192,6 @@ const AddModal = ({ setStatus }) => {
         message.error("Bir sorun oluşdu! Tekrar deneyiniz.");
       }
     });
-    setStatus(false);
   });
 
   const personalProps = {
