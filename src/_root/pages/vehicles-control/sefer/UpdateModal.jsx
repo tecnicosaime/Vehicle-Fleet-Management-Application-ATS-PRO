@@ -265,7 +265,6 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, 
 
     uploadFiles();
     uploadImages();
-    onRefresh();
   });
 
   const personalProps = {
