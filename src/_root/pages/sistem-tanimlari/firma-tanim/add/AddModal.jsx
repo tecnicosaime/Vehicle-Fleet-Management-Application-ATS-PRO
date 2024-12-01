@@ -10,7 +10,7 @@ import { AddCompanyItemService } from "../../../../../api/services/sistem-taniml
 import Iletisim from "./Iletisim";
 import { CodeItemValidateService, GetModuleCodeByCode } from "../../../../../api/services/code/services";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [openModal, setopenModal] = useState(false);
   const [isValid, setIsValid] = useState("normal");
   const [activeKey, setActiveKey] = useState("1");
@@ -171,7 +171,7 @@ const AddModal = ({ setStatus }) => {
 
     AddCompanyItemService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
         setIsValid("normal");
@@ -179,7 +179,6 @@ const AddModal = ({ setStatus }) => {
         setLoading(false);
       }
     });
-    setStatus(false);
   });
 
   const personalProps = {
