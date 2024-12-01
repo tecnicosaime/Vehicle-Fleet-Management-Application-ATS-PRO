@@ -14,7 +14,7 @@ import { uploadFile, uploadPhoto } from "../../../../../utils/upload";
 import PhotoUpload from "../../../../components/upload/PhotoUpload";
 import FileUpload from "../../../../components/upload/FileUpload";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const [isValid, setIsValid] = useState("normal");
   const [code, setCode] = useState("normal");
   const [activeKey, setActiveKey] = useState("1");
@@ -127,62 +127,64 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   }, [watch("kod"), code]);
 
   useEffect(() => {
-    GetCompanyByIdService(id).then((res) => {
-      setCode(res?.data.kod);
-      setValue("web", res.data.web);
-      setValue("vno", res.data.vno);
-      setValue("vd", res.data.vd);
-      setValue("unvan", res.data.unvan);
-      setValue("lokasyon", res.data.lokasyon);
-      setValue("lokasyonId", res.data.lokasyonId);
-      setValue("tipTedarikci", res.data.tipTedarikci);
-      setValue("tipSigorta", res.data.tipSigorta);
-      setValue("tipServis", res.data.tipServis);
-      setValue("tipMusteri", res.data.tipMusteri);
-      setValue("tipKiralama", res.data.tipKiralama);
-      setValue("tipDiger", res.data.tipDiger);
-      setValue("tipAkaryakitIst", res.data.tipAkaryakitIst);
-      setValue("terminSure", res.data.terminSure);
-      setValue("tel_2", res.data.tel_2);
-      setValue("tel_1", res.data.tel_1);
-      setValue("sektor", res.data.sektor);
-      setValue("kod", res.data.kod);
-      setValue("indirimOran", res.data.indirimOran);
-      setValue("ilgili_2", res.data.ilgili_2);
-      setValue("ilgili_1", res.data.ilgili_1);
-      setValue("ilce", res.data.ilce);
-      setValue("il", res.data.il);
-      setValue("firmaTipiKodId", res.data.firmaTipiKodId);
-      setValue("firmaTipi", res.data.firmaTipi);
-      setValue("gsm", res.data.gsm);
-      setValue("fax", res.data.fax);
-      setValue("email", res.data.email);
-      setValue("borc", res.data.borc);
-      setValue("bakiye", res.data.bakiye);
-      setValue("alacak", res.data.alacak);
-      setValue("aktif", res.data.aktif);
-      setValue("adres_2", res.data.adres_2);
-      setValue("adres_1", res.data.adres_1);
-      setFirmaId(res.data.firmaId);
-      setValue("ozelAlan1", res?.data.ozelAlan1);
-      setValue("ozelAlan2", res?.data.ozelAlan2);
-      setValue("ozelAlan3", res?.data.ozelAlan3);
-      setValue("ozelAlan4", res?.data.ozelAlan4);
-      setValue("ozelAlan5", res?.data.ozelAlan5);
-      setValue("ozelAlan6", res?.data.ozelAlan6);
-      setValue("ozelAlan7", res?.data.ozelAlan7);
-      setValue("ozelAlan8", res?.data.ozelAlan8);
-      setValue("ozelAlanKodId9", res?.data.ozelAlanKodId9);
-      setValue("ozelAlan9", res?.data.ozelAlan9);
-      setValue("ozelAlan10", res?.data.ozelAlan10);
-      setValue("ozelAlanKodId10", res?.data.ozelAlanKodId10);
-      setValue("ozelAlan11", res?.data.ozelAlan11);
-      setValue("ozelAlan12", res?.data.ozelAlan12);
-    });
+    if (drawerVisible && selectedRow) {
+      GetCompanyByIdService(selectedRow?.key).then((res) => {
+        setCode(res?.data.kod);
+        setValue("web", res.data.web);
+        setValue("vno", res.data.vno);
+        setValue("vd", res.data.vd);
+        setValue("unvan", res.data.unvan);
+        setValue("lokasyon", res.data.lokasyon);
+        setValue("lokasyonId", res.data.lokasyonId);
+        setValue("tipTedarikci", res.data.tipTedarikci);
+        setValue("tipSigorta", res.data.tipSigorta);
+        setValue("tipServis", res.data.tipServis);
+        setValue("tipMusteri", res.data.tipMusteri);
+        setValue("tipKiralama", res.data.tipKiralama);
+        setValue("tipDiger", res.data.tipDiger);
+        setValue("tipAkaryakitIst", res.data.tipAkaryakitIst);
+        setValue("terminSure", res.data.terminSure);
+        setValue("tel_2", res.data.tel_2);
+        setValue("tel_1", res.data.tel_1);
+        setValue("sektor", res.data.sektor);
+        setValue("kod", res.data.kod);
+        setValue("indirimOran", res.data.indirimOran);
+        setValue("ilgili_2", res.data.ilgili_2);
+        setValue("ilgili_1", res.data.ilgili_1);
+        setValue("ilce", res.data.ilce);
+        setValue("il", res.data.il);
+        setValue("firmaTipiKodId", res.data.firmaTipiKodId);
+        setValue("firmaTipi", res.data.firmaTipi);
+        setValue("gsm", res.data.gsm);
+        setValue("fax", res.data.fax);
+        setValue("email", res.data.email);
+        setValue("borc", res.data.borc);
+        setValue("bakiye", res.data.bakiye);
+        setValue("alacak", res.data.alacak);
+        setValue("aktif", res.data.aktif);
+        setValue("adres_2", res.data.adres_2);
+        setValue("adres_1", res.data.adres_1);
+        setFirmaId(res.data.firmaId);
+        setValue("ozelAlan1", res?.data.ozelAlan1);
+        setValue("ozelAlan2", res?.data.ozelAlan2);
+        setValue("ozelAlan3", res?.data.ozelAlan3);
+        setValue("ozelAlan4", res?.data.ozelAlan4);
+        setValue("ozelAlan5", res?.data.ozelAlan5);
+        setValue("ozelAlan6", res?.data.ozelAlan6);
+        setValue("ozelAlan7", res?.data.ozelAlan7);
+        setValue("ozelAlan8", res?.data.ozelAlan8);
+        setValue("ozelAlanKodId9", res?.data.ozelAlanKodId9);
+        setValue("ozelAlan9", res?.data.ozelAlan9);
+        setValue("ozelAlan10", res?.data.ozelAlan10);
+        setValue("ozelAlanKodId10", res?.data.ozelAlanKodId10);
+        setValue("ozelAlan11", res?.data.ozelAlan11);
+        setValue("ozelAlan12", res?.data.ozelAlan12);
+      });
 
-    GetPhotosByRefGroupService(id, "FIRMA").then((res) => setImageUrls(res.data));
-    GetDocumentsByRefGroupService(id, "FIRMA").then((res) => setFilesUrl(res.data));
-  }, [id, updateModal]);
+      GetPhotosByRefGroupService(selectedRow?.key, "FIRMA").then((res) => setImageUrls(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "FIRMA").then((res) => setFilesUrl(res.data));
+    }
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -236,8 +238,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateCompanyItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
         setActiveKey("1");
       }
@@ -245,13 +247,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     uploadImages();
     uploadFiles();
-    setStatus(false);
   });
 
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "FIRMA", images, false);
+      const data = uploadPhoto(selectedRow?.key, "FIRMA", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -263,7 +264,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "FIRMA", files);
+      uploadFile(selectedRow?.key, "FIRMA", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -318,7 +319,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         reset(defaultValues);
         setActiveKey("1");
       }}
@@ -328,7 +329,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("firmaTanimBilgileriniGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("firmaTanimBilgileriniGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
