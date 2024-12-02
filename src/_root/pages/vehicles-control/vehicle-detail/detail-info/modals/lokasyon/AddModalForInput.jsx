@@ -80,7 +80,7 @@ const AddModal = ({ setStatus, isModalOpen, setIsModalOpen, lokasyon, lokasyonId
       saat: dayjs(values.teslimSaat).format("HH:mm:ss") || null,
       aciklama: values.aciklama,
       aracKm: values.km || 0,
-      bulunduguLokasyonId: values.eskiLokasyonId,
+      bulunduguLokasyonId: Number(values.eskiLokasyonId),
       transferEdilenLokasyonId: values.yeniLokasyonID,
 
       // surucuTeslimAlanId: values.surucuTeslimAlanId || -1,
