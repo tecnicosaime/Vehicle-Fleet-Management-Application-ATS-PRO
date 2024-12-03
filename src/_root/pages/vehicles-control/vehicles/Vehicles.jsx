@@ -401,6 +401,9 @@ const Vehicles = () => {
     if (ayarlarData) {
       fetchData();
     }
+    if (status) {
+      setStatus(false);
+    }
   }, [ayarlarData, search, tableParams.pagination.current, tableParams.pagination.pageSize, status, filterData]);
 
   const handleTableChange = (pagination, filters, sorter) => {

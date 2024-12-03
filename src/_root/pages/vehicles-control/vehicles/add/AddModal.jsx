@@ -145,6 +145,7 @@ const AddModal = ({ setStatus }) => {
   }, [watch("plaka")]);
 
   const handleOk = handleSubmit(async (value) => {
+    setLoading(true); // Move this before the request
     const kmLog = value.guncelKm
       ? {
           plaka: value.plaka,
@@ -188,18 +189,27 @@ const AddModal = ({ setStatus }) => {
       ozelAlan12: value.ozelAlan12 || 0,
     };
 
-    AddVehicleService(body).then((res) => {
-      setLoading(true);
-      if (res?.data.statusCode === 201) {
-        setIsModalOpen(false);
-        setStatus(true);
-        reset(defaultValues);
-        setLoading(false);
-        setIsValid("normal");
-        setActiveKey("1");
-      }
-    });
-    setStatus(false);
+    AddVehicleService(body)
+      .then((res) => {
+        if (res?.data.statusCode === 201) {
+          setIsModalOpen(false);
+          setStatus(true);
+          reset(defaultValues);
+          setIsValid("normal");
+          setActiveKey("1");
+        } else {
+          // Handle unexpected status codes
+          setStatus(false);
+        }
+      })
+      .catch((error) => {
+        // Handle errors here
+        setStatus(false);
+        console.error("An error occurred:", error);
+      })
+      .finally(() => {
+        setLoading(false); // Ensure loading is false after request completes
+      });
   });
 
   const personalProps = {
