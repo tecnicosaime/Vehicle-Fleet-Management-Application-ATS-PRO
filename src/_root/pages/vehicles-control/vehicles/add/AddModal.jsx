@@ -10,7 +10,7 @@ import GeneralInfo from "./GeneralInfo";
 import PersonalFields from "../../../../components/form/personal-fields/PersonalFields";
 import { CodeItemValidateService } from "../../../../../api/services/code/services";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isValid, setIsValid] = useState("normal");
   const [activeKey, setActiveKey] = useState("1");
@@ -193,18 +193,16 @@ const AddModal = ({ setStatus }) => {
       .then((res) => {
         if (res?.data.statusCode === 201) {
           setIsModalOpen(false);
-          setStatus(true);
+          onRefresh();
           reset(defaultValues);
           setIsValid("normal");
           setActiveKey("1");
         } else {
           // Handle unexpected status codes
-          setStatus(false);
         }
       })
       .catch((error) => {
         // Handle errors here
-        setStatus(false);
         console.error("An error occurred:", error);
       })
       .finally(() => {
