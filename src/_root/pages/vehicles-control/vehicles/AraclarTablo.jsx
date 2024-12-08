@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip } from "antd";
 import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -153,7 +153,10 @@ const Yakit = ({ ayarlarData }) => {
         currentSetPointId = 0;
       }
 
-      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`, body.filters.customfilters);
+      // Determine what to send for customfilters
+      const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
+
+      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`, customFilters);
 
       const total = response.data.vehicleCount;
       setTotalCount(total);
@@ -179,9 +182,14 @@ const Yakit = ({ ayarlarData }) => {
   };
 
   useEffect(() => {
-    fetchData(0, 1);
+    if (body !== prevBodyRef.current) {
+      fetchData(0, 1);
+      prevBodyRef.current = body;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [body]);
+
+  const prevBodyRef = useRef(body);
 
   // Search handling
   // Define handleSearch function
@@ -977,6 +985,7 @@ const Yakit = ({ ayarlarData }) => {
               showSizeChanger: false,
               showQuickJumper: true,
               onChange: handleTableChange,
+              showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
             }}
             scroll={{ y: "calc(100vh - 335px)" }}
           />
