@@ -110,11 +110,11 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
       key: "15",
       icon: <MdSettingsInputComponent className="text-info" />,
     },
-    {
+    /*  {
       label: t("sil"),
       key: "16",
       icon: <DeleteOutlined className="text-info" />,
-    },
+    }, */
   ];
 
   const menuProps = {
@@ -261,7 +261,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
             selectedRowsData={selectedRowsData}
           />
         );
-      case "16":
+      /*  case "16":
         return (
           <Sil
             key={`Sil-${ids.join("-")}-${Date.now()}`} // Assign a unique key to force remounting
@@ -275,7 +275,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               setSelectedItem(null);
             }}
           />
-        );
+        ); */
       default:
         return null;
     }
