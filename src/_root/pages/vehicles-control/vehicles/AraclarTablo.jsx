@@ -233,11 +233,45 @@ const Yakit = ({ ayarlarData }) => {
       title: t("aracPlaka"),
       dataIndex: "plaka",
       key: "plaka",
-      width: 120,
+      width: 135,
       ellipsis: true,
       visible: true,
+      onCell: () => ({
+        style: {
+          padding: "8px", // set your desired padding
+        },
+      }),
       // render: (text, record) => <a onClick={() => onRowClick(record)}>{text}</a>,
-      render: (text, record) => <Link to={`/detay/${record.aracId}`}>{text}</Link>,
+      render: (text, record) => (
+        <Link
+          style={{
+            border: "1px solid #5B548B",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            borderRadius: "5px 5px 5px 5px",
+            overflow: "hidden",
+          }}
+          to={`/detay/${record.aracId}`}
+        >
+          <div
+            style={{
+              height: "25px",
+              backgroundColor: "#5B548B",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-end",
+              color: "white",
+              padding: "0px 5px 0px 5px",
+              fontSize: "10px",
+            }}
+          >
+            TR
+          </div>
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "black", width: "100%", textAlign: "center" }}>{text}</span>
+        </Link>
+      ),
       sorter: (a, b) => {
         if (a.plaka === null) return -1;
         if (b.plaka === null) return 1;
