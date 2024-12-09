@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import AxiosInstance from "../../../../../../../api/http";
 import { Button, message, Popconfirm } from "antd";
 import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { t } from "i18next";
 
 export default function Sil({ selectedRows, refreshTableData, disabled, hidePopover }) {
   // Sil düğmesini gizlemek için koşullu stil
@@ -20,8 +21,19 @@ export default function Sil({ selectedRows, refreshTableData, disabled, hidePopo
         message.success("İşlem Başarılı.");
       } else if (response.data.statusCode === 401) {
         message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
-      } else if (response.data.statusCode === 409) {
+      } /* else if (response.data.statusCode === 409) {
         message.error("Bu aracın " + response.data.message + " kaydı var");
+      }  */ else if (response.data.statusCode === 409) {
+        const kayitTipleri = {
+          1: t("yakit"),
+          2: t("sefer"),
+          3: t("harcama"),
+          4: t("sigorta"),
+          5: t("kaza"),
+          6: t("ceza"),
+        };
+        const kayitTipi = kayitTipleri[response.data.message] || response.data.message;
+        message.error(`Bu aracın ${kayitTipi} kaydı var`);
       } else {
         message.error("İşlem Başarısız.");
       }
