@@ -258,6 +258,7 @@ const Yakit = ({ ayarlarData }) => {
           <div
             style={{
               height: "25px",
+              minWidth: "23px",
               backgroundColor: "#5B548B",
               display: "flex",
               justifyContent: "center",
