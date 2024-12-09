@@ -27,8 +27,7 @@ function YapayZekayaSor({ selectedRows }) {
   // Mesaj listesini otomatik kaydırmak için ref
   const messageListRef = useRef(null);
 
-  // Google Gemini API Anahtarı (Güvenlik riski taşır!)
-  const GEMINI_API_KEY = "AIzaSyBsTjvQnaDv-xz-XMtldUTCGC6m0dMah2Q"; // Buraya kendi API anahtarınızı ekleyin
+  const GEMINI = "AIzaSyBsTjvQnaDv-xz-XMtldUTCGC6m0dMah2Q";
 
   // Modal açıldığında araç bilgilerini çek ve sohbete başla
   const showModal = async () => {
@@ -71,10 +70,10 @@ function YapayZekayaSor({ selectedRows }) {
 
   // Google Gemini API'ye mesaj gönderme fonksiyonu
   const sendToGemini = async (message) => {
-    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI}`;
 
     try {
-      const response = await fetch(GEMINI_API_URL, {
+      const response = await fetch(GEMINI_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
