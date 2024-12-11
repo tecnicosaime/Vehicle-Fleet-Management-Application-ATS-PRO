@@ -3,6 +3,7 @@ import { Button, Input, Spin, Table, Typography } from "antd";
 import { CheckOutlined, CloseOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../api/http.jsx";
+import RaporModal from "./RaporModal/RaporModal.jsx";
 
 const { Text } = Typography;
 
@@ -143,6 +144,7 @@ function RaporsTables({ tabKey, tabName }) {
           scroll={{ y: "calc(100vh - 380px)" }}
         />
       </Spin>
+      <RaporModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
     </div>
   );
 }
