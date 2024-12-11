@@ -1,9 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Modal, Input, List, Typography, Divider, Spin, message as AntMessage } from "antd";
+import { Button, Modal, Input, List, Typography, Divider, Spin, message as AntMessage, Table } from "antd";
 import AxiosInstance from "../../../../../../../../api/http";
+import { isMarkdownTable } from "./utils/isMarkdownTable";
+import { parseMarkdownTable } from "./utils/parseMarkdownTable";
+import { splitMarkdownTable } from "./utils/splitMarkdownTable";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import "./YapayZekayaSor.css"; // Stil dosyasını unutmayın
 
 const { TextArea } = Input;
-const { Paragraph } = Typography;
+
+// Tabloyu render eden bileşen
+const TableRenderer = ({ markdown }) => {
+  const { columns, data } = parseMarkdownTable(markdown);
+  if (!columns || !data) {
+    return <div>Tablo verisi hatalı.</div>;
+  }
+  return <Table columns={columns} dataSource={data} pagination={false} bordered />;
+};
+
+// Normal metni render eden bileşen
+const TextRenderer = ({ text }) => {
+  return <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>;
+};
 
 function YapayZekayaSor({ selectedRows }) {
   // Modal görünürlüğünü kontrol eden durum
@@ -45,18 +64,10 @@ function YapayZekayaSor({ selectedRows }) {
       });
 
       setVehicleData(response.data);
-
-      // Başlangıç mesajı ekle
-      /*       setMessages([{ sender: "system", text: "Araç bilgileri yüklendi. Sorularınızı sorabilirsiniz." }]); */
-
-      // Araç bilgilerini modele gönder
-      await sendToGemini("Araç bilgileri: " + JSON.stringify(response.data));
     } catch (error) {
       console.error("API Hatası:", error);
       AntMessage.error("Araç bilgileri yüklenirken bir hata oluştu.");
       setIsModalVisible(false);
-    } finally {
-      setInitialLoading(false);
     }
   };
 
@@ -67,6 +78,12 @@ function YapayZekayaSor({ selectedRows }) {
     setUserInput("");
     setVehicleData(null);
   };
+
+  useEffect(() => {
+    if (vehicleData) {
+      sendToGemini("Araç bilgileri: " + JSON.stringify(vehicleData));
+    }
+  }, [vehicleData]);
 
   // Google Gemini API'ye mesaj gönderme fonksiyonu
   const sendToGemini = async (message) => {
@@ -102,6 +119,10 @@ function YapayZekayaSor({ selectedRows }) {
         }),
       });
 
+      if (response) {
+        setInitialLoading(false);
+      }
+
       if (!response.ok) {
         throw new Error(`Google Gemini API Hatası: ${response.statusText}`);
       }
@@ -125,7 +146,7 @@ function YapayZekayaSor({ selectedRows }) {
     setMessages(newMessages);
     setUserInput("");
 
-    // Sadece yanıt beklerken loading aç
+    // Yanıt beklerken loading aç
     setResponseLoading(true);
 
     try {
@@ -146,48 +167,79 @@ function YapayZekayaSor({ selectedRows }) {
     }
   }, [messages]);
 
+  // Mesaj render işlemini güncelleme
+  const renderMessage = (item) => {
+    const isUser = item.sender === "user";
+
+    if (isUser) {
+      return (
+        <List.Item
+          key={item.key || Math.random()} // unique key
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#e6f7ff",
+              padding: "8px 12px",
+              borderRadius: "8px",
+              maxWidth: "80%",
+              wordBreak: "break-word",
+              textAlign: "right",
+            }}
+          >
+            <TextRenderer text={item.text} />
+          </div>
+        </List.Item>
+      );
+    }
+
+    // Bot mesajları için metni parçala
+    const { before, table, after } = splitMarkdownTable(item.text);
+
+    return (
+      <List.Item
+        key={item.key || Math.random()} // unique key
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "#f5f5f5",
+            padding: "8px 12px",
+            borderRadius: "8px",
+            maxWidth: "80%",
+            wordBreak: "break-word",
+            textAlign: "left",
+          }}
+        >
+          {before && <TextRenderer text={before} />}
+          {table && <TableRenderer markdown={table} />}
+          {after && <TextRenderer text={after} />}
+        </div>
+      </List.Item>
+    );
+  };
+
   return (
     <div>
       <div style={{ cursor: "pointer" }} onClick={showModal}>
         Yapay Zekaya Sor
       </div>
 
-      <Modal title="Yapay Zeka ile Sohbet" open={isModalVisible} onCancel={handleCancel} footer={null} width={600}>
+      <Modal title="Yapay Zeka ile Sohbet" open={isModalVisible} onCancel={handleCancel} footer={null} width={1200}>
         {initialLoading ? (
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <Spin />
           </div>
         ) : (
           <>
-            <div ref={messageListRef} style={{ maxHeight: "300px", overflowY: "auto" }}>
-              <List
-                dataSource={messages}
-                renderItem={(item) => {
-                  const isUser = item.sender === "user";
-                  return (
-                    <List.Item
-                      style={{
-                        display: "flex",
-                        justifyContent: isUser ? "flex-end" : "flex-start",
-                      }}
-                    >
-                      <div
-                        style={{
-                          backgroundColor: isUser ? "#e6f7ff" : "#f5f5f5",
-                          padding: "8px 12px",
-                          borderRadius: "8px",
-                          maxWidth: "80%",
-                          wordBreak: "break-word",
-                          textAlign: isUser ? "right" : "left",
-                        }}
-                      >
-                        <Paragraph style={{ margin: 0 }}>{item.text}</Paragraph>
-                      </div>
-                    </List.Item>
-                  );
-                }}
-                locale={{ emptyText: "Sohbete başlayın!" }}
-              />
+            <div ref={messageListRef} style={{ maxHeight: "calc(100vh - 310px)", overflowY: "auto" }}>
+              <List dataSource={messages} renderItem={renderMessage} locale={{ emptyText: "Sohbete başlayın!" }} />
             </div>
             <Divider />
             <TextArea
