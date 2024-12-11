@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Modal, Table, Button, Checkbox, Typography, Input, Space } from "antd";
+import { Modal, Table, Button, Checkbox, Typography, Input, Space, DatePicker } from "antd";
 import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import AxiosInstance from "../../../../../../api/http.jsx";
 import { DndContext, PointerSensor, useSensor, useSensors, KeyboardSensor } from "@dnd-kit/core";
@@ -9,12 +9,12 @@ import { Resizable } from "react-resizable";
 import DraggableRow from "./DraggableRow";
 import * as XLSX from "xlsx";
 import { SiMicrosoftexcel } from "react-icons/si";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
-
   const handleStyle = {
     position: "absolute",
     bottom: 0,
@@ -50,7 +50,7 @@ const ResizableTitle = (props) => {
   );
 };
 
-function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
+function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
   const [originalData, setOriginalData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [initialColumns, setInitialColumns] = useState([]);
@@ -147,24 +147,73 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
 
   const applyAllFilters = (filters) => {
     let filteredData = [...originalData];
+
     Object.keys(filters).forEach((colKey) => {
-      const searchTerm = filters[colKey]?.toLowerCase() || "";
-      filteredData = filteredData.filter((item) => {
-        const cellValue = item[colKey] != null ? item[colKey].toString().toLowerCase() : "";
-        return cellValue.includes(searchTerm);
-      });
+      const filterVal = filters[colKey];
+      if (typeof filterVal === "string") {
+        const searchTerm = filterVal.toLowerCase();
+        filteredData = filteredData.filter((item) => {
+          const cellValue = item[colKey] != null ? item[colKey].toString().toLowerCase() : "";
+          return cellValue.includes(searchTerm);
+        });
+      } else if (typeof filterVal === "object" && filterVal !== null) {
+        const { start, end } = filterVal;
+        if (colKey === "YIL") {
+          const startYear = start ? parseInt(start, 10) : null;
+          const endYear = end ? parseInt(end, 10) : null;
+          filteredData = filteredData.filter((item) => {
+            const cellValue = item[colKey] ? parseInt(item[colKey], 10) : null;
+            if (cellValue == null) return false;
+            if (startYear && cellValue < startYear) return false;
+            if (endYear && cellValue > endYear) return false;
+            return true;
+          });
+        } else if (colKey === "TARIH") {
+          const startDate = start ? new Date(start) : null;
+          const endDate = end ? new Date(end) : null;
+          filteredData = filteredData.filter((item) => {
+            const cellValue = item[colKey] ? new Date(item[colKey]) : null;
+            if (!cellValue) return false;
+            if (startDate && cellValue < startDate) return false;
+            if (endDate && cellValue > endDate) return false;
+            return true;
+          });
+        }
+      }
     });
+
     return filteredData;
   };
 
   const handleSearch = (selectedKeys, dataIndex, closeDropdown, setSelectedKeys) => {
-    const searchTerm = selectedKeys[0] || "";
-    setColumnFilters((prev) => {
-      const newFilters = { ...prev, [dataIndex]: searchTerm };
-      const filtered = applyAllFilters(newFilters);
-      setTableData(filtered);
-      return newFilters;
-    });
+    if (dataIndex === "YIL") {
+      const startYear = selectedKeys[0] || "";
+      const endYear = selectedKeys[1] || "";
+      setColumnFilters((prev) => {
+        const newFilters = { ...prev, [dataIndex]: { start: startYear, end: endYear } };
+        const filtered = applyAllFilters(newFilters);
+        setTableData(filtered);
+        return newFilters;
+      });
+    } else if (dataIndex === "TARIH") {
+      const startDate = selectedKeys[0] || "";
+      const endDate = selectedKeys[1] || "";
+      setColumnFilters((prev) => {
+        const newFilters = { ...prev, [dataIndex]: { start: startDate, end: endDate } };
+        const filtered = applyAllFilters(newFilters);
+        setTableData(filtered);
+        return newFilters;
+      });
+    } else {
+      const searchTerm = selectedKeys[0] || "";
+      setColumnFilters((prev) => {
+        const newFilters = { ...prev, [dataIndex]: searchTerm };
+        const filtered = applyAllFilters(newFilters);
+        setTableData(filtered);
+        return newFilters;
+      });
+    }
+
     closeDropdown && closeDropdown();
   };
 
@@ -181,41 +230,150 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
   };
 
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, closeDropdown, close }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={searchInput}
-          placeholder="Ara"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button type="primary" onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)} icon={<SearchOutlined />} size="small" style={{ width: 90 }}>
-            Ara
-          </Button>
-          <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
-            Sıfırla
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            Kapat
-          </Button>
-        </Space>
-      </div>
-    ),
+    filterDropdown: ({ setSelectedKeys, selectedKeys, closeDropdown, close }) => {
+      if (dataIndex === "YIL") {
+        return (
+          <div style={{ padding: 8 }}>
+            <Space direction="vertical">
+              <DatePicker
+                picker="year"
+                placeholder="Başlangıç Yılı"
+                value={selectedKeys[0] ? dayjs(selectedKeys[0], "YYYY") : null}
+                onChange={(date) => {
+                  const val = date ? date.year().toString() : "";
+                  setSelectedKeys([val, selectedKeys[1] || ""]);
+                }}
+                style={{ width: "100%" }}
+              />
+              <DatePicker
+                picker="year"
+                placeholder="Bitiş Yılı"
+                value={selectedKeys[1] ? dayjs(selectedKeys[1], "YYYY") : null}
+                onChange={(date) => {
+                  const val = date ? date.year().toString() : "";
+                  setSelectedKeys([selectedKeys[0] || "", val]);
+                }}
+                style={{ width: "100%" }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+                  icon={<SearchOutlined />}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  Ara
+                </Button>
+                <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
+                  Sıfırla
+                </Button>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    close();
+                  }}
+                >
+                  Kapat
+                </Button>
+              </Space>
+            </Space>
+          </div>
+        );
+      } else if (dataIndex === "TARIH") {
+        return (
+          <div style={{ padding: 8 }}>
+            <Space direction="vertical">
+              <DatePicker
+                placeholder="Başlangıç Tarihi"
+                value={selectedKeys[0] ? dayjs(selectedKeys[0]) : null}
+                onChange={(date) => {
+                  const val = date ? date.toISOString() : "";
+                  setSelectedKeys([val, selectedKeys[1] || ""]);
+                }}
+                style={{ width: "100%" }}
+              />
+              <DatePicker
+                placeholder="Bitiş Tarihi"
+                value={selectedKeys[1] ? dayjs(selectedKeys[1]) : null}
+                onChange={(date) => {
+                  const val = date ? date.toISOString() : "";
+                  setSelectedKeys([selectedKeys[0] || "", val]);
+                }}
+                style={{ width: "100%" }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+                  icon={<SearchOutlined />}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  Ara
+                </Button>
+                <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
+                  Sıfırla
+                </Button>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    close();
+                  }}
+                >
+                  Kapat
+                </Button>
+              </Space>
+            </Space>
+          </div>
+        );
+      } else {
+        return (
+          <div style={{ padding: 8 }}>
+            <Input
+              ref={searchInput}
+              placeholder="Ara"
+              value={selectedKeys[0]}
+              onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+              style={{ marginBottom: 8, display: "block" }}
+            />
+            <Space>
+              <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+                icon={<SearchOutlined />}
+                size="small"
+                style={{ width: 90 }}
+              >
+                Ara
+              </Button>
+              <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
+                Sıfırla
+              </Button>
+              <Button
+                type="link"
+                size="small"
+                onClick={() => {
+                  close();
+                }}
+              >
+                Kapat
+              </Button>
+            </Space>
+          </div>
+        );
+      }
+    },
     filterIcon: () => {
-      const filtered = columnFilters[dataIndex] && columnFilters[dataIndex] !== "";
-      return <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />;
+      const val = columnFilters[dataIndex];
+      const isFiltered = (typeof val === "string" && val !== "") || (typeof val === "object" && val !== null);
+      return <SearchOutlined style={{ color: isFiltered ? "#1890ff" : undefined }} />;
     },
     onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
+      if (visible && dataIndex !== "YIL" && dataIndex !== "TARIH") {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
@@ -327,15 +485,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
             </div>
           </div>
 
-          <DndContext
-            onDragEnd={handleDragEnd}
-            sensors={useSensors(
-              useSensor(PointerSensor),
-              useSensor(KeyboardSensor, {
-                coordinateGetter: sortableKeyboardCoordinates,
-              })
-            )}
-          >
+          <DndContext onDragEnd={handleDragEnd} sensors={useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }))}>
             <div
               style={{
                 width: "46%",
