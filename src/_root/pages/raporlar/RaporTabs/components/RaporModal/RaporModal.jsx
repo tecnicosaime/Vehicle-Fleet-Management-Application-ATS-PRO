@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
+// ResizableTitle bileşeni
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
   const handleStyle = {
@@ -76,7 +77,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
               title: headerObj[key],
               dataIndex: key,
               key: key,
-              visible: key === "ID" ? false : true,
+              visible: key === "ID" ? false : true, // "ID" kolonunu gizliyoruz
               width: 150,
             }));
 
@@ -90,9 +91,10 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
           console.error("Error fetching detail:", error);
         })
         .finally(() => {
-          setLoading(false);
+          setLoading(false); // Veri yüklendi veya hata alındı, spin durdur
         });
     } else {
+      // Modal kapanınca resetle
       setTableData([]);
       setOriginalData([]);
       setInitialColumns([]);
@@ -145,6 +147,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
       });
     };
 
+  // Tüm filtreleri uygula
   const applyAllFilters = (filters) => {
     let filteredData = [...originalData];
 
@@ -185,6 +188,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     return filteredData;
   };
 
+  // Arama
   const handleSearch = (selectedKeys, dataIndex, closeDropdown, setSelectedKeys) => {
     if (dataIndex === "YIL") {
       const startYear = selectedKeys[0] || "";
@@ -217,8 +221,9 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     closeDropdown && closeDropdown();
   };
 
+  // Sıfırlama
   const handleReset = (dataIndex, closeDropdown, setSelectedKeys) => {
-    setSelectedKeys([]);
+    setSelectedKeys([]); // inputu temizle
     setColumnFilters((prev) => {
       const newFilters = { ...prev };
       delete newFilters[dataIndex];
@@ -397,12 +402,20 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     },
   };
 
+  // XLSX İndirme Fonksiyonu
   const handleExportXLSX = () => {
+    // Visible kolon başlıklarını al
     const headers = visibleColumns.map((col) => col.title);
+    // Veri satırlarını oluştur (sadece visible kolonların dataIndex'lerini kullan)
     const dataRows = tableData.map((row) => visibleColumns.map((col) => row[col.dataIndex]));
+
     const sheetData = [headers, ...dataRows];
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    ws["!cols"] = visibleColumns.map((col) => ({ wpx: col.width || 100 }));
+
+    // Sütun genişliklerini ayarla
+    // Her visibleColumn için wpx: col.width değeri belirliyoruz
+    ws["!cols"] = visibleColumns.map((col) => ({ wpx: col.width || 100 })); // width tanımlı değilse varsayılan 100 px verelim
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "tablo_export.xlsx");
