@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Modal, Table, Button, Checkbox, Typography } from "antd";
-import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { Modal, Table, Button, Checkbox, Typography, Input, Space } from "antd";
+import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import AxiosInstance from "../../../../../../api/http.jsx";
 import { DndContext, PointerSensor, useSensor, useSensors, KeyboardSensor } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -12,7 +12,6 @@ import { SiMicrosoftexcel } from "react-icons/si";
 
 const { Text } = Typography;
 
-// ResizableTitle bileşeni
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
 
@@ -43,10 +42,8 @@ const ResizableTitle = (props) => {
           style={handleStyle}
         />
       }
+      draggableOpts={{ enableUserSelectHack: false }}
       onResize={onResize}
-      draggableOpts={{
-        enableUserSelectHack: false,
-      }}
     >
       <th {...restProps} />
     </Resizable>
@@ -54,11 +51,15 @@ const ResizableTitle = (props) => {
 };
 
 function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
+  const [originalData, setOriginalData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [initialColumns, setInitialColumns] = useState([]);
   const [columns, setColumns] = useState([]);
   const [manageColumnsVisible, setManageColumnsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [columnFilters, setColumnFilters] = useState({});
+
+  const searchInput = useRef(null);
 
   useEffect(() => {
     if (drawerVisible && selectedRow) {
@@ -75,26 +76,28 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
               title: headerObj[key],
               dataIndex: key,
               key: key,
-              visible: true,
+              visible: key === "ID" ? false : true,
               width: 150,
             }));
 
             setInitialColumns(cols);
             setColumns(cols);
             setTableData(list);
+            setOriginalData(list);
           }
         })
         .catch((error) => {
           console.error("Error fetching detail:", error);
         })
         .finally(() => {
-          setLoading(false); // Veri yüklendi veya hata alındı, spin durdur
+          setLoading(false);
         });
     } else {
-      // Modal kapanınca resetle
       setTableData([]);
+      setOriginalData([]);
       setInitialColumns([]);
       setColumns([]);
+      setColumnFilters({});
     }
   }, [drawerVisible, selectedRow]);
 
@@ -128,15 +131,107 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
     onDrawerClose();
   };
 
+  // handleResize fonksiyonunu index yerine key bazlı yapıyoruz
   const handleResize =
-    (index) =>
+    (key) =>
     (e, { size }) => {
       setColumns((prevColumns) => {
         const newColumns = [...prevColumns];
-        newColumns[index] = { ...newColumns[index], width: size.width };
+        const colIndex = newColumns.findIndex((c) => c.key === key);
+        if (colIndex > -1) {
+          newColumns[colIndex] = { ...newColumns[colIndex], width: size.width };
+        }
         return newColumns;
       });
     };
+
+  const applyAllFilters = (filters) => {
+    let filteredData = [...originalData];
+    Object.keys(filters).forEach((colKey) => {
+      const searchTerm = filters[colKey]?.toLowerCase() || "";
+      filteredData = filteredData.filter((item) => {
+        const cellValue = item[colKey] != null ? item[colKey].toString().toLowerCase() : "";
+        return cellValue.includes(searchTerm);
+      });
+    });
+    return filteredData;
+  };
+
+  const handleSearch = (selectedKeys, dataIndex, closeDropdown, setSelectedKeys) => {
+    const searchTerm = selectedKeys[0] || "";
+    setColumnFilters((prev) => {
+      const newFilters = { ...prev, [dataIndex]: searchTerm };
+      const filtered = applyAllFilters(newFilters);
+      setTableData(filtered);
+      return newFilters;
+    });
+    closeDropdown && closeDropdown();
+  };
+
+  const handleReset = (dataIndex, closeDropdown, setSelectedKeys) => {
+    setSelectedKeys([]);
+    setColumnFilters((prev) => {
+      const newFilters = { ...prev };
+      delete newFilters[dataIndex];
+      const filtered = applyAllFilters(newFilters);
+      setTableData(filtered);
+      return newFilters;
+    });
+    closeDropdown && closeDropdown();
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, closeDropdown, close }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder="Ara"
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button type="primary" onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)} icon={<SearchOutlined />} size="small" style={{ width: 90 }}>
+            Ara
+          </Button>
+          <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
+            Sıfırla
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            Kapat
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: () => {
+      const filtered = columnFilters[dataIndex] && columnFilters[dataIndex] !== "";
+      return <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />;
+    },
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+  });
+
+  const resizableColumns = visibleColumns.map((col) => {
+    const searchProps = getColumnSearchProps(col.dataIndex);
+    return {
+      ...col,
+      ...searchProps,
+      onHeaderCell: (column) => ({
+        width: column.width,
+        onResize: handleResize(column.key),
+      }),
+    };
+  });
 
   const components = {
     header: {
@@ -144,30 +239,12 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
     },
   };
 
-  const resizableColumns = visibleColumns.map((col, index) => ({
-    ...col,
-    onHeaderCell: (column) => ({
-      width: column.width,
-      onResize: handleResize(index),
-    }),
-  }));
-
-  // XLSX İndirme Fonksiyonu
   const handleExportXLSX = () => {
-    // Visible kolon başlıklarını al
     const headers = visibleColumns.map((col) => col.title);
-    // Veri satırlarını oluştur (sadece visible kolonların dataIndex'lerini kullan)
     const dataRows = tableData.map((row) => visibleColumns.map((col) => row[col.dataIndex]));
-
     const sheetData = [headers, ...dataRows];
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
-
-    // Sütun genişliklerini ayarla
-    // Her visibleColumn için wpx: col.width değeri belirliyoruz
-    ws["!cols"] = visibleColumns.map((col) => {
-      return { wpx: col.width || 100 }; // width tanımlı değilse varsayılan 100 px verelim
-    });
-
+    ws["!cols"] = visibleColumns.map((col) => ({ wpx: col.width || 100 }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, "tablo_export.xlsx");
@@ -175,7 +252,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
 
   return (
     <>
-      <Modal title={selectedRow?.rprTanim} open={drawerVisible} onCancel={handleRecordModalClose} footer={null} width={800}>
+      <Modal title={selectedRow?.rprTanim} open={drawerVisible} onCancel={handleRecordModalClose} footer={null} width={1200}>
         <div style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
           <Button style={{ padding: "0px", width: "32px", height: "32px" }} onClick={() => setManageColumnsVisible(true)}>
             <MenuOutlined />
@@ -201,18 +278,12 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible, onRefresh }) {
 
       <Modal title="Sütunları Yönet" centered width={800} open={manageColumnsVisible} onOk={() => setManageColumnsVisible(false)} onCancel={() => setManageColumnsVisible(false)}>
         <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle, Sıralamalarını ve Genişliklerini Ayarlayabilirsiniz.</Text>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-            marginTop: "10px",
-          }}
-        >
+        <div style={{ display: "flex", width: "100%", justifyContent: "center", marginTop: "10px" }}>
           <Button
             onClick={() => {
-              // Sütunları varsayılan haline döndür
               setColumns(initialColumns);
+              setColumnFilters({});
+              setTableData(originalData);
             }}
             style={{ marginBottom: "15px" }}
           >
