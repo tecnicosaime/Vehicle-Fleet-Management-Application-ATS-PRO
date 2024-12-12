@@ -344,7 +344,7 @@ export default function RaporTabs({ refreshKey, disabled, fieldRequirements }) {
         style={{
           backgroundColor: "white",
           padding: "10px",
-          height: "calc(100vh - 210px)",
+          height: "calc(100vh - 115px)",
           borderRadius: "8px 8px 8px 8px",
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
