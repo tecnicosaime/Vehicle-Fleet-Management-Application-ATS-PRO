@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Input, Spin, Table, Typography } from "antd";
-import { CheckOutlined, CloseOutlined, SearchOutlined, ToolOutlined } from "@ant-design/icons";
+import { Input, Spin, Typography, Card, Pagination } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { useFormContext } from "react-hook-form";
 import AxiosInstance from "../../../../../api/http.jsx";
 import RaporModal from "./RaporModal/RaporModal.jsx";
@@ -10,39 +10,38 @@ const { Text } = Typography;
 function RaporsTables({ tabKey, tabName }) {
   const { setValue } = useFormContext();
   const [data, setData] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
-  const [selectedRows, setSelectedRows] = useState([]);
-
-  // edit drawer için
+  // Drawer state for detail view
   const [drawer, setDrawer] = useState({
     visible: false,
     data: null,
   });
-  // edit drawer için son
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1); // Current active page
+  const [pageSize, setPageSize] = useState(10); // Number of cards per page
 
   useEffect(() => {
     fetchEquipmentData();
-  }, []);
+  }, [tabKey]);
 
   const fetchEquipmentData = async () => {
     try {
       setLoading(true);
       const response = await AxiosInstance.get(`Report/GetReportListByGroupId?id=${tabKey}`);
-      if (response) {
-        const formattedData = response.data.map((item) => {
-          return {
-            ...item,
-            key: item.tbRaporId,
-          };
-        });
-        setData(formattedData); // Directly set the data
+      if (response && response.data) {
+        const formattedData = response.data.map((item) => ({
+          ...item,
+          key: item.tbRaporId,
+        }));
+        setData(formattedData);
         setLoading(false);
       } else {
         console.error("API response is not in expected format");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error in API request:", error);
@@ -60,53 +59,31 @@ function RaporsTables({ tabKey, tabName }) {
   useEffect(() => {
     const filtered = data.filter((item) => normalizeString(item.rprTanim).includes(normalizeString(searchTerm)));
     setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page on search
   }, [searchTerm, data]);
-
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-    if (newSelectedRowKeys.length > 0) {
-      setValue("selectedLokasyonId", newSelectedRowKeys[0]);
-    } else {
-      setValue("selectedLokasyonId", null);
-    }
-
-    // Seçilen satırların verisini bul
-    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
-    setSelectedRows(newSelectedRows); // Seçilen satırların verilerini state'e ata
-  };
-
-  const rowSelection = {
-    type: "checkbox",
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
 
   const refreshTableData = useCallback(() => {
     fetchEquipmentData();
-  }, []);
+  }, [tabKey]);
 
-  const columns = [
-    {
-      title: "",
-      dataIndex: "rprTanim",
-      key: "rprTanim",
-      width: 150,
-      ellipsis: true,
-      render: (text, record) => <a onClick={() => setDrawer({ visible: true, data: record })}>{text}</a>,
-    },
-    // {
-    //   title: "Özel Alan 10",
-    //   dataIndex: "PBK_OZEL_ALAN_10",
-    //   key: "PBK_OZEL_ALAN_10",
-    //   width: 150,
-    //   ellipsis: true,
-    // },
-    // Other columns...
-  ];
+  // Determine which data to display based on search
+  const displayData = searchTerm ? filteredData : data;
+
+  // Calculate the data to display on the current page
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentPageData = displayData.slice(startIndex, endIndex);
+
+  // Handler for page change
+  const handlePageChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+    // Optionally, you can fetch new data here if you're implementing server-side pagination
+  };
 
   return (
     <div>
-      {/* Search input and create drawer */}
+      {/* Search input and header */}
       <div
         style={{
           display: "flex",
@@ -126,24 +103,68 @@ function RaporsTables({ tabKey, tabName }) {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+          allowClear
         />
       </div>
+
       <Spin spinning={loading}>
-        <Table
-          // rowSelection={rowSelection}
-          columns={columns}
-          dataSource={searchTerm ? filteredData : data}
-          pagination={{
-            defaultPageSize: 10,
-            showSizeChanger: true,
-            pageSizeOptions: ["10", "20", "50", "100"],
-            position: ["bottomRight"],
-            showTotal: (total, range) => `Toplam ${total}`,
-            showQuickJumper: true,
+        {/* Card Grid Container */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "16px",
+            maxHeight: "calc(100vh - 250px)", // Adjust as needed
+            overflowY: "auto",
+            padding: "10px",
+            border: "1px solid #f0f0f0",
+            borderRadius: "8px",
+            backgroundColor: "#fafafa",
           }}
-          scroll={{ y: "calc(100vh - 380px)" }}
-        />
+        >
+          {currentPageData.length > 0 ? (
+            currentPageData.map((record) => (
+              <Card
+                key={record.key}
+                hoverable
+                style={{ width: 340, height: 150 }}
+                onClick={() => setDrawer({ visible: true, data: record })}
+                styles={{ body: { padding: "16px", display: "flex", flexDirection: "column" } }} // Updated prop
+              >
+                <Text strong ellipsis>
+                  {record.rprTanim}
+                </Text>
+                <div style={{ height: "100px", overflow: "scroll" }}>
+                  <Text type="secondary">{record.rprAciklama}</Text>
+                </div>
+
+                {/* Add more fields as needed */}
+                {/* Example:
+                <p>{record.PBK_OZEL_ALAN_10}</p>
+                */}
+              </Card>
+            ))
+          ) : (
+            <Text type="secondary">No data found.</Text>
+          )}
+        </div>
       </Spin>
+
+      {/* Pagination Component */}
+      <div style={{ display: "flex", marginTop: "20px", textAlign: "right", justifyContent: "flex-end" }}>
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={displayData.length}
+          onChange={handlePageChange}
+          onShowSizeChange={handlePageChange}
+          showSizeChanger
+          pageSizeOptions={["5", "10", "20", "50"]}
+          showTotal={(total, range) => `Toplam ${total} kayıt`}
+        />
+      </div>
+
+      {/* Detail Modal */}
       <RaporModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
     </div>
   );

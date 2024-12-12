@@ -10,10 +10,13 @@ import DraggableRow from "./DraggableRow";
 import * as XLSX from "xlsx";
 import { SiMicrosoftexcel } from "react-icons/si";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat); // Enable custom date formats
 
 const { Text } = Typography;
 
-// ResizableTitle bileşeni
+// ResizableTitle component
 const ResizableTitle = (props) => {
   const { onResize, width, ...restProps } = props;
   const handleStyle = {
@@ -77,8 +80,10 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
               title: headerObj[key],
               dataIndex: key,
               key: key,
-              visible: key === "ID" ? false : true, // "ID" kolonunu gizliyoruz
+              visible: key === "ID" ? false : true, // Hide "ID" column
               width: 150,
+              ellipsis: true,
+              isDate: key.includes("TARIH"), // Custom property to identify date columns
             }));
 
             setInitialColumns(cols);
@@ -91,10 +96,10 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
           console.error("Error fetching detail:", error);
         })
         .finally(() => {
-          setLoading(false); // Veri yüklendi veya hata alındı, spin durdur
+          setLoading(false); // Stop spinner after data is loaded or error occurs
         });
     } else {
-      // Modal kapanınca resetle
+      // Reset when modal is closed
       setTableData([]);
       setOriginalData([]);
       setInitialColumns([]);
@@ -133,7 +138,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     onDrawerClose();
   };
 
-  // handleResize fonksiyonunu index yerine key bazlı yapıyoruz
+  // Handle resize by key instead of index
   const handleResize =
     (key) =>
     (e, { size }) => {
@@ -147,12 +152,16 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
       });
     };
 
-  // Tüm filtreleri uygula
+  // Apply all filters
   const applyAllFilters = (filters) => {
     let filteredData = [...originalData];
 
     Object.keys(filters).forEach((colKey) => {
       const filterVal = filters[colKey];
+      const column = columns.find((col) => col.key === colKey);
+
+      if (!column) return;
+
       if (typeof filterVal === "string") {
         const searchTerm = filterVal.toLowerCase();
         filteredData = filteredData.filter((item) => {
@@ -161,6 +170,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
         });
       } else if (typeof filterVal === "object" && filterVal !== null) {
         const { start, end } = filterVal;
+
         if (colKey === "YIL") {
           const startYear = start ? parseInt(start, 10) : null;
           const endYear = end ? parseInt(end, 10) : null;
@@ -171,14 +181,20 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             if (endYear && cellValue > endYear) return false;
             return true;
           });
-        } else if (colKey === "TARIH") {
-          const startDate = start ? new Date(start) : null;
-          const endDate = end ? new Date(end) : null;
+        } else if (column.isDate) {
+          // Use the custom isDate property
+          const startDate = start ? dayjs(start, "DD.MM.YYYY", true) : null;
+          const endDate = end ? dayjs(end, "DD.MM.YYYY", true) : null;
+
           filteredData = filteredData.filter((item) => {
-            const cellValue = item[colKey] ? new Date(item[colKey]) : null;
-            if (!cellValue) return false;
-            if (startDate && cellValue < startDate) return false;
-            if (endDate && cellValue > endDate) return false;
+            const dateStr = item[colKey];
+            if (!dateStr) return false; // Exclude if date is null
+
+            const cellValue = dayjs(dateStr, "DD.MM.YYYY", true);
+            if (!cellValue.isValid()) return false; // Exclude if date is invalid
+
+            if (startDate && cellValue.isBefore(startDate, "day")) return false;
+            if (endDate && cellValue.isAfter(endDate, "day")) return false;
             return true;
           });
         }
@@ -188,7 +204,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     return filteredData;
   };
 
-  // Arama
+  // Handle Search
   const handleSearch = (selectedKeys, dataIndex, closeDropdown, setSelectedKeys) => {
     if (dataIndex === "YIL") {
       const startYear = selectedKeys[0] || "";
@@ -199,7 +215,8 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
         setTableData(filtered);
         return newFilters;
       });
-    } else if (dataIndex === "TARIH") {
+    } else if (columns.find((col) => col.key === dataIndex)?.isDate) {
+      // Use isDate property
       const startDate = selectedKeys[0] || "";
       const endDate = selectedKeys[1] || "";
       setColumnFilters((prev) => {
@@ -221,9 +238,9 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     closeDropdown && closeDropdown();
   };
 
-  // Sıfırlama
+  // Handle Reset
   const handleReset = (dataIndex, closeDropdown, setSelectedKeys) => {
-    setSelectedKeys([]); // inputu temizle
+    setSelectedKeys([]); // Clear input
     setColumnFilters((prev) => {
       const newFilters = { ...prev };
       delete newFilters[dataIndex];
@@ -236,6 +253,10 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
 
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, closeDropdown, close }) => {
+      const column = columns.find((col) => col.key === dataIndex);
+
+      if (!column) return null;
+
       if (dataIndex === "YIL") {
         return (
           <div style={{ padding: 8 }}>
@@ -243,7 +264,8 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
               <DatePicker
                 picker="year"
                 placeholder="Başlangıç Yılı"
-                value={selectedKeys[0] ? dayjs(selectedKeys[0], "YYYY") : null}
+                format="YYYY"
+                value={selectedKeys[0] ? dayjs(selectedKeys[0], "YYYY", true) : null}
                 onChange={(date) => {
                   const val = date ? date.year().toString() : "";
                   setSelectedKeys([val, selectedKeys[1] || ""]);
@@ -253,7 +275,8 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
               <DatePicker
                 picker="year"
                 placeholder="Bitiş Yılı"
-                value={selectedKeys[1] ? dayjs(selectedKeys[1], "YYYY") : null}
+                format="YYYY"
+                value={selectedKeys[1] ? dayjs(selectedKeys[1], "YYYY", true) : null}
                 onChange={(date) => {
                   const val = date ? date.year().toString() : "";
                   setSelectedKeys([selectedKeys[0] || "", val]);
@@ -286,24 +309,27 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             </Space>
           </div>
         );
-      } else if (dataIndex === "TARIH") {
+      } else if (column.isDate) {
+        // Handle all date columns
         return (
           <div style={{ padding: 8 }}>
             <Space direction="vertical">
               <DatePicker
                 placeholder="Başlangıç Tarihi"
-                value={selectedKeys[0] ? dayjs(selectedKeys[0]) : null}
+                format="DD.MM.YYYY"
+                value={selectedKeys[0] ? dayjs(selectedKeys[0], "DD.MM.YYYY", true) : null}
                 onChange={(date) => {
-                  const val = date ? date.toISOString() : "";
+                  const val = date ? date.format("DD.MM.YYYY") : "";
                   setSelectedKeys([val, selectedKeys[1] || ""]);
                 }}
                 style={{ width: "100%" }}
               />
               <DatePicker
                 placeholder="Bitiş Tarihi"
-                value={selectedKeys[1] ? dayjs(selectedKeys[1]) : null}
+                format="DD.MM.YYYY"
+                value={selectedKeys[1] ? dayjs(selectedKeys[1], "DD.MM.YYYY", true) : null}
                 onChange={(date) => {
-                  const val = date ? date.toISOString() : "";
+                  const val = date ? date.format("DD.MM.YYYY") : "";
                   setSelectedKeys([selectedKeys[0] || "", val]);
                 }}
                 style={{ width: "100%" }}
@@ -378,7 +404,9 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
       return <SearchOutlined style={{ color: isFiltered ? "#1890ff" : undefined }} />;
     },
     onFilterDropdownOpenChange: (visible) => {
-      if (visible && dataIndex !== "YIL" && dataIndex !== "TARIH") {
+      const column = columns.find((col) => col.key === dataIndex);
+      if (visible && !column?.isDate && dataIndex !== "YIL") {
+        // Exclude date columns and "YIL" from auto-select
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
@@ -402,19 +430,18 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     },
   };
 
-  // XLSX İndirme Fonksiyonu
+  // XLSX Download Function
   const handleExportXLSX = () => {
-    // Visible kolon başlıklarını al
+    // Get visible column headers
     const headers = visibleColumns.map((col) => col.title);
-    // Veri satırlarını oluştur (sadece visible kolonların dataIndex'lerini kullan)
+    // Create data rows (only use dataIndex of visible columns)
     const dataRows = tableData.map((row) => visibleColumns.map((col) => row[col.dataIndex]));
 
     const sheetData = [headers, ...dataRows];
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
 
-    // Sütun genişliklerini ayarla
-    // Her visibleColumn için wpx: col.width değeri belirliyoruz
-    ws["!cols"] = visibleColumns.map((col) => ({ wpx: col.width || 100 })); // width tanımlı değilse varsayılan 100 px verelim
+    // Set column widths
+    ws["!cols"] = visibleColumns.map((col) => ({ wpx: col.width || 100 })); // Default to 100px if width not defined
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -444,6 +471,9 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             defaultPageSize: 10,
           }}
           scroll={{ y: "calc(100vh - 335px)" }}
+          locale={{
+            emptyText: loading ? "Yükleniyor..." : "Eşleşen veri bulunamadı.",
+          }}
         />
       </Modal>
 
