@@ -135,7 +135,9 @@ function RaporsTables({ tabKey, tabName }) {
                   {record.rprTanim}
                 </Text>
                 <div style={{ height: "100px", overflow: "scroll" }}>
-                  <Text type="secondary">{record.rprAciklama}</Text>
+                  <Text type="secondary" style={{ fontSize: "13px" }}>
+                    {record.rprAciklama}
+                  </Text>
                 </div>
 
                 {/* Add more fields as needed */}
