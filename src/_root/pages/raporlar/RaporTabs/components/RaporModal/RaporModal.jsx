@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Modal, Table, Button, Checkbox, Typography, Input, Space, DatePicker } from "antd";
+import { Modal, Table, Button, Checkbox, Typography, Input, Space, DatePicker, InputNumber, TimePicker } from "antd";
 import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import AxiosInstance from "../../../../../../api/http.jsx";
 import { DndContext, PointerSensor, useSensor, useSensors, KeyboardSensor } from "@dnd-kit/core";
@@ -47,19 +47,21 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
         .then((response) => {
           const { headers, list } = response.data;
           if (headers && headers.length > 0) {
-            const headerObj = headers[0];
-            const cols = Object.keys(headerObj).map((key) => {
+            const cols = headers.map((header) => {
               // Calculate width based on header length
-              const headerLength = headerObj[key].length;
+              const headerLength = header.title.length;
               const width = Math.max(headerLength * 10, 150); // Adjust multiplier and default as needed
 
               return {
-                title: headerObj[key],
-                dataIndex: key,
-                key: key,
-                visible: key === "ID" ? false : true, // Hide "ID" column
+                title: header.title,
+                dataIndex: header.dataIndex,
+                key: header.dataIndex,
+                visible: header.visible,
                 width: width, // Set width based on header length
-                isDate: key.includes("TARIH"), // Custom property to identify date columns
+                isDate: header.isDate,
+                isYear: header.isYear,
+                isHour: header.isHour,
+                isNumber: header.isNumber,
               };
             });
 
@@ -145,7 +147,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
       } else if (typeof filterVal === "object" && filterVal !== null) {
         const { start, end } = filterVal;
 
-        if (colKey === "YIL") {
+        if (column.isYear) {
           const startYear = start ? parseInt(start, 10) : null;
           const endYear = end ? parseInt(end, 10) : null;
           filteredData = filteredData.filter((item) => {
@@ -156,7 +158,6 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             return true;
           });
         } else if (column.isDate) {
-          // Use the custom isDate property
           const startDate = start ? dayjs(start, "DD.MM.YYYY", true) : null;
           const endDate = end ? dayjs(end, "DD.MM.YYYY", true) : null;
 
@@ -171,7 +172,34 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             if (endDate && cellValue.isAfter(endDate, "day")) return false;
             return true;
           });
+        } else if (column.isNumber) {
+          const minValue = start !== undefined && start !== "" ? parseFloat(start) : null;
+          const maxValue = end !== undefined && end !== "" ? parseFloat(end) : null;
+          filteredData = filteredData.filter((item) => {
+            const cellValue = item[colKey] !== null && item[colKey] !== undefined ? parseFloat(item[colKey]) : null;
+            if (cellValue == null) return false;
+            if (minValue !== null && cellValue < minValue) return false;
+            if (maxValue !== null && cellValue > maxValue) return false;
+            return true;
+          });
+        } else if (column.isHour) {
+          const format = "HH:mm";
+          const startTime = start ? dayjs(start, format) : null;
+          const endTime = end ? dayjs(end, format) : null;
+
+          filteredData = filteredData.filter((item) => {
+            const timeStr = item[colKey];
+            if (!timeStr) return false; // Exclude if time is null
+
+            const cellValue = dayjs(timeStr, format, true);
+            if (!cellValue.isValid()) return false; // Exclude if time is invalid
+
+            if (startTime && cellValue.isBefore(startTime)) return false;
+            if (endTime && cellValue.isAfter(endTime)) return false;
+            return true;
+          });
         }
+        // Additional filter types (e.g., isHour) can be handled here if needed
       }
     });
 
@@ -180,21 +208,53 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
 
   // Handle Search
   const handleSearch = (selectedKeys, dataIndex, closeDropdown, setSelectedKeys) => {
-    if (dataIndex === "YIL") {
-      const startYear = selectedKeys[0] || "";
-      const endYear = selectedKeys[1] || "";
+    const column = columns.find((col) => col.key === dataIndex);
+    if (!column) return;
+
+    if (column.isYear) {
+      const startYear = selectedKeys[0] ? parseInt(selectedKeys[0], 10) : null;
+      const endYear = selectedKeys[1] ? parseInt(selectedKeys[1], 10) : null;
       setColumnFilters((prev) => {
-        const newFilters = { ...prev, [dataIndex]: { start: startYear, end: endYear } };
+        const newFilters = {
+          ...prev,
+          [dataIndex]: { start: startYear, end: endYear },
+        };
         const filtered = applyAllFilters(newFilters);
         setTableData(filtered);
         return newFilters;
       });
-    } else if (columns.find((col) => col.key === dataIndex)?.isDate) {
-      // Use isDate property
+    } else if (column.isDate) {
       const startDate = selectedKeys[0] || "";
       const endDate = selectedKeys[1] || "";
       setColumnFilters((prev) => {
-        const newFilters = { ...prev, [dataIndex]: { start: startDate, end: endDate } };
+        const newFilters = {
+          ...prev,
+          [dataIndex]: { start: startDate, end: endDate },
+        };
+        const filtered = applyAllFilters(newFilters);
+        setTableData(filtered);
+        return newFilters;
+      });
+    } else if (column.isNumber) {
+      const minValue = selectedKeys[0] || "";
+      const maxValue = selectedKeys[1] || "";
+      setColumnFilters((prev) => {
+        const newFilters = {
+          ...prev,
+          [dataIndex]: { start: minValue, end: maxValue },
+        };
+        const filtered = applyAllFilters(newFilters);
+        setTableData(filtered);
+        return newFilters;
+      });
+    } else if (column.isHour) {
+      const startTime = selectedKeys[0] || "";
+      const endTime = selectedKeys[1] || "";
+      setColumnFilters((prev) => {
+        const newFilters = {
+          ...prev,
+          [dataIndex]: { start: startTime, end: endTime },
+        };
         const filtered = applyAllFilters(newFilters);
         setTableData(filtered);
         return newFilters;
@@ -231,31 +291,29 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
 
       if (!column) return null;
 
-      if (dataIndex === "YIL") {
+      if (column.isYear) {
         return (
           <div style={{ padding: 8 }}>
             <Space direction="vertical">
               <DatePicker
                 picker="year"
-                placeholder="Başlangıç Yılı"
-                format="YYYY"
-                value={selectedKeys[0] ? dayjs(selectedKeys[0], "YYYY", true) : null}
+                placeholder="Min Yıl"
+                value={selectedKeys[0] ? dayjs(selectedKeys[0], "YYYY") : null}
                 onChange={(date) => {
                   const val = date ? date.year().toString() : "";
                   setSelectedKeys([val, selectedKeys[1] || ""]);
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: 8 }}
               />
               <DatePicker
                 picker="year"
-                placeholder="Bitiş Yılı"
-                format="YYYY"
-                value={selectedKeys[1] ? dayjs(selectedKeys[1], "YYYY", true) : null}
+                placeholder="Max Yıl"
+                value={selectedKeys[1] ? dayjs(selectedKeys[1], "YYYY") : null}
                 onChange={(date) => {
                   const val = date ? date.year().toString() : "";
                   setSelectedKeys([selectedKeys[0] || "", val]);
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: 8 }}
               />
               <Space>
                 <Button
@@ -296,7 +354,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
                   const val = date ? date.format("DD.MM.YYYY") : "";
                   setSelectedKeys([val, selectedKeys[1] || ""]);
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: 8 }}
               />
               <DatePicker
                 placeholder="Bitiş Tarihi"
@@ -306,7 +364,101 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
                   const val = date ? date.format("DD.MM.YYYY") : "";
                   setSelectedKeys([selectedKeys[0] || "", val]);
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: 8 }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+                  icon={<SearchOutlined />}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  Ara
+                </Button>
+                <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
+                  Sıfırla
+                </Button>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    close();
+                  }}
+                >
+                  Kapat
+                </Button>
+              </Space>
+            </Space>
+          </div>
+        );
+      } else if (column.isNumber) {
+        // Replace Input with InputNumber for isNumber columns
+        return (
+          <div style={{ padding: 8 }}>
+            <Space direction="vertical">
+              <InputNumber
+                placeholder="Min Değer"
+                value={selectedKeys[0]}
+                onChange={(value) => setSelectedKeys([value !== null ? value : "", selectedKeys[1] || ""])}
+                style={{ width: "100%", marginBottom: 8 }}
+              />
+              <InputNumber
+                placeholder="Max Değer"
+                value={selectedKeys[1]}
+                onChange={(value) => setSelectedKeys([selectedKeys[0] || "", value !== null ? value : ""])}
+                style={{ width: "100%", marginBottom: 8 }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
+                  icon={<SearchOutlined />}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  Ara
+                </Button>
+                <Button onClick={() => handleReset(dataIndex, closeDropdown, setSelectedKeys)} size="small" style={{ width: 90 }}>
+                  Sıfırla
+                </Button>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => {
+                    close();
+                  }}
+                >
+                  Kapat
+                </Button>
+              </Space>
+            </Space>
+          </div>
+        );
+      } else if (column.isHour) {
+        // Handle isHour columns with TimePicker
+        return (
+          <div style={{ padding: 8 }}>
+            <Space direction="vertical">
+              <TimePicker
+                placeholder="Min Saat"
+                format="HH:mm"
+                value={selectedKeys[0] ? dayjs(selectedKeys[0], "HH:mm") : null}
+                onChange={(time) => {
+                  const val = time ? time.format("HH:mm") : "";
+                  setSelectedKeys([val, selectedKeys[1] || ""]);
+                }}
+                style={{ width: "100%", marginBottom: 8 }}
+              />
+              <TimePicker
+                placeholder="Max Saat"
+                format="HH:mm"
+                value={selectedKeys[1] ? dayjs(selectedKeys[1], "HH:mm") : null}
+                onChange={(time) => {
+                  const val = time ? time.format("HH:mm") : "";
+                  setSelectedKeys([selectedKeys[0] || "", val]);
+                }}
+                style={{ width: "100%", marginBottom: 8 }}
               />
               <Space>
                 <Button
@@ -335,15 +487,16 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
           </div>
         );
       } else {
+        // Default filter for other columns
         return (
-          <div style={{ padding: 8 }}>
+          <div style={{ padding: 8, width: 300 }}>
             <Input
               ref={searchInput}
               placeholder="Ara"
               value={selectedKeys[0]}
               onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
               onPressEnter={() => handleSearch(selectedKeys, dataIndex, closeDropdown, setSelectedKeys)}
-              style={{ marginBottom: 8, display: "block" }}
+              style={{ width: "100%", marginBottom: 8 }}
             />
             <Space>
               <Button
@@ -374,13 +527,13 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     },
     filterIcon: () => {
       const val = columnFilters[dataIndex];
-      const isFiltered = (typeof val === "string" && val !== "") || (typeof val === "object" && val !== null);
+      const isFiltered = (typeof val === "string" && val !== "") || (typeof val === "object" && val !== null && (val.start !== "" || val.end !== ""));
       return <SearchOutlined style={{ color: isFiltered ? "#1890ff" : undefined }} />;
     },
     onFilterDropdownOpenChange: (visible) => {
       const column = columns.find((col) => col.key === dataIndex);
-      if (visible && !column?.isDate && dataIndex !== "YIL") {
-        // Exclude date columns and "YIL" from auto-select
+      if (visible && !column?.isDate && !column?.isYear && !column?.isNumber) {
+        // Exclude date, year, and number columns from auto-select
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
@@ -446,7 +599,13 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
   return (
     <>
       <Modal title={selectedRow?.rprTanim} open={drawerVisible} onCancel={handleRecordModalClose} footer={null} width={1200}>
-        <div style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
+        <div
+          style={{
+            marginBottom: "10px",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Button style={{ padding: "0px", width: "32px", height: "32px" }} onClick={() => setManageColumnsVisible(true)}>
             <MenuOutlined />
           </Button>
@@ -458,7 +617,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
           columns={styledColumns}
           dataSource={tableData}
           loading={loading}
-          rowKey={(record) => (record.id ? record.id : JSON.stringify(record))}
+          rowKey={(record) => (record.ID ? record.ID : JSON.stringify(record))}
           pagination={{
             showSizeChanger: true,
             pageSizeOptions: ["10", "20", "50", "100"],
@@ -474,7 +633,14 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
 
       <Modal title="Sütunları Yönet" centered width={800} open={manageColumnsVisible} onOk={() => setManageColumnsVisible(false)} onCancel={() => setManageColumnsVisible(false)}>
         <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle, Sıralamalarını ve Genişliklerini Ayarlayabilirsiniz.</Text>
-        <div style={{ display: "flex", width: "100%", justifyContent: "center", marginTop: "10px" }}>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            marginTop: "10px",
+          }}
+        >
           <Button
             onClick={() => {
               setColumns(initialColumns);
@@ -488,6 +654,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* Show/Hide Columns Section */}
           <div
             style={{
               width: "46%",
@@ -523,7 +690,16 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             </div>
           </div>
 
-          <DndContext onDragEnd={handleDragEnd} sensors={useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }))}>
+          {/* Sort Columns Section */}
+          <DndContext
+            onDragEnd={handleDragEnd}
+            sensors={useSensors(
+              useSensor(PointerSensor),
+              useSensor(KeyboardSensor, {
+                coordinateGetter: sortableKeyboardCoordinates,
+              })
+            )}
+          >
             <div
               style={{
                 width: "46%",
