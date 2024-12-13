@@ -1,3 +1,5 @@
+// src/components/YapayZekayaSor.js
+
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Modal, Input, List, Typography, Divider, Spin, message as AntMessage, Table } from "antd";
 import AxiosInstance from "../../../../../../../../api/http";
@@ -6,7 +8,7 @@ import { parseMarkdownTable } from "./utils/parseMarkdownTable";
 import { splitMarkdownTable } from "./utils/splitMarkdownTable";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import "./YapayZekayaSor.css"; // Stil dosyasını unutmayın
+import "./YapayZekayaSor.css"; // Ensure this path is correct
 
 const { TextArea } = Input;
 
@@ -46,7 +48,8 @@ function YapayZekayaSor({ selectedRows }) {
   // Mesaj listesini otomatik kaydırmak için ref
   const messageListRef = useRef(null);
 
-  const GEMINI = "AIzaSyBsTjvQnaDv-xz-XMtldUTCGC6m0dMah2Q";
+  // Use environment variable for Gemini API key
+  const GEMINI = import.meta.env.VITE_APP_GEMINI;
 
   // Modal açıldığında araç bilgilerini çek ve sohbete başla
   const showModal = async () => {
