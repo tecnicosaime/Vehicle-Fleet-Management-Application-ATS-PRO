@@ -5,7 +5,6 @@ import AxiosInstance from "../../../../../../api/http.jsx";
 import { DndContext, PointerSensor, useSensor, useSensors, KeyboardSensor } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { Resizable } from "react-resizable";
 import DraggableRow from "./DraggableRow";
 import * as XLSX from "xlsx";
 import { SiMicrosoftexcel } from "react-icons/si";
@@ -16,43 +15,16 @@ dayjs.extend(customParseFormat); // Enable custom date formats
 
 const { Text } = Typography;
 
-// ResizableTitle component
-const ResizableTitle = (props) => {
-  const { onResize, width, ...restProps } = props;
-  const handleStyle = {
-    position: "absolute",
-    bottom: 0,
-    right: "-5px",
-    width: "10px",
-    height: "100%",
-    zIndex: 2,
-    cursor: "col-resize",
-  };
-
-  if (!width) {
-    return <th {...restProps} />;
-  }
-
-  return (
-    <Resizable
-      width={width}
-      height={0}
-      handle={
-        <span
-          className="react-resizable-handle"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          style={handleStyle}
-        />
-      }
-      draggableOpts={{ enableUserSelectHack: false }}
-      onResize={onResize}
-    >
-      <th {...restProps} />
-    </Resizable>
-  );
+// Utility function to move elements in an array
+const arrayMove = (array, from, to) => {
+  const newArray = [...array];
+  const [movedItem] = newArray.splice(from, 1);
+  newArray.splice(to, 0, movedItem);
+  return newArray;
 };
+
+// Utility function to convert pixels to wch (approximate)
+const pxToWch = (px) => Math.ceil(px / 7); // 1 wch ≈ 7px
 
 function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
   const [originalData, setOriginalData] = useState([]);
@@ -76,15 +48,20 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
           const { headers, list } = response.data;
           if (headers && headers.length > 0) {
             const headerObj = headers[0];
-            const cols = Object.keys(headerObj).map((key) => ({
-              title: headerObj[key],
-              dataIndex: key,
-              key: key,
-              visible: key === "ID" ? false : true, // Hide "ID" column
-              width: 150,
-              ellipsis: true,
-              isDate: key.includes("TARIH"), // Custom property to identify date columns
-            }));
+            const cols = Object.keys(headerObj).map((key) => {
+              // Calculate width based on header length
+              const headerLength = headerObj[key].length;
+              const width = Math.max(headerLength * 10, 150); // Adjust multiplier and default as needed
+
+              return {
+                title: headerObj[key],
+                dataIndex: key,
+                key: key,
+                visible: key === "ID" ? false : true, // Hide "ID" column
+                width: width, // Set width based on header length
+                isDate: key.includes("TARIH"), // Custom property to identify date columns
+              };
+            });
 
             setInitialColumns(cols);
             setColumns(cols);
@@ -117,19 +94,30 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      setColumns((prev) => {
-        const oldIndex = prev.findIndex((col) => col.key === active.id);
-        const newIndex = prev.findIndex((col) => col.key === over.id);
+      setColumns((prevColumns) => {
+        // Extract visible columns
+        const visibleCols = prevColumns.filter((col) => col.visible);
+        const oldIndex = visibleCols.findIndex((col) => col.key === active.id);
+        const newIndex = visibleCols.findIndex((col) => col.key === over.id);
 
-        const visibleCols = prev.filter((col) => col.visible);
-        const hiddenCols = prev.filter((col) => !col.visible);
+        if (oldIndex === -1 || newIndex === -1) {
+          // If either index is not found, do nothing
+          return prevColumns;
+        }
 
-        const moved = [...visibleCols];
-        const [removed] = moved.splice(oldIndex, 1);
-        moved.splice(newIndex, 0, removed);
+        // Reorder the visible columns
+        const newVisibleCols = arrayMove(visibleCols, oldIndex, newIndex);
 
-        const reordered = moved.concat(hiddenCols);
-        return reordered;
+        // Merge the reordered visible columns back into the full columns array
+        // Hidden columns remain in their original positions
+        const newColumns = prevColumns.map((col) => {
+          if (col.visible) {
+            return newVisibleCols.shift();
+          }
+          return col; // Keep hidden columns unchanged
+        });
+
+        return newColumns;
       });
     }
   };
@@ -137,20 +125,6 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
   const handleRecordModalClose = () => {
     onDrawerClose();
   };
-
-  // Handle resize by key instead of index
-  const handleResize =
-    (key) =>
-    (e, { size }) => {
-      setColumns((prevColumns) => {
-        const newColumns = [...prevColumns];
-        const colIndex = newColumns.findIndex((c) => c.key === key);
-        if (colIndex > -1) {
-          newColumns[colIndex] = { ...newColumns[colIndex], width: size.width };
-        }
-        return newColumns;
-      });
-    };
 
   // Apply all filters
   const applyAllFilters = (filters) => {
@@ -412,36 +386,57 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
     },
   });
 
-  const resizableColumns = visibleColumns.map((col) => {
-    const searchProps = getColumnSearchProps(col.dataIndex);
-    return {
-      ...col,
-      ...searchProps,
-      onHeaderCell: (column) => ({
-        width: column.width,
-        onResize: handleResize(column.key),
-      }),
-    };
-  });
-
-  const components = {
-    header: {
-      cell: ResizableTitle,
-    },
-  };
+  const styledColumns = useMemo(() => {
+    return visibleColumns.map((col) => {
+      const searchProps = getColumnSearchProps(col.dataIndex);
+      return {
+        ...col,
+        ...searchProps,
+        // Apply styles to prevent text wrapping in headers and cells
+        onHeaderCell: () => ({
+          style: {
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          },
+        }),
+        onCell: () => ({
+          style: {
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          },
+        }),
+        // Custom render to handle null values
+        render: (text) => <span style={{ whiteSpace: "nowrap" }}>{text !== null && text !== undefined ? text : "\u00A0"}</span>,
+      };
+    });
+  }, [visibleColumns, columnFilters]);
 
   // XLSX Download Function
   const handleExportXLSX = () => {
     // Get visible column headers
     const headers = visibleColumns.map((col) => col.title);
     // Create data rows (only use dataIndex of visible columns)
-    const dataRows = tableData.map((row) => visibleColumns.map((col) => row[col.dataIndex]));
+    const dataRows = tableData.map((row) => visibleColumns.map((col) => (row[col.dataIndex] !== null && row[col.dataIndex] !== undefined ? row[col.dataIndex] : "")));
 
     const sheetData = [headers, ...dataRows];
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
 
-    // Set column widths
-    ws["!cols"] = visibleColumns.map((col) => ({ wpx: col.width || 100 })); // Default to 100px if width not defined
+    // Calculate maximum text length for each column based on header and data
+    const columnWidths = visibleColumns.map((col) => {
+      const headerLength = col.title.length;
+      const maxDataLength = tableData.reduce((max, row) => {
+        const cell = row[col.dataIndex];
+        if (cell === null || cell === undefined) return max;
+        const cellStr = cell.toString();
+        return Math.max(max, cellStr.length);
+      }, 0);
+      const maxLength = Math.max(headerLength, maxDataLength);
+      return { wch: pxToWch(maxLength * 10) }; // Multiply by 10 to add padding
+    });
+
+    ws["!cols"] = columnWidths;
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -460,8 +455,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
           </Button>
         </div>
         <Table
-          components={components}
-          columns={resizableColumns}
+          columns={styledColumns}
           dataSource={tableData}
           loading={loading}
           rowKey={(record) => (record.id ? record.id : JSON.stringify(record))}
@@ -470,10 +464,11 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             pageSizeOptions: ["10", "20", "50", "100"],
             defaultPageSize: 10,
           }}
-          scroll={{ y: "calc(100vh - 335px)" }}
+          scroll={{ y: "calc(100vh - 355px)", x: "max-content" }} // Adjusted y to account for additional content
           locale={{
             emptyText: loading ? "Yükleniyor..." : "Eşleşen veri bulunamadı.",
           }}
+          style={{ tableLayout: "auto" }} // Allow table to adjust based on content
         />
       </Modal>
 
@@ -547,12 +542,10 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
                 <Text style={{ fontWeight: 600 }}>Sütunların Sıralamasını Ayarla</Text>
               </div>
               <div style={{ height: "400px", overflow: "auto" }}>
-                <SortableContext items={columns.filter((col) => col.visible).map((col) => col.key)} strategy={verticalListSortingStrategy}>
-                  {columns
-                    .filter((col) => col.visible)
-                    .map((col, index) => (
-                      <DraggableRow key={col.key} id={col.key} index={index} text={col.title} />
-                    ))}
+                <SortableContext items={visibleColumns.map((col) => col.key)} strategy={verticalListSortingStrategy}>
+                  {visibleColumns.map((col, index) => (
+                    <DraggableRow key={col.key} id={col.key} text={col.title} />
+                  ))}
                 </SortableContext>
               </div>
             </div>
