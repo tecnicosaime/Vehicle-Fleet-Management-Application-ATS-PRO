@@ -9,7 +9,7 @@ import PersonalFields from "../../../../../components/form/personal-fields/Perso
 import PhotoUpload from "../../../../../components/upload/PhotoUpload";
 import FileUpload from "../../../../../components/upload/FileUpload";
 
-const Bakim = ({ visible, onClose, ids }) => {
+const Bakim = ({ visible, onClose, ids, selectedRowsData }) => {
   const [dataSource, setDataSource] = useState([
     {
       plaka: "38 ABB 789",
@@ -329,7 +329,14 @@ const Bakim = ({ visible, onClose, ids }) => {
   ];
 
   return (
-    <Modal title={`Bakım Bilgileri Plaka: []`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+    <Modal
+      title={`Bakım Bilgileri Plaka: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+      open={visible}
+      onCancel={onClose}
+      maskClosable={false}
+      footer={footer}
+      width={1200}
+    >
       <AddModal data={selectedRow} />
       <Modal title="Bakım Bilgisi Güncelle" open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={updateModalFooter} width={1200}>
         <FormProvider {...methods}>

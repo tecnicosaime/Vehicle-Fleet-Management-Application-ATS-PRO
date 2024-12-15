@@ -6,7 +6,7 @@ import { GetVehicleByIdService } from "../../../../../../api/services/vehicles/v
 import dayjs from "dayjs";
 import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../../../api/services/upload/services.jsx";
 
-function KmTakibi({ visible, onClose, ids }) {
+function KmTakibi({ visible, onClose, ids, selectedRowsData }) {
   const [dataSource, setDataSource] = useState([]);
   const [kmHistryModal, setKmHistryModal] = useState(false);
   const [dataStatus, setDataStatus] = useState(false);

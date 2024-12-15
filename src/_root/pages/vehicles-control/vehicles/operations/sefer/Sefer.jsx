@@ -12,7 +12,7 @@ import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
 import Content from "../../../../../components/drag-drop-table/DraggableCheckbox";
 
-const Sefer = ({ visible, onClose, ids }) => {
+const Sefer = ({ visible, onClose, ids, selectedRowsData }) => {
   const { plaka } = useContext(PlakaContext);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -248,7 +248,14 @@ const Sefer = ({ visible, onClose, ids }) => {
   const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal title={`${t("seferBilgileri")} - ${t("plaka")}: [${plakaData}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+    <Modal
+      title={`${t("seferBilgileri")} - ${t("plaka")}: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+      open={visible}
+      onCancel={onClose}
+      maskClosable={false}
+      footer={footer}
+      width={1200}
+    >
       <div className="flex align-center gap-1 mb-10">
         <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
           <Button className="btn primary-btn">

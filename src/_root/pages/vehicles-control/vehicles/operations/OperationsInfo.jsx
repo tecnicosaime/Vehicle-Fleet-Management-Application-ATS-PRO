@@ -135,6 +135,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "12":
@@ -158,6 +159,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "4":
@@ -169,6 +171,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "5":
@@ -180,6 +183,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "6":
@@ -191,6 +195,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "7":
@@ -202,6 +207,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "8":
@@ -213,6 +219,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "9":
@@ -224,6 +231,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "10":
@@ -235,6 +243,7 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
               // setPlaka([]);
             }}
             ids={ids}
+            selectedRowsData={selectedRowsData}
           />
         );
       case "3":
