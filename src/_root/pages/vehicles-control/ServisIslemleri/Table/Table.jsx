@@ -216,7 +216,7 @@ const Sigorta = () => {
   // Özel Alanların nameleri backend çekmek için api isteği sonu
   const initialColumns = [
     {
-      title: "Plaka",
+      title: t("plaka"),
       dataIndex: "plaka",
       key: "plaka",
       width: 120,
@@ -232,7 +232,7 @@ const Sigorta = () => {
       },
     },
     {
-      title: "Tarihi",
+      title: t("tarih"),
       dataIndex: "tarih",
       key: "tarih",
       width: 110,
@@ -247,7 +247,7 @@ const Sigorta = () => {
       render: (text) => formatDate(text),
     },
     {
-      title: "Saat",
+      title: t("saat"),
       dataIndex: "saat",
       key: "saat",
       width: 90,
@@ -262,7 +262,7 @@ const Sigorta = () => {
       render: (text) => formatTime(text),
     },
     {
-      title: "Servis Tanımı",
+      title: t("servisTanim"),
       dataIndex: "servisTanimi",
       key: "servisTanimi",
       width: 190,
@@ -277,7 +277,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Durum",
+      title: t("durum"),
       dataIndex: "durumBilgisi",
       key: "durumBilgisi",
       width: 150,
@@ -310,7 +310,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Servis Nedeni",
+      title: t("servisNedeni"),
       dataIndex: "servisNedeni",
       key: "servisNedeni",
       width: 120,
@@ -325,7 +325,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Firma",
+      title: t("firma"),
       dataIndex: "servisFirma",
       key: "servisFirma",
       width: 190,
@@ -340,7 +340,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Servis Tipi",
+      title: t("servisTipi"),
       dataIndex: "servisTipi",
       key: "servisTipi",
       width: 120,
@@ -354,7 +354,7 @@ const Sigorta = () => {
       },
     },
     {
-      title: "Sürücü",
+      title: t("surucu"),
       dataIndex: "surucuIsim",
       key: "surucuIsim",
       width: 160,
@@ -369,7 +369,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Başlama Tarihi",
+      title: t("baslamaTarihi"),
       dataIndex: "baslamaTarih",
       key: "baslamaTarih",
       width: 110,
@@ -385,7 +385,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Bitiş Tarihi",
+      title: t("bitisTarihi"),
       dataIndex: "bitisTarih",
       key: "bitisTarih",
       width: 110,
@@ -401,7 +401,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Servis Km.",
+      title: t("servisKm."),
       dataIndex: "km",
       key: "km",
       width: 120,
@@ -416,7 +416,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "İşçilik Ücreti",
+      title: t("iscilikUcreti"),
       dataIndex: "iscilik",
       key: "iscilik",
       width: 120,
@@ -431,7 +431,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Malzeme Maliyeti",
+      title: t("malzemeMaliyeti"),
       dataIndex: "malzeme",
       key: "malzeme",
       width: 120,
@@ -446,7 +446,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Diğer Giderler",
+      title: t("digerGiderler"),
       dataIndex: "diger",
       key: "diger",
       width: 120,
@@ -460,7 +460,7 @@ const Sigorta = () => {
       },
     },
     {
-      title: "KDV",
+      title: t("KDV"),
       dataIndex: "kdv",
       key: "kdv",
       width: 120,
@@ -474,7 +474,7 @@ const Sigorta = () => {
       },
     },
     {
-      title: "İndirim",
+      title: t("indirim"),
       dataIndex: "indirim",
       key: "indirim",
       width: 120,
@@ -489,7 +489,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Toplam Maliyet",
+      title: t("toplamMaliyet"),
       dataIndex: "toplam",
       key: "toplam",
       width: 120,
@@ -504,7 +504,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Fatura Tarihi",
+      title: t("faturaTarihi"),
       dataIndex: "faturaTarih",
       key: "faturaTarih",
       width: 110,
@@ -520,7 +520,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Fatura No",
+      title: t("faturaNo"),
       dataIndex: "faturaNo",
       key: "faturaNo",
       width: 120,
@@ -535,7 +535,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Açıklama",
+      title: t("aciklama"),
       dataIndex: "aciklama",
       key: "aciklama",
       width: 120,
@@ -550,7 +550,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Şikayetler",
+      title: t("sikayetler"),
       dataIndex: "sikayetler",
       key: "sikayetler",
       width: 120,
@@ -565,7 +565,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Lokasyon",
+      title: t("lokasyon"),
       dataIndex: "lokasyon",
       key: "lokasyon",
       width: 120,
@@ -580,7 +580,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Talep No",
+      title: t("talepNo"),
       dataIndex: "talepNo",
       key: "talepNo",
       width: 120,
@@ -595,7 +595,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Talep Eden - ?",
+      title: t("talepEden"),
       dataIndex: "talepEden",
       key: "talepEden",
       width: 120,
@@ -610,7 +610,7 @@ const Sigorta = () => {
     },
 
     {
-      title: "Onay",
+      title: t("onay"),
       dataIndex: "onay",
       key: "onay",
       width: 120,
