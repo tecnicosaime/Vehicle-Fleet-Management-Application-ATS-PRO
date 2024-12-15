@@ -12,7 +12,7 @@ import { GetExpeditionsListByVehicleIdService } from "../../../../../../api/serv
 import Content from "../../../../../components/drag-drop-table/DraggableCheckbox";
 import Tire from "./svg/Tire";
 
-const Lastik = ({ visible, onClose, ids }) => {
+const Lastik = ({ visible, onClose, ids, selectedRowsData }) => {
   const { plaka } = useContext(PlakaContext);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -259,7 +259,14 @@ const Lastik = ({ visible, onClose, ids }) => {
   ];
 
   return (
-    <Modal title={`${t("lastikBilgileri")} - ${t("plaka")}: [${plakaData}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1200}>
+    <Modal
+      title={`${t("lastikBilgileri")} - ${t("plaka")}: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+      open={visible}
+      onCancel={onClose}
+      maskClosable={false}
+      footer={footer}
+      width={1200}
+    >
       <div className="grid gap-1">
         <div className="col-span-4 border p-20">
           <Tire />

@@ -12,7 +12,7 @@ import Content from "../../../../../components/drag-drop-table/DraggableCheckbox
 import AddModal from "./add/AddModal";
 import UpdateModal from "./update/UpdateModal";
 
-const Yakit = ({ visible, onClose, ids }) => {
+const Yakit = ({ visible, onClose, ids, selectedRowsData }) => {
   const { plaka } = useContext(PlakaContext);
   const [dataSource, setDataSource] = useState([]);
   const [total, setTotal] = useState(null);
@@ -329,7 +329,14 @@ const Yakit = ({ visible, onClose, ids }) => {
   const customIcon = <LoadingOutlined style={{ fontSize: 36 }} className="text-primary" spin />;
 
   return (
-    <Modal title={`${t("yakitBilgileri")} - ${t("plaka")}: [${plakaData}]`} open={visible} onCancel={onClose} maskClosable={false} footer={footer} width={1300}>
+    <Modal
+      title={`${t("yakitBilgileri")} - ${t("plaka")}: [${selectedRowsData?.map((item) => item.plaka).join(", ")}]`}
+      open={visible}
+      onCancel={onClose}
+      maskClosable={false}
+      footer={footer}
+      width={1300}
+    >
       <div className="flex align-center gap-1 mb-20">
         <Popover content={content} placement="bottom" trigger="click" open={openRowHeader} onOpenChange={(newOpen) => setOpenRowHeader(newOpen)}>
           <Button className="btn primary-btn">
