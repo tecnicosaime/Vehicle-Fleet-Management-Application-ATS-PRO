@@ -116,7 +116,7 @@ const Sidebar = () => {
     {
       key: "19",
       icon: <GiAutoRepair />,
-      label: "Bakım & Onarım",
+      label: t("bakim&Onarim"),
       children: [
         {
           key: "21",
@@ -347,7 +347,7 @@ const Sidebar = () => {
     {
       key: "50",
       icon: <FaGears />,
-      label: "Sistem Ayarları",
+      label: t("sistemAyarari"),
       children: [
         // {
         //   key: "534",
