@@ -598,7 +598,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
 
   return (
     <>
-      <Modal title={selectedRow?.rprTanim} open={drawerVisible} onCancel={handleRecordModalClose} footer={null} width={1200}>
+      <Modal title={selectedRow?.rprTanim} open={drawerVisible} onCancel={handleRecordModalClose} footer={null} width="90%">
         <div
           style={{
             marginBottom: "10px",
@@ -623,7 +623,7 @@ function RecordModal({ selectedRow, onDrawerClose, drawerVisible }) {
             pageSizeOptions: ["10", "20", "50", "100"],
             defaultPageSize: 10,
           }}
-          scroll={{ y: "calc(100vh - 355px)", x: "max-content" }} // Adjusted y to account for additional content
+          scroll={{ y: "calc(100vh - 340px)", x: "max-content" }} // Adjusted y to account for additional content
           locale={{
             emptyText: loading ? "Yükleniyor..." : "Eşleşen veri bulunamadı.",
           }}
