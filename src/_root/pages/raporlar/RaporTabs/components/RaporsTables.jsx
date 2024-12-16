@@ -134,7 +134,7 @@ function RaporsTables({ tabKey, tabName }) {
                 <Text strong ellipsis>
                   {record.rprTanim}
                 </Text>
-                <div style={{ height: "100px", overflow: "scroll" }}>
+                <div style={{ height: "100px", overflowX: "auto" }}>
                   <Text type="secondary" style={{ fontSize: "13px" }}>
                     {record.rprAciklama}
                   </Text>
