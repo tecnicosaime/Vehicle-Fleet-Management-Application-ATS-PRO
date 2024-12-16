@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { t } from "i18next";
-import { Button, Modal, Tabs } from "antd";
+import { Button, Modal, Tabs, message } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { AddVehicleService } from "../../../../../api/services/vehicles/vehicles/services";
 import GeneralInfo from "./GeneralInfo";
@@ -15,6 +15,7 @@ const AddModal = ({ setStatus, onRefresh }) => {
   const [isValid, setIsValid] = useState("normal");
   const [activeKey, setActiveKey] = useState("1");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // New state for error messages
 
   const [fields, setFields] = useState([
     {
@@ -127,6 +128,7 @@ const AddModal = ({ setStatus, onRefresh }) => {
     ozelAlan11: null,
     ozelAlan12: null,
   };
+
   const methods = useForm({
     defaultValues: defaultValues,
   });
@@ -138,19 +140,32 @@ const AddModal = ({ setStatus, onRefresh }) => {
         tableName: "Arac",
         code: watch("plaka"),
       };
-      CodeItemValidateService(body).then((res) => {
-        !res.data.status ? setIsValid("success") : setIsValid("error");
-      });
+      CodeItemValidateService(body)
+        .then((res) => {
+          if (res.data.status) {
+            setIsValid("error");
+          } else {
+            setIsValid("success");
+          }
+        })
+        .catch((error) => {
+          console.error("Validation error:", error);
+          setIsValid("error");
+        });
+    } else {
+      setIsValid("normal"); // Reset validation when plaka is empty
     }
   }, [watch("plaka")]);
 
   const handleOk = handleSubmit(async (value) => {
-    setLoading(true); // Move this before the request
+    setLoading(true);
+    setErrorMessage(""); // Reset error message before submission
+
     const kmLog = value.guncelKm
       ? {
           plaka: value.plaka,
-          tarih: dayjs(new Date()).format("YYYY-MM-DD"),
-          saat: dayjs(new Date()).format("HH:mm"),
+          tarih: dayjs().format("YYYY-MM-DD"),
+          saat: dayjs().format("HH:mm"),
           yeniKm: value.guncelKm,
           dorse: false,
           lokasyonId: value.lokasyonId,
@@ -189,25 +204,27 @@ const AddModal = ({ setStatus, onRefresh }) => {
       ozelAlan12: value.ozelAlan12 || 0,
     };
 
-    AddVehicleService(body)
-      .then((res) => {
-        if (res?.data.statusCode === 201) {
-          setIsModalOpen(false);
-          onRefresh();
-          reset(defaultValues);
-          setIsValid("normal");
-          setActiveKey("1");
-        } else {
-          // Handle unexpected status codes
-        }
-      })
-      .catch((error) => {
-        // Handle errors here
-        console.error("An error occurred:", error);
-      })
-      .finally(() => {
-        setLoading(false); // Ensure loading is false after request completes
-      });
+    try {
+      const res = await AddVehicleService(body);
+      if (res?.data.statusCode === 201) {
+        setIsModalOpen(false);
+        onRefresh();
+        reset(defaultValues);
+        setIsValid("normal");
+        setActiveKey("1");
+        message.success(t("aracBasariylaEklendi")); // Success message
+      } else {
+        // Handle unexpected status codes
+        setErrorMessage(res?.data.message || t("islemBasarisiz"));
+        message.error(res?.data.message || t("islemBasarisiz"));
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      setErrorMessage(t("sunucuHatasi"));
+      message.error(t("sunucuHatasi"));
+    } finally {
+      setLoading(false);
+    }
   });
 
   const personalProps = {
@@ -230,15 +247,9 @@ const AddModal = ({ setStatus, onRefresh }) => {
   ];
 
   const footer = [
-    loading ? (
-      <Button className="btn btn-min primary-btn">
-        <LoadingOutlined />
-      </Button>
-    ) : (
-      <Button key="submit" className="btn btn-min primary-btn" onClick={handleOk} disabled={isValid === "error" ? true : isValid === "success" ? false : false}>
-        {t("kaydet")}
-      </Button>
-    ),
+    <Button key="submit" type="primary" className="btn btn-min primary-btn" onClick={handleOk} disabled={isValid === "error"} loading={loading}>
+      {t("kaydet")}
+    </Button>,
     <Button
       key="back"
       className="btn btn-min cancel-btn"
@@ -247,6 +258,7 @@ const AddModal = ({ setStatus, onRefresh }) => {
         reset(defaultValues);
         setIsValid("normal");
         setActiveKey("1");
+        setErrorMessage(""); // Reset error message on cancel
       }}
     >
       {t("kapat")}
@@ -256,6 +268,7 @@ const AddModal = ({ setStatus, onRefresh }) => {
   return (
     <div>
       <Button
+        type="primary"
         className="btn primary-btn"
         onClick={() => {
           setIsModalOpen(true);
@@ -265,18 +278,21 @@ const AddModal = ({ setStatus, onRefresh }) => {
       </Button>
       <Modal
         title={t("yeniAracGiris")}
-        open={isModalOpen}
+        open={isModalOpen} // Updated from 'open' to 'visible' for AntD versions before 4.23.0
         onOk={handleOk}
         onCancel={() => {
           setIsModalOpen(false);
           setActiveKey("1");
           reset(defaultValues);
           setIsValid("normal");
+          setErrorMessage(""); // Reset error message on cancel
         }}
         maskClosable={false}
         footer={footer}
         width={1200}
+        destroyOnClose // Optional: destroys modal content on close to reset form
       >
+        {errorMessage && <div style={{ marginBottom: 16, color: "red" }}>{errorMessage}</div>}
         <FormProvider {...methods}>
           <form>
             <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
@@ -289,7 +305,7 @@ const AddModal = ({ setStatus, onRefresh }) => {
 
 AddModal.propTypes = {
   setStatus: PropTypes.func,
-  data: PropTypes.array,
+  onRefresh: PropTypes.func.isRequired, // Ensure onRefresh is required
 };
 
 export default AddModal;
