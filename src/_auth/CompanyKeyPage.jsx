@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Space, Typography, Input, Button, InputNumber } from "antd";
+import { Space, Typography, Input, Button } from "antd";
 import { t } from "i18next";
 import AxiosInstance from "../api/http";
 import { useNavigate } from "react-router-dom";
@@ -10,22 +10,31 @@ function CompanyKeyPage() {
   const [companyKey, setCompanyKey] = useState("");
   const [inputStatus, setInputStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [disableSave, setDisableSave] = useState(false);
   const navigate = useNavigate();
 
   const handleSave = () => {
     AxiosInstance.get(`ClientInfo/GetClientInfo?clientIdentifier=${companyKey}`)
       .then((response) => {
-        if (response.data.siraNo != 0) {
+        if (response.data.siraNo !== 0) {
           localStorage.setItem("companyKey", companyKey);
           navigate("/login");
         } else if (response.data.siraNo === 0) {
           setInputStatus("error");
           setErrorMessage("Lütfen geçerli firma anahtarı girin");
+          setDisableSave(true);
         }
       })
       .catch((error) => {
         console.error("Error sending data:", error);
       });
+  };
+
+  const handleInputChange = (e) => {
+    setCompanyKey(e.target.value);
+    setInputStatus("");
+    setErrorMessage("");
+    setDisableSave(false); // Kullanıcı inputu değiştirince buton tekrar aktifleşir
   };
 
   return (
@@ -50,20 +59,11 @@ function CompanyKeyPage() {
           padding: "10px",
         }}
       >
-        <Space direction="vertical" /* size="middle"  */ style={{ width: "100%", display: "flex", gap: "10px" }}>
+        <Space direction="vertical" style={{ width: "100%", display: "flex", gap: "10px" }}>
           <Text>{t("lutfenFirmaAnahtariniziGirin")}</Text>
-          <Input
-            style={{ width: "100%" }}
-            status={inputStatus}
-            value={companyKey}
-            onChange={(e) => {
-              setCompanyKey(e.target.value);
-              setInputStatus("");
-              setErrorMessage("");
-            }}
-          />
+          <Input style={{ width: "100%" }} status={inputStatus} value={companyKey} onChange={handleInputChange} />
           {errorMessage && <Text type="danger">{errorMessage}</Text>}
-          <Button style={{ width: "100%" }} type="primary" onClick={handleSave}>
+          <Button style={{ width: "100%" }} type="primary" onClick={handleSave} disabled={disableSave}>
             {t("kaydet")}
           </Button>
         </Space>
