@@ -30,6 +30,7 @@ import ProfilePhoto from "./tabs/ProfilePhoto";
 import SurucuInput from "../../../components/form/inputs/SurucuInput";
 import AddSurucu from "./detail-info/modals/surucu/AddModalForInput";
 import AddLokasyon from "./detail-info/modals/lokasyon/AddModalForInput";
+import ResimUpload from "./Resim/ResimUpload";
 
 const { Text, Link } = Typography;
 
@@ -68,6 +69,8 @@ const DetailUpdate = () => {
   // Optional: Local state if needed elsewhere
   const [surucu, setSurucu] = useState("");
   const [surucuId, setSurucuId] = useState(null);
+
+  const [photoUploaded, setPhotoUploaded] = useState(0);
 
   const [fields, setFields] = useState([
     {
@@ -283,6 +286,11 @@ const DetailUpdate = () => {
       setLoadingImages(false);
     }
   };
+  useEffect(() => {
+    if (photoUploaded > 0) {
+      GetPhotosByRefGroupService(id, "Arac").then((res) => setImageUrls(res.data));
+    }
+  }, [photoUploaded]);
 
   const uploadFiles = () => {
     try {
@@ -382,7 +390,8 @@ const DetailUpdate = () => {
     {
       key: "3",
       label: `[${imageUrls.length}] ${t("resimler")}`,
-      children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />,
+      /*  children: <PhotoUpload imageUrls={imageUrls} loadingImages={loadingImages} setImages={setImages} />, */
+      children: <ResimUpload selectedRowID={id} setPhotoUploaded={setPhotoUploaded} />,
     },
     {
       key: "4",
