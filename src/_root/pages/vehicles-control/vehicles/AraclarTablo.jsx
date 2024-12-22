@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip } from "antd";
 import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -16,6 +16,7 @@ import OperationsInfo from "./operations/OperationsInfo";
 import Filters from "./filter/Filters";
 // import UpdateModal from "./update/UpdateModal";
 import dayjs from "dayjs";
+import { PlakaContext } from "../../../../context/plakaSlice";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 
@@ -115,6 +116,7 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 // Sütunların sürüklenebilir olmasını sağlayan component sonu
 
 const Yakit = ({ ayarlarData }) => {
+  const { setPlaka } = useContext(PlakaContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -209,6 +211,16 @@ const Yakit = ({ ayarlarData }) => {
     const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
     setSelectedRows(newSelectedRows);
   };
+
+  useEffect(() => {
+    const newPlakaEntries = selectedRows.map((vehicle) => ({
+      id: vehicle.aracId,
+      plaka: vehicle.plaka,
+      lokasyonId: vehicle.lokasyonId,
+      lokasyon: vehicle.lokasyon,
+    }));
+    setPlaka(newPlakaEntries);
+  }, [selectedRows]);
 
   const rowSelection = {
     type: "checkbox",
