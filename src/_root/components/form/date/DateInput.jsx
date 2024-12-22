@@ -39,7 +39,7 @@ const DateInput = ({ name, checked, readonly, required }) => {
 
 DateInput.propTypes = {
   name: PropTypes.string,
-  checked: PropTypes.string,
+  checked: PropTypes.bool,
   readonly: PropTypes.bool,
   required: PropTypes.bool,
 };
