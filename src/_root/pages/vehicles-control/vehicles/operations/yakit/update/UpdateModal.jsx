@@ -139,8 +139,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, aracId }) => 
         setValue("surucu", res?.data.surucuAdi);
         setValue("yakitTipId", res?.data.yakitTipId);
         setValue("yakitTip", res?.data.yakitTip);
-        setValue("lokasyonId", plaka[0].lokasyonId);
-        setValue("lokasyon", plaka[0].lokasyon);
+        setValue("lokasyonId", res?.data.lokasyonId);
+        setValue("lokasyon", res?.data.lokasyon);
         setValue("firmaId", res?.data.firmaId);
         setValue("firma", res?.data.firma);
         setValue("istasyonKodId", res?.data.istasyonKodId);

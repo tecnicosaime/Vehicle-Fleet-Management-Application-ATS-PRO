@@ -200,10 +200,12 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   }, [watch("depoYakitMiktar")]);
 
   useEffect(() => {
-    GetMaterialPriceService(watch("yakitTipId")).then((res) => {
-      setValue("litreFiyat", res?.data.price);
-      setValue("kdvOran", res?.data.kdv);
-    });
+    if (watch("yakitTipId")) {
+      GetMaterialPriceService(watch("yakitTipId")).then((res) => {
+        setValue("litreFiyat", res?.data.price);
+        setValue("kdvOran", res?.data.kdv);
+      });
+    }
   }, [watch("yakitTipId"), watch("tutar")]);
 
   useEffect(() => {
