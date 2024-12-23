@@ -316,7 +316,19 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setIsOpen(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal title={t("yeniYakitGirisi")} open={isOpen} onCancel={() => setIsOpen(false)} maskClosable={false} footer={footer} width={1200}>
+      <Modal
+        title={t("yeniYakitGirisi")}
+        destroyOnClose
+        open={isOpen}
+        afterClose={() => {
+          // İstediğiniz defaultValues ile formu resetlersiniz
+          reset(defaultValues);
+        }}
+        onCancel={() => setIsOpen(false)}
+        maskClosable={false}
+        footer={footer}
+        width={1200}
+      >
         <p className="count">
           {t("guncelKm")}: [ {watch("guncelKmLog")} km ]
         </p>

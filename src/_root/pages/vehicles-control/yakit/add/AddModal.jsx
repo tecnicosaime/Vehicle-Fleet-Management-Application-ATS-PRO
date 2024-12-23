@@ -11,7 +11,7 @@ import GeneralInfo from "./GeneralInfo";
 import PersonalFields from "../../../../components/form/personal-fields/PersonalFields";
 
 const AddModal = ({ setStatus, onRefresh }) => {
-  const { data, plaka, setData, setHistory } = useContext(PlakaContext);
+  const { data, plaka, setPlaka, setData, setHistory } = useContext(PlakaContext);
 
   const [openModal, setopenModal] = useState(false);
   const [isValid, setIsValid] = useState(false);
@@ -336,14 +336,26 @@ const AddModal = ({ setStatus, onRefresh }) => {
     </Button>,
   ];
 
+  const handleOpen = () => {
+    reset(defaultValues); // Her açılışta formu varsayılan değerlere sıfırla
+    setPlaka([]);
+    setData([]);
+    setopenModal(true);
+  };
+
   return (
     <>
-      <Button className="btn primary-btn" onClick={() => setopenModal(true)}>
+      <Button className="btn primary-btn" onClick={handleOpen}>
         <PlusOutlined /> {t("ekle")}
       </Button>
       <Modal
         title={t("yeniYakitGirisi")}
         open={openModal}
+        // Modal kapandıktan sonra formu resetliyoruz
+        afterClose={() => {
+          // İstediğiniz defaultValues ile formu resetlersiniz
+          reset(defaultValues);
+        }}
         destroyOnClose
         onCancel={() => {
           setopenModal(false);
