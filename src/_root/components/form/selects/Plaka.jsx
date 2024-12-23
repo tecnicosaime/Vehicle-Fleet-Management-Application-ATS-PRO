@@ -12,19 +12,21 @@ const Plaka = ({ name, codeName, required }) => {
   const [plateList, setPlateList] = useState([]);
 
   useEffect(() => {
-    if (plaka.length === 1) {
+    // plaka mutlaka array mi? Kontrol edelim
+    if (Array.isArray(plaka) && plaka.length === 1) {
       GetFuelCardContentByIdService(plaka[0].id).then((res) => {
         setData(res.data);
       });
     }
-  }, [plaka]);
+  }, [plaka, setData]);
 
   const handleChange = (e) => {
     GetFuelCardContentByIdService(e).then((res) => setData(res.data));
   };
 
   const handleClick = async () => {
-    if (plaka.length === 0) {
+    // Yine plaka'nın array olup olmadığını kontrol edelim
+    if (Array.isArray(plaka) && plaka.length === 0) {
       const res = await CodeControlByUrlService("Vehicle/GetVehiclePlates");
       const updatedData = res.data.map((item) => {
         if ("aracId" in item && "plaka" in item) {
@@ -44,54 +46,69 @@ const Plaka = ({ name, codeName, required }) => {
       name={codeName ? codeName : "plaka"}
       control={control}
       rules={{ required: required ? "Bu alan boş bırakılamaz!" : false }}
-      render={({ field, fieldState }) => (
-        <>
-          <Select
-            {...field}
-            showSearch
-            allowClear
-            optionFilterProp="children"
-            className={fieldState.error ? "input-error" : ""}
-            value={name ? watch(name) : watch("plaka")}
-            filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
-            filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-            options={
-              plaka.length === 0
-                ? plateList.map((item) => ({
-                    label: item.plaka,
-                    value: item.id,
-                  }))
-                : plaka.map((item) => ({
-                    label: item.plaka,
-                    value: item.id,
-                  }))
-            }
-            onClick={handleClick}
-            onChange={(e) => {
-              field.onChange(e);
-              handleChange(e);
-              if (e === undefined) {
-                const selectedOption = plaka.find((option) => option.id === e);
-                if (!selectedOption) {
-                  name ? setValue(name, "") : setValue("plaka", "");
-                  setData([]);
+      render={({ field, fieldState }) => {
+        // Seçili değeri FormContext'ten izliyoruz
+        const selectedValue = name ? watch(name) : watch("plaka");
+
+        // plaka bir array mi? Değilse boş array olarak kullanalım
+        const plakaArray = Array.isArray(plaka) ? plaka : [];
+
+        // Seçenekleri oluştururken koşullu şekilde plaka veya plateList'i gösteriyoruz
+        const options =
+          plakaArray.length === 0
+            ? plateList.map((item) => ({
+                label: item.plaka,
+                value: item.id,
+              }))
+            : plakaArray.map((item) => ({
+                label: item.plaka,
+                value: item.id,
+              }));
+
+        return (
+          <>
+            <Select
+              {...field}
+              showSearch
+              allowClear
+              optionFilterProp="children"
+              className={fieldState.error ? "input-error" : ""}
+              value={selectedValue}
+              filterOption={(input, option) => (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())}
+              filterSort={(optionA, optionB) => (optionA?.label.toLowerCase() ?? "").localeCompare(optionB?.label.toLowerCase() ?? "")}
+              options={options}
+              onClick={handleClick}
+              onChange={(value) => {
+                field.onChange(value);
+                handleChange(value);
+
+                if (value === undefined) {
+                  // Seçim temizlenmişse
+                  const selectedOption = plakaArray.find((option) => option.id === value);
+                  if (!selectedOption) {
+                    name ? setValue(name, "") : setValue("plaka", "");
+                    setData([]);
+                  }
+                } else {
+                  // Seçilen plakaya göre form value güncelle
+                  const selectedOption = plakaArray.find((option) => option.id === value);
+                  if (selectedOption) {
+                    name ? setValue(name, selectedOption.plaka) : setValue("plaka", selectedOption.plaka);
+                  }
+                  // Seçilen plaka ek veriye sahipse (lokasyonId vb.) kaydet
+                  const selectedPlate = plateList.find((option) => option.id === value);
+                  if (selectedPlate && "lokasyonId" in selectedPlate) {
+                    setValue("lokasyonIdFromPlaka", selectedPlate.lokasyonId);
+                  }
                 }
-              } else {
-                const selectedOption = plaka.find((option) => option.id === e);
-                if (selectedOption) {
-                  name ? setValue(name, selectedOption.plaka) : setValue("plaka", selectedOption.plaka);
-                }
-                const selectedPlate = plateList.find((option) => option.id === e);
-                if (selectedPlate && "lokasyonId" in selectedPlate) {
-                  setValue("lokasyonIdFromPlaka", selectedPlate.lokasyonId);
-                }
-              }
-            }}
-            disabled={plaka.length === 1}
-          />
-          {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
-        </>
-      )}
+              }}
+              // plaka tek elemanlı bir array ise disabled olsun
+              disabled={Array.isArray(plaka) && plakaArray.length === 1}
+            />
+            {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
+          </>
+        );
+      }}
     />
   );
 };
