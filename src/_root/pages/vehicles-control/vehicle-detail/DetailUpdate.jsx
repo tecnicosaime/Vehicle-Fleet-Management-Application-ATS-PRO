@@ -31,6 +31,7 @@ import SurucuInput from "../../../components/form/inputs/SurucuInput";
 import AddSurucu from "./detail-info/modals/surucu/AddModalForInput";
 import AddLokasyon from "./detail-info/modals/lokasyon/AddModalForInput";
 import ResimUpload from "./Resim/ResimUpload";
+import DosyaUpload from "./Dosya/DosyaUpload";
 
 const { Text, Link } = Typography;
 
@@ -71,6 +72,7 @@ const DetailUpdate = () => {
   const [surucuId, setSurucuId] = useState(null);
 
   const [photoUploaded, setPhotoUploaded] = useState(0);
+  const [dosyaUploaded, setDosyaUploaded] = useState(0);
 
   const [fields, setFields] = useState([
     {
@@ -276,34 +278,17 @@ const DetailUpdate = () => {
     GetDocumentsByRefGroupService(id, "Arac").then((res) => setFilesUrl(res.data));
   }, [id, status, dataStatus]);
 
-  const uploadImages = () => {
-    try {
-      setLoadingImages(true);
-      const data = uploadPhoto(id, "Arac", images, false);
-      setImageUrls([...imageUrls, data.imageUrl]);
-    } catch (error) {
-      message.error("Resim yüklenemedi. Yeniden deneyin.");
-    } finally {
-      setLoadingImages(false);
-    }
-  };
   useEffect(() => {
     if (photoUploaded > 0) {
       GetPhotosByRefGroupService(id, "Arac").then((res) => setImageUrls(res.data));
     }
   }, [photoUploaded]);
 
-  const uploadFiles = () => {
-    try {
-      setLoadingFiles(true);
-      uploadFile(+id, "Arac", files);
-    } catch (error) {
-      message.error("Dosya yüklenemedi. Yeniden deneyin.");
-    } finally {
-      setLoadingFiles(false);
-      setUploadFinished(2);
+  useEffect(() => {
+    if (photoUploaded > 0) {
+      GetDocumentsByRefGroupService(id, "Arac").then((res) => setFilesUrl(res.data));
     }
-  };
+  }, [photoUploaded]);
 
   const onSubmit = handleSubmit((values) => {
     const data = {
@@ -363,10 +348,6 @@ const DetailUpdate = () => {
       }
     });
 
-    uploadImages();
-    uploadFiles();
-
-    uploadPhoto(id, "ARAC", profile, true);
     setProfile([]);
     setUrls([]);
     setActiveKey("1");
@@ -398,7 +379,8 @@ const DetailUpdate = () => {
     {
       key: "4",
       label: `[${filesUrl.length}] ${t("ekliBelgeler")}`,
-      children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} uploadFinished={uploadFinished} setUploadFinished={setUploadFinished} />,
+      /* children: <FileUpload filesUrl={filesUrl} loadingFiles={loadingFiles} setFiles={setFiles} uploadFinished={uploadFinished} setUploadFinished={setUploadFinished} />, */
+      children: <DosyaUpload selectedRowID={id} setDosyaUploaded={setDosyaUploaded} />,
     },
   ];
 
