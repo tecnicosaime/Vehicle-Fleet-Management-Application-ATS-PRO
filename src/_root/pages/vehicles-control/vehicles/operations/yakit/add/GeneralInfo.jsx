@@ -285,26 +285,28 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setErrorMessage("Alınan Km Km Log-a girilemez!");
       }
     }
-  }, [watch("engelle"), logError, setResponse, setIsValid]);
+  }, [watch("engelle"), logError]);
 
   // ------------------------------------------------------------------
   // 6) DEPO HACMİ KONTROLÜ
   // ------------------------------------------------------------------
   useEffect(() => {
-    if ((watch("depoYakitMiktar") ?? 0) + (history[0]?.miktar ?? 0) > (watch("yakitHacmi") ?? 0)) {
+    if (watch("depoYakitMiktar") + history[0]?.miktar > watch("yakitHacmi")) {
       message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
       setIsValid(true);
     } else {
       setIsValid(false);
     }
-  }, [watch("depoYakitMiktar"), watch("yakitHacmi"), history, setIsValid]);
+  }, [watch("depoYakitMiktar")]);
 
   useEffect(() => {
-    if (logError && watch("engelle")) {
-      setResponse("success");
-      setIsValid(false);
+    if (logError) {
+      if (watch("engelle")) {
+        setResponse("success");
+        setIsValid(false);
+      }
     }
-  }, [logError, watch("engelle"), setIsValid, setResponse]);
+  }, [logError, watch("engelle")]);
 
   // ------------------------------------------------------------------
   // 7) ERROR MESAJI GÖSTER
@@ -541,21 +543,24 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                         className={fieldState.error ? "input-error w-full" : "w-full"}
                         style={response === "error" ? { borderColor: "#dc3545" } : response === "success" ? { borderColor: "#23b545" } : { color: "#000" }}
                         onPressEnter={(e) => {
-                          validateLog();
-                          e.target.blur();
+                          validateLog(); // ENTER'a basıldığında kontrol etsin
+                          e.target.blur(); // focus’u çıkartarak klavyeyi kapatmak ya da benzeri amaçla
                         }}
-                        onBlur={validateLog}
+                        onBlur={validateLog} // Input dışına tıklandığında kontrol etsin
                         onChange={(value) => {
                           field.onChange(value);
                           setIsValid(true);
 
+                          // Fark Km hesaplama mantığı
                           const sonKm = watch("sonAlinanKm") ?? 0;
                           if (sonKm === 0) {
                             setValue("farkKm", 0);
                           } else {
                             setValue("farkKm", value - sonKm);
                           }
-                          validateLog();
+
+                          // Buradan validateLog()'u kaldırdık
+                          // validateLog();
                         }}
                       />
                       {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
