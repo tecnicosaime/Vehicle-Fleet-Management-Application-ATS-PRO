@@ -214,6 +214,7 @@ const DetailUpdate = () => {
       setValue("bagliArac", res?.data.bagliAracPlaka);
       setValue("hgsNo", res?.data.hgsNo);
       setValue("AracCinsiKodId", res?.data.aracCinsi);
+      setValue("aracCinsi", res?.data.aracCinsi);
       setValue("markaId", res?.data.markaId ? res?.data.markaId : null);
       setValue("marka", res?.data.marka);
       setValue("model", res?.data.model);
@@ -318,6 +319,7 @@ const DetailUpdate = () => {
       modelId: values.modelId || 0,
       aracGrubuId: values.aracGrubuId || 0,
       aracRenkId: values.aracRenkId || 0,
+      AracCinsiKodId: Number(values.aracCinsiKodId),
       lokasyonId: values.lokasyonId || 0,
       departmanId: values.departmanId || 0,
       surucuId: values.surucuId || 0,
