@@ -147,10 +147,27 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, 
         setValue("plaka", res?.data.plaka);
         setValue("seferNo", res?.data.seferNo);
         setCode(res?.data.seferNo);
-        setValue("cikisTarih", dayjs(res?.data.cikisTarih));
-        setValue("varisTarih", dayjs(res?.data.varisTarih));
-        setValue("cikisSaat", dayjs(res?.data.cikisSaat, "HH:mm:ss"));
-        setValue("varisSaat", dayjs(res?.data.varisSaat, "HH:mm:ss"));
+        if (dayjs(res?.data.cikisTarih).isValid()) {
+          setValue("cikisTarih", dayjs(res?.data.cikisTarih));
+        } else {
+          setValue("cikisTarih", null);
+        }
+        if (dayjs(res?.data.varisTarih).isValid()) {
+          setValue("varisTarih", dayjs(res?.data.varisTarih));
+        } else {
+          setValue("varisTarih", null);
+        }
+        if (dayjs(res?.data.cikisSaat, "HH:mm:ss", true).isValid()) {
+          setValue("cikisSaat", dayjs(res?.data.cikisSaat, "HH:mm:ss"));
+        } else {
+          setValue("cikisSaat", null);
+        }
+
+        if (dayjs(res?.data.varisSaat, "HH:mm:ss", true).isValid()) {
+          setValue("varisSaat", dayjs(res?.data.varisSaat, "HH:mm:ss"));
+        } else {
+          setValue("varisSaat", null);
+        }
         setValue("aciklama", res?.data.aciklama);
         setValue("surucuId1", res?.data.surucuId1);
         setValue("surucu1", res?.data.surucuIsim1);
