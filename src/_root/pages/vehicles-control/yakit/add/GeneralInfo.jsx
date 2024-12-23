@@ -285,26 +285,28 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setErrorMessage("Alınan Km Km Log-a girilemez!");
       }
     }
-  }, [watch("engelle"), logError, setResponse, setIsValid]);
+  }, [watch("engelle"), logError]);
 
   // ------------------------------------------------------------------
   // 6) DEPO HACMİ KONTROLÜ
   // ------------------------------------------------------------------
   useEffect(() => {
-    if ((watch("depoYakitMiktar") ?? 0) + (history[0]?.miktar ?? 0) > (watch("yakitHacmi") ?? 0)) {
+    if (watch("depoYakitMiktar") + history[0]?.miktar > watch("yakitHacmi")) {
       message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
       setIsValid(true);
     } else {
       setIsValid(false);
     }
-  }, [watch("depoYakitMiktar"), watch("yakitHacmi"), history, setIsValid]);
+  }, [watch("depoYakitMiktar")]);
 
   useEffect(() => {
-    if (logError && watch("engelle")) {
-      setResponse("success");
-      setIsValid(false);
+    if (logError) {
+      if (watch("engelle")) {
+        setResponse("success");
+        setIsValid(false);
+      }
     }
-  }, [logError, watch("engelle"), setIsValid, setResponse]);
+  }, [logError, watch("engelle")]);
 
   // ------------------------------------------------------------------
   // 7) ERROR MESAJI GÖSTER
