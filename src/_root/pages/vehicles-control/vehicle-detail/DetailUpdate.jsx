@@ -285,10 +285,10 @@ const DetailUpdate = () => {
   }, [photoUploaded]);
 
   useEffect(() => {
-    if (photoUploaded > 0) {
+    if (dosyaUploaded > 0) {
       GetDocumentsByRefGroupService(id, "Arac").then((res) => setFilesUrl(res.data));
     }
-  }, [photoUploaded]);
+  }, [dosyaUploaded]);
 
   const onSubmit = handleSubmit((values) => {
     const data = {
