@@ -29,23 +29,32 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
   const { control, setValue, watch } = useFormContext();
   const { data, history, setHistory } = useContext(PlakaContext);
   const { setFuelTankId } = useContext(SelectContext);
+
   const [open, setOpen] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [content, setContent] = useState(null);
   const [logError, setLogError] = useState(false);
 
+  // ------------------------------------------------------------------
+  // 1) PLAKA GELDİĞİNDE YAKIT TİPİ, TARİH, SAAT, etc. HAZIRLA
+  // ------------------------------------------------------------------
   useEffect(() => {
     if (data.length === 0) return;
-    else {
-      setFuelTankId(data.yakitTipId);
-      if (dayjs(new Date()).format("DD.MM.YYYY") !== dayjs(watch("tarih")).format("DD.MM.YYYY")) fetchData();
-      else {
-        GetLastThreeFuelRecordService(data.aracId, dayjs(watch("tarih")).format("YYYY-MM-DD"), dayjs(watch("saat")).format("HH:mm:ss")).then((res) => setHistory(res.data));
-      }
+    setFuelTankId(data.yakitTipId);
+
+    // Tarih bugün değilse fetchData çalışsın:
+    if (dayjs(new Date()).format("DD.MM.YYYY") !== dayjs(watch("tarih")).format("DD.MM.YYYY")) {
+      fetchData();
+    } else {
+      // Sadece son 3 yakıt kaydını çek
+      GetLastThreeFuelRecordService(data.aracId, dayjs(watch("tarih")).format("YYYY-MM-DD"), dayjs(watch("saat")).format("HH:mm:ss")).then((res) => setHistory(res.data));
     }
   }, [data]);
 
+  // ------------------------------------------------------------------
+  // 2) YAKIT TİPİ DEĞİŞİNCE LİTRE FİYATI + KDV'Yİ GETİR
+  // ------------------------------------------------------------------
   useEffect(() => {
     if (!watch("yakitTipId")) return;
 
@@ -53,25 +62,31 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       setValue("litreFiyat", res?.data.price);
       setValue("kdv", res?.data.kdv);
     });
-  }, [watch("yakitTipId")]);
+  }, [watch("yakitTipId"), setValue]);
 
+  // ------------------------------------------------------------------
+  // 3) FULL DEPO İSE VE MİKTAR ALANI BOŞ İSE -> OTO DEPO HACMİ YAP
+  // ------------------------------------------------------------------
   useEffect(() => {
     const fullDepo = watch("fullDepo");
     const miktar = watch("miktar");
     const yakitHacmi = watch("yakitHacmi");
 
-    if (fullDepo && (!miktar || miktar === 0 || miktar === null || miktar === undefined)) {
+    if (fullDepo && (!miktar || miktar === 0)) {
       setValue("miktar", yakitHacmi);
     }
-  }, [watch("fullDepo"), watch("miktar"), watch("yakitHacmi")]);
+  }, [watch("fullDepo"), watch("miktar"), watch("yakitHacmi"), setValue]);
 
+  // ------------------------------------------------------------------
+  // 4) YAKIT TÜKETİMİ (tuketim) HESAPLAYAN ETKİ
+  // ------------------------------------------------------------------
   useEffect(() => {
     const fullDepo = watch("fullDepo");
     const farkKm = watch("farkKm");
     const miktar = watch("miktar");
     const yakitHacmi = watch("yakitHacmi");
 
-    let tktm = 0;
+    let tktm = 0; // km başına litre (sonra *100 yapılıyor)
 
     if (fullDepo) {
       if (farkKm > 0 && miktar > 0) {
@@ -79,7 +94,9 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       } else {
         tktm = 0;
       }
-      const content = (
+
+      // Detay pop-up içeriği fullDepo = true
+      const contentFull = (
         <div className="grid detail-tuketim">
           <div className="col-span-5">
             <p>{t("gidilenYol")}:</p>
@@ -91,19 +108,15 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             <p>{t("yakitMiktari")}:</p>
           </div>
           <div className="col-span-6">
-            <p className="text-info">{watch("miktar")} lt</p>
+            <p className="text-info">{miktar} lt</p>
           </div>
           <div className="col-span-5">
             <p>{t("kalanYakitMiktari")}:</p>
           </div>
           <div className="col-span-6">
             <div className="text-info">
-              <Controller
-                name="depoYakitMiktar"
-                control={control}
-                render={({ field }) => <InputNumber {...field} value={watch("yakitHacmi") - watch("miktar")} onChange={(e) => field.onChange(e)} readOnly />}
-              />
-              &nbsp; lt (Depo {watch("fullDepo") ? "fullendi" : "fullenmedi"})
+              <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} value={yakitHacmi - miktar} readOnly />} />
+              &nbsp; lt (Depo {fullDepo ? "fullendi" : "fullenmedi"})
             </div>
           </div>
           <div className="col-span-12">
@@ -117,23 +130,24 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
           </div>
         </div>
       );
-
-      setContent(content);
+      setContent(contentFull);
     } else {
+      // fullDepo = false
       if (history[0]?.fullDepo) {
+        // Son kayıtta full depo varsa
         if (farkKm > 0 && miktar > 0) {
           tktm = history[0]?.miktar / farkKm;
         } else {
           tktm = 0;
         }
 
-        const content = (
+        const contentNotFull = (
           <div className="grid detail-tuketim">
             <div className="col-span-5">
               <p>{t("gidilenYol")}:</p>
             </div>
             <div className="col-span-6">
-              <p className="text-info">{watch("farkKm")} km</p>
+              <p className="text-info">{farkKm} km</p>
             </div>
             <div className="col-span-5">
               <p>{t("oncekiYakitMiktari")}:</p>
@@ -146,7 +160,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
             <div className="col-span-6">
               <div className="text-info">
-                <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(e) => field.onChange(e)} />} />
+                <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(val) => field.onChange(val)} />} />
                 &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
               </div>
             </div>
@@ -161,62 +175,66 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
           </div>
         );
-
-        setContent(content);
+        setContent(contentNotFull);
       } else {
+        // Son kayıtta da fullDepo=false
         if (farkKm > 0 && miktar > 0) {
-          yakitHacmi !== null ? (tktm = yakitHacmi / farkKm) : (tktm = 0);
-
-          const content = (
-            <div className="grid detail-tuketim">
-              <div className="col-span-5">
-                <p>{t("gidilenYol")}:</p>
-              </div>
-              <div className="col-span-6">
-                <p className="text-info">{watch("farkKm")} km</p>
-              </div>
-              <div className="col-span-5">
-                <p>{t("aracDepoHacmi")}:</p>
-              </div>
-              <div className="col-span-6">
-                <p className="text-info">{watch("yakitHacmi")} lt</p>
-              </div>
-              <div className="col-span-5">
-                <p>{t("oncekiYakitMiktari")}:</p>
-              </div>
-              <div className="col-span-6">
-                <p className="text-info">{history[0]?.miktar} lt</p>
-              </div>
-              <div className="col-span-5">
-                <p>{t("kalanYakitMiktari")}:</p>
-              </div>
-              <div className="col-span-6">
-                <div className="text-info">
-                  <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(e) => field.onChange(e)} />} />
-                  &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
-                </div>
-              </div>
-              <div className="col-span-12">
-                <Divider />
-              </div>
-              <div className="col-span-5">
-                <p>{t("yakitTuketimi")}:</p>
-              </div>
-              <div className="col-span-6">
-                <p className="text-info">{watch("tuketim")} lt/km</p>
-              </div>
-            </div>
-          );
-
-          setContent(content);
+          tktm = yakitHacmi !== null ? yakitHacmi / farkKm : 0;
         } else {
           tktm = 0;
         }
+
+        const contentOther = (
+          <div className="grid detail-tuketim">
+            <div className="col-span-5">
+              <p>{t("gidilenYol")}:</p>
+            </div>
+            <div className="col-span-6">
+              <p className="text-info">{farkKm} km</p>
+            </div>
+            <div className="col-span-5">
+              <p>{t("aracDepoHacmi")}:</p>
+            </div>
+            <div className="col-span-6">
+              <p className="text-info">{yakitHacmi} lt</p>
+            </div>
+            <div className="col-span-5">
+              <p>{t("oncekiYakitMiktari")}:</p>
+            </div>
+            <div className="col-span-6">
+              <p className="text-info">{history[0]?.miktar} lt</p>
+            </div>
+            <div className="col-span-5">
+              <p>{t("kalanYakitMiktari")}:</p>
+            </div>
+            <div className="col-span-6">
+              <div className="text-info">
+                <Controller name="depoYakitMiktar" control={control} render={({ field }) => <InputNumber {...field} onChange={(val) => field.onChange(val)} />} />
+                &nbsp; lt (Depo {history[0]?.fullDepo ? "fullendi" : "fullenmedi"})
+              </div>
+            </div>
+            <div className="col-span-12">
+              <Divider />
+            </div>
+            <div className="col-span-5">
+              <p>{t("yakitTuketimi")}:</p>
+            </div>
+            <div className="col-span-6">
+              <p className="text-info">{watch("tuketim")} lt/km</p>
+            </div>
+          </div>
+        );
+        setContent(contentOther);
       }
     }
-    setValue("tuketim", (tktm * 100).toFixed(2));
-  }, [watch("fullDepo"), watch("farkKm"), watch("miktar"), watch("yakitHacmi")]);
 
+    // Tüketim = tktm * 100 (lt/100km)
+    setValue("tuketim", (tktm * 100).toFixed(2));
+  }, [watch("fullDepo"), watch("farkKm"), watch("miktar"), watch("yakitHacmi"), control, history, setValue, t]);
+
+  // ------------------------------------------------------------------
+  // 5) KM LOG KONTROL
+  // ------------------------------------------------------------------
   const validateLog = () => {
     const body = {
       aracId: data.aracId,
@@ -267,33 +285,40 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         setErrorMessage("Alınan Km Km Log-a girilemez!");
       }
     }
-  }, [watch("engelle"), logError]);
+  }, [watch("engelle"), logError, setResponse, setIsValid]);
 
+  // ------------------------------------------------------------------
+  // 6) DEPO HACMİ KONTROLÜ
+  // ------------------------------------------------------------------
   useEffect(() => {
-    if (watch("depoYakitMiktar") + history[0]?.miktar > watch("yakitHacmi")) {
+    if ((watch("depoYakitMiktar") ?? 0) + (history[0]?.miktar ?? 0) > (watch("yakitHacmi") ?? 0)) {
       message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
       setIsValid(true);
     } else {
       setIsValid(false);
     }
-  }, [watch("depoYakitMiktar")]);
+  }, [watch("depoYakitMiktar"), watch("yakitHacmi"), history, setIsValid]);
 
   useEffect(() => {
-    if (logError) {
-      if (watch("engelle")) {
-        setResponse("success");
-        setIsValid(false);
-      }
+    if (logError && watch("engelle")) {
+      setResponse("success");
+      setIsValid(false);
     }
-  }, [logError, watch("engelle")]);
+  }, [logError, watch("engelle"), setIsValid, setResponse]);
 
+  // ------------------------------------------------------------------
+  // 7) ERROR MESAJI GÖSTER
+  // ------------------------------------------------------------------
   useEffect(() => {
     if (errorMessage) {
       message.error(errorMessage);
+      setErrorMessage("");
     }
-    setErrorMessage("");
   }, [errorMessage]);
 
+  // ------------------------------------------------------------------
+  // 8) DEPO HACMİ GÜNCELLE
+  // ------------------------------------------------------------------
   const updateDepoHacmi = () => {
     const body = {
       dtyAracId: data.aracId,
@@ -307,6 +332,9 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
     });
   };
 
+  // ------------------------------------------------------------------
+  // 9) FETCH DATA (sonAlinanKm + 3 yakıt kaydı)
+  // ------------------------------------------------------------------
   const fetchData = () => {
     const body = {
       aracId: data.aracId,
@@ -314,47 +342,48 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
       saat: dayjs(watch("saat")).format("HH:mm:ss"),
     };
     GetKmRangeBeforeDateService(body).then((res) => {
-      res.data === -1 ? setValue("sonAlinanKm", 0) : setValue("sonAlinanKm", res.data);
-      if (watch("farkKm") > 0 && watch("alinanKm")) setValue("farkKm", watch("alinanKm") - watch("sonAlinanKm"));
+      if (res.data === -1) {
+        setValue("sonAlinanKm", 0);
+      } else {
+        setValue("sonAlinanKm", res.data);
+      }
+      // Eskiden burada farkKm hesaplayıp set ediyorduk; SİLDİK
+      // Çünkü artık bu hesaplamayı onChange'lerde yapıyoruz.
     });
 
     GetLastThreeFuelRecordService(data.aracId, dayjs(watch("tarih")).format("YYYY-MM-DD"), dayjs(watch("saat")).format("HH:mm:ss")).then((res) => setHistory(res.data));
   };
 
+  // ------------------------------------------------------------------
+  // 10) MODAL FOOTER
+  // ------------------------------------------------------------------
   const footer = [
     <Button key="submit" className="btn btn-min primary-btn" onClick={updateDepoHacmi}>
       {t("kaydet")}
     </Button>,
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => {
-        setOpen(false);
-      }}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setOpen(false)}>
       {t("iptal")}
     </Button>,
   ];
 
   const detailModalFooter = [
-    <Button
-      key="back"
-      className="btn btn-min cancel-btn"
-      onClick={() => {
-        setOpenDetail(false);
-      }}
-    >
+    <Button key="back" className="btn btn-min cancel-btn" onClick={() => setOpenDetail(false)}>
       {t("kapat")}
     </Button>,
   ];
 
+  // ------------------------------------------------------------------
+  // RETURN
+  // ------------------------------------------------------------------
   return (
     <>
       {contextHolder}
 
+      {/* --------- 1. KISIM: PLAKA, SÜRÜCÜ, TARİH, SAAT --------- */}
       <div className="grid gap-4 border p-10">
         <div className="col-span-6">
           <div className="grid gap-1">
+            {/* --- Plaka --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label htmlFor="plaka">
@@ -363,12 +392,14 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 <Plaka required={true} />
               </div>
             </div>
+            {/* --- Sürücü --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label htmlFor="surucuId">{t("surucu")}</label>
                 <Driver />
               </div>
             </div>
+            {/* --- Tarih --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
@@ -383,15 +414,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                       <ConfigProvider locale={tr_TR}>
                         <DatePicker
                           {...field}
-                          className={fieldState.error ? "input-error" : ""}
-                          placeholder=""
-                          locale={dayjs.locale("tr")}
                           format="DD.MM.YYYY"
-                          onBlur={() => {
-                            fetchData();
-                          }}
-                          onChange={(e) => {
-                            field.onChange(e);
+                          className={fieldState.error ? "input-error" : ""}
+                          onBlur={() => fetchData()}
+                          onChange={(dateVal) => {
+                            field.onChange(dateVal);
                             if (watch("alinanKm")) validateLog();
                           }}
                         />
@@ -402,6 +429,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 />
               </div>
             </div>
+            {/* --- Saat --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
@@ -415,14 +443,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <>
                       <TimePicker
                         {...field}
-                        placeholder=""
                         format="HH:mm:ss"
                         className={fieldState.error ? "input-error" : ""}
-                        onBlur={() => {
-                          fetchData();
-                        }}
-                        onChange={(e) => {
-                          field.onChange(e);
+                        onBlur={() => fetchData()}
+                        onChange={(timeVal) => {
+                          field.onChange(timeVal);
                           if (watch("alinanKm")) validateLog();
                         }}
                       />
@@ -434,6 +459,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
             </div>
           </div>
         </div>
+
+        {/* --- YAKIT TİPİ, STOKTAN KULLANIM --- */}
         <div className="col-span-6">
           <div className="grid gap-1">
             <div className="col-span-12">
@@ -446,19 +473,15 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
               <label>{t("stoktanKullanim")}</label>
               <CheckboxInput name="stokKullanimi" />
             </div>
-            {/* <div className="col-span-6">
-              <div className="flex flex-col gap-1">
-                <label>{t("yakitTank")} -- ?</label>
-                <YakitTank />
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
 
+      {/* --------- 2. KISIM: KM BİLGİLERİ --------- */}
       <div className="grid gap-4 border p-10 mt-10">
         <div className="col-span-6">
           <div className="grid gap-1">
+            {/* --- SON ALINAN KM --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
@@ -473,20 +496,25 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                       <InputNumber
                         {...field}
                         className={fieldState.error ? "input-error w-full" : "w-full"}
+                        // Projende var olan readOnly kontrolü:
                         readOnly={data.sonAlinanKm !== 0}
                         onPressEnter={(e) => {
                           validateLog();
                           e.target.blur();
                         }}
                         onBlur={validateLog}
-                        onChange={(e) => {
-                          field.onChange(e);
+                        onChange={(value) => {
+                          field.onChange(value);
                           setIsValid(true);
-                          if (watch("alinanKm")) {
-                            const fark = watch("alinanKm") - e;
-                            setValue("farkKm", fark);
-                            validateLog();
+
+                          // YENİ MANTIK:
+                          const alKm = watch("alinanKm") ?? 0;
+                          if (value === 0) {
+                            setValue("farkKm", 0);
+                          } else {
+                            setValue("farkKm", alKm - value);
                           }
+                          validateLog();
                         }}
                       />
                       {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
@@ -495,6 +523,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 />
               </div>
             </div>
+
+            {/* --- ALINAN KM --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
@@ -507,23 +537,25 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                   render={({ field, fieldState }) => (
                     <>
                       <InputNumber
+                        {...field}
                         className={fieldState.error ? "input-error w-full" : "w-full"}
                         style={response === "error" ? { borderColor: "#dc3545" } : response === "success" ? { borderColor: "#23b545" } : { color: "#000" }}
-                        {...field}
                         onPressEnter={(e) => {
                           validateLog();
                           e.target.blur();
                         }}
                         onBlur={validateLog}
-                        onChange={(e) => {
-                          field.onChange(e);
+                        onChange={(value) => {
+                          field.onChange(value);
                           setIsValid(true);
-                          if (data.sonAlinanKm === 0 && !watch("alinanKm")) {
+
+                          const sonKm = watch("sonAlinanKm") ?? 0;
+                          if (sonKm === 0) {
                             setValue("farkKm", 0);
                           } else {
-                            const fark = +e - watch("sonAlinanKm");
-                            setValue("farkKm", fark);
+                            setValue("farkKm", value - sonKm);
                           }
+                          validateLog();
                         }}
                       />
                       {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
@@ -532,6 +564,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 />
               </div>
             </div>
+
+            {/* --- FARK KM: SALT OKUNUR --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("farkKm")}</label>
@@ -542,48 +576,33 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <InputNumber
                       {...field}
                       className="w-full"
-                      readOnly={data.sonAlinanKm === 0}
+                      readOnly
+                      // Negatifse 0 göster
                       value={watch("farkKm") < 0 ? 0 : watch("farkKm")}
-                      onPressEnter={(e) => {
-                        validateLog();
-                        e.target.blur();
-                      }}
-                      onBlur={validateLog}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setIsValid(true);
-                        const alinanKm = watch("sonAlinanKm") + +e;
-                        setValue("alinanKm", alinanKm);
-                        validateLog();
-                      }}
                     />
                   )}
                 />
               </div>
             </div>
+
+            {/* --- ENGELLE --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>{t("engelle")}</label>
                 <Controller
                   name="engelle"
                   control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      className="custom-checkbox"
-                      {...field}
-                      checked={field.value}
-                      onChange={(e) => {
-                        field.onChange(e.target.checked);
-                      }}
-                    />
-                  )}
+                  render={({ field }) => <Checkbox className="custom-checkbox" {...field} checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
                 />
               </div>
             </div>
           </div>
         </div>
+
+        {/* --------- SAĞ TARAFTA: MİKTAR, FULL DEPO, TÜKETİM vb. --------- */}
         <div className="col-span-6">
           <div className="grid gap-1">
+            {/* --- MİKTAR --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <div className="flex align-baseline gap-1">
@@ -601,11 +620,12 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                   render={({ field, fieldState }) => (
                     <>
                       <InputNumber
-                        className={fieldState.error ? "input-error w-full" : "w-full"}
                         {...field}
+                        className={fieldState.error ? "input-error w-full" : "w-full"}
                         onPressEnter={(e) => {
-                          if (watch("yakitHacmi") === 0 && !watch("fullDepo")) message.warning("Depo Hacmi sıfırdır. Depo hacmi giriniz!");
-
+                          if (watch("yakitHacmi") === 0 && !watch("fullDepo")) {
+                            message.warning("Depo Hacmi sıfırdır. Depo hacmi giriniz!");
+                          }
                           if (watch("yakitHacmi") < +e.target.value + +watch("depoYakitMiktar")) {
                             message.warning("Miktar depo hacminden büyükdür. Depo hacmini güncelleyin!");
                             setIsValid(true);
@@ -613,15 +633,11 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                             setIsValid(false);
                           }
                         }}
-                        onChange={(e) => {
-                          field.onChange(e);
-
-                          if (watch("litreFiyat") === null) {
-                            setValue("tutar", 0);
-                          } else {
-                            const tutar = +e * watch("litreFiyat");
-                            setValue("tutar", tutar);
-                          }
+                        onChange={(val) => {
+                          field.onChange(val);
+                          const litreFiyat = watch("litreFiyat") ?? 0;
+                          const tutarHesap = +val * +litreFiyat;
+                          setValue("tutar", tutarHesap);
                         }}
                       />
                       {fieldState.error && <span style={{ color: "red" }}>{fieldState.error.message}</span>}
@@ -630,6 +646,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 />
               </div>
             </div>
+
+            {/* --- FULL DEPO + ORTALAMA TÜKETİM --- */}
             <div className="col-span-6">
               <div className="grid">
                 <div className="col-span-4 flex flex-col">
@@ -655,6 +673,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 </div>
               </div>
             </div>
+
+            {/* --- LİTRE FİYATI --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
@@ -667,13 +687,14 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                     <InputNumber
                       {...field}
                       className="w-full"
-                      onChange={(e) => {
-                        field.onChange(e);
-                        if (e === null) {
+                      onChange={(val) => {
+                        field.onChange(val);
+                        const tutarVal = watch("tutar") ?? 0;
+                        if (!val || val === 0) {
                           setValue("miktar", 0);
                         } else {
-                          const miktar = watch("tutar") / +e;
-                          setValue("miktar", Math.round(miktar));
+                          const miktarHesap = +tutarVal / +val;
+                          setValue("miktar", Math.round(miktarHesap));
                         }
                       }}
                     />
@@ -681,6 +702,8 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 />
               </div>
             </div>
+
+            {/* --- TUTAR --- */}
             <div className="col-span-6">
               <div className="flex flex-col gap-1">
                 <label>
@@ -695,14 +718,14 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                       <InputNumber
                         {...field}
                         className={fieldState.error ? "input-error w-full" : "w-full"}
-                        onChange={(e) => {
-                          field.onChange(e);
-
-                          if (watch("litreFiyat") === null) {
+                        onChange={(val) => {
+                          field.onChange(val);
+                          const litreFiyat = watch("litreFiyat") ?? 0;
+                          if (!litreFiyat || litreFiyat === 0) {
                             setValue("miktar", 0);
                           } else {
-                            const miktar = +e / watch("litreFiyat");
-                            setValue("miktar", Math.round(miktar));
+                            const miktarHesap = +val / litreFiyat;
+                            setValue("miktar", Math.round(miktarHesap));
                           }
                         }}
                       />
@@ -716,18 +739,22 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
         </div>
       </div>
 
+      {/* --------- DEPO HACMİ GÜNCELLEME MODAL --------- */}
       <Modal open={open} maskClosable={false} title={t("depoHacmiGirisi")} footer={footer} onCancel={() => setOpen(false)}>
         <Controller name="yakitHacmi" control={control} render={({ field }) => <Input {...field} onChange={(e) => field.onChange(e.target.value)} />} />
       </Modal>
 
+      {/* --------- ORTALAMA TÜKETİM DETAY MODAL --------- */}
       <Modal open={openDetail} maskClosable={false} title={t("ortalamaYakitTuketimi")} footer={detailModalFooter} onCancel={() => setOpenDetail(false)}>
-        {content}
+        {content /* Yukarıda "setContent(...)" ile atanan JSX içeriği */}
       </Modal>
 
+      {/* --------- SON 3 YAKIT KAYDI GÖRSEL --------- */}
       {watch("plaka") && history.length >= 3 && (
         <div className="grid gap-1 border p-10 mt-10">
           <div className="col-span-12">
             <div className="grid">
+              {/* 3 kaydın eskisi gibi yan yana gösterimi */}
               <div className="col-span-2 flex flex-col" style={{ textAlign: "center" }}>
                 <p style={{ fontSize: "14px" }}>{dayjs(history[2]?.tarih).format("DD.MM.YYYY")}</p>
                 <div>
@@ -743,6 +770,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 <img src="/images/yol.svg" alt="" style={{ width: "70%" }} />
                 <p>{history[2]?.farkKm} km</p>
               </div>
+
               <div className="col-span-2 flex flex-col" style={{ textAlign: "center" }}>
                 <p style={{ fontSize: "14px" }}>{dayjs(history[1]?.tarih).format("DD.MM.YYYY")}</p>
                 <div>
@@ -758,6 +786,7 @@ const GeneralInfo = ({ setIsValid, response, setResponse }) => {
                 <img src="/images/yol.svg" alt="" style={{ width: "70%" }} />
                 <p>{history[1]?.farkKm} km</p>
               </div>
+
               <div className="col-span-2 flex flex-col" style={{ textAlign: "center" }}>
                 <p style={{ fontSize: "14px" }}>{dayjs(history[0]?.tarih).format("DD.MM.YYYY")}</p>
                 <div>
