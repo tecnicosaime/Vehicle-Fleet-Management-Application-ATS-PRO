@@ -319,7 +319,7 @@ const DetailUpdate = () => {
       modelId: values.modelId || 0,
       aracGrubuId: values.aracGrubuId || 0,
       aracRenkId: values.aracRenkId || 0,
-      AracCinsiKodId: Number(values.aracCinsiKodId),
+      AracCinsiKodId: values.aracCinsiKodId || 0,
       lokasyonId: values.lokasyonId || 0,
       departmanId: values.departmanId || 0,
       surucuId: values.surucuId || 0,
