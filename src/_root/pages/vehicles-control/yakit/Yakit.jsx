@@ -298,6 +298,55 @@ const Yakit = () => {
         return a.miktar - b.miktar;
       },
     },
+
+    {
+      title: t("kmBasinaMaliyet"),
+      dataIndex: "kmBasinaMaliyet",
+      key: "kmBasinaMaliyet",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+      render: (text, record) => (
+        <div className="">
+          <span>
+            {Number(text).toLocaleString(localStorage.getItem("i18nextLng"), {
+              minimumFractionDigits: Number(record?.tutarFormat),
+              maximumFractionDigits: Number(record?.tutarFormat),
+            })}
+          </span>
+        </div>
+      ),
+      sorter: (a, b) => {
+        if (a.kmBasinaMaliyet === null) return -1;
+        if (b.kmBasinaMaliyet === null) return 1;
+        return a.kmBasinaMaliyet - b.kmBasinaMaliyet;
+      },
+    },
+
+    {
+      title: t("farkKm"),
+      dataIndex: "farkKm",
+      key: "farkKm",
+      width: 120,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+      render: (text, record) => (
+        <div className="">
+          <span>
+            {Number(text).toLocaleString(localStorage.getItem("i18nextLng"), {
+              minimumFractionDigits: Number(record?.tutarFormat),
+              maximumFractionDigits: Number(record?.tutarFormat),
+            })}
+          </span>
+        </div>
+      ),
+      sorter: (a, b) => {
+        if (a.farkKm === null) return -1;
+        if (b.farkKm === null) return 1;
+        return a.farkKm - b.farkKm;
+      },
+    },
+
     {
       title: t("tutar"),
       dataIndex: "tutar",
