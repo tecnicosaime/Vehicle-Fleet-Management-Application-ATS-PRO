@@ -178,8 +178,8 @@ const Yakit = ({ visible, onClose, ids, selectedRowsData }) => {
       },
     },
     {
-      title: `${t("kmBasinaMaliyet")} --?`,
-      dataIndex: "",
+      title: t("kmBasinaMaliyet"),
+      dataIndex: "kmBasinaMaliyet",
       key: 9,
       ellipsis: true,
       width: 100,
