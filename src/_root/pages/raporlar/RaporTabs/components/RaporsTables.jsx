@@ -31,7 +31,8 @@ function RaporsTables({ tabKey, tabName }) {
   const fetchEquipmentData = async () => {
     try {
       setLoading(true);
-      const response = await AxiosInstance.get(`Report/GetReportListByGroupId?id=${tabKey}`);
+      const lan = localStorage.getItem("i18nextLng") || "tr";
+      const response = await AxiosInstance.get(`Report/GetReportListByGroupId?id=${tabKey}&lan=${lan}`);
       if (response && response.data) {
         const formattedData = response.data.map((item) => ({
           ...item,
