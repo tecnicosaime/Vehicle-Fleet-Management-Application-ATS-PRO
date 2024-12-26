@@ -3,6 +3,17 @@ import { Button, Popover, Typography, Spin, Badge, Modal, Divider } from "antd";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import styled from "styled-components";
 import Sigorta from "./components/Sigorta";
+import TasitKarti from "./components/TasitKarti";
+import CezaOdeme from "./components/CezaOdeme";
+import YakitTuketimi from "./components/YakitTuketimi";
+import Kiralama from "./components/Kiralama";
+import Surucu from "./components/Surucu";
+import Stok from "./components/Stok";
+import Vergi from "./components/Vergi";
+import Muayene from "./components/Muayene";
+import Sozlesme from "./components/Sozlesme";
+import Egzoz from "./components/Egzoz";
+import PeriyodikBakim from "./components/PeriyodikBakim";
 import { FormProvider, useForm } from "react-hook-form";
 
 const { Text } = Typography;
@@ -147,7 +158,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.sigortaHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Taşıt Kartı", <div>Taşıt Kartı İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Taşıt Kartı", <TasitKarti />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#009b84" }} />
               <Text>Taşıt Kartı</Text>
@@ -163,7 +174,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.aracKartiHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Ceza Ödeme", <div>Ceza Ödeme İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Ceza Ödeme", <CezaOdeme />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "rgb(106,14,168)" }} />
               <Text>Ceza Ödeme</Text>
@@ -179,7 +190,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.cezaHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Yakit Tüketimi", <div>Yakit Tüketimi İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Yakit Tüketimi", <YakitTuketimi />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "rgb(202,108,0)" }} />
               <Text>Yakit Tüketimi</Text>
@@ -195,7 +206,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.yakitTuketimiHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Kiralama", <div>Kiralama İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Kiralama", <Kiralama />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "rgba(0,196,255,0.88)" }} />
               <Text>Kiralama</Text>
@@ -211,7 +222,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.kiralamaHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Stok", <div>Stok İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Stok", <Stok />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "rgba(0,59,209,0.88)" }} />
               <Text>Stok</Text>
@@ -227,7 +238,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.stokHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Sürücü", <div>Sürücü İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Sürücü", <Surucu />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "rgba(255,117,31,0.88)" }} />
               <Text>Sürücü</Text>
@@ -243,7 +254,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.surucuHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Vergi", <div>Vergi İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Vergi", <Vergi />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#921A40" }} />
               <Text>Vergi</Text>
@@ -259,7 +270,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.aracVergiHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Muayene", <div>Muayene İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Muayene", <Muayene />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#987D9A" }} />
               <Text>Muayene</Text>
@@ -275,7 +286,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.aracMuayeneHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Sözleşme", <div>Sözleşme İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Sözleşme", <Sozlesme />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#EF5A6F" }} />
               <Text>Sözleşme</Text>
@@ -291,7 +302,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.aracSozlesmeHatirlaticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Egzoz", <div>Egzoz İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Egzoz", <Egzoz />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#134B70" }} />
               <Text>Egzoz</Text>
@@ -307,7 +318,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
               {data?.aracEgzozHatiraticiSayisi}
             </Text>
           </Row>
-          <Row onClick={() => handleRowClick("Peryodik Bakım", <div>Peryodik Bakım İçeriği</div>)}>
+          <Row onClick={() => handleRowClick("Peryodik Bakım", <PeriyodikBakim />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#00cfaa" }} />
               <Text>Peryodik Bakım</Text>
