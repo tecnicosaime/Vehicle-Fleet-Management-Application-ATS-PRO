@@ -125,7 +125,7 @@ export default function CustomFilter({ onSubmit, durum }) {
     <>
       <Button
         onClick={showDrawer}
-        disabled={durum !== 0}
+        disabled={durum !== null && durum !== undefined}
         style={{
           display: "flex",
           alignItems: "center",

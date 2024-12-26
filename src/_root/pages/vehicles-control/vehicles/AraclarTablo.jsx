@@ -134,7 +134,7 @@ const Yakit = ({ ayarlarData }) => {
   const navigate = useNavigate();
   const methods = useForm({
     defaultValues: {
-      durum: 0,
+      durum: null,
       // ... Tüm default değerleriniz
     },
   });
@@ -169,7 +169,7 @@ const Yakit = ({ ayarlarData }) => {
       // Determine what to send for customfilters
       const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
 
-      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}&type=${durum}`, customFilters);
+      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}&type=${durum || 0}`, customFilters);
 
       const total = response.data.vehicleCount;
       setTotalCount(total);

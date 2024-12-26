@@ -6,7 +6,7 @@ import { t } from "i18next";
 const { Option } = Select;
 
 const DURUM_OPTIONS = [
-  { value: 0, label: t("tumu") },
+  { value: 8, label: t("tumu") },
   { value: 1, label: t("aktifAraclar") },
   { value: 2, label: t("pasifAraclar") },
   { value: 3, label: t("arsivdekiAraclar") },

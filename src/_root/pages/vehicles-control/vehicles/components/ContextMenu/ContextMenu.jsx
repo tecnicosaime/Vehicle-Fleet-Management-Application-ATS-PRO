@@ -3,6 +3,8 @@ import { Button, Popover, Typography } from "antd";
 import { MoreOutlined, DownOutlined } from "@ant-design/icons";
 import Sil from "./components/Sil";
 import YapayZekayaSor from "./components/YapayZekayaSor/YapayZekayaSor";
+import Arsivle from "./components/Arsivle";
+import ArsivdenCikar from "./components/ArsivdenCikar";
 
 const { Text, Link } = Typography;
 
@@ -21,6 +23,12 @@ export default function ContextMenu({ selectedRows, refreshTableData }) {
     <div>
       {selectedRows.length >= 1 && <Sil selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />}
       {selectedRows.length === 1 && <YapayZekayaSor selectedRows={selectedRows[0]} refreshTableData={refreshTableData} hidePopover={hidePopover} />}
+      {selectedRows.length >= 1 && selectedRows.every((row) => row.arsiv === false) && (
+        <Arsivle selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
+      )}
+      {selectedRows.length >= 1 && selectedRows.every((row) => row.arsiv === true) && (
+        <ArsivdenCikar selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
+      )}
     </div>
   );
   return (
