@@ -8,7 +8,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Resizable } from "react-resizable";
 import "./ResizeStyle.css";
 import AxiosInstance from "../../../../api/http";
-import { useFormContext } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import styled from "styled-components";
 import ContextMenu from "./components/ContextMenu/ContextMenu";
 import AddModal from "./add/AddModal";
@@ -16,6 +16,7 @@ import OperationsInfo from "./operations/OperationsInfo";
 import Filters from "./filter/Filters";
 // import UpdateModal from "./update/UpdateModal";
 import dayjs from "dayjs";
+import DurumSelect from "./components/Durum/DurumSelectbox";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
@@ -131,6 +132,14 @@ const Yakit = ({ ayarlarData }) => {
     data: null,
   });
   const navigate = useNavigate();
+  const methods = useForm({
+    defaultValues: {
+      durum: 0,
+      // ... Tüm default değerleriniz
+    },
+  });
+
+  const { setValue, reset, watch } = methods;
 
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -138,6 +147,8 @@ const Yakit = ({ ayarlarData }) => {
     keyword: "",
     filters: {},
   });
+
+  const durum = watch("durum");
 
   // API Data Fetching with diff and setPointId
   const fetchData = async (diff, targetPage) => {
@@ -158,7 +169,7 @@ const Yakit = ({ ayarlarData }) => {
       // Determine what to send for customfilters
       const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
 
-      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`, customFilters);
+      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}&type=${durum}`, customFilters);
 
       const total = response.data.vehicleCount;
       setTotalCount(total);
@@ -182,6 +193,32 @@ const Yakit = ({ ayarlarData }) => {
       setLoading(false);
     }
   };
+
+  const isFirstRender = useRef(true);
+  const prevDurum = useRef(watch("durum"));
+
+  useEffect(() => {
+    const currentDurum = watch("durum");
+
+    // İlk render'da hiçbir şey yapma
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      // o anki durumu referans kabul et
+      prevDurum.current = currentDurum;
+      return;
+    }
+
+    // Eğer önceki değerle aynıysa çağırma
+    if (prevDurum.current === currentDurum) {
+      return;
+    }
+
+    // Değer değiştiyse fetchData
+    fetchData(0, 1);
+
+    // prevDurum'u güncelle
+    prevDurum.current = currentDurum;
+  }, [watch("durum")]);
 
   useEffect(() => {
     if (body !== prevBodyRef.current) {
@@ -960,85 +997,87 @@ const Yakit = ({ ayarlarData }) => {
           </DndContext>
         </div>
       </Modal>
-
-      {/* Toolbar */}
-      <div
-        style={{
-          backgroundColor: "white",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          marginBottom: "15px",
-          gap: "10px",
-          padding: "15px",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
+      <FormProvider {...methods}>
+        {" "}
+        {/* Toolbar */}
         <div
           style={{
+            backgroundColor: "white",
             display: "flex",
-            gap: "10px",
-            alignItems: "center",
-            width: "100%",
-            maxWidth: "935px",
             flexWrap: "wrap",
+            justifyContent: "space-between",
+            marginBottom: "15px",
+            gap: "10px",
+            padding: "15px",
+            borderRadius: "8px 8px 8px 8px",
+            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
           }}
         >
-          <StyledButton onClick={() => setIsModalVisible(true)}>
-            <MenuOutlined />
-          </StyledButton>
-          <Input
-            style={{ width: "250px" }}
-            type="text"
-            placeholder="Arama yap..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onPressEnter={handleSearch}
-            // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
-            suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
-          />
-          <Filters onChange={handleBodyChange} />
-          {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
-          {/* Other toolbar components */}
-        </div>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <OperationsInfo ids={keyArray} selectedRowsData={selectedRows} onRefresh={refreshTableData} />
-          <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <AddModal selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
-        </div>
-      </div>
-
-      {/* Table */}
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "10px",
-          height: "calc(100vh - 200px)",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
-        <Spin spinning={loading}>
-          <Table
-            components={components}
-            rowSelection={rowSelection}
-            columns={filteredColumns}
-            dataSource={data}
-            pagination={{
-              current: currentPage,
-              total: totalCount,
-              pageSize: 10,
-              showSizeChanger: false,
-              showQuickJumper: true,
-              onChange: handleTableChange,
-              showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+              width: "100%",
+              maxWidth: "935px",
+              flexWrap: "wrap",
             }}
-            scroll={{ y: "calc(100vh - 335px)" }}
-          />
-        </Spin>
-        {/* <UpdateModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} /> */}
-      </div>
+          >
+            <StyledButton onClick={() => setIsModalVisible(true)}>
+              <MenuOutlined />
+            </StyledButton>
+            <Input
+              style={{ width: "250px" }}
+              type="text"
+              placeholder="Arama yap..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onPressEnter={handleSearch}
+              // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+              suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
+            />
+            <Filters onChange={handleBodyChange} durum={durum} />
+            <DurumSelect />
+            {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
+            {/* Other toolbar components */}
+          </div>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <OperationsInfo ids={keyArray} selectedRowsData={selectedRows} onRefresh={refreshTableData} />
+            <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
+            <AddModal selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+          </div>
+        </div>
+        {/* Table */}
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "10px",
+            height: "calc(100vh - 200px)",
+            borderRadius: "8px 8px 8px 8px",
+            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+          }}
+        >
+          <Spin spinning={loading}>
+            <Table
+              components={components}
+              rowSelection={rowSelection}
+              columns={filteredColumns}
+              dataSource={data}
+              pagination={{
+                current: currentPage,
+                total: totalCount,
+                pageSize: 10,
+                showSizeChanger: false,
+                showQuickJumper: true,
+                onChange: handleTableChange,
+                showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
+              }}
+              scroll={{ y: "calc(100vh - 335px)" }}
+            />
+          </Spin>
+          {/* <UpdateModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} /> */}
+        </div>
+      </FormProvider>
     </>
   );
 };
