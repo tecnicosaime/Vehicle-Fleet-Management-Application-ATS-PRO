@@ -134,10 +134,10 @@ const Stok = () => {
 
       if (diff > 0) {
         // Moving forward
-        currentSetPointId = data[data.length - 1]?.siraNo || 0;
+        currentSetPointId = data[data.length - 1]?.malzemeId || 0;
       } else if (diff < 0) {
         // Moving backward
-        currentSetPointId = data[0]?.siraNo || 0;
+        currentSetPointId = data[0]?.malzemeId || 0;
       } else {
         currentSetPointId = 0;
       }
@@ -150,7 +150,7 @@ const Stok = () => {
 
       const newData = response.data.list.map((item) => ({
         ...item,
-        key: item.siraNo, // Assign key directly from siraNo
+        key: item.malzemeId, // Assign key directly from siraNo
       }));
 
       if (newData.length > 0) {
