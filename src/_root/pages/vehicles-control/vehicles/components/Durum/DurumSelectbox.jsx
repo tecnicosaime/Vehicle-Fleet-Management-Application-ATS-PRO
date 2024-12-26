@@ -1,5 +1,4 @@
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
 import { Select } from "antd";
 import { t } from "i18next";
 
@@ -16,28 +15,15 @@ const DURUM_OPTIONS = [
   { value: 7, label: t("seferdeOlanAraclar") },
 ];
 
-const DurumSelect = () => {
-  const {
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useFormContext();
-
+const DurumSelect = ({ value, onChange, placeholder = "Durum Seçin" }) => {
   return (
-    <Controller
-      name="durum"
-      control={control}
-      render={({ field }) => (
-        <Select {...field} placeholder="Durum Seçin" style={{ width: "200px" }} allowClear>
-          {DURUM_OPTIONS.map((option) => (
-            <Option key={option.value} value={option.value}>
-              {option.label}
-            </Option>
-          ))}
-        </Select>
-      )}
-    />
+    <Select value={value} onChange={onChange} placeholder={placeholder} style={{ width: "200px" }} allowClear>
+      {DURUM_OPTIONS.map((option) => (
+        <Option key={option.value} value={option.value}>
+          {option.label}
+        </Option>
+      ))}
+    </Select>
   );
 };
 

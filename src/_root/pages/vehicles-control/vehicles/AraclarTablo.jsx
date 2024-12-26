@@ -118,6 +118,7 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 
 const Yakit = ({ ayarlarData }) => {
   const { setPlaka } = useContext(PlakaContext);
+  const [selectedDurum, setSelectedDurum] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -148,8 +149,6 @@ const Yakit = ({ ayarlarData }) => {
     filters: {},
   });
 
-  const durum = watch("durum");
-
   // API Data Fetching with diff and setPointId
   const fetchData = async (diff, targetPage) => {
     setLoading(true);
@@ -169,7 +168,10 @@ const Yakit = ({ ayarlarData }) => {
       // Determine what to send for customfilters
       const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
 
-      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}&type=${durum || 0}`, customFilters);
+      const response = await AxiosInstance.post(
+        `Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}&type=${selectedDurum || 0}`,
+        customFilters
+      );
 
       const total = response.data.vehicleCount;
       setTotalCount(total);
@@ -194,31 +196,18 @@ const Yakit = ({ ayarlarData }) => {
     }
   };
 
-  const isFirstRender = useRef(true);
-  const prevDurum = useRef(watch("durum"));
-
   useEffect(() => {
-    const currentDurum = watch("durum");
-
-    // İlk render'da hiçbir şey yapma
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      // o anki durumu referans kabul et
-      prevDurum.current = currentDurum;
-      return;
+    // İlk render'da çalışmasını engellemek için (isteğe bağlı)
+    if (selectedDurum !== null) {
+      console.log("useEffect tetiklendi, seçilen durum:", selectedDurum);
+      fetchData(0, 1);
     }
+  }, [selectedDurum]);
 
-    // Eğer önceki değerle aynıysa çağırma
-    if (prevDurum.current === currentDurum) {
-      return;
-    }
-
-    // Değer değiştiyse fetchData
-    fetchData(0, 1);
-
-    // prevDurum'u güncelle
-    prevDurum.current = currentDurum;
-  }, [watch("durum")]);
+  const handleDurumChange = (value) => {
+    setSelectedDurum(value);
+    console.log("handleDurumChange seçilen durum:", value);
+  };
 
   useEffect(() => {
     if (body !== prevBodyRef.current) {
@@ -274,7 +263,7 @@ const Yakit = ({ ayarlarData }) => {
     setSelectedRows([]);
     fetchData(0, 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedDurum]);
 
   // Columns definition (adjust as needed)
   const initialColumns = [
@@ -1036,8 +1025,8 @@ const Yakit = ({ ayarlarData }) => {
               // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
               suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
             />
-            <Filters onChange={handleBodyChange} durum={durum} />
-            <DurumSelect />
+            <Filters onChange={handleBodyChange} durum={selectedDurum} />
+            <DurumSelect value={selectedDurum} onChange={handleDurumChange} />
             {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
             {/* Other toolbar components */}
           </div>
