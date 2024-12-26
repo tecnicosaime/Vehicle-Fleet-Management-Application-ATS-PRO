@@ -24,7 +24,7 @@ const CloseButton = styled.div`
   cursor: pointer;
 `;
 
-export default function CustomFilter({ onSubmit }) {
+export default function CustomFilter({ onSubmit, durum }) {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([]);
   const [newObjectsAdded, setNewObjectsAdded] = useState(false);
@@ -125,6 +125,7 @@ export default function CustomFilter({ onSubmit }) {
     <>
       <Button
         onClick={showDrawer}
+        disabled={durum !== 0}
         style={{
           display: "flex",
           alignItems: "center",

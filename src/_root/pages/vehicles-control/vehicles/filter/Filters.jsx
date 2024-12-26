@@ -4,7 +4,7 @@ import LocationFilter from "./LocationFilter";
 import TypeFilter from "./TypeFilter";
 import CustomFilter from "./custom-filter/CustomFilter";
 
-export default function Filters({ onChange }) {
+export default function Filters({ onChange, durum }) {
   const [filters, setFilters] = React.useState({
     lokasyonlar: {},
     isemritipleri: {},
@@ -21,7 +21,7 @@ export default function Filters({ onChange }) {
       {/* <TypeFilter onSubmit={(newFilters) => setFilters((state) => ({ ...state, isemritipleri: newFilters }))} /> */}
       {/* <ConditionFilter onSubmit={(newFilters) => setFilters((state) => ({ ...state, durumlar: newFilters }))} /> */}
       {/* <LocationFilter onSubmit={(newFilters) => setFilters((state) => ({ ...state, lokasyonlar: newFilters }))} /> */}
-      <CustomFilter onSubmit={(newFilters) => setFilters((state) => ({ ...state, customfilters: newFilters }))} />
+      <CustomFilter durum={durum} onSubmit={(newFilters) => setFilters((state) => ({ ...state, customfilters: newFilters }))} />
     </>
   );
 }
