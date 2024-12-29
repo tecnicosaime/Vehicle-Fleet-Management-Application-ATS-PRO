@@ -17,7 +17,7 @@ const DURUM_OPTIONS = [
 
 const DurumSelect = ({ value, onChange, placeholder = "Durum Seçin" }) => {
   return (
-    <Select value={value} onChange={onChange} placeholder={placeholder} style={{ width: "200px" }} allowClear>
+    <Select value={value} onChange={onChange} placeholder={placeholder} style={{ width: "230px" }} allowClear>
       {DURUM_OPTIONS.map((option) => (
         <Option key={option.value} value={option.value}>
           <span
