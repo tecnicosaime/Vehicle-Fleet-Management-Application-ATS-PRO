@@ -282,74 +282,15 @@ const Yakit = ({ ayarlarData }) => {
       title: t("aracPlaka"),
       dataIndex: "plaka",
       key: "plaka",
-      width: 135,
+      width: 120,
       ellipsis: true,
       visible: true,
-      onCell: () => ({
-        style: {
-          padding: "8px", // set your desired padding
-        },
-      }),
+      // render: (text, record) => <a onClick={() => onRowClick(record)}>{text}</a>,
+      render: (text, record) => <Link to={`/detay/${record.aracId}`}>{text}</Link>,
       sorter: (a, b) => {
         if (a.plaka === null) return -1;
         if (b.plaka === null) return 1;
         return a.plaka.localeCompare(b.plaka);
-      },
-      render: (text, record) => {
-        // Rengi belirlemek için değişken tanımlıyoruz
-        let columnOpacity;
-
-        if (record.arsiv) {
-          columnOpacity = 0.4; // 1) record.arsiv true => gri arşiv
-        } else if (record.aktif) {
-          columnOpacity = 1; // 2) record.arsiv false, record.aktif true => yeşil aktif
-        } else {
-          columnOpacity = 0.7; // 3) record.arsiv false, record.aktif false => sarı passif
-        }
-
-        return (
-          <Link
-            style={{
-              border: "1px solid #5B548B",
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              borderRadius: "5px",
-              overflow: "hidden",
-              opacity: columnOpacity,
-            }}
-            to={`/detay/${record.aracId}`}
-          >
-            <div
-              style={{
-                height: "25px",
-                minWidth: "23px",
-                backgroundColor: "#5B548B",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "flex-end",
-                color: "white",
-                padding: "0px 5px",
-                fontSize: "10px",
-              }}
-            >
-              TR
-            </div>
-            <span
-              style={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                color: "black", // Renk buradan atanıyor
-                width: "100%",
-                textAlign: "center",
-              }}
-            >
-              {text}
-            </span>
-          </Link>
-        );
       },
     },
 
@@ -365,11 +306,11 @@ const Yakit = ({ ayarlarData }) => {
         let durumIcon;
 
         if (record.arsiv) {
-          durumIcon = <FaTimes style={{ color: "#eb0000" }} />; // 1) record.arsiv true => gri arşiv
+          durumIcon = <Tag color="error">{t("arsiv")}</Tag>; // 1) record.arsiv true => gri arşiv
         } else if (record.aktif) {
-          durumIcon = <FaCheck style={{ color: "green" }} />; // 2) record.arsiv false, record.aktif true => yeşil aktif
+          durumIcon = <Tag color="success">{t("aktif")}</Tag>; // 2) record.arsiv false, record.aktif true => yeşil aktif
         } else {
-          durumIcon = <FaExclamation style={{ color: "#ff9500" }} />; // 3) record.arsiv false, record.aktif false => sarı passif
+          durumIcon = <Tag color="warning">{t("pasif")}</Tag>; // 3) record.arsiv false, record.aktif false => sarı passif
         }
         return <div>{durumIcon}</div>;
       },
