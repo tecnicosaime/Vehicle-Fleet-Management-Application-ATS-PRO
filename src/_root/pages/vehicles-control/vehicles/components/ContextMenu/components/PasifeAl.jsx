@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import AxiosInstance from "../../../../../../../api/http";
-import { Button, message, Modal, Popconfirm, DatePicker, Input, ConfigProvider } from "antd";
-import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, message, Modal, ConfigProvider, DatePicker, Input } from "antd";
 import { t } from "i18next";
 import dayjs from "dayjs";
 import trTR from "antd/lib/locale/tr_TR";
 import enUS from "antd/lib/locale/en_US";
 import ruRU from "antd/lib/locale/ru_RU";
 import azAZ from "antd/lib/locale/az_AZ";
-// Import other locales as needed
 
 const localeMap = {
   tr: trTR,
   en: enUS,
   ru: ruRU,
   az: azAZ,
-  // Add other mappings here
 };
 
 // Define date format mapping based on language
@@ -25,7 +22,6 @@ const dateFormatMap = {
   en: "MM/DD/YYYY",
   ru: "DD.MM.YYYY",
   az: "DD.MM.YYYY",
-  // Add other mappings here
 };
 
 // Define time format mapping based on language
@@ -34,14 +30,12 @@ const timeFormatMap = {
   en: "hh:mm A",
   ru: "HH:mm",
   az: "HH:mm",
-  // Add other mappings here
 };
 
-export default function ArsivdenCikar({ selectedRows, refreshTableData, disabled, hidePopover }) {
+export default function PasifeAl({ selectedRows, refreshTableData, disabled, hidePopover }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY"); // Default format
-  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default format
-  // Sil düğmesini gizlemek için koşullu stil
+  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY");
+  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm");
   const buttonStyle = disabled ? { display: "none" } : {};
 
   const methods = useForm({
@@ -51,20 +45,19 @@ export default function ArsivdenCikar({ selectedRows, refreshTableData, disabled
     },
   });
 
-  const { setValue, reset, handleSubmit, control } = methods;
+  const { reset, handleSubmit, control } = methods;
 
   const onSubmit = async (data) => {
     const aracIDs = selectedRows.map((row) => row.key);
 
     const body = {
       vIds: aracIDs,
-      durum: false,
       tarih: data.selectedDate && dayjs(data.selectedDate).isValid() ? dayjs(data.selectedDate).format("YYYY-MM-DD") : null,
       aciklama: data.aciklama,
     };
 
     try {
-      const response = await AxiosInstance.post(`GetArchive/GetVehiclesArchiveById`, body);
+      const response = await AxiosInstance.post(`Deactivate/DeactivateVehicleById`, body);
       console.log("İşlem sonucu:", response);
 
       if (response.data.statusCode >= 200 && response.data.statusCode < 300) {
@@ -90,28 +83,25 @@ export default function ArsivdenCikar({ selectedRows, refreshTableData, disabled
 
   useEffect(() => {
     // Ay ve tarih formatını dil bazında ayarlayın
-    const selectedDateFormat = dateFormatMap[currentLang] || "MM/DD/YYYY";
-    setLocaleDateFormat(selectedDateFormat);
-
-    const selectedTimeFormat = timeFormatMap[currentLang] || "HH:mm";
-    setLocaleTimeFormat(selectedTimeFormat);
+    setLocaleDateFormat(dateFormatMap[currentLang] || "MM/DD/YYYY");
+    setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
   }, [currentLang]);
 
   // Modal kapandığında formu sıfırla
   const handleCancel = () => {
     setIsModalVisible(false);
-    reset(); // Formu sıfırla
+    reset();
   };
 
   return (
     <div style={buttonStyle}>
       <div style={{ marginTop: "8px", cursor: "pointer" }} onClick={() => setIsModalVisible(true)}>
-        {t("arsivdenCikar")}
+        {t("pasifeAl")}
       </div>
 
-      <Modal title={t("arsivdenCikar")} open={isModalVisible} onOk={methods.handleSubmit(onSubmit)} onCancel={handleCancel}>
+      <Modal title={t("pasifeAl")} open={isModalVisible} onOk={handleSubmit(onSubmit)} onCancel={handleCancel}>
         <ConfigProvider locale={currentLocale}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name="selectedDate"
               control={control}
@@ -124,4 +114,3 @@ export default function ArsivdenCikar({ selectedRows, refreshTableData, disabled
     </div>
   );
 }
-// ...existing code...

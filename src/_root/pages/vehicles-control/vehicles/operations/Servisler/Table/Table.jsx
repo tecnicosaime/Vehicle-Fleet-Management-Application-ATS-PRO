@@ -10,6 +10,7 @@ import AxiosInstance from "../../../../../../../api/http";
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import CreateDrawer from "../Insert/CreateDrawer";
+import EditDrawer from "../../../../ServisIslemleri/Update/EditDrawer";
 import dayjs from "dayjs";
 import { t } from "i18next";
 
@@ -1068,6 +1069,7 @@ const MainTable = ({ ids, selectedRowsData }) => {
           rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
         />
       </CustomSpin>
+      <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
     </>
   );
 };

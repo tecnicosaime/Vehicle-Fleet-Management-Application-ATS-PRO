@@ -5,6 +5,10 @@ import Sil from "./components/Sil";
 import YapayZekayaSor from "./components/YapayZekayaSor/YapayZekayaSor";
 import Arsivle from "./components/Arsivle";
 import ArsivdenCikar from "./components/ArsivdenCikar";
+import AktifYap from "./components/AktifYap";
+import PasifeAl from "./components/PasifeAl";
+import AracTipiniDegistir from "./components/AracTipiniDegistir";
+import AracGrubunuDegistir from "./components/AracGrubunuDegistir";
 
 const { Text, Link } = Typography;
 
@@ -28,6 +32,19 @@ export default function ContextMenu({ selectedRows, refreshTableData }) {
       )}
       {selectedRows.length >= 1 && selectedRows.every((row) => row.arsiv === true) && (
         <ArsivdenCikar selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
+      )}
+
+      {selectedRows.length >= 1 && selectedRows.every((row) => row.aktif === false) && selectedRows.every((row) => row.arsiv === false) && (
+        <AktifYap selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
+      )}
+      {selectedRows.length >= 1 && selectedRows.every((row) => row.aktif === true) && selectedRows.every((row) => row.arsiv === false) && (
+        <PasifeAl selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
+      )}
+      {selectedRows.length >= 1 && selectedRows.every((row) => row.arsiv === false) && (
+        <AracTipiniDegistir selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
+      )}
+      {selectedRows.length >= 1 && selectedRows.every((row) => row.arsiv === false) && (
+        <AracGrubunuDegistir selectedRows={selectedRows} refreshTableData={refreshTableData} hidePopover={hidePopover} />
       )}
     </div>
   );

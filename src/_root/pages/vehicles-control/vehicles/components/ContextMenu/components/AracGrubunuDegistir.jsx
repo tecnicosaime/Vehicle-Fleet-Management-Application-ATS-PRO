@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import AxiosInstance from "../../../../../../../api/http";
-import { Button, message, Modal, Popconfirm, DatePicker, Input, ConfigProvider } from "antd";
-import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, message, Modal, ConfigProvider, DatePicker, Input, Typography } from "antd";
+import styled from "styled-components";
+import GrupSelectbox from "./GrupSelectbox";
 import { t } from "i18next";
 import dayjs from "dayjs";
 import trTR from "antd/lib/locale/tr_TR";
 import enUS from "antd/lib/locale/en_US";
 import ruRU from "antd/lib/locale/ru_RU";
 import azAZ from "antd/lib/locale/az_AZ";
-// Import other locales as needed
+
+const { Text, Link } = Typography;
+const { TextArea } = Input;
 
 const localeMap = {
   tr: trTR,
   en: enUS,
   ru: ruRU,
   az: azAZ,
-  // Add other mappings here
 };
 
 // Define date format mapping based on language
@@ -25,7 +27,6 @@ const dateFormatMap = {
   en: "MM/DD/YYYY",
   ru: "DD.MM.YYYY",
   az: "DD.MM.YYYY",
-  // Add other mappings here
 };
 
 // Define time format mapping based on language
@@ -34,37 +35,38 @@ const timeFormatMap = {
   en: "hh:mm A",
   ru: "HH:mm",
   az: "HH:mm",
-  // Add other mappings here
 };
 
-export default function ArsivdenCikar({ selectedRows, refreshTableData, disabled, hidePopover }) {
+const StyledDivBottomLine = styled.div`
+  @media (min-width: 600px) {
+    alignitems: "center";
+  }
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+export default function AracGrubunuDegistir({ selectedRows, refreshTableData, disabled, hidePopover }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY"); // Default format
-  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default format
-  // Sil düğmesini gizlemek için koşullu stil
+  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY");
+  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm");
   const buttonStyle = disabled ? { display: "none" } : {};
 
   const methods = useForm({
     defaultValues: {
-      selectedDate: null, // Tarih için null yapıldı
-      aciklama: "",
+      aracTipiID: null,
+      aracTipi: null,
     },
   });
 
-  const { setValue, reset, handleSubmit, control } = methods;
+  const { reset, handleSubmit, control, watch } = methods;
 
   const onSubmit = async (data) => {
     const aracIDs = selectedRows.map((row) => row.key);
 
-    const body = {
-      vIds: aracIDs,
-      durum: false,
-      tarih: data.selectedDate && dayjs(data.selectedDate).isValid() ? dayjs(data.selectedDate).format("YYYY-MM-DD") : null,
-      aciklama: data.aciklama,
-    };
-
     try {
-      const response = await AxiosInstance.post(`GetArchive/GetVehiclesArchiveById`, body);
+      const response = await AxiosInstance.post(`ModifyGroup/ModifyVehicleGroup?groupId=${data.aracGrubuID}`, aracIDs);
       console.log("İşlem sonucu:", response);
 
       if (response.data.statusCode >= 200 && response.data.statusCode < 300) {
@@ -90,38 +92,36 @@ export default function ArsivdenCikar({ selectedRows, refreshTableData, disabled
 
   useEffect(() => {
     // Ay ve tarih formatını dil bazında ayarlayın
-    const selectedDateFormat = dateFormatMap[currentLang] || "MM/DD/YYYY";
-    setLocaleDateFormat(selectedDateFormat);
-
-    const selectedTimeFormat = timeFormatMap[currentLang] || "HH:mm";
-    setLocaleTimeFormat(selectedTimeFormat);
+    setLocaleDateFormat(dateFormatMap[currentLang] || "MM/DD/YYYY");
+    setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
   }, [currentLang]);
 
   // Modal kapandığında formu sıfırla
   const handleCancel = () => {
     setIsModalVisible(false);
-    reset(); // Formu sıfırla
+    reset();
   };
 
   return (
     <div style={buttonStyle}>
       <div style={{ marginTop: "8px", cursor: "pointer" }} onClick={() => setIsModalVisible(true)}>
-        {t("arsivdenCikar")}
+        {t("aracGrubunuDegistir")}
       </div>
 
-      <Modal title={t("arsivdenCikar")} open={isModalVisible} onOk={methods.handleSubmit(onSubmit)} onCancel={handleCancel}>
+      <Modal title={t("aracGrubunuDegistir")} open={isModalVisible} onOk={handleSubmit(onSubmit)} onCancel={handleCancel}>
         <ConfigProvider locale={currentLocale}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <Controller
-              name="selectedDate"
-              control={control}
-              render={({ field }) => <DatePicker {...field} style={{ width: "100%", marginBottom: 8 }} format={localeDateFormat} placeholder={t("Tarih seçiniz")} />}
-            />
-            <Controller name="aciklama" control={control} render={({ field }) => <Input.TextArea {...field} rows={4} placeholder={t("Açıklama")} style={{ marginTop: 8 }} />} />
-          </form>
+          <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div style={{ width: "100%", maxWidth: "450px" }}>
+                <StyledDivBottomLine style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                  <Text style={{ fontSize: "14px" }}>Araç Grubu:</Text>
+                  <GrupSelectbox />
+                </StyledDivBottomLine>
+              </div>
+            </form>
+          </FormProvider>
         </ConfigProvider>
       </Modal>
     </div>
   );
 }
-// ...existing code...
