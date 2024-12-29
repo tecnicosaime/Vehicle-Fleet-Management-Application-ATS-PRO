@@ -8,7 +8,6 @@ import ruRU from "antd/es/locale/ru_RU";
 import azAZ from "antd/es/locale/az_AZ"; // Import Azerbaijani locale
 
 const CarouselSlide = styled.div`
-  /* Center the content */
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -52,7 +51,8 @@ const ImageCarousel = ({ imageUrls }) => {
           const responses = await Promise.all(requests);
 
           const fetchedImages = responses.map((response) => {
-            // Assuming response.data contains the Blob of the image
+            // response.data'in içinde, API'nizin tasarımına göre blob veya base64 gibi veriler olabilir.
+            // Bu örnekte blob olarak varsayıyoruz.
             return {
               uid: response.data.photoId,
               url: URL.createObjectURL(response.data),
@@ -77,17 +77,28 @@ const ImageCarousel = ({ imageUrls }) => {
     };
   }, [imageUrls]);
 
+  const fallbackSrc = "/public/images/ResimYok.jpeg"; // Sabit resim yolunu burada belirtiyoruz
+
   return (
     <ConfigProvider locale={locale}>
-      <Image.PreviewGroup items={images.map((image) => image.url)}>
+      {images.length > 0 ? (
+        <Image.PreviewGroup items={images.map((image) => image.url)}>
+          <Carousel arrows autoplay>
+            {images.map((image) => (
+              <CarouselSlide key={image.uid}>
+                <Image src={image.url} alt={image.name} style={{ width: "100%", height: "100%" }} />
+              </CarouselSlide>
+            ))}
+          </Carousel>
+        </Image.PreviewGroup>
+      ) : (
+        // Eğer resim yoksa fallback resimi Carousel içinde tek bir slide olarak gösteriyoruz.
         <Carousel arrows autoplay>
-          {images.map((image) => (
-            <CarouselSlide key={image.uid}>
-              <Image src={image.url} alt={image.name} style={{ width: "100%", height: "100%" }} />
-            </CarouselSlide>
-          ))}
+          <CarouselSlide>
+            <Image src={fallbackSrc} alt="Fallback" style={{ width: "100%", height: "100%" }} />
+          </CarouselSlide>
         </Carousel>
-      </Image.PreviewGroup>
+      )}
     </ConfigProvider>
   );
 };
