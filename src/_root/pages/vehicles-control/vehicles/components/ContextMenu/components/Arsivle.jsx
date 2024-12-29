@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import AxiosInstance from "../../../../../../../api/http";
-import { Button, message, Modal, Popconfirm, DatePicker, Input, ConfigProvider } from "antd";
-import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, message, Modal, ConfigProvider, DatePicker, Input, Alert } from "antd";
 import { t } from "i18next";
 import dayjs from "dayjs";
 import trTR from "antd/lib/locale/tr_TR";
 import enUS from "antd/lib/locale/en_US";
 import ruRU from "antd/lib/locale/ru_RU";
 import azAZ from "antd/lib/locale/az_AZ";
-// Import other locales as needed
 
 const localeMap = {
   tr: trTR,
   en: enUS,
   ru: ruRU,
   az: azAZ,
-  // Add other mappings here
 };
 
 // Define date format mapping based on language
@@ -25,7 +22,6 @@ const dateFormatMap = {
   en: "MM/DD/YYYY",
   ru: "DD.MM.YYYY",
   az: "DD.MM.YYYY",
-  // Add other mappings here
 };
 
 // Define time format mapping based on language
@@ -34,61 +30,51 @@ const timeFormatMap = {
   en: "hh:mm A",
   ru: "HH:mm",
   az: "HH:mm",
-  // Add other mappings here
 };
 
 export default function Arsivle({ selectedRows, refreshTableData, disabled, hidePopover }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY"); // Default format
-  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm"); // Default format
-  // Sil düğmesini gizlemek için koşullu stil
+  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY");
+  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm");
   const buttonStyle = disabled ? { display: "none" } : {};
 
   const methods = useForm({
     defaultValues: {
-      selectedDate: "",
+      selectedDate: null, // Tarih için null yapıldı
       aciklama: "",
-      // ... Tüm default değerleriniz
     },
   });
 
-  const { setValue, reset, handleSubmit, control } = methods;
+  const { reset, handleSubmit, control } = methods;
 
-  // Silme işlemini tetikleyecek fonksiyon
   const onSubmit = async (data) => {
-    let isError = false;
+    const aracIDs = selectedRows.map((row) => row.key);
+
+    const body = {
+      vIds: aracIDs,
+      durum: true,
+      tarih: data.selectedDate && dayjs(data.selectedDate).isValid() ? dayjs(data.selectedDate).format("YYYY-MM-DD") : null,
+      aciklama: data.aciklama,
+    };
+
     try {
-      for (const row of selectedRows) {
-        const body = {
-          aracId: row.key,
-          durum: true,
-          tarih: data.selectedDate && dayjs(data.selectedDate).isValid() ? dayjs(data.selectedDate).format("YYYY-MM-DD") : null,
-          aciklama: data.aciklama,
-        };
-        const response = await AxiosInstance.post(`Vehicle/ArchiveVehicle`, body);
-        console.log("İşlem başarılı:", response);
-        if (response.data.statusCode === 200 || response.data.statusCode === 201 || response.data.statusCode === 202 || response.data.statusCode === 204) {
-          message.success(`İşlem Başarılı ${row.plaka}`);
-        } else if (response.data.statusCode === 401) {
-          message.error("Bu işlemi yapmaya yetkiniz bulunmamaktadır.");
-          isError = true;
-          break;
-        } else {
-          message.error("İşlem Başarısız.");
-          isError = true;
-          break;
-        }
+      const response = await AxiosInstance.post(`GetArchive/GetVehiclesArchiveById`, body);
+      console.log("İşlem sonucu:", response);
+
+      if (response.data.statusCode >= 200 && response.data.statusCode < 300) {
+        message.success(t("İşlem Başarılı"));
+        refreshTableData();
+        hidePopover();
+        setIsModalVisible(false);
+        reset();
+      } else if (response.data.statusCode === 401) {
+        message.error(t("Bu işlemi yapmaya yetkiniz bulunmamaktadır."));
+      } else {
+        message.error(t("İşlem Başarısız."));
       }
     } catch (error) {
       console.error("İşlem sırasında hata oluştu:", error);
-      message.error("İşlem sırasında hata oluştu.");
-      isError = true;
-    }
-    if (!isError) {
-      refreshTableData();
-      hidePopover();
-      setIsModalVisible(false);
-      reset(); // Formu sıfırla
+      message.error(t("İşlem sırasında hata oluştu."));
     }
   };
 
@@ -98,33 +84,25 @@ export default function Arsivle({ selectedRows, refreshTableData, disabled, hide
 
   useEffect(() => {
     // Ay ve tarih formatını dil bazında ayarlayın
-    const selectedDateFormat = dateFormatMap[currentLang] || "MM/DD/YYYY";
-    setLocaleDateFormat(selectedDateFormat);
-
-    const selectedTimeFormat = timeFormatMap[currentLang] || "HH:mm";
-    setLocaleTimeFormat(selectedTimeFormat);
+    setLocaleDateFormat(dateFormatMap[currentLang] || "MM/DD/YYYY");
+    setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
   }, [currentLang]);
 
   // Modal kapandığında formu sıfırla
   const handleCancel = () => {
     setIsModalVisible(false);
-    reset(); // Formu sıfırla
+    reset();
   };
 
   return (
     <div style={buttonStyle}>
       <div style={{ marginTop: "8px", cursor: "pointer" }} onClick={() => setIsModalVisible(true)}>
-        Arşivle
+        {t("arsivle")}
       </div>
 
-      <Modal
-        title="Arşivle"
-        open={isModalVisible}
-        onOk={methods.handleSubmit(onSubmit)}
-        onCancel={handleCancel} // OnCancel'da reset çağırılıyor
-      >
+      <Modal title={t("arsivle")} open={isModalVisible} onOk={handleSubmit(onSubmit)} onCancel={handleCancel}>
         <ConfigProvider locale={currentLocale}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name="selectedDate"
               control={control}
@@ -132,9 +110,22 @@ export default function Arsivle({ selectedRows, refreshTableData, disabled, hide
             />
             <Controller name="aciklama" control={control} render={({ field }) => <Input.TextArea {...field} rows={4} placeholder={t("Açıklama")} style={{ marginTop: 8 }} />} />
           </form>
+          <Alert
+            message="Uyarı"
+            description={
+              <ul style={{ listStyleType: "initial" }}>
+                <li>Arşivleme işlemi, araca ait tüm verilerin sistemde saklanmasını sağlar. Ancak araç tüm listelerden kaldırılarak görünmez hale gelir.</li>
+                <li>⁠Araçla ilgili işlem yapılamaz.</li>
+                <li>Bu işlem geri alınabilir.</li>
+                Devam etmek istiyor musunuz?
+              </ul>
+            }
+            type="error"
+            showIcon
+            style={{ marginTop: 16 }}
+          />
         </ConfigProvider>
       </Modal>
     </div>
   );
 }
-// ...existing code...

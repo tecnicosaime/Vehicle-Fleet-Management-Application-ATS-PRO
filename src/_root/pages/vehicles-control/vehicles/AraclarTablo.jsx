@@ -279,42 +279,65 @@ const Yakit = ({ ayarlarData }) => {
           padding: "8px", // set your desired padding
         },
       }),
-      // render: (text, record) => <a onClick={() => onRowClick(record)}>{text}</a>,
-      render: (text, record) => (
-        <Link
-          style={{
-            border: "1px solid #5B548B",
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            borderRadius: "5px 5px 5px 5px",
-            overflow: "hidden",
-          }}
-          to={`/detay/${record.aracId}`}
-        >
-          <div
-            style={{
-              height: "25px",
-              minWidth: "23px",
-              backgroundColor: "#5B548B",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-end",
-              color: "white",
-              padding: "0px 5px 0px 5px",
-              fontSize: "10px",
-            }}
-          >
-            TR
-          </div>
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "black", width: "100%", textAlign: "center" }}>{text}</span>
-        </Link>
-      ),
       sorter: (a, b) => {
         if (a.plaka === null) return -1;
         if (b.plaka === null) return 1;
         return a.plaka.localeCompare(b.plaka);
+      },
+      render: (text, record) => {
+        // Rengi belirlemek için değişken tanımlıyoruz
+        let textColor;
+
+        if (record.arsiv) {
+          textColor = "gray"; // 1) record.arsiv true => gri
+        } else if (record.aktif) {
+          textColor = "green"; // 2) record.arsiv false, record.aktif true => yeşil
+        } else {
+          textColor = "#ff8300"; // 3) record.arsiv false, record.aktif false => sarı
+        }
+
+        return (
+          <Link
+            style={{
+              border: "1px solid #5B548B",
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              borderRadius: "5px",
+              overflow: "hidden",
+            }}
+            to={`/detay/${record.aracId}`}
+          >
+            <div
+              style={{
+                height: "25px",
+                minWidth: "23px",
+                backgroundColor: "#5B548B",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "flex-end",
+                color: "white",
+                padding: "0px 5px",
+                fontSize: "10px",
+              }}
+            >
+              TR
+            </div>
+            <span
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                color: textColor, // Renk buradan atanıyor
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              {text}
+            </span>
+          </Link>
+        );
       },
     },
 
@@ -891,6 +914,7 @@ const Yakit = ({ ayarlarData }) => {
 
   // filtreleme işlemi için kullanılan useEffect
   const handleBodyChange = useCallback((type, newBody) => {
+    setSelectedDurum(null);
     setBody((state) => ({
       ...state,
       [type]: newBody,
@@ -987,7 +1011,6 @@ const Yakit = ({ ayarlarData }) => {
         </div>
       </Modal>
       <FormProvider {...methods}>
-        {" "}
         {/* Toolbar */}
         <div
           style={{
@@ -1025,7 +1048,7 @@ const Yakit = ({ ayarlarData }) => {
               // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
               suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
             />
-            <Filters onChange={handleBodyChange} durum={selectedDurum} />
+            <Filters onChange={handleBodyChange} />
             <DurumSelect value={selectedDurum} onChange={handleDurumChange} />
             {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
             {/* Other toolbar components */}
