@@ -481,7 +481,9 @@ const DetailUpdate = () => {
                 </div>
                 <div className="col-span-4">
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="plaka">{t("plaka")}</label>
+                    <label htmlFor="plaka">
+                      {t("plaka")} <span className="text-danger">*</span>
+                    </label>
                     <TextInput name="plaka" />
                   </div>
                 </div>
