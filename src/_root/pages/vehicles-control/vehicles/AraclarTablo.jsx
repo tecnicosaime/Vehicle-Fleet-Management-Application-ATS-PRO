@@ -1,7 +1,18 @@
 import React, { useCallback, useEffect, useState, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip } from "antd";
-import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  HolderOutlined,
+  SearchOutlined,
+  MenuOutlined,
+  HomeOutlined,
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  ExclamationOutlined,
+} from "@ant-design/icons";
+import { FaExclamation, FaCheck, FaTimes } from "react-icons/fa";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -286,14 +297,14 @@ const Yakit = ({ ayarlarData }) => {
       },
       render: (text, record) => {
         // Rengi belirlemek için değişken tanımlıyoruz
-        let textColor;
+        let columnOpacity;
 
         if (record.arsiv) {
-          textColor = "gray"; // 1) record.arsiv true => gri
+          columnOpacity = 0.4; // 1) record.arsiv true => gri arşiv
         } else if (record.aktif) {
-          textColor = "green"; // 2) record.arsiv false, record.aktif true => yeşil
+          columnOpacity = 1; // 2) record.arsiv false, record.aktif true => yeşil aktif
         } else {
-          textColor = "#ff8300"; // 3) record.arsiv false, record.aktif false => sarı
+          columnOpacity = 0.7; // 3) record.arsiv false, record.aktif false => sarı passif
         }
 
         return (
@@ -306,6 +317,7 @@ const Yakit = ({ ayarlarData }) => {
               alignItems: "center",
               borderRadius: "5px",
               overflow: "hidden",
+              opacity: columnOpacity,
             }}
             to={`/detay/${record.aracId}`}
           >
@@ -329,7 +341,7 @@ const Yakit = ({ ayarlarData }) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-                color: textColor, // Renk buradan atanıyor
+                color: "black", // Renk buradan atanıyor
                 width: "100%",
                 textAlign: "center",
               }}
@@ -338,6 +350,28 @@ const Yakit = ({ ayarlarData }) => {
             </span>
           </Link>
         );
+      },
+    },
+
+    {
+      title: t("aracDurum"),
+      dataIndex: "aracDurum",
+      key: "aracDurum",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+      align: "center",
+      render: (text, record) => {
+        let durumIcon;
+
+        if (record.arsiv) {
+          durumIcon = <FaTimes style={{ color: "#eb0000" }} />; // 1) record.arsiv true => gri arşiv
+        } else if (record.aktif) {
+          durumIcon = <FaCheck style={{ color: "green" }} />; // 2) record.arsiv false, record.aktif true => yeşil aktif
+        } else {
+          durumIcon = <FaExclamation style={{ color: "#ff9500" }} />; // 3) record.arsiv false, record.aktif false => sarı passif
+        }
+        return <div>{durumIcon}</div>;
       },
     },
 
