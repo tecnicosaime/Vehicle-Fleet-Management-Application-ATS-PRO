@@ -77,7 +77,7 @@ const ImageCarousel = ({ imageUrls }) => {
     };
   }, [imageUrls]);
 
-  const fallbackSrc = "/public/images/ResimYok.jpeg"; // Sabit resim yolunu burada belirtiyoruz
+  const fallbackSrc = "/images/ResimYok.jpeg"; // Sabit resim yolunu burada belirtiyoruz
 
   return (
     <ConfigProvider locale={locale}>
