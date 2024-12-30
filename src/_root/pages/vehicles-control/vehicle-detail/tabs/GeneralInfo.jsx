@@ -11,6 +11,7 @@ import DateInput from "../../../../components/form/date/DateInput";
 import VehicleList from "./VehiclesList";
 import { useFormContext, Controller } from "react-hook-form";
 import Textarea from "../../../../components/form/inputs/Textarea";
+import KodIDSelectbox from "../../../../components/form/selects/KodIDSelectbox";
 
 const GeneralInfo = () => {
   const { setValue, watch, control } = useFormContext();
@@ -83,7 +84,7 @@ const GeneralInfo = () => {
               <div className="col-span-4">
                 <div className="flex flex-col gap-1">
                   <label htmlFor="">{t("mulkiyet")}</label>
-                  <TextInput name="mulkiyet" />
+                  <KodIDSelectbox name1="mulkiyet" kodID={891} isRequired={false} />
                 </div>
               </div>
               <div className="col-span-4">
