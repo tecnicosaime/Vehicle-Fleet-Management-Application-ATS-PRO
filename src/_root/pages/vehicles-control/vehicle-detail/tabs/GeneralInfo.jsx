@@ -232,7 +232,7 @@ const GeneralInfo = () => {
               </div>
             </div>
           </div>
-          <div className="border p-10 mt-10">
+          <div className="border mt-10" style={{ padding: "5px 10px" }}>
             <h3 className="sub-title">{t("yakitTuketimKontrol")} (100 km)</h3>
             <div className="grid gap-2">
               <div className="col-span-6 mt-10">
@@ -260,19 +260,6 @@ const GeneralInfo = () => {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="border p-10 mt-10">
-            <Controller
-              name="aracDurum"
-              control={control}
-              render={({ field }) => (
-                <Radio.Group {...field} style={{ width: 16 }} className="flex">
-                  <Radio value={1}>{t("aktif")}</Radio>
-                  <Radio value={2}>{t("pasif")}</Radio>
-                  <Radio value={3}>{t("arsiv")}</Radio>
-                </Radio.Group>
-              )}
-            />
           </div>
         </div>
         <div className="col-span-12">

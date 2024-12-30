@@ -7,7 +7,7 @@ import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 import { IoLocationSharp } from "react-icons/io5";
 import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { FaCircle } from "react-icons/fa";
-import { Button, message, Modal, Spin, Tabs, Typography } from "antd";
+import { Button, message, Modal, Spin, Tabs, Typography, Tag } from "antd";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetVehicleByIdService, UpdateVehicleService } from "../../../../api/services/vehicles/vehicles/services";
 import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
@@ -32,6 +32,7 @@ import AddSurucu from "./detail-info/modals/surucu/AddModalForInput";
 import AddLokasyon from "./detail-info/modals/lokasyon/AddModalForInput";
 import ResimUpload from "./Resim/ResimUpload";
 import DosyaUpload from "./Dosya/DosyaUpload";
+import { use } from "react";
 
 const { Text, Link } = Typography;
 
@@ -70,6 +71,8 @@ const DetailUpdate = () => {
   // Optional: Local state if needed elsewhere
   const [surucu, setSurucu] = useState("");
   const [surucuId, setSurucuId] = useState(null);
+
+  const [durumIcon, setDurumIcon] = useState(null);
 
   const [photoUploaded, setPhotoUploaded] = useState(0);
   const [dosyaUploaded, setDosyaUploaded] = useState(0);
@@ -268,11 +271,6 @@ const DetailUpdate = () => {
       setValue("ozelAlan10", res?.data.ozelAlan10);
       setValue("ozelAlan11", res?.data.ozelAlan11);
       setValue("ozelAlan12", res?.data.ozelAlan12);
-      if (res?.data.aktif) {
-        setValue("aracDurum", 1);
-      } else {
-        setValue("aracDurum", 2);
-      }
       setValue("uyari", res?.data.yakitUyari);
       setUrls([...urls, res.data.defPhotoInfo]);
     });
@@ -341,7 +339,6 @@ const DetailUpdate = () => {
       DepoBataryaKapasitesi: Number(values.DepoBataryaKapasitesi), // name i alborzdan al
       tamDepoSarjIleMenzil: Number(values.tamDepoSarjIleMenzil), // namei alborzdan al
       yakitUyari: values.uyari,
-      aktif: values.aracDurum === 1 ? true : false,
       havuzGrup: values.havuzGrup,
       onGorulenMin: values.onGorulenMin,
       onGorulen: values.onGorulen,
@@ -438,6 +435,31 @@ const DetailUpdate = () => {
 
   const handleCancel = () => navigate("/araclar");
 
+  useEffect(() => {
+    if (dataSource.arsiv) {
+      setDurumIcon(
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <div style={{ backgroundColor: "red", width: "10px", height: "10px", borderRadius: "50%" }}></div>
+          {t("arsiv")}
+        </div>
+      ); // 1) record.arsiv true => gri arşiv
+    } else if (dataSource.aktif) {
+      setDurumIcon(
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <div style={{ backgroundColor: "#00aa00", width: "10px", height: "10px", borderRadius: "50%" }}></div>
+          {t("aktif")}
+        </div>
+      ); // 2) record.arsiv false, record.aktif true => yeşil aktif
+    } else {
+      setDurumIcon(
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <div style={{ backgroundColor: "#ffcc00", width: "10px", height: "10px", borderRadius: "50%" }}></div>
+          {t("pasif")}
+        </div>
+      ); // 3) record.arsiv false, record.aktif false => sarı passif
+    }
+  }, [dataSource]);
+
   return (
     <>
       {loading && (
@@ -470,10 +492,7 @@ const DetailUpdate = () => {
               </div>
               <div className="flex gap-1 justify-between mt-10">
                 <p className="flex gap-1 align-center">
-                  <span>
-                    <FaCircle style={{ color: "green", fontSize: 12 }} />
-                  </span>
-                  <span>{data.aktif ? "Aktif" : "Pasif"}</span>
+                  <span>{durumIcon}</span>
                 </p>
                 <p className="flex gap-1 align-center">
                   <span>
