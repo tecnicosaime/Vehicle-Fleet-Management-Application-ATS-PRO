@@ -7,7 +7,7 @@ import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 import { IoLocationSharp } from "react-icons/io5";
 import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { FaCircle } from "react-icons/fa";
-import { Button, message, Modal, Spin, Tabs, Typography, Tag } from "antd";
+import { Button, message, Modal, Spin, Tabs, Typography, Tag, Alert } from "antd";
 import { PlakaContext } from "../../../../context/plakaSlice";
 import { GetVehicleByIdService, UpdateVehicleService } from "../../../../api/services/vehicles/vehicles/services";
 import { GetDocumentsByRefGroupService, GetPhotosByRefGroupService } from "../../../../api/services/upload/services";
@@ -73,6 +73,7 @@ const DetailUpdate = () => {
   const [surucuId, setSurucuId] = useState(null);
 
   const [durumIcon, setDurumIcon] = useState(null);
+  const [durumNeden, setDurumNeden] = useState(null);
 
   const [photoUploaded, setPhotoUploaded] = useState(0);
   const [dosyaUploaded, setDosyaUploaded] = useState(0);
@@ -460,6 +461,52 @@ const DetailUpdate = () => {
     }
   }, [dataSource]);
 
+  useEffect(() => {
+    if (dataSource.arsiv == true) {
+      setDurumNeden(
+        <Alert
+          message={
+            t("buArac") +
+            "," +
+            " [ " +
+            dataSource.arsivNedeni +
+            " ] " +
+            t("nedeniyleArsivlenmistir") +
+            ". " +
+            t("tarih") +
+            ":" +
+            " [ " +
+            (dayjs(dataSource.arsivTarihi).isValid() ? dayjs(dataSource.arsivTarihi).format("DD.MM.YYYY") : dataSource.arsivTarihi) +
+            " ] "
+          }
+          type="error"
+          showIcon
+        />
+      ); // 1) record.arsiv true => gri arşiv
+    } else if (dataSource.aktif == false) {
+      setDurumNeden(
+        <Alert
+          message={
+            t("buArac") +
+            "," +
+            " [ " +
+            dataSource.pasifNedeni +
+            " ] " +
+            t("nedeniylePasifDurumdadir") +
+            ". " +
+            t("tarih") +
+            ":" +
+            " [ " +
+            (dayjs(dataSource.pasifTarihi).isValid() ? dayjs(dataSource.pasifTarihi).format("DD.MM.YYYY") : dataSource.pasifTarihi) +
+            " ] "
+          }
+          type="warning"
+          showIcon
+        />
+      ); // 3) record.arsiv false, record.aktif false => sarı passif
+    }
+  }, [dataSource]);
+
   return (
     <>
       {loading && (
@@ -510,13 +557,16 @@ const DetailUpdate = () => {
             </div>
             <div className="col-span-9">
               <div className="grid p-10 gap-1">
-                <div className="col-span-12 flex gap-1 justify-end mb-10">
-                  <Button className="btn btn-min primary-btn" onClick={onSubmit}>
-                    {t("guncelle")}
-                  </Button>
-                  <Button className="btn btn-min cancel-btn" onClick={handleCancel}>
-                    {t("kapat")}
-                  </Button>
+                <div className="col-span-12 flex gap-1 justify-end mb-10" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>{durumNeden}</div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Button className="btn btn-min primary-btn" onClick={onSubmit}>
+                      {t("guncelle")}
+                    </Button>
+                    <Button className="btn btn-min cancel-btn" onClick={handleCancel}>
+                      {t("kapat")}
+                    </Button>
+                  </div>
                 </div>
                 <div className="col-span-4">
                   <div className="flex flex-col gap-1">
