@@ -165,7 +165,8 @@ const DetailUpdate = () => {
     AracCinsiKodId: 0,
     aracRenkId: 0,
     lokasyonId: 0,
-    mulkiyet: "",
+    mulkiyet: null,
+    mulkiyetID: null,
     departmanId: 0,
     surucuId: 0,
     yakitTipId: 0,
@@ -215,6 +216,8 @@ const DetailUpdate = () => {
       setValue("bagliAracId", res?.data.bagliAracId);
       setValue("bagliArac", res?.data.bagliAracPlaka);
       setValue("hgsNo", res?.data.hgsNo);
+      setValue("mulkiyetID", res?.data.aracMulkiyetKodId ? res?.data.aracMulkiyetKodId : null);
+      setValue("mulkiyet", res?.data.aracMulkiyet ? res?.data.aracMulkiyet : null);
       setValue("AracCinsiKodId", res?.data.aracCinsi);
       setValue("aracCinsi", res?.data.aracCinsi);
       setValue("markaId", res?.data.markaId ? res?.data.markaId : null);
@@ -317,6 +320,7 @@ const DetailUpdate = () => {
       sozlesmeTarih: values?.sozlesmeTarih ? dayjs(values?.sozlesmeTarih).format("YYYY-MM-DD") : null,
       yakitTipId: values.yakitTipId || 0,
       tts: values.tts,
+      aracMulkiyetKodId: values.mulkiyetID || 0,
       durumKodId: values.durumKodId || 0,
       DepoBataryaKapasitesi: Number(values.DepoBataryaKapasitesi), // name i alborzdan al
       tamDepoSarjIleMenzil: Number(values.tamDepoSarjIleMenzil), // namei alborzdan al
