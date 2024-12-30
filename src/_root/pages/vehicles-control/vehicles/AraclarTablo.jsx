@@ -295,28 +295,6 @@ const Yakit = ({ ayarlarData }) => {
     },
 
     {
-      title: t("aracDurum"),
-      dataIndex: "aracDurum",
-      key: "aracDurum",
-      width: 130,
-      ellipsis: true,
-      visible: true, // Varsayılan olarak açık
-      align: "center",
-      render: (text, record) => {
-        let durumIcon;
-
-        if (record.arsiv) {
-          durumIcon = <Tag color="error">{t("arsiv")}</Tag>; // 1) record.arsiv true => gri arşiv
-        } else if (record.aktif) {
-          durumIcon = <Tag color="success">{t("aktif")}</Tag>; // 2) record.arsiv false, record.aktif true => yeşil aktif
-        } else {
-          durumIcon = <Tag color="warning">{t("pasif")}</Tag>; // 3) record.arsiv false, record.aktif false => sarı passif
-        }
-        return <div>{durumIcon}</div>;
-      },
-    },
-
-    {
       title: t("aracTip"),
       dataIndex: "aracTip",
       key: "aracTip",
@@ -350,7 +328,7 @@ const Yakit = ({ ayarlarData }) => {
       title: t("model"),
       dataIndex: "model",
       key: "model",
-      width: 130,
+      width: 250,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
@@ -364,7 +342,7 @@ const Yakit = ({ ayarlarData }) => {
       title: t("aracLokasyon"),
       dataIndex: "lokasyon",
       key: "lokasyon",
-      width: 130,
+      width: 250,
       ellipsis: true,
       visible: true, // Varsayılan olarak açık
 
@@ -372,6 +350,28 @@ const Yakit = ({ ayarlarData }) => {
         if (a.lokasyon === null) return -1;
         if (b.lokasyon === null) return 1;
         return a.lokasyon.localeCompare(b.lokasyon);
+      },
+    },
+
+    {
+      title: t("aracDurum"),
+      dataIndex: "aracDurum",
+      key: "aracDurum",
+      width: 130,
+      ellipsis: true,
+      visible: true, // Varsayılan olarak açık
+      align: "center",
+      render: (text, record) => {
+        let durumIcon;
+
+        if (record.arsiv) {
+          durumIcon = <Tag color="error">{t("arsiv")}</Tag>; // 1) record.arsiv true => gri arşiv
+        } else if (record.aktif) {
+          durumIcon = <Tag color="success">{t("aktif")}</Tag>; // 2) record.arsiv false, record.aktif true => yeşil aktif
+        } else {
+          durumIcon = <Tag color="warning">{t("pasif")}</Tag>; // 3) record.arsiv false, record.aktif false => sarı passif
+        }
+        return <div>{durumIcon}</div>;
       },
     },
 
