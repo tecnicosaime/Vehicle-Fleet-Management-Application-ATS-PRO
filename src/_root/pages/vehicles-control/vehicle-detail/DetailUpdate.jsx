@@ -277,7 +277,23 @@ const DetailUpdate = () => {
       setUrls([...urls, res.data.defPhotoInfo]);
     });
 
-    GetPhotosByRefGroupService(id, "Arac").then((res) => setImageUrls(res.data));
+    // Burada imageUrls’ları çektiğiniz yer
+    setLoadingImages(true);
+    GetPhotosByRefGroupService(id, "Arac")
+      .then((res) => {
+        // Eğer res.data hiç resim dönmezse dahi, “boş array” döndüğünü varsayalım
+        // Artık imageUrls null değil; ister boş array ister dolu array olsun
+        setImageUrls(res.data);
+      })
+      .catch((err) => {
+        console.error("Photo fetch error", err);
+        // Hata olsa bile imageUrls state’ini boş array’e çekeriz
+        setImageUrls([]);
+      })
+      .finally(() => {
+        // İster başarılı ister hatalı olsun, loadingImages false
+        setLoadingImages(false);
+      });
     GetDocumentsByRefGroupService(id, "Arac").then((res) => setFilesUrl(res.data));
   }, [id, status, dataStatus]);
 
@@ -450,7 +466,7 @@ const DetailUpdate = () => {
           <div className="grid">
             <div className="col-span-3">
               <div style={{ minHeight: "190px" }}>
-                <ProfilePhoto setImages={setProfile} urls={urls} imageUrls={imageUrls} />
+                <ProfilePhoto setImages={setProfile} urls={urls} imageUrls={imageUrls} loadingImages={loadingImages} />
               </div>
               <div className="flex gap-1 justify-between mt-10">
                 <p className="flex gap-1 align-center">
