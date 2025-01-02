@@ -20,6 +20,7 @@ import PeryodikBakimlar from "./PeryodikBakimlar/PeryodikBakimlar.jsx";
 import Servisler from "./Servisler/Servisler";
 import Surucu from "../../vehicle-detail/detail-info/modals/surucu/Surucu.jsx";
 import Sil from "./Sil/Sil.jsx";
+import Ekspertiz from "../../vehicle-detail/detail-info/modals/ekspertiz/Ekspertiz";
 
 const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
   const { setPlaka } = useContext(PlakaContext);
@@ -98,18 +99,19 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
             key: "13",
             icon: <MdSettingsInputComponent className="text-info" />,
           },
+          {
+            label: t("ekspertiz"),
+            key: "15",
+            icon: <MdSettingsInputComponent className="text-info" />,
+          },
         ]
       : []),
-    {
+    /*  {
       label: t("sozlesmeler"),
       key: "14",
       icon: <MdSettingsInputComponent className="text-info" />,
-    },
-    {
-      label: t("ekspertiz"),
-      key: "15",
-      icon: <MdSettingsInputComponent className="text-info" />,
-    },
+    }, */
+
     /*  {
       label: t("sil"),
       key: "16",
@@ -270,6 +272,19 @@ const OperationsInfo = ({ ids, selectedRowsData, onRefresh }) => {
             selectedRowsData={selectedRowsData}
           />
         );
+      case "15":
+        return (
+          <Ekspertiz
+            visible={selectedItem === "15"}
+            onClose={() => {
+              setSelectedItem(null);
+            }}
+            // Çoklu id gelebilir, sadece ilk indextekini gönderiyoruz
+            id={ids[0]}
+            selectedRowsData={selectedRowsData}
+          />
+        );
+
       /*  case "16":
         return (
           <Sil
