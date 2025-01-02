@@ -38,6 +38,15 @@ const Ekspertiz = ({ visible, onClose, id }) => {
 
   const { control, handleSubmit, setValue } = methods;
 
+  useEffect(() => {
+    if (visible) {
+      // Modal açılır açılmaz yapmak istediğiniz temizleme işlemleri
+      setSelectedOptions({});
+      setTableData([]);
+      // Diğer gerekli temizleme işlemleri...
+    }
+  }, [visible]);
+
   const fetchColorStyles = async () => {
     try {
       const response = await AxiosInstance.get("AppraisalsSettings/GetAppraisalsSettings");
