@@ -26,8 +26,10 @@ http.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       localStorage.removeItem("id");
-      localStorage.removeItem("token_expire");
+      sessionStorage.removeItem("id");
+      /*  localStorage.removeItem("token_expire"); */
       if (window.location.pathname !== "/login") {
         window.location.href = "/login"; // `/auth` sayfasına yönlendir
       }

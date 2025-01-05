@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { t } from "i18next";
-import { Button, Input, message, Spin, Typography } from "antd";
+import { Button, Input, message, Spin, Form, Typography, Checkbox } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { LoginUserService } from "../api/service";
 import { setItemWithExpiration } from "../utils/expireToken";
 import SuccessAlert from "../components/alerts/SuccessAlert";
 import ErrorAlert from "../components/alerts/ErrorAlert";
 import LanguageSelectbox from "../_root/components/lang/LanguageSelectbox.jsx";
+import { useForm } from "antd/lib/form/Form";
 
 const { Text } = Typography;
 
@@ -18,18 +18,17 @@ const AuthLayout = () => {
   const [isError, setIsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const [form] = useForm();
+
   const navigate = useNavigate();
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
+  const onFinish = (values) => {
+    console.log("Success:", values);
+    onSubmit(values);
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
 
   const handleChangeCompanyKey = () => {
     localStorage.removeItem("companyKey");
@@ -50,7 +49,7 @@ const AuthLayout = () => {
       const response = await LoginUserService(body);
       if (response?.data.accessToken) {
         setIsSuccess(true);
-        setItemWithExpiration("token", response?.data.accessToken, 24, response?.data.siraNo);
+        setItemWithExpiration("token", response?.data.accessToken, 24, response?.data.siraNo, data.remember);
         navigate("/");
       }
       if (response?.data.siraNo === 0) {
@@ -64,78 +63,127 @@ const AuthLayout = () => {
   };
 
   return (
-    <div className="login">
-      {/* alert messages */}
-      {isSuccess && <SuccessAlert />}
-      {isError && <ErrorAlert />}
-
-      <div className="grid h-full">
-        <div className="col-span-5 login-card" style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ width: "450px" }}>
-            <div style={{ marginBottom: "70px" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
-                <LanguageSelectbox />
-              </div>
-              <Text>{t("filoYonetimiYazilimi")}</Text>
+    <div
+      style={{
+        background: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5)), url('/images/ats_login_image.webp')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "flex-end",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "white",
+          width: "100%",
+          maxWidth: "800px",
+          height: "100vh",
+          display: "flex",
+          padding: "20px 0 20px 0",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "34px", width: "150px" }}></div>
+        <div style={{ width: "400px" }}>
+          <div style={{ marginBottom: "70px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
+              <LanguageSelectbox />
             </div>
-
-            <div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
-                <Text style={{ fontSize: "23px", fontWeight: 600 }}>{t("Giris")} !</Text>
-                <Text>{t("hosGeldinizKullaniciKoduVeSifreniziGiriniz")}</Text>
-              </div>
-
-              <div style={{ display: "flex", gap: "5px", flexDirection: "column" }} className="mt-30">
-                <Text>{t("KullaniciKodu")}</Text>
-                <Controller
-                  name="username"
-                  control={control}
-                  rules={{ required: t("usernameValidationErrorMessage") }}
-                  render={({ field }) => <Input {...field} placeholder={t("username")} className={errors.username ? "border-red-500" : null} />}
-                />
-                {errors.username && <span className="error-message">{errors.username.message}</span>}
-              </div>
-              <div style={{ display: "flex", gap: "5px", flexDirection: "column" }} className="mt-30 mb-20">
-                <Text>{t("Sifre")}</Text>
-
-                <Controller
-                  name="password"
-                  control={control}
-                  rules={{ required: t("passwordValidationErrorMessage") }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      style={{ height: "40px", display: "flex", alignItems: "center" }}
-                      placeholder={t("password")}
-                      type={showPassword ? "text" : "password"}
-                      suffix={showPassword ? <EyeTwoTone onClick={() => setShowPassword(false)} /> : <EyeInvisibleOutlined onClick={() => setShowPassword(true)} />}
-                      className={errors.username ? "border-red-500" : null}
-                    />
-                  )}
-                />
-                {errors.password && <span className="error-message">{errors.password.message}</span>}
-              </div>
-              <div className="flex justify-end mb-20">
-                <Link to={""} className="login-forget-link">
-                  {t("forgotPassword")}
-                </Link>
-              </div>
-              <Button type="submit" onClick={handleSubmit(onSubmit)} className="login-btn btn mt-6">
-                {isLoading ? <Spin className="text-white" /> : t("login")}
-              </Button>
-              <Button style={{ marginTop: "10px", width: "100%" }} danger onClick={handleChangeCompanyKey}>
-                {t("anahtarDegistir")}
-              </Button>
-            </div>
+            <Text>{t("filoYonetimiYazilimi")}</Text>
           </div>
-
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", bottom: "20px" }}>
-            <img src="/images/orjinLogo.png" alt="ats logo" style={{ width: "150px" }} className="login-logo-img self-center" />
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+            <Text style={{ fontSize: "23px", fontWeight: 600 }}>{t("Giris")} !</Text>
+            <Text>{t("hosGeldinizKullaniciKoduVeSifreniziGiriniz")}</Text>
           </div>
+          <Form
+            form={form}
+            name="basic"
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 24,
+            }}
+            style={{
+              maxWidth: 600,
+            }}
+            initialValues={{
+              remember: true,
+            }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+          >
+            <Form.Item
+              label=""
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: t("lutfenKullaniciKodunuzuGiriniz"),
+                },
+              ]}
+            >
+              <Input
+                placeholder={t("KullaniciKodu")}
+                style={{
+                  height: "40px",
+                  borderTop: "0px solid #ffffff00",
+                  borderRight: "0px solid #ffffff00",
+                  borderBottom: "0px solid #ffffff00",
+                  backgroundColor: "#F4F2F2",
+                  borderLeft: "4px solid #3C6ABC",
+                  borderRadius: "0px",
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label=""
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: t("lutfenSifreniziGiriniz"),
+                },
+              ]}
+            >
+              <Input.Password
+                placeholder={t("sifre")}
+                style={{
+                  height: "40px",
+                  borderTop: "0px solid #ffffff00",
+                  borderRight: "0px solid #ffffff00",
+                  borderBottom: "0px solid #ffffff00",
+                  backgroundColor: "#F4F2F2",
+                  borderLeft: "4px solid #3C6ABC",
+                  borderRadius: "0px",
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item name="remember" valuePropName="checked" label={null}>
+              <Checkbox>{t("beniHatirla")}</Checkbox>
+            </Form.Item>
+
+            <Form.Item label={null}>
+              <Button loading={isLoading} style={{ width: "100%", borderRadius: "20px", backgroundColor: "#3C6ABC", color: "white", height: "40px" }} type="" htmlType="submit">
+                {t("login")}
+              </Button>
+            </Form.Item>
+            <Button style={{ marginTop: "0px", width: "100%", borderRadius: "20px", height: "40px" }} danger onClick={handleChangeCompanyKey}>
+              {t("anahtarDegistir")}
+            </Button>
+          </Form>
         </div>
-        <div className="login-bg-image col-span-7">
-          <div className="bg-overlay"></div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "34px" }}>
+          <img src="/images/orjinLogo.png" alt="ats logo" style={{ width: "150px" }} />
         </div>
       </div>
     </div>

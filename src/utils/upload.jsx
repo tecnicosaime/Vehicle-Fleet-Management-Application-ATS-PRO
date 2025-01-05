@@ -8,7 +8,7 @@ export const uploadPhoto = async (id, group, files, isForDefault) => {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      "User-Id": JSON.parse(localStorage.getItem("id")),
+      "User-Id": JSON.parse(localStorage.getItem("id")) || JSON.parse(sessionStorage.getItem("id")),
     },
     body: files,
   });
@@ -23,7 +23,7 @@ export const uploadPhoto = async (id, group, files, isForDefault) => {
 };
 
 export const uploadFile = async (id, group, files) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(localStorage.getItem("token")) || JSON.parse(sessionStorage.getItem("token"));
   if (!token) {
     throw new Error("Authentication token not found.");
   }
@@ -32,7 +32,7 @@ export const uploadFile = async (id, group, files) => {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      "User-Id": JSON.parse(localStorage.getItem("id")),
+      "User-Id": JSON.parse(localStorage.getItem("id")) || JSON.parse(sessionStorage.getItem("id")),
     },
     body: files,
   });
