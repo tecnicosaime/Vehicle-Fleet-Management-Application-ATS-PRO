@@ -35,7 +35,7 @@ function ComponentSingleCard() {
 
     try {
       // Sadece type=1 ile tek bir istek
-      const response = await AxiosInstance.post("ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=1", body);
+      const response = await AxiosInstance.post("ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=3", body);
       setData(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -107,9 +107,9 @@ function ComponentSingleCard() {
     <div style={{ width: "100%", height: "100%" }}>
       {renderCard(
         data, // API'den gelen değer (type=1 sonucu)
-        t("toplamYakitMiktari"), // Kart üzerindeki başlık/label
-        "linear-gradient(to right, #ff7e5f, #feb47b)", // Arka plan
-        "L.", // Birim
+        t("toplamMesafe"),
+        "linear-gradient(to right, #43cea2, #185a9d)",
+        "km.",
         isLoading // Yüklenme durumu
       )}
     </div>

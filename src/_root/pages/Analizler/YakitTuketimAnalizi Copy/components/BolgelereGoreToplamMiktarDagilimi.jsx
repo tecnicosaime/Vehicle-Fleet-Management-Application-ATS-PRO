@@ -22,8 +22,8 @@ function BolgelereGoreToplamMiktarDagilimi() {
   const baslangicTarihi = watch("baslangicTarihi") ? dayjs(watch("baslangicTarihi")).format("YYYY-MM-DD") : null;
   const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
 
-  const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : null;
-  const endYear = bitisTarihi ? dayjs(bitisTarihi).year() : null;
+  const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : 0;
+  const endYear = bitisTarihi ? dayjs(bitisTarihi).year() : 0;
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -34,8 +34,8 @@ function BolgelereGoreToplamMiktarDagilimi() {
       departman: departmanValues || "",
       startDate: baslangicTarihi || null,
       endDate: bitisTarihi || null,
-      startYear: startYear || 0,
-      endYear: endYear || 0,
+      startYear: startYear,
+      endYear: endYear,
       parameterType: 1,
     };
     try {
@@ -170,7 +170,7 @@ function BolgelereGoreToplamMiktarDagilimi() {
     <div
       style={{
         width: "100%",
-        height: "100%",
+        height: "470px",
         borderRadius: "5px",
         backgroundColor: "white",
         display: "flex",
@@ -178,6 +178,7 @@ function BolgelereGoreToplamMiktarDagilimi() {
         gap: "10px",
         border: "1px solid #f0f0f0",
         padding: "10px",
+        filter: "drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.1))",
       }}
     >
       <div
@@ -197,7 +198,7 @@ function BolgelereGoreToplamMiktarDagilimi() {
             maxWidth: "100%",
           }}
         >
-          {t("BolgelereGoreToplamMiktarDagilimi")} {startYear} - {endYear}
+          {t("BolgelereGoreToplamMiktarDagilimi")} {startYear && endYear ? `${dayjs(startYear).format("YYYY")} - ${dayjs(endYear).format("YYYY")}` : ""}
         </Text>
       </div>
       {isLoading ? (
@@ -212,49 +213,36 @@ function BolgelereGoreToplamMiktarDagilimi() {
           <Spin />
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "7px",
-            overflow: "auto",
-            height: "100vh",
-            padding: "10px",
-          }}
-        >
-          <div style={{ width: "100%", height: "calc(100% - 5px)" }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data.filter((entry) => visibleSeries[entry.lokasyon])}
-                  dataKey="toplamMiktar"
-                  nameKey="lokasyon"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius="90%"
-                  fill="#8884d8"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                >
-                  {data
-                    .filter((entry) => visibleSeries[entry.lokasyon])
-                    .map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) =>
-                    Number(value).toLocaleString("tr-TR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  }
-                />
-                <Legend content={<CustomLegend payload={data.map((entry) => ({ value: entry.lokasyon, color: entry.color }))} />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={data.filter((entry) => visibleSeries[entry.lokasyon])}
+              dataKey="toplamMiktar"
+              nameKey="lokasyon"
+              cx="50%"
+              cy="50%"
+              outerRadius={150}
+              fill="#8884d8"
+              labelLine={false}
+              label={renderCustomizedLabel}
+            >
+              {data
+                .filter((entry) => visibleSeries[entry.lokasyon])
+                .map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) =>
+                Number(value).toLocaleString("tr-TR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }
+            />
+            <Legend content={<CustomLegend payload={data.map((entry) => ({ value: entry.lokasyon, color: entry.color }))} />} />
+          </PieChart>
+        </ResponsiveContainer>
       )}
     </div>
   );

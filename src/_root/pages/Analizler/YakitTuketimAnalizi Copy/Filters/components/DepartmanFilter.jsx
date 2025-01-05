@@ -6,7 +6,7 @@ import { t } from "i18next";
 
 const { Option } = Select;
 
-const AracTipiFilter = ({ onSubmit }) => {
+const DepartmanFilter = ({ onSubmit }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
@@ -27,7 +27,7 @@ const AracTipiFilter = ({ onSubmit }) => {
   useEffect(() => {
     if (open) {
       setLoading(true); // API isteği başladığında loading true yap
-      AxiosInstance.get("Code/GetCodeTextById?codeNumber=100")
+      AxiosInstance.get("Code/GetCodeTextById?codeNumber=200")
         .then((response) => {
           // API'den gelen veriye göre options dizisini oluştur
           const options = response.data.map((item) => ({
@@ -45,19 +45,16 @@ const AracTipiFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
+    // Seçilen değerleri setValue ile ayarla
+    const selectedValuesString = selectedValues.join(",");
+    setValue("departmanValues", selectedValuesString);
     setOpen(false);
     // onSubmit(selectedValues); // onSubmit ile değerleri gönder
   };
 
-  useEffect(() => {
-    // Seçilen id'leri setValue ile ayarla
-    const selectedIdsString = selectedValues.join(",");
-    setValue("aracTipiValues", selectedIdsString);
-  }, [selectedValues]);
-
   const handleCancelClick = () => {
     setSelectedValues([]);
-    setValue("aracTipiValues", "");
+    setValue("departmanValues", "");
     setOpen(false);
     // onSubmit([]);
   };
@@ -72,9 +69,9 @@ const AracTipiFilter = ({ onSubmit }) => {
           justifyContent: "space-between",
         }}
       >
-        <Button onClick={handleCancelClick}>İptal</Button>
+        <Button onClick={handleCancelClick}>{t("iptal")}</Button>
         <Button type="primary" onClick={handleSubmit}>
-          Uygula
+          {t("uygula")}
         </Button>
       </div>
       <div style={{ padding: "10px" }}>
@@ -120,7 +117,7 @@ const AracTipiFilter = ({ onSubmit }) => {
           justifyContent: "center",
         }}
       >
-        Araç Tipi
+        {t("departman")}
         <div
           style={{
             marginLeft: "5px",
@@ -141,4 +138,4 @@ const AracTipiFilter = ({ onSubmit }) => {
   );
 };
 
-export default AracTipiFilter;
+export default DepartmanFilter;

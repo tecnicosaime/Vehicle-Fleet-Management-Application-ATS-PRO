@@ -45,12 +45,15 @@ const DepartmanFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
-    // Seçilen değerleri setValue ile ayarla
-    const selectedValuesString = selectedValues.join(",");
-    setValue("departmanValues", selectedValuesString);
     setOpen(false);
     // onSubmit(selectedValues); // onSubmit ile değerleri gönder
   };
+
+  useEffect(() => {
+    // Seçilen değerleri setValue ile ayarla
+    const selectedValuesString = selectedValues.join(",");
+    setValue("departmanValues", selectedValuesString);
+  }, [selectedValues]);
 
   const handleCancelClick = () => {
     setSelectedValues([]);

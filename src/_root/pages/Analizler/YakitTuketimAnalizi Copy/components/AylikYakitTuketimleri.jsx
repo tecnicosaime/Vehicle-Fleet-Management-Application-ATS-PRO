@@ -78,7 +78,7 @@ function AylikYakitTuketimleri() {
     <div
       style={{
         width: "100%",
-        height: "100%",
+        height: "470px",
         borderRadius: "5px",
         backgroundColor: "white",
         display: "flex",
@@ -86,6 +86,7 @@ function AylikYakitTuketimleri() {
         gap: "10px",
         border: "1px solid #f0f0f0",
         padding: "10px",
+        filter: "drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.1))",
       }}
     >
       <div
@@ -130,45 +131,32 @@ function AylikYakitTuketimleri() {
           <Spin />
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "7px",
-            overflow: "auto",
-            height: "100vh",
-            padding: "10px",
-          }}
-        >
-          <div style={{ width: "100%", height: "calc(100% - 5px)" }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={data}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                {/* XAxis dataKey'i 'ayAdi' olarak güncellendi */}
-                <XAxis dataKey="ayAdi" />
-                <YAxis />
-                <Tooltip
-                  formatter={(value) =>
-                    Number(value).toLocaleString("tr-TR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  }
-                />
-                <Legend />
-                <Bar dataKey="deger" fill="#8884d8" name={parameterTypeNameMap[parameterType]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart
+            data={data}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            {/* XAxis dataKey'i 'ayAdi' olarak güncellendi */}
+            <XAxis dataKey="ayAdi" />
+            <YAxis />
+            <Tooltip
+              formatter={(value) =>
+                Number(value).toLocaleString("tr-TR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }
+            />
+            <Legend />
+            <Bar dataKey="deger" fill="#8884d8" name={parameterTypeNameMap[parameterType]} />
+          </BarChart>
+        </ResponsiveContainer>
       )}
     </div>
   );

@@ -17,14 +17,11 @@ const TarihFilter = () => {
   const { control, setValue } = useFormContext();
 
   const handleSubmit = () => {
-    setOpen(false);
-  };
-
-  useEffect(() => {
     // React state'lerinden alınan değerleri react-hook-form ile set et
     setValue("baslangicTarihi", startDate);
     setValue("bitisTarihi", endDate);
-  }, [startDate, endDate]);
+    setOpen(false);
+  };
 
   const handleCancelClick = () => {
     setStartDate(null);
