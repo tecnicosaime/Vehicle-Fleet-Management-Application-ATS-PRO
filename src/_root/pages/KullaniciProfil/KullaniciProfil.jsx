@@ -14,7 +14,7 @@ function KullaniciProfil() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const id = localStorage.getItem("id");
+    const id = localStorage.getItem("id") || sessionStorage.getItem("id");
     AxiosInstance.get(`Profile/GetUserInfoById?id=${id}`)
       .then((response) => {
         setUserData(response.data);
@@ -49,7 +49,9 @@ function KullaniciProfil() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("token_expire");
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("id");
+    sessionStorage.removeItem("id");
     navigate("/login");
   };
 
