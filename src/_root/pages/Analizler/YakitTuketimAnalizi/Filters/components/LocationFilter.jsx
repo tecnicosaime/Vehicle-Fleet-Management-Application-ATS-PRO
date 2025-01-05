@@ -45,12 +45,15 @@ const LocationFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
-    // Seçilen değerleri setValue ile ayarla
-    const selectedValuesString = selectedValues.join(",");
-    setValue("locationValues", selectedValuesString); // 'locationValues' olarak kaydediyoruz
     setOpen(false);
     // onSubmit(selectedValues); // onSubmit ile değerleri gönder
   };
+
+  useEffect(() => {
+    // Seçilen id'leri setValue ile ayarla
+    const selectedIdsString = selectedValues.join(",");
+    setValue("locationValues", selectedIdsString);
+  }, [selectedValues]);
 
   const handleCancelClick = () => {
     setSelectedValues([]);

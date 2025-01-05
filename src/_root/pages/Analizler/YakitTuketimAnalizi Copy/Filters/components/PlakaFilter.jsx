@@ -6,10 +6,10 @@ import { t } from "i18next";
 
 const { Option } = Select;
 
-const AracTipiFilter = ({ onSubmit }) => {
+const PlakaFilter = ({ onSubmit }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
-  const [selectedValues, setSelectedValues] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
   const {
     control,
@@ -20,19 +20,19 @@ const AracTipiFilter = ({ onSubmit }) => {
   } = useFormContext();
 
   const handleChange = (selectedValues) => {
-    // Seçilen değerleri doğrudan state'e ata
-    setSelectedValues(selectedValues);
+    // Seçilen değerlerin id'lerini kullanarak selectedIds dizisini güncelle
+    setSelectedIds(selectedValues);
   };
 
   useEffect(() => {
     if (open) {
       setLoading(true); // API isteği başladığında loading true yap
-      AxiosInstance.get("Code/GetCodeTextById?codeNumber=100")
+      AxiosInstance.get("Vehicle/GetVehiclePlates")
         .then((response) => {
           // API'den gelen veriye göre options dizisini oluştur
           const options = response.data.map((item) => ({
-            key: item.siraNo.toString(), // ID değerini key olarak kullan
-            value: item.codeText, // Gösterilecek değer
+            key: item.aracId.toString(), // ID değerini key olarak kullan
+            value: item.plaka, // Gösterilecek değer
           }));
           setOptions(options);
           setLoading(false); // API isteği bittiğinde loading false yap
@@ -45,19 +45,18 @@ const AracTipiFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
+    // console.log("Selected IDs:", selectedIds);
+    // Seçilen id'leri setValue ile ayarla
+    const selectedIdsString = selectedIds.join(",");
+    setValue("plakaValues", selectedIdsString);
     setOpen(false);
-    // onSubmit(selectedValues); // onSubmit ile değerleri gönder
+    // onSubmit(selectedIds); // onSubmit ile id'leri gönder
   };
 
-  useEffect(() => {
-    // Seçilen id'leri setValue ile ayarla
-    const selectedIdsString = selectedValues.join(",");
-    setValue("aracTipiValues", selectedIdsString);
-  }, [selectedValues]);
-
   const handleCancelClick = () => {
-    setSelectedValues([]);
-    setValue("aracTipiValues", "");
+    setSelectedIds([]);
+    setValue("plakaValues", "");
+    // console.log(watch("locationIds"));
     setOpen(false);
     // onSubmit([]);
   };
@@ -82,7 +81,7 @@ const AracTipiFilter = ({ onSubmit }) => {
           mode="multiple"
           style={{ width: "100%" }}
           placeholder="Ara..."
-          value={selectedValues}
+          value={selectedIds}
           onChange={handleChange}
           allowClear
           notFoundContent={
@@ -120,7 +119,7 @@ const AracTipiFilter = ({ onSubmit }) => {
           justifyContent: "center",
         }}
       >
-        Araç Tipi
+        Plaka
         <div
           style={{
             marginLeft: "5px",
@@ -134,11 +133,11 @@ const AracTipiFilter = ({ onSubmit }) => {
             color: "white",
           }}
         >
-          {selectedValues.length}
+          {selectedIds.length}
         </div>
       </Button>
     </Popover>
   );
 };
 
-export default AracTipiFilter;
+export default PlakaFilter;

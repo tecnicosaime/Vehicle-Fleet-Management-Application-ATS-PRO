@@ -45,15 +45,12 @@ const AracTipiFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
+    // Seçilen değerleri setValue ile ayarla
+    const selectedValuesString = selectedValues.join(",");
+    setValue("aracTipiValues", selectedValuesString);
     setOpen(false);
     // onSubmit(selectedValues); // onSubmit ile değerleri gönder
   };
-
-  useEffect(() => {
-    // Seçilen id'leri setValue ile ayarla
-    const selectedIdsString = selectedValues.join(",");
-    setValue("aracTipiValues", selectedIdsString);
-  }, [selectedValues]);
 
   const handleCancelClick = () => {
     setSelectedValues([]);

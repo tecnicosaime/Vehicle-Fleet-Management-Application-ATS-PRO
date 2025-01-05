@@ -8,12 +8,11 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-function ComponentSingleCard() {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+function Component1() {
+  const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState({});
   const { watch } = useFormContext();
 
-  // Form değerlerini izle
   const lokasyonId = watch("locationValues");
   const plakaValues = watch("plakaValues");
   const aracTipiValues = watch("aracTipiValues");
@@ -22,8 +21,6 @@ function ComponentSingleCard() {
   const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
 
   const fetchData = async () => {
-    setIsLoading(true);
-
     const body = {
       plaka: plakaValues || "",
       aracTipi: aracTipiValues || "",
@@ -33,14 +30,26 @@ function ComponentSingleCard() {
       endDate: bitisTarihi || null,
     };
 
+    const types = [1, 2, 3, 4];
+
+    // Yüklenme durumlarını başlat
+    setIsLoading(types.reduce((acc, type) => ({ ...acc, [type]: true }), {}));
+
     try {
-      // Sadece type=1 ile tek bir istek
-      const response = await AxiosInstance.post("ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=1", body);
-      setData(response.data);
+      const requests = types.map((type) => AxiosInstance.post(`ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=${type}`, body));
+      const responses = await Promise.all(requests);
+
+      // Verileri güncelle
+      const newData = {};
+      types.forEach((type, index) => {
+        newData[type] = responses[index].data;
+      });
+      setData(newData);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
-      setIsLoading(false);
+      // Yüklenme durumlarını güncelle
+      setIsLoading(types.reduce((acc, type) => ({ ...acc, [type]: false }), {}));
     }
   };
 
@@ -48,11 +57,12 @@ function ComponentSingleCard() {
     fetchData();
   }, [lokasyonId, plakaValues, aracTipiValues, departmanValues, baslangicTarihi, bitisTarihi]);
 
-  const renderCard = (value, label, backgroundColor, unit, loading) => (
+  const renderCard = (value, label, backgroundColor, unit, isLoading) => (
     <div
       style={{
-        width: "100%",
-        height: "100%",
+        flex: "1 1 24%",
+        maxWidth: "24%",
+        height: "100px",
         background: backgroundColor || `url(${bg}), linear-gradient(rgb(27 17 92), #007eff)`,
         backgroundPosition: "inherit",
         backgroundSize: "cover",
@@ -62,7 +72,7 @@ function ComponentSingleCard() {
         filter: "drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.1))",
       }}
     >
-      {loading ? (
+      {isLoading ? (
         <div
           style={{
             display: "flex",
@@ -79,12 +89,11 @@ function ComponentSingleCard() {
             display: "flex",
             justifyContent: "space-between",
             cursor: "pointer",
-            height: "100%",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <Text style={{ fontWeight: "500", fontSize: "35px", color: "white" }}>
-              {value !== null && value !== undefined ? (
+              {value !== undefined ? (
                 <>
                   {Number(value).toLocaleString("tr-TR", {
                     minimumFractionDigits: 2,
@@ -96,7 +105,15 @@ function ComponentSingleCard() {
                 ""
               )}
             </Text>
-            <Text style={{ color: "white", fontSize: "15px", fontWeight: "400" }}>{label}</Text>
+            <Text
+              style={{
+                color: "white",
+                fontSize: "15px",
+                fontWeight: "400",
+              }}
+            >
+              {label}
+            </Text>
           </div>
         </div>
       )}
@@ -104,16 +121,20 @@ function ComponentSingleCard() {
   );
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      {renderCard(
-        data, // API'den gelen değer (type=1 sonucu)
-        t("toplamYakitMiktari"), // Kart üzerindeki başlık/label
-        "linear-gradient(to right, #ff7e5f, #feb47b)", // Arka plan
-        "L.", // Birim
-        isLoading // Yüklenme durumu
-      )}
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "10px",
+        justifyContent: "space-between",
+      }}
+    >
+      {renderCard(data[1], t("toplamYakitMiktari"), "linear-gradient(to right, #ff7e5f, #feb47b)", "L.", isLoading[1])}
+      {renderCard(data[2], t("toplamYakitTutari"), "linear-gradient(to right, #6a11cb, #2575fc)", "TL.", isLoading[2])}
+      {renderCard(data[3], t("toplamMesafe"), "linear-gradient(to right, #43cea2, #185a9d)", "km.", isLoading[3])}
+      {renderCard(data[4], t("kmBasinaYakitTuketimi"), "linear-gradient(to right, #ff4e50, #f9d423)", "L./km.", isLoading[4])}
     </div>
   );
 }
 
-export default ComponentSingleCard;
+export default Component1;

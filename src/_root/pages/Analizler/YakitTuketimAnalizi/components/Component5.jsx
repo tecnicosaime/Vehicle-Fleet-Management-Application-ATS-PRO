@@ -9,7 +9,7 @@ import { t } from "i18next";
 const { Text } = Typography;
 const { Option } = Select;
 
-function AylikYakitTuketimleri() {
+function YillikYakitTuketimleri() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [parameterType, setParameterType] = useState(1);
@@ -23,7 +23,7 @@ function AylikYakitTuketimleri() {
   const bitisTarihi = watch("bitisTarihi") ? dayjs(watch("bitisTarihi")).format("YYYY-MM-DD") : null;
 
   // startYear ve endYear değerlerini burada hesaplıyoruz
-  const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : dayjs().year();
+  const startYear = baslangicTarihi ? dayjs(baslangicTarihi).year() : dayjs().year() - 5;
   const endYear = bitisTarihi ? dayjs(bitisTarihi).year() : dayjs().year();
 
   const parameterOptions = [
@@ -38,9 +38,6 @@ function AylikYakitTuketimleri() {
     3: t("ortalama"),
   };
 
-  // Ay numaralarını ay isimlerine eşleyen dizi
-  const monthNames = [t("ocak"), t("subat"), t("mart"), t("nisan"), t("mayis"), t("haziran"), t("temmuz"), t("agustos"), t("eylul"), t("ekim"), t("kasim"), t("aralik")];
-
   const fetchData = async () => {
     setIsLoading(true);
     const body = {
@@ -50,18 +47,13 @@ function AylikYakitTuketimleri() {
       departman: departmanValues || "",
       startDate: baslangicTarihi || null,
       endDate: bitisTarihi || null,
-      startYear: startYear,
-      endYear: endYear,
+      startYear: startYear, // startYear değerini kullanıyoruz
+      endYear: endYear, // endYear değerini kullanıyoruz
       parameterType,
     };
     try {
-      const response = await AxiosInstance.post(`/ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=6`, body);
-      // Veriyi dönüştürüyoruz: ay numaralarını ay isimlerine çeviriyoruz
-      const transformedData = response.data.map((item) => ({
-        ...item,
-        ayAdi: monthNames[item.ay - 1], // Ay numaraları 1-12, dizinler 0-11
-      }));
-      setData(transformedData);
+      const response = await AxiosInstance.post(`/ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=5`, body);
+      setData(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -106,7 +98,7 @@ function AylikYakitTuketimleri() {
             maxWidth: "100%",
           }}
         >
-          {t("AylikYakitTuketimleri")} {startYear}
+          {t("yillikYakitTuketimleri")} {startYear} - {endYear}
         </Text>
         <Select value={parameterType} onChange={(value) => setParameterType(value)} style={{ width: 120 }}>
           {parameterOptions.map((option) => (
@@ -117,18 +109,7 @@ function AylikYakitTuketimleri() {
         </Select>
       </div>
       {isLoading ? (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "relative",
-          }}
-        >
-          <Spin />
-        </div>
+        <Spin />
       ) : (
         <div
           style={{
@@ -152,8 +133,7 @@ function AylikYakitTuketimleri() {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                {/* XAxis dataKey'i 'ayAdi' olarak güncellendi */}
-                <XAxis dataKey="ayAdi" />
+                <XAxis dataKey="yil" />
                 <YAxis />
                 <Tooltip
                   formatter={(value) =>
@@ -174,4 +154,4 @@ function AylikYakitTuketimleri() {
   );
 }
 
-export default AylikYakitTuketimleri;
+export default YillikYakitTuketimleri;

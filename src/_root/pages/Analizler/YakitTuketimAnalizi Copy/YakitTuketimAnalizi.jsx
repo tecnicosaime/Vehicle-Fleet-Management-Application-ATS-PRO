@@ -1,13 +1,13 @@
 import React from "react";
-import MainDashboard from "./MainDashboard.jsx";
+import Main from "./Main/Main";
 import { FormProvider, useForm } from "react-hook-form";
 
-export default function Dashboard() {
+export default function PersonelTanimlari() {
   const formMethods = useForm();
   return (
     <FormProvider {...formMethods}>
       <div>
-        <MainDashboard />
+        <Main />
       </div>
     </FormProvider>
   );

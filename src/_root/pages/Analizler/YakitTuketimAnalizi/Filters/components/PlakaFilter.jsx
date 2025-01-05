@@ -45,13 +45,15 @@ const PlakaFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
-    // console.log("Selected IDs:", selectedIds);
-    // Seçilen id'leri setValue ile ayarla
-    const selectedIdsString = selectedIds.join(",");
-    setValue("plakaValues", selectedIdsString);
     setOpen(false);
     // onSubmit(selectedIds); // onSubmit ile id'leri gönder
   };
+
+  useEffect(() => {
+    // Seçilen id'leri setValue ile ayarla
+    const selectedIdsString = selectedIds.join(",");
+    setValue("plakaValues", selectedIdsString);
+  }, [selectedIds]);
 
   const handleCancelClick = () => {
     setSelectedIds([]);

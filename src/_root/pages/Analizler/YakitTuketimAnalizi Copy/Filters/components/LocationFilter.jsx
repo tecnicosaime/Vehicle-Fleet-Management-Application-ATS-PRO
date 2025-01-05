@@ -6,7 +6,7 @@ import { t } from "i18next";
 
 const { Option } = Select;
 
-const AracTipiFilter = ({ onSubmit }) => {
+const LocationFilter = ({ onSubmit }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
@@ -27,12 +27,12 @@ const AracTipiFilter = ({ onSubmit }) => {
   useEffect(() => {
     if (open) {
       setLoading(true); // API isteği başladığında loading true yap
-      AxiosInstance.get("Code/GetCodeTextById?codeNumber=100")
+      AxiosInstance.get("Location/GetLocationList")
         .then((response) => {
           // API'den gelen veriye göre options dizisini oluştur
           const options = response.data.map((item) => ({
-            key: item.siraNo.toString(), // ID değerini key olarak kullan
-            value: item.codeText, // Gösterilecek değer
+            key: item.lokasyonId.toString(), // ID değerini key olarak kullan
+            value: item.lokasyonTanim, // Gösterilecek değer
           }));
           setOptions(options);
           setLoading(false); // API isteği bittiğinde loading false yap
@@ -45,19 +45,16 @@ const AracTipiFilter = ({ onSubmit }) => {
   }, [open]);
 
   const handleSubmit = () => {
+    // Seçilen değerleri setValue ile ayarla
+    const selectedValuesString = selectedValues.join(",");
+    setValue("locationValues", selectedValuesString); // 'locationValues' olarak kaydediyoruz
     setOpen(false);
     // onSubmit(selectedValues); // onSubmit ile değerleri gönder
   };
 
-  useEffect(() => {
-    // Seçilen id'leri setValue ile ayarla
-    const selectedIdsString = selectedValues.join(",");
-    setValue("aracTipiValues", selectedIdsString);
-  }, [selectedValues]);
-
   const handleCancelClick = () => {
     setSelectedValues([]);
-    setValue("aracTipiValues", "");
+    setValue("locationValues", "");
     setOpen(false);
     // onSubmit([]);
   };
@@ -120,7 +117,7 @@ const AracTipiFilter = ({ onSubmit }) => {
           justifyContent: "center",
         }}
       >
-        Araç Tipi
+        Lokasyon
         <div
           style={{
             marginLeft: "5px",
@@ -141,4 +138,4 @@ const AracTipiFilter = ({ onSubmit }) => {
   );
 };
 
-export default AracTipiFilter;
+export default LocationFilter;
