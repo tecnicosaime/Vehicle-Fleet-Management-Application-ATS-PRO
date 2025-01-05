@@ -9,8 +9,43 @@ import SuccessAlert from "../components/alerts/SuccessAlert";
 import ErrorAlert from "../components/alerts/ErrorAlert";
 import LanguageSelectbox from "../_root/components/lang/LanguageSelectbox.jsx";
 import { useForm } from "antd/lib/form/Form";
+import styled from "styled-components";
 
 const { Text } = Typography;
+
+const ImageContainer = styled.div`
+  background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5)), url("/images/ats_login_image.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+`;
+
+const FormContainer = styled.div`
+  background-color: white;
+  width: 100%;
+  max-width: 800px;
+  height: 100vh;
+  display: flex;
+  padding: 20px 0 20px 0;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+
+  @media (max-width: 600px) {
+    max-width: 100%;
+  }
+  @media (min-width: 600px) {
+    min-width: 600px;
+  }
+`;
 
 const AuthLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -65,29 +100,18 @@ const AuthLayout = () => {
   return (
     <div
       style={{
-        background: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5)), url('/images/ats_login_image.webp')`,
+        /* background: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5)), url('/images/ats_login_image.webp')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundRepeat: "no-repeat", */
         minHeight: "100vh",
         display: "flex",
         justifyContent: "flex-end",
         width: "100%",
       }}
     >
-      <div
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          maxWidth: "800px",
-          height: "100vh",
-          display: "flex",
-          padding: "20px 0 20px 0",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
+      <ImageContainer></ImageContainer>
+      <FormContainer>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "34px", width: "150px" }}></div>
         <div style={{ width: "400px" }}>
           <div style={{ marginBottom: "70px" }}>
@@ -185,7 +209,7 @@ const AuthLayout = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "34px" }}>
           <img src="/images/orjinLogo.png" alt="ats logo" style={{ width: "150px" }} />
         </div>
-      </div>
+      </FormContainer>
     </div>
   );
 };
