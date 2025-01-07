@@ -285,6 +285,10 @@ const Sidebar = () => {
           key: "2980345df",
           label: <Link to={"/fuel-analysis"}>{t("yakitTuketimAnalizleri")}</Link>,
         },
+        {
+          key: "3j4h5v34",
+          label: <Link to={"/performance-analysis"}>{t("performansAnalizleri")}</Link>,
+        },
       ],
     },
     {
