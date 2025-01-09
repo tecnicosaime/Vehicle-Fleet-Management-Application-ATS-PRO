@@ -52,7 +52,7 @@ function YillikYakitTuketimleri() {
       parameterType,
     };
     try {
-      const response = await AxiosInstance.post(`/ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=5`, body);
+      const response = await AxiosInstance.post(`/PerformanceAnalysis/GetPerformanceAnalysisInfoByType?type=7`, body);
       setData(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -98,7 +98,7 @@ function YillikYakitTuketimleri() {
             maxWidth: "100%",
           }}
         >
-          {t("yillikYakitTuketimleri")} {startYear} - {endYear}
+          {t("filoYasiGrafigi")} {startYear} - {endYear}
         </Text>
         <Select value={parameterType} onChange={(value) => setParameterType(value)} style={{ width: 120 }}>
           {parameterOptions.map((option) => (
@@ -133,7 +133,7 @@ function YillikYakitTuketimleri() {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="yil" />
+                <XAxis dataKey="yasGrubu" />
                 <YAxis />
                 <Tooltip
                   formatter={(value) =>
@@ -144,7 +144,7 @@ function YillikYakitTuketimleri() {
                   }
                 />
                 <Legend />
-                <Bar dataKey="deger" fill="#8884d8" name={parameterTypeNameMap[parameterType]} />
+                <Bar dataKey="aracSayisi" fill="#8884d8" name={parameterTypeNameMap[parameterType]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

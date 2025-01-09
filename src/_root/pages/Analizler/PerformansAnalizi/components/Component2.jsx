@@ -35,7 +35,7 @@ function ComponentSingleCard() {
 
     try {
       // Sadece type=1 ile tek bir istek
-      const response = await AxiosInstance.post("ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=2", body);
+      const response = await AxiosInstance.post("/PerformanceAnalysis/GetPerformanceAnalysisInfoByType?type=2", body);
       setData(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -48,7 +48,7 @@ function ComponentSingleCard() {
     fetchData();
   }, [lokasyonId, plakaValues, aracTipiValues, departmanValues, baslangicTarihi, bitisTarihi]);
 
-  const renderCard = (value, label, backgroundColor, unit, loading) => (
+  const renderCard = (value, label, backgroundColor, loading) => (
     <div
       style={{
         width: "100%",
@@ -84,17 +84,7 @@ function ComponentSingleCard() {
         >
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <Text style={{ fontWeight: "500", fontSize: "35px", color: "white" }}>
-              {value !== null && value !== undefined ? (
-                <>
-                  {Number(value).toLocaleString("tr-TR", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                  {unit && <span style={{ fontSize: "20px" }}> ({unit})</span>}
-                </>
-              ) : (
-                ""
-              )}
+              {value !== null && value !== undefined ? value : ""}
             </Text>
             <Text style={{ color: "white", fontSize: "15px", fontWeight: "400" }}>{label}</Text>
           </div>
@@ -106,10 +96,9 @@ function ComponentSingleCard() {
   return (
     <div style={{ width: "100%", height: "100%" }}>
       {renderCard(
-        data, // API'den gelen değer (type=1 sonucu)
-        t("toplamYakitTutari"),
+        data?.plaka, // API'den gelen plaka bilgisi
+        t("enCokKullanilanArac"), // Kart başlığı (çeviride plaka yazacak)
         "linear-gradient(to right, #6a11cb, #2575fc)",
-        "TL.",
         isLoading // Yüklenme durumu
       )}
     </div>
