@@ -55,7 +55,7 @@ function AylikYakitTuketimleri() {
       parameterType,
     };
     try {
-      const response = await AxiosInstance.post(`/ModuleAnalysis/FuelAnalysis/GetFuelAnalysisInfoByType?type=6`, body);
+      const response = await AxiosInstance.post(`/PerformanceAnalysis/GetPerformanceAnalysisInfoByType?type=6`, body);
       // Veriyi dönüştürüyoruz: ay numaralarını ay isimlerine çeviriyoruz
       const transformedData = response.data.map((item) => ({
         ...item,
@@ -106,7 +106,7 @@ function AylikYakitTuketimleri() {
             maxWidth: "100%",
           }}
         >
-          {t("AylikYakitTuketimleri")} {startYear}
+          {t("katEdilenKilometreGrafigi")} {startYear}
         </Text>
         <Select value={parameterType} onChange={(value) => setParameterType(value)} style={{ width: 120 }}>
           {parameterOptions.map((option) => (

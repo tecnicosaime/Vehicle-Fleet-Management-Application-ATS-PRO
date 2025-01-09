@@ -28,6 +28,7 @@
   background-color: rgba(240, 240, 240, 0);
   cursor: grab;
   width: 90%;
+  justify-self: center;
 }
 
 .grid-stack-item .widget-body {
