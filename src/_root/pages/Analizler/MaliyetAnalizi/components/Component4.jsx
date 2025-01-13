@@ -35,7 +35,7 @@ function ComponentSingleCard() {
 
     try {
       // Sadece type=1 ile tek bir istek
-      const response = await AxiosInstance.post("/PerformanceAnalysis/GetPerformanceAnalysisInfoByType?type=5", body);
+      const response = await AxiosInstance.post("CostAnalysis/GetCostAnalysisInfoByType?type=4", body);
       setData(response.data);
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -84,7 +84,17 @@ function ComponentSingleCard() {
         >
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <Text style={{ fontWeight: "500", fontSize: "35px", color: "white" }}>
-              {value !== null && value !== undefined ? value : ""}
+              {value !== null && value !== undefined ? (
+                <>
+                  {Number(value).toLocaleString("tr-TR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                  {unit && <span style={{ fontSize: "20px" }}> ({unit})</span>}
+                </>
+              ) : (
+                ""
+              )}
             </Text>
             <Text style={{ color: "white", fontSize: "15px", fontWeight: "400" }}>{label}</Text>
           </div>
@@ -96,9 +106,10 @@ function ComponentSingleCard() {
   return (
     <div style={{ width: "100%", height: "100%" }}>
       {renderCard(
-        data?.plaka, // API'den gelen değer (type=1 sonucu)
-        t("enCokKazaYapanArac"),
+        data, // API'den gelen değer (type=1 sonucu)
+        t("sigortaVeVergiler"),
         "linear-gradient(to right, #ff4e50, #f9d423)",
+        "TL.",
         isLoading // Yüklenme durumu
       )}
     </div>

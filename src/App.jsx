@@ -52,6 +52,7 @@ import ServisIslemleri from "./_root/pages/vehicles-control/ServisIslemleri/Serv
 // Analizler
 import YakitTuketimAnalizi from "./_root/pages/Analizler/YakitTuketimAnalizi/YakitTuketimAnalizi.jsx";
 import PerformansAnalizi from "./_root/pages/Analizler/PerformansAnalizi/PerformansAnalizi.jsx";
+import MaliyetAnalizi from "./_root/pages/Analizler/MaliyetAnalizi/MaliyetAnalizi.jsx";
 
 // sistem Ayarlari
 
@@ -132,6 +133,7 @@ const App = () => {
         {/*Analızlar*/}
         <Route path="/fuel-analysis" element={<YakitTuketimAnalizi />} />
         <Route path="/performance-analysis" element={<PerformansAnalizi />} />
+        <Route path="/cost-analysis" element={<MaliyetAnalizi />} />
 
         <Route path="/Periodic-Maintenance" element={<PeriyordikBakimlar />} />
 

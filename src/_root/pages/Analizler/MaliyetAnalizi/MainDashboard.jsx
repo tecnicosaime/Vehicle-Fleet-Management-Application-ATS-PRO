@@ -46,6 +46,8 @@ const widgetTitles = {
   widget5: "Yıllık Yakıt Tüketimleri",
   widget6: "Araçlar Arası Yakıt Tüketimi ve Gider Karşılaştırması",
   widget11: "Yakıt Verimliliği",
+  widget14: "Bölgelere Göre Toplam Miktar Dağılımı",
+  widget18: "Lokasyon Bazında Yakıt Tüketimleri",
   widget19: "Aylık Yakıt Tüketimleri",
 };
 
@@ -56,6 +58,8 @@ const defaultItems = [
   { id: "widget4", x: 9, y: 0, width: 3, height: 1, minW: 3, minH: 1 },
   { id: "widget5", x: 0, y: 1, width: 6, height: 3, minW: 3, minH: 2 },
   { id: "widget19", x: 6, y: 1, width: 6, height: 3, minW: 3, minH: 2 },
+  { id: "widget14", x: 0, y: 4, width: 6, height: 4, minW: 3, minH: 2 },
+  { id: "widget18", x: 6, y: 4, width: 6, height: 4, minW: 3, minH: 2 },
   { id: "widget6", x: 0, y: 8, width: 6, height: 3, minW: 3, minH: 2 },
   { id: "widget11", x: 6, y: 8, width: 6, height: 3, minW: 3, minH: 2 },
 ];
@@ -71,6 +75,8 @@ function MainDashboard() {
     widget5: false,
     widget6: false,
     widget11: false,
+    widget14: false,
+    widget18: false,
     widget19: false,
   });
 
@@ -82,29 +88,29 @@ function MainDashboard() {
 
   const { setValue, watch, reset } = methods;
 
-  const selectedDashboard = "PerformansAnalizi";
+  const selectedDashboard = "MaliyetAnalizi";
 
   const updateApiTriger = async () => {
     setUpdateApi(!updateApi);
   };
 
   useEffect(() => {
-    const reorganizeValue = localStorage.getItem("reorganizePerformansAnalizi");
+    const reorganizeValue = localStorage.getItem("reorganizeMaliyetAnalizi");
     if (reorganizeValue !== null) {
       setReorganize(reorganizeValue === "true");
     } else {
       setReorganize(false); // Or any other default value you want reorganize varsayılan değerini ayarla
-      localStorage.setItem("reorganizePerformansAnalizi", "false");
+      localStorage.setItem("reorganizeMaliyetAnalizi", "false");
     }
   }, []);
 
   const onChange = (checked) => {
     if (checked) {
       setReorganize(false);
-      localStorage.setItem("reorganizePerformansAnalizi", "false");
+      localStorage.setItem("reorganizeMaliyetAnalizi", "false");
     } else {
       setReorganize(true);
-      localStorage.setItem("reorganizePerformansAnalizi", "true");
+      localStorage.setItem("reorganizeMaliyetAnalizi", "true");
     }
     setTimeout(() => {
       const gridItems = JSON.parse(localStorage.getItem(selectedDashboard)) || [];
@@ -268,6 +274,33 @@ function MainDashboard() {
             );
             break;
 
+          case "widget14":
+            root.render(
+              <FormProvider {...methods}>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <BolgelereGoreToplamMiktarDagilimi />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
+              </FormProvider>
+            );
+            break;
+
+          case "widget18":
+            root.render(
+              <FormProvider {...methods}>
+                <I18nextProvider i18n={i18n}>
+                  <ConfigProvider locale={trTR}>
+                    <BrowserRouter>
+                      <LokasyonBazindaYakitTuketimleri />
+                    </BrowserRouter>
+                  </ConfigProvider>
+                </I18nextProvider>
+              </FormProvider>
+            );
+            break;
           case "widget19":
             root.render(
               <FormProvider {...methods}>
@@ -297,6 +330,8 @@ function MainDashboard() {
         widget5: false,
         widget6: false,
         widget11: false,
+        widget14: false,
+        widget18: false,
         widget19: false,
       };
       newGridItems.forEach((item) => {
@@ -324,6 +359,8 @@ function MainDashboard() {
         widget5: false,
         widget6: false,
         widget11: false,
+        widget14: false,
+        widget18: false,
         widget19: false,
       };
       itemsToLoad.forEach((item) => {
@@ -447,7 +484,7 @@ function MainDashboard() {
 
   const handleReset = () => {
     localStorage.removeItem(selectedDashboard);
-    localStorage.removeItem("reorganizePerformansAnalizi");
+    localStorage.removeItem("reorganizeMaliyetAnalizi");
     window.location.reload();
   };
 
@@ -509,6 +546,12 @@ function MainDashboard() {
       </Checkbox>
       <Checkbox name="widget11" onChange={handleCheckboxChange} checked={checkedWidgets.widget11}>
         Yakıt Verimliliği
+      </Checkbox>
+      <Checkbox name="widget14" onChange={handleCheckboxChange} checked={checkedWidgets.widget14}>
+        Bölgelere Göre Toplam Miktar Dağılımı
+      </Checkbox>
+      <Checkbox name="widget18" onChange={handleCheckboxChange} checked={checkedWidgets.widget18}>
+        Lokasyon Bazında Yakıt Tüketimleri
       </Checkbox>
       <Checkbox name="widget19" onChange={handleCheckboxChange} checked={checkedWidgets.widget19}>
         Aylık Yakıt Tüketimleri

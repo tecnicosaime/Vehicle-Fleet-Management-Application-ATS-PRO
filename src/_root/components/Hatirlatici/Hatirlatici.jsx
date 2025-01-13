@@ -193,7 +193,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
           <Row onClick={() => handleRowClick("Yakit Tüketimi", <YakitTuketimi />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "rgb(202,108,0)" }} />
-              <Text>Yakit Tüketimi</Text>
+              <Text>Yakıt Tüketimi</Text>
             </div>
             <Text
               style={{
@@ -321,7 +321,7 @@ const Hatirlatici = ({ data, getHatirlatici, loading, data1, getHatirlatici1 }) 
           <Row onClick={() => handleRowClick("Peryodik Bakım", <PeriyodikBakim />)}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "5px" }}>
               <Indicator style={{ backgroundColor: "#00cfaa" }} />
-              <Text>Peryodik Bakım</Text>
+              <Text>Periyodik Bakım</Text>
             </div>
             <Text
               style={{
