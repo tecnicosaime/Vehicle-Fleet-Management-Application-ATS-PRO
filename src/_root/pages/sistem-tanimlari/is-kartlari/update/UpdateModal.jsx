@@ -7,7 +7,7 @@ import IsTipi from "../../../../components/form/IsTipi";
 import BakimDepartman from "../../../../components/form/BakimDepartmani";
 import { GetIsKartiByIdService, UpdateIsKartiService } from "../../../../../api/services/isKartlari_services";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const [isKartiId, setIsKartiId] = useState(0);
 
   const defaultValues = {};
@@ -17,18 +17,20 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   const { handleSubmit, reset, control, setValue } = methods;
 
   useEffect(() => {
-    GetIsKartiByIdService(id).then((res) => {
-      setValue("bakimDepartman", res.data.bakimDepartman);
-      setValue("bakimDepartmanKodId", res.data.bakimDepartmanKodId);
-      setValue("isTip", res.data.isTip);
-      setValue("isTipKodId", res.data.isTipKodId);
-      setValue("tanim", res.data.tanim);
-      setValue("dakika", res.data.dakika);
-      setValue("saat", res.data.saat);
-      setValue("ucret", res.data.ucret);
-      setIsKartiId(res.data.isTanimId);
-    });
-  }, [id, updateModal]);
+    if(selectedRow){
+      GetIsKartiByIdService(selectedRow?.key).then((res) => {
+        setValue("bakimDepartman", res.data.bakimDepartman);
+        setValue("bakimDepartmanKodId", res.data.bakimDepartmanKodId);
+        setValue("isTip", res.data.isTip);
+        setValue("isTipKodId", res.data.isTipKodId);
+        setValue("tanim", res.data.tanim);
+        setValue("dakika", res.data.dakika);
+        setValue("saat", res.data.saat);
+        setValue("ucret", res.data.ucret);
+        setIsKartiId(res.data.isTanimId);
+      });
+    }
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -43,12 +45,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateIsKartiService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [
@@ -68,7 +70,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("isKartiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={600}>
+    <Modal title={t("isKartiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={600}>
       <FormProvider {...methods}>
         <form>
           <div className="grid gap-1">

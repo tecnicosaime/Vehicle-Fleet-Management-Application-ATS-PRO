@@ -283,16 +283,16 @@ const Yakit = () => {
       },
     },
     {
-      title: t("toplamKm"),
+      title: "Km",
       dataIndex: "toplamKm",
       key: "toplamKm",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamKm === null) return -1;
         if (b.toplamKm === null) return 1;
-        return a.toplamKm.localeCompare(b.toplamKm);
+        return a.toplamKm - b.toplamKm;
       },
     },
     {
@@ -301,11 +301,11 @@ const Yakit = () => {
       key: "bakimSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.bakimSayisi === null) return -1;
         if (b.bakimSayisi === null) return 1;
-        return a.bakimSayisi.localeCompare(b.bakimSayisi);
+        return a.bakimSayisi - b.bakimSayisi;
       },
     },
     {
@@ -314,11 +314,11 @@ const Yakit = () => {
       key: "bakimMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
-        if (a.toplamKazaSayisi === null) return -1;
-        if (b.toplamKazaSayisi === null) return 1;
-        return a.toplamKazaSayisi.localeCompare(b.toplamKazaSayisi);
+        if (a.bakimMaliyeti === null) return -1;
+        if (b.bakimMaliyeti === null) return 1;
+        return a.bakimMaliyeti - b.bakimMaliyeti;
       },
     },
     {
@@ -327,11 +327,11 @@ const Yakit = () => {
       key: "arizaSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.arizaSayisi === null) return -1;
         if (b.arizaSayisi === null) return 1;
-        return a.arizaSayisi.localeCompare(b.arizaSayisi);
+        return a.arizaSayisi - b.arizaSayisi;
       },
     },
     {
@@ -340,11 +340,11 @@ const Yakit = () => {
       key: "arizaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.arizaMaliyeti === null) return -1;
         if (b.arizaMaliyeti === null) return 1;
-        return a.arizaMaliyeti.localeCompare(b.arizaMaliyeti);
+        return a.arizaMaliyeti - b.arizaMaliyeti;
       },
     },
     {
@@ -353,11 +353,11 @@ const Yakit = () => {
       key: "bakimVerimliligi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.bakimVerimliligi === null) return -1;
         if (b.bakimVerimliligi === null) return 1;
-        return a.bakimVerimliligi.localeCompare(b.bakimVerimliligi);
+        return a.bakimVerimliligi - b.bakimVerimliligi;
       },
     },
 

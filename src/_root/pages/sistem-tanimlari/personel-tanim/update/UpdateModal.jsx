@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import KisiselBilgiler from "../add/KisiselBilgiler";
 import { uploadPhoto } from "../../../../../utils/upload";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const [isValid, setIsValid] = useState("normal");
   const [personelId, setPersonelId] = useState(0);
   const [images, setImages] = useState([]);
@@ -116,61 +116,63 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   }, [watch("personelKod")]);
 
   useEffect(() => {
-    GetEmployeeByIdService(id).then((res) => {
-      setValue("personelKod", res.data.personelKod);
-      setValue("isim", res.data.isim);
-      setValue("lokasyonId", res.data.lokasyonId);
-      setValue("lokasyon", res.data.lokasyon);
-      setValue("unvanKodId", res.data.unvanKodId);
-      setValue("unvan", res.data.unvan);
-      setValue("personelTipiKodId", res.data.personelTipiKodId);
-      setValue("personelTipi", res.data.personelTipi);
-      setValue("departmanKodId", res.data.departmanKodId);
-      setValue("departman", res.data.departman);
-      setValue("gorevKodId", res.data.gorevKodId);
-      setValue("gorev", res.data.gorev);
-      setValue("sskNo", res.data.sskNo);
-      setValue("ehliyet", res.data.ehliyet);
-      setValue("ehliyetSinifi", res.data.ehliyetSinifi);
-      setValue("ehliyetNo", res.data.ehliyetNo);
-      setValue("kanGrubu", res.data.kanGrubu);
-      setValue("dogumTarihi", dayjs(res.data.dogumTarihi));
-      setValue("anneAdi", res.data.anneAdi);
-      setValue("babaAdi", res.data.babaAdi);
-      setValue("tcKimlikNo", res.data.tcKimlikNo);
-      setValue("beden", res.data.beden);
-      setValue("ayakKabiNo", res.data.ayakKabiNo);
-      setValue("adres", res.data.adres);
-      setValue("ilce", res.data.ilce);
-      setValue("il", res.data.il);
-      setValue("tel1", res.data.tel1);
-      setValue("tel2", res.data.tel2);
-      setValue("gsm", res.data.gsm);
-      setValue("fax", res.data.fax);
-      setValue("email", res.data.email);
-      setValue("web", res.data.web);
-      setValue("iseBaslamaTarihi", dayjs(res.data.iseBaslamaTarihi));
-      setValue("isetenAyrilmaTarihi", dayjs(res.data.isetenAyrilmaTarihi));
-      setValue("aktif", res.data.aktif);
-      setPersonelId(res.data.personelId);
-      setValue("ozelAlan1", res?.data.ozelAlan1);
-      setValue("ozelAlan2", res?.data.ozelAlan2);
-      setValue("ozelAlan3", res?.data.ozelAlan3);
-      setValue("ozelAlan4", res?.data.ozelAlan4);
-      setValue("ozelAlan5", res?.data.ozelAlan5);
-      setValue("ozelAlan6", res?.data.ozelAlan6);
-      setValue("ozelAlan7", res?.data.ozelAlan7);
-      setValue("ozelAlan8", res?.data.ozelAlan8);
-      setValue("ozelAlanKodId9", res?.data.ozelAlanKodId9);
-      setValue("ozelAlan9", res?.data.ozelAlan9);
-      setValue("ozelAlan10", res?.data.ozelAlan10);
-      setValue("ozelAlanKodId10", res?.data.ozelAlanKodId10);
-      setValue("ozelAlan11", res?.data.ozelAlan11);
-      setValue("ozelAlan12", res?.data.ozelAlan12);
-
-      setImagesURL([res.data.defPhotoInfo]);
-    });
-  }, [id, updateModal]);
+    if (selectedRow){
+      GetEmployeeByIdService(selectedRow?.key).then((res) => {
+        setValue("personelKod", res.data.personelKod);
+        setValue("isim", res.data.isim);
+        setValue("lokasyonId", res.data.lokasyonId);
+        setValue("lokasyon", res.data.lokasyon);
+        setValue("unvanKodId", res.data.unvanKodId);
+        setValue("unvan", res.data.unvan);
+        setValue("personelTipiKodId", res.data.personelTipiKodId);
+        setValue("personelTipi", res.data.personelTipi);
+        setValue("departmanKodId", res.data.departmanKodId);
+        setValue("departman", res.data.departman);
+        setValue("gorevKodId", res.data.gorevKodId);
+        setValue("gorev", res.data.gorev);
+        setValue("sskNo", res.data.sskNo);
+        setValue("ehliyet", res.data.ehliyet);
+        setValue("ehliyetSinifi", res.data.ehliyetSinifi);
+        setValue("ehliyetNo", res.data.ehliyetNo);
+        setValue("kanGrubu", res.data.kanGrubu);
+        setValue("dogumTarihi", dayjs(res.data.dogumTarihi));
+        setValue("anneAdi", res.data.anneAdi);
+        setValue("babaAdi", res.data.babaAdi);
+        setValue("tcKimlikNo", res.data.tcKimlikNo);
+        setValue("beden", res.data.beden);
+        setValue("ayakKabiNo", res.data.ayakKabiNo);
+        setValue("adres", res.data.adres);
+        setValue("ilce", res.data.ilce);
+        setValue("il", res.data.il);
+        setValue("tel1", res.data.tel1);
+        setValue("tel2", res.data.tel2);
+        setValue("gsm", res.data.gsm);
+        setValue("fax", res.data.fax);
+        setValue("email", res.data.email);
+        setValue("web", res.data.web);
+        setValue("iseBaslamaTarihi", dayjs(res.data.iseBaslamaTarihi));
+        setValue("isetenAyrilmaTarihi", dayjs(res.data.isetenAyrilmaTarihi));
+        setValue("aktif", res.data.aktif);
+        setPersonelId(res.data.personelId);
+        setValue("ozelAlan1", res?.data.ozelAlan1);
+        setValue("ozelAlan2", res?.data.ozelAlan2);
+        setValue("ozelAlan3", res?.data.ozelAlan3);
+        setValue("ozelAlan4", res?.data.ozelAlan4);
+        setValue("ozelAlan5", res?.data.ozelAlan5);
+        setValue("ozelAlan6", res?.data.ozelAlan6);
+        setValue("ozelAlan7", res?.data.ozelAlan7);
+        setValue("ozelAlan8", res?.data.ozelAlan8);
+        setValue("ozelAlanKodId9", res?.data.ozelAlanKodId9);
+        setValue("ozelAlan9", res?.data.ozelAlan9);
+        setValue("ozelAlan10", res?.data.ozelAlan10);
+        setValue("ozelAlanKodId10", res?.data.ozelAlanKodId10);
+        setValue("ozelAlan11", res?.data.ozelAlan11);
+        setValue("ozelAlan12", res?.data.ozelAlan12);
+  
+        setImagesURL([res.data.defPhotoInfo]);
+      });
+    }
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -222,8 +224,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateEmployeeService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
@@ -231,7 +233,6 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     uploadPhoto(personelId, "PERSONEL", images, true);
     setImages([]);
     setImagesURL([]);
-    setStatus(false);
   });
 
   const personalProps = {
@@ -271,7 +272,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         reset(defaultValues);
         setImages([]);
         setImagesURL([]);
@@ -282,7 +283,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("servisGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("personelGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs defaultActiveKey="1" items={items} />

@@ -159,7 +159,7 @@ function YillikYakitTuketimleri() {
                   }
                 />
                 <Legend />
-                <Bar dataKey="Miktar" fill="#8884d8" name={parameterTypeNameMap[parameterType]} />
+                <Bar dataKey="Miktar" fill="#00b7ce" name={parameterTypeNameMap[parameterType]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

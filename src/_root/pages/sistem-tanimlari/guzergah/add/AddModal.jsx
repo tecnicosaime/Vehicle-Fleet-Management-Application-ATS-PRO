@@ -12,7 +12,7 @@ import { CodeItemValidateService } from "../../../../../api/service";
 import TownVaris from "../../../../components/form/TownVaris";
 import SehirYer from "../../../../components/table/SehirYer";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [openModal, setopenModal] = useState(false);
   const [openSehirYerModal, setopenSehirYerModal] = useState(false);
   const [isValid, setIsValid] = useState("normal");
@@ -59,12 +59,12 @@ const AddModal = ({ setStatus }) => {
 
     AddGuzergahService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [

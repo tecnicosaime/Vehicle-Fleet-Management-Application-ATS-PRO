@@ -8,7 +8,7 @@ import { CodeItemValidateService } from "../../../../../api/service";
 import { GetServisByIdService, UpdateServisService } from "../../../../../api/services/servistanim_services";
 import ServisTip from "../../../../components/form/ServisTip";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const [isValid, setIsValid] = useState("normal");
   const [servisId, setServisId] = useState(0);
 
@@ -45,18 +45,20 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   }, [watch("bakimKodu")]);
 
   useEffect(() => {
-    GetServisByIdService(id).then((res) => {
-      setValue("aciklama", res.data.aciklama);
-      setValue("bakimKodu", res.data.bakimKodu);
-      setValue("gun", res.data.gun);
-      setValue("km", res.data.km);
-      setValue("periyodik", res.data.periyodik);
-      setValue("servisTipi", res.data.servisTipi);
-      setValue("servisTipiKodId", res.data.servisTipiKodId);
-      setValue("tanim", res.data.tanim);
-      setServisId(res.data.bakimId);
-    });
-  }, [id, updateModal]);
+    if(selectedRow){
+      GetServisByIdService(selectedRow?.key).then((res) => {
+        setValue("aciklama", res.data.aciklama);
+        setValue("bakimKodu", res.data.bakimKodu);
+        setValue("gun", res.data.gun);
+        setValue("km", res.data.km);
+        setValue("periyodik", res.data.periyodik);
+        setValue("servisTipi", res.data.servisTipi);
+        setValue("servisTipiKodId", res.data.servisTipiKodId);
+        setValue("tanim", res.data.tanim);
+        setServisId(res.data.bakimId);
+      });
+    }
+  }, [selectedRow, drawerVisible]);
 
   useEffect(() => {
     if (periyodik) {
@@ -96,12 +98,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateServisService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [
@@ -112,7 +114,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         reset(defaultValues);
       }}
     >
@@ -121,7 +123,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("servisGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("servisGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <div className="grid gap-2">

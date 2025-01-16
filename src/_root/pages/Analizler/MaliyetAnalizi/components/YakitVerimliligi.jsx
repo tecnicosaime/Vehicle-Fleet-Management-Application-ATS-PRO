@@ -262,89 +262,89 @@ const Yakit = () => {
       key: "kullandigiAracSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.kullandigiAracSayisi === null) return -1;
         if (b.kullandigiAracSayisi === null) return 1;
-        return a.kullandigiAracSayisi.localeCompare(b.kullandigiAracSayisi);
+        return a.kullandigiAracSayisi - b.kullandigiAracSayisi;
       },
     },
     {
-      title: t("toplamMesafe"),
+      title: "Mesafe",
       dataIndex: "toplamMesafe",
       key: "toplamMesafe",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamMesafe === null) return -1;
         if (b.toplamMesafe === null) return 1;
-        return a.toplamMesafe.localeCompare(b.toplamMesafe);
+        return a.toplamMesafe - b.toplamMesafe;
       },
     },
     {
-      title: t("toplamYakitMaliyeti"),
+      title: "Yakıt Maliyeti",
       dataIndex: "toplamYakitMaliyeti",
       key: "toplamYakitMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamYakitMaliyeti === null) return -1;
         if (b.toplamYakitMaliyeti === null) return 1;
-        return a.toplamYakitMaliyeti.localeCompare(b.toplamYakitMaliyeti);
+        return a.toplamYakitMaliyeti - b.toplamYakitMaliyeti;
       },
     },
     {
-      title: t("toplamBakimOnarimMaliyeti"),
+      title: "Bakım Onarım Maliyeti",
       dataIndex: "toplamBakimOnarimMaliyeti",
       key: "toplamBakimOnarimMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamBakimOnarimMaliyeti === null) return -1;
         if (b.toplamBakimOnarimMaliyeti === null) return 1;
-        return a.toplamBakimOnarimMaliyeti.localeCompare(b.toplamBakimOnarimMaliyeti);
+        return a.toplamBakimOnarimMaliyeti - b.toplamBakimOnarimMaliyeti;
       },
     },
     {
-      title: t("toplamHarcamaMaliyeti"),
+      title: "Harcama Maliyeti",
       dataIndex: "toplamHarcamaMaliyeti",
       key: "toplamHarcamaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamHarcamaMaliyeti === null) return -1;
         if (b.toplamHarcamaMaliyeti === null) return 1;
-        return a.toplamHarcamaMaliyeti.localeCompare(b.toplamHarcamaMaliyeti);
+        return a.toplamHarcamaMaliyeti - b.toplamHarcamaMaliyeti;
       },
     },
     {
-      title: t("toplamKazaMaliyeti"),
+      title: "Kaza Maliyeti",
       dataIndex: "toplamKazaMaliyeti",
       key: "toplamKazaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamKazaMaliyeti === null) return -1;
         if (b.toplamKazaMaliyeti === null) return 1;
-        return a.toplamKazaMaliyeti.localeCompare(b.toplamKazaMaliyeti);
+        return a.toplamKazaMaliyeti - b.toplamKazaMaliyeti;
       },
     },
     {
-      title: t("toplamCezaMaliyeti"),
+      title: "Ceza Maliyeti",
       dataIndex: "toplamCezaMaliyeti",
       key: "toplamCezaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamCezaMaliyeti === null) return -1;
         if (b.toplamCezaMaliyeti === null) return 1;
-        return a.toplamCezaMaliyeti.localeCompare(b.toplamCezaMaliyeti);
+        return a.toplamCezaMaliyeti - b.toplamCezaMaliyeti;
       },
     },
     {
@@ -353,11 +353,11 @@ const Yakit = () => {
       key: "toplam",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplam === null) return -1;
         if (b.toplam === null) return 1;
-        return a.toplam.localeCompare(b.toplam);
+        return a.toplam - b.toplam;
       },
     },
 

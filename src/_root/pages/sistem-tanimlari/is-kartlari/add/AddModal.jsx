@@ -7,7 +7,7 @@ import IsTipi from "../../../../components/form/IsTipi";
 import BakimDepartman from "../../../../components/form/BakimDepartmani";
 import { AddIsKartiService } from "../../../../../api/services/isKartlari_services";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [openModal, setopenModal] = useState(false);
 
   const defaultValues = {};
@@ -28,12 +28,12 @@ const AddModal = ({ setStatus }) => {
 
     AddIsKartiService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [

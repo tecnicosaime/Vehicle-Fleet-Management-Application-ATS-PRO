@@ -11,7 +11,7 @@ import LastikTipi from "../../../../components/form/LastikTipi";
 import FirmaUnvani from "../../../../components/form/FirmaUnvani";
 import TextArea from "antd/es/input/TextArea";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [openModal, setopenModal] = useState(false);
 
   const defaultValues = {};
@@ -37,12 +37,12 @@ const AddModal = ({ setStatus }) => {
 
     AddIsLastikService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [

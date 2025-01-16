@@ -283,68 +283,68 @@ const Yakit = () => {
       },
     },
     {
-      title: t("toplamKm"),
+      title: "Km",
       dataIndex: "toplamKm",
       key: "toplamKm",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamKm === null) return -1;
         if (b.toplamKm === null) return 1;
-        return a.toplamKm.localeCompare(b.toplamKm);
+        return a.toplamKm - b.toplamKm;
       },
     },
     {
-      title: t("toplamYakitTuketimi"),
+      title: "Yakıt Tüketimi",
       dataIndex: "toplamYakitTuketimi",
       key: "toplamYakitTuketimi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamYakitTuketimi === null) return -1;
         if (b.toplamYakitTuketimi === null) return 1;
-        return a.toplamYakitTuketimi.localeCompare(b.toplamYakitTuketimi);
+        return a.toplamYakitTuketimi - b.toplamYakitTuketimi;
       },
     },
     {
-      title: t("toplamKazaSayisi"),
+      title: "Kaza Sayısı",
       dataIndex: "toplamKazaSayisi",
       key: "toplamKazaSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamKazaSayisi === null) return -1;
         if (b.toplamKazaSayisi === null) return 1;
-        return a.toplamKazaSayisi.localeCompare(b.toplamKazaSayisi);
+        return a.toplamKazaSayisi - b.toplamKazaSayisi;
       },
     },
     {
-      title: t("toplamCezaSayisi"),
+      title: "Ceza Sayısı",
       dataIndex: "toplamCezaSayisi",
       key: "toplamCezaSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamCezaSayisi === null) return -1;
         if (b.toplamCezaSayisi === null) return 1;
-        return a.toplamCezaSayisi.localeCompare(b.toplamCezaSayisi);
+        return a.toplamCezaSayisi - b.toplamCezaSayisi;
       },
     },
     {
-      title: t("toplamSurucuSayisi"),
+      title: "Sürücü Sayısı",
       dataIndex: "toplamSurucuSayisi",
       key: "toplamSurucuSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamSurucuSayisi === null) return -1;
         if (b.toplamSurucuSayisi === null) return 1;
-        return a.toplamSurucuSayisi.localeCompare(b.toplamSurucuSayisi);
+        return a.toplamSurucuSayisi - b.toplamSurucuSayisi;
       },
     },
 
