@@ -6,7 +6,7 @@ import { Button, Input, InputNumber, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { GetCezaByIdService, UpdateCezaService } from "../../../../../api/services/ceza_services";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh  }) => {
   const [cezaId, setCezaId] = useState(0);
 
   const defaultValues = {};
@@ -16,17 +16,19 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   const { handleSubmit, reset, control, setValue } = methods;
 
   useEffect(() => {
-    GetCezaByIdService(id).then((res) => {
-      setValue("aciklama1", res.data.aciklama1);
-      setValue("aciklama2", res.data.aciklama2);
-      setValue("madde", res.data.madde);
-      setValue("kime", res.data.kime);
-      setValue("puan", res.data.puan);
-      setValue("belgeNo", res.data.belgeNo);
-      setValue("tutar", res.data.tutar);
-      setCezaId(res.data.siraNo);
-    });
-  }, [id, updateModal]);
+    if(selectedRow){
+      GetCezaByIdService(selectedRow?.key).then((res) => {
+        setValue("aciklama1", res.data.aciklama1);
+        setValue("aciklama2", res.data.aciklama2);
+        setValue("madde", res.data.madde);
+        setValue("kime", res.data.kime);
+        setValue("puan", res.data.puan);
+        setValue("belgeNo", res.data.belgeNo);
+        setValue("tutar", res.data.tutar);
+        setCezaId(res.data.siraNo);
+      });
+    }
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -42,12 +44,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateCezaService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [
@@ -58,7 +60,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         reset(defaultValues);
       }}
     >
@@ -67,7 +69,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("lastikTanimGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("cezaTanimGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <div className="grid gap-1">

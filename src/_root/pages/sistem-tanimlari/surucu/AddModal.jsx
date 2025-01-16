@@ -14,7 +14,7 @@ import KimlikBilgiler from "./tabs/KimlikBilgiler";
 import EhliyetBilgiler from "./tabs/EhliyetBilgiler";
 import MeslekiYeterlilik from "./tabs/MeslekiYeterlilik";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const isFirstRender = useRef(true);
   const [openModal, setopenModal] = useState(false);
   const [isValid, setIsValid] = useState("normal");
@@ -201,14 +201,14 @@ const AddModal = ({ setStatus }) => {
 
     AddDriverService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
         setActiveKey("1");
         setLoading(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const personalProps = {

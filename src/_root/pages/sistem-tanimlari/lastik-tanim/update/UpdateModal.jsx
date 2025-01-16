@@ -11,7 +11,7 @@ import LastikTipi from "../../../../components/form/LastikTipi";
 import FirmaUnvani from "../../../../components/form/FirmaUnvani";
 import TextArea from "antd/es/input/TextArea";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const [lastikId, setLastikId] = useState(0);
 
   const defaultValues = {};
@@ -21,26 +21,28 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   const { handleSubmit, reset, control, setValue } = methods;
 
   useEffect(() => {
-    GetLastikByIdService(id).then((res) => {
-      setValue("aciklama", res.data.aciklama);
-      setValue("basinc", res.data.basinc);
-      setValue("disDerinlik", res.data.disDerinlik);
-      setValue("ebat", res.data.ebat);
-      setValue("ebatKodId", res.data.ebatKodId);
-      setValue("unvan", res.data.firma);
-      setValue("firmaId", res.data.firmaId);
-      setValue("fiyat", res.data.fiyat);
-      setValue("lastikOmru", res.data.lastikOmru);
-      setValue("marka", res.data.marka);
-      setValue("markaKodId", res.data.markaKodId);
-      setValue("model", res.data.model);
-      setValue("modelKodId", res.data.modelKodId);
-      setValue("tanim", res.data.tanim);
-      setValue("tip", res.data.tip);
-      setValue("tipKodId", res.data.tipKodId);
-      setLastikId(res.data.siraNo);
-    });
-  }, [id, updateModal]);
+    if(selectedRow){
+      GetLastikByIdService(selectedRow?.key).then((res) => {
+        setValue("aciklama", res.data.aciklama);
+        setValue("basinc", res.data.basinc);
+        setValue("disDerinlik", res.data.disDerinlik);
+        setValue("ebat", res.data.ebat);
+        setValue("ebatKodId", res.data.ebatKodId);
+        setValue("unvan", res.data.firma);
+        setValue("firmaId", res.data.firmaId);
+        setValue("fiyat", res.data.fiyat);
+        setValue("lastikOmru", res.data.lastikOmru);
+        setValue("marka", res.data.marka);
+        setValue("markaKodId", res.data.markaKodId);
+        setValue("model", res.data.model);
+        setValue("modelKodId", res.data.modelKodId);
+        setValue("tanim", res.data.tanim);
+        setValue("tip", res.data.tip);
+        setValue("tipKodId", res.data.tipKodId);
+        setLastikId(res.data.siraNo);
+      });
+    }
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -60,12 +62,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateLastikService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [
@@ -85,7 +87,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("lastikTanimGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("lastikTanimGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <div className="grid gap-1">

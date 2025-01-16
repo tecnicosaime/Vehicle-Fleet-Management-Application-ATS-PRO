@@ -14,7 +14,7 @@ import KimlikBilgiler from "./tabs/KimlikBilgiler";
 import EhliyetBilgiler from "./tabs/EhliyetBilgiler";
 import MeslekiYeterlilik from "./tabs/MeslekiYeterlilik";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id,selectedRow, onDrawerClose, drawerVisible, onRefresh   }) => {
   const [isValid, setIsValid] = useState("normal");
   const [surucuId, setSurucuId] = useState(0);
   const [images, setImages] = useState([]);
@@ -119,7 +119,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await GetDriverByIdService(id);
+        const res = await GetDriverByIdService(selectedRow?.key);
 
         setValue("surucuKod", res.data.surucuKod);
         setValue("isim", res.data.isim);
@@ -208,10 +208,10 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       }
     };
 
-    if (updateModal) {
+    if (drawerVisible) {
       fetchData();
     }
-  }, [id, updateModal]);
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -292,8 +292,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateDriverService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
@@ -301,7 +301,6 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
     uploadPhoto(surucuId, "SURUCU", images, true);
     setImages([]);
     setImagesURL([]);
-    setStatus(false);
   });
 
   const personalProps = {
@@ -351,7 +350,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         reset(defaultValues);
         setImages([]);
         setImagesURL([]);
@@ -362,7 +361,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("surucuGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("surucuGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs defaultActiveKey="1" items={items} />

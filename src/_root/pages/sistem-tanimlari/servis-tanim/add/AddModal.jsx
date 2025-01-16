@@ -12,7 +12,7 @@ import TownVaris from "../../../../components/form/TownVaris";
 import SehirYer from "../../../../components/table/SehirYer";
 import { AddServisService, GetServisCodeService } from "../../../../../api/services/servistanim_services";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [openModal, setopenModal] = useState(false);
   const [isValid, setIsValid] = useState("normal");
   const isFirstRender = useRef(true);
@@ -92,12 +92,12 @@ const AddModal = ({ setStatus }) => {
 
     AddServisService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [

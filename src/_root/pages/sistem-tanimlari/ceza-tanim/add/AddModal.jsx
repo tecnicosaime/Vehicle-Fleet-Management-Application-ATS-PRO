@@ -6,7 +6,7 @@ import { t } from "i18next";
 import TextArea from "antd/es/input/TextArea";
 import { AddCezaService } from "../../../../../api/services/ceza_services";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh  }) => {
   const [openModal, setopenModal] = useState(false);
 
   const defaultValues = {};
@@ -28,12 +28,12 @@ const AddModal = ({ setStatus }) => {
 
     AddCezaService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [
@@ -57,7 +57,7 @@ const AddModal = ({ setStatus }) => {
       <Button className="btn primary-btn" onClick={() => setopenModal(true)}>
         <PlusOutlined /> {t("ekle")}
       </Button>
-      <Modal title={t("yeniLastikGirisi")} open={openModal} onCancel={() => setopenModal(false)} maskClosable={false} footer={footer} width={1200}>
+      <Modal title={t("yeniCezaGirisi")} open={openModal} onCancel={() => setopenModal(false)} maskClosable={false} footer={footer} width={1200}>
         <FormProvider {...methods}>
           <form>
             <div className="grid gap-1">

@@ -1,19 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Spin, Typography } from "antd";
+import { Spin, Typography, Button, Popover, Tour, Modal } from "antd";
+import { MoreOutlined, PrinterOutlined } from "@ant-design/icons";
 import AxiosInstance from "../../../../../api/http.jsx";
 import { useFormContext } from "react-hook-form";
 import dayjs from "dayjs";
 import { t } from "i18next";
 import chroma from "chroma-js";
+import styled from "styled-components";
 
 const { Text } = Typography;
+
+const StyledResponsiveContainer = styled(ResponsiveContainer)`
+  &:focus {
+    outline: none !important;
+  }
+  .recharts-wrapper path:focus {
+    outline: none;
+  }
+`;
 
 function BolgelereGoreToplamMiktarDagilimi() {
   const [data, setData] = useState([]);
   const [visibleSeries, setVisibleSeries] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const { watch } = useFormContext();
+  const {watch, setValue  } = useFormContext();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+  const [open, setOpen] = useState(false);
+  const ref1 = useRef(null);
+  const [isExpandedModalVisible, setIsExpandedModalVisible] = useState(false); // Expanded modal visibility state
 
   const lokasyonId = watch("locationValues");
   const plakaValues = watch("plakaValues");
@@ -171,6 +187,127 @@ function BolgelereGoreToplamMiktarDagilimi() {
     );
   };
 
+  const showModal = (content) => {
+    setModalContent(content);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    // reset();
+  };
+
+  // Custom Tooltip function
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      // Formatlanmış sayıyı almak
+      let formattedValue = formatNumber(payload[0].value);
+
+      return (
+        <div
+          style={{
+            backgroundColor: "#fff",
+            padding: "5px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <p>{`${payload[0].name} : ${formattedValue} adet`}</p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  // Sayıyı formata dönüştüren fonksiyon
+  function formatNumber(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  const downloadPDF = () => {
+      const element = document.getElementById("toplam-is-gucu");
+      const opt = {
+        margin: 10,
+        filename: "toplam-is-gucu.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+      };
+  
+      html2pdf().set(opt).from(element).save();
+    };
+
+  useEffect(() => {
+      if (isModalVisible === true) {
+        setValue("satinAlmaMaliyeti", null);
+        setValue("yakitMaliyeti", null);
+        setValue("sigortaMaliyeti", null);
+        setValue("harcamaMaliyeti", null);
+        setValue("bakimOnarimMaliyeti", null);
+        setValue("lastikMaliyeti", null);
+        // reset({
+        //   baslamaTarihiToplamIsGucu: undefined,
+        //   bitisTarihiToplamIsGucu: undefined,
+        //   aySecimiToplamIsGucu: undefined,
+        //   yilSecimiToplamIsGucu: undefined,
+        // });
+      }
+    }, [isModalVisible]);
+  
+    const content = (
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div style={{ cursor: "pointer" }} onClick={() => setIsExpandedModalVisible(true)}>
+          Büyüt
+        </div>
+        <div style={{ cursor: "pointer" }} onClick={() => setOpen(true)}>
+          Bilgi
+        </div>
+      </div>
+    );
+  
+    const steps = [
+      {
+        title: "Bilgi",
+        description: (
+          <div
+            style={{
+              overflow: "auto",
+              height: "100%",
+              maxHeight: "200px",
+            }}
+          >
+            <p>
+              Belirli bir süre zarfında tüm çalışanlar tarafından harcanan iş gücü toplamının atölyelere dağılımını ifade eder. Bu kavram, genellikle aşağıdaki amaçlar için
+              kullanılır:
+            </p>
+            <ol>
+              <li>
+                <strong>Genel Verimlilik Analizi</strong>: Organizasyonun genel verimliliğini değerlendirmek için.
+              </li>
+              <li>
+                <strong>Proje ve Görev Takibi</strong>: Bir proje veya görev için harcanan toplam zamanı ve çabayı belirlemek için.
+              </li>
+              <li>
+                <strong>Maliyet Kontrolü</strong>: İş gücü maliyetlerini kontrol etmek ve bütçelendirme yapmak için.
+              </li>
+              <li>
+                <strong>Kaynak Yönetimi</strong>: Kaynakların etkin kullanımını planlamak ve optimize etmek için.
+              </li>
+              <li>
+                <strong>İş Yükü Dağılımı</strong>: Çalışanlar arasındaki iş yükü dağılımını değerlendirmek ve dengelemek için.
+              </li>
+            </ol>
+          </div>
+        ),
+  
+        target: () => ref1.current,
+      },
+    ];
+
   return (
     <div
       style={{
@@ -189,6 +326,7 @@ function BolgelereGoreToplamMiktarDagilimi() {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           marginBottom: "10px",
         }}
       >
@@ -204,6 +342,21 @@ function BolgelereGoreToplamMiktarDagilimi() {
         >
           {t("toplamSahipOlmaMaliyeti")} {startYear} - {endYear}
         </Text>
+        <Popover placement="bottom" content={content} trigger="click">
+          <Button
+            type="text"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0px 5px",
+              height: "32px",
+              zIndex: 3,
+            }}
+          >
+            <MoreOutlined style={{ cursor: "pointer", fontWeight: "500", fontSize: "16px" }} />
+          </Button>
+        </Popover>
       </div>
       {isLoading ? (
         <div
@@ -261,6 +414,73 @@ function BolgelereGoreToplamMiktarDagilimi() {
           </div>
         </div>
       )}
+      <Tour open={open} onClose={() => setOpen(false)} steps={steps} />
+      <Modal
+        title={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "98%",
+            }}
+          >
+            <div
+              style={{
+                fontWeight: "500",
+                fontSize: "17px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "calc(100% - 50px)",
+              }}
+              title={`Toplam Harcanan İş Gücü (${startYear ? formatDate(startYear) : ""} - ${bitisTarihi ? formatDate(bitisTarihi) : ""})`}
+            >
+              Araç Filosu (Araç Tipleri)
+              {` ${startYear}`}
+            </div>
+            <PrinterOutlined style={{ cursor: "pointer", fontSize: "20px" }} onClick={downloadPDF} />
+          </div>
+        }
+        centered
+        open={isExpandedModalVisible}
+        onOk={() => setIsExpandedModalVisible(false)}
+        onCancel={() => setIsExpandedModalVisible(false)}
+        width="90%"
+        destroyOnClose
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "7px",
+            height: "calc(100vh - 180px)",
+          }}
+        >
+          <StyledResponsiveContainer id="toplam-is-gucu" width="100%" height="100%">
+            <PieChart width="100%" height="100%">
+              <Pie
+                data={data.filter((entry) => visibleSeries[entry.name])}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius="90%"
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {data
+                  .filter((entry) => visibleSeries[entry.name])
+                  .map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend content={<CustomLegend payload={data.map((entry, index) => ({ value: entry.name, color: entry.color }))} />} />
+            </PieChart>
+          </StyledResponsiveContainer>
+        </div>
+      </Modal>
     </div>
   );
 }

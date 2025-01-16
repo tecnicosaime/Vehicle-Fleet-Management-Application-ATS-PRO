@@ -11,7 +11,7 @@ import { AddEmployeeService, GetPersonelCodeService } from "../../../../../api/s
 import dayjs from "dayjs";
 import KisiselBilgiler from "./KisiselBilgiler";
 
-const AddModal = ({ setStatus }) => {
+const AddModal = ({ setStatus, onRefresh }) => {
   const [openModal, setopenModal] = useState(false);
   const [isValid, setIsValid] = useState("normal");
   const isFirstRender = useRef(true);
@@ -168,12 +168,12 @@ const AddModal = ({ setStatus }) => {
 
     AddEmployeeService(body).then((res) => {
       if (res.data.statusCode === 200) {
-        setStatus(true);
+        onRefresh();
         reset(defaultValues);
         setopenModal(false);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const personalProps = {

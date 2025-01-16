@@ -262,102 +262,102 @@ const Yakit = () => {
       key: "aracSayisi",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.aracSayisi === null) return -1;
         if (b.aracSayisi === null) return 1;
-        return a.aracSayisi.localeCompare(b.aracSayisi);
+        return a.aracSayisi - b.aracSayisi;
       },
     },
     {
-      title: t("toplamMesafe"),
+      title: "Mesafe",
       dataIndex: "toplamMesafe",
       key: "toplamMesafe",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamMesafe === null) return -1;
         if (b.toplamMesafe === null) return 1;
-        return a.toplamMesafe.localeCompare(b.toplamMesafe);
+        return a.toplamMesafe - b.toplamMesafe;
       },
     },
     {
-      title: t("toplamYakitMaliyet"),
+      title: "Yakıt Maliyet",
       dataIndex: "toplamYakitMaliyet",
       key: "toplamYakitMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
-        if (a.harcamaMaliyeti === null) return -1;
-        if (b.harcamaMaliyeti === null) return 1;
-        return a.harcamaMaliyeti.localeCompare(b.harcamaMaliyeti);
+        if (a.toplamYakitMaliyet === null) return -1;
+        if (b.toplamYakitMaliyet === null) return 1;
+        return a.toplamYakitMaliyet - b.toplamYakitMaliyet;
       },
     },
     {
-      title: t("toplamSatinalmaMaliyet"),
+      title: "Satınalma Maliyet",
       dataIndex: "toplamSatinalmaMaliyet",
       key: "toplamSatinalmaMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamSatinalmaMaliyet === null) return -1;
         if (b.toplamSatinalmaMaliyet === null) return 1;
-        return a.toplamSatinalmaMaliyet.localeCompare(b.toplamSatinalmaMaliyet);
+        return a.toplamSatinalmaMaliyet - b.toplamSatinalmaMaliyet;
       },
     },
     {
-      title: t("toplamBakimOnarimMaliyet"),
+      title: "Bakım Onarım Maliyet",
       dataIndex: "toplamBakimOnarimMaliyet",
       key: "toplamBakimOnarimMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamBakimOnarimMaliyet === null) return -1;
         if (b.toplamBakimOnarimMaliyet === null) return 1;
-        return a.toplamBakimOnarimMaliyet.localeCompare(b.toplamBakimOnarimMaliyet);
+        return a.toplamBakimOnarimMaliyet - b.toplamBakimOnarimMaliyet;
       },
     },
     {
-      title: t("toplamLastikMaliyet"),
+      title: "Lastik Maliyet",
       dataIndex: "toplamLastikMaliyet",
       key: "toplamLastikMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamLastikMaliyet === null) return -1;
         if (b.toplamLastikMaliyet === null) return 1;
-        return a.toplamLastikMaliyet.localeCompare(b.toplamLastikMaliyet);
+        return a.toplamLastikMaliyet - b.toplamLastikMaliyet;
       },
     },
     {
-      title: t("toplamSigortaMaliyet"),
+      title: "Sigorta Maliyet",
       dataIndex: "toplamSigortaMaliyet",
       key: "toplamSigortaMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamSigortaMaliyet === null) return -1;
         if (b.toplamSigortaMaliyet === null) return 1;
-        return a.toplamSigortaMaliyet.localeCompare(b.toplamSigortaMaliyet);
+        return a.toplamSigortaMaliyet - b.toplamSigortaMaliyet;
       },
     },
     {
-      title: t("toplamHarcamaMaliyet"),
+      title: "Harcama Maliyet",
       dataIndex: "toplamHarcamaMaliyet",
       key: "toplamHarcamaMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamHarcamaMaliyet === null) return -1;
         if (b.toplamHarcamaMaliyet === null) return 1;
-        return a.toplamHarcamaMaliyet.localeCompare(b.toplamHarcamaMaliyet);
+        return a.toplamHarcamaMaliyet - b.toplamHarcamaMaliyet;
       },
     },
     {
@@ -366,11 +366,11 @@ const Yakit = () => {
       key: "aracBasinaMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.aracBasinaMaliyet === null) return -1;
         if (b.aracBasinaMaliyet === null) return 1;
-        return a.aracBasinaMaliyet.localeCompare(b.aracBasinaMaliyet);
+        return a.aracBasinaMaliyet - b.aracBasinaMaliyet;
       },
     },
     {
@@ -379,11 +379,11 @@ const Yakit = () => {
       key: "toplamMaliyet",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplamMaliyet === null) return -1;
         if (b.toplamMaliyet === null) return 1;
-        return a.toplamMaliyet.localeCompare(b.toplamMaliyet);
+        return a.toplamMaliyet - b.toplamMaliyet;
       },
     },
 

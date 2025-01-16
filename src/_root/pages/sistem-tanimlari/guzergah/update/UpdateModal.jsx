@@ -13,7 +13,7 @@ import { CodeItemValidateService } from "../../../../../api/service";
 import { GetGuzergahByIdService, UpdateGuzergahService } from "../../../../../api/services/guzergah_services";
 import SehirYer from "../../../../components/table/SehirYer";
 
-const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const [isValid, setIsValid] = useState("normal");
   const [guzergahId, setGuzergahId] = useState(0);
   const [openSehirYerModal, setopenSehirYerModal] = useState(false);
@@ -36,26 +36,28 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   }, [watch("guzergahKodu")]);
 
   useEffect(() => {
-    GetGuzergahByIdService(id).then((res) => {
-      setValue("aciklama", res.data.aciklama);
-      setValue("tanim", res.data.guzergah);
-      setValue("sehir", res.data.cikisSehri);
-      setValue("cikisSehriId", res.data.cikisSehriId);
-      setValue("cikisYeri", res.data.cikisYeri);
-      setValue("cikisYeriId", res.data.cikisYeriId);
-      setValue("dakika", res.data.dakika);
-      setValue("saat", res.data.saat);
-      setValue("guzergah", res.data.guzergah);
-      setValue("guzergahKodu", res.data.guzergahKodu);
-      setValue("mesafe", res.data.mesafe);
-      setValue("tuketim", res.data.tuketimOran);
-      setValue("varisSehir", res.data.varisSehri);
-      setValue("varisSehriId", res.data.varisSehriId);
-      setValue("varisYeri", res.data.varisYeri);
-      setValue("varisYeriId", res.data.varisYeriId);
-      setGuzergahId(res.data.guzergahId);
-    });
-  }, [id, updateModal]);
+    if(selectedRow){
+      GetGuzergahByIdService(selectedRow?.key).then((res) => {
+        setValue("aciklama", res.data.aciklama);
+        setValue("tanim", res.data.guzergah);
+        setValue("sehir", res.data.cikisSehri);
+        setValue("cikisSehriId", res.data.cikisSehriId);
+        setValue("cikisYeri", res.data.cikisYeri);
+        setValue("cikisYeriId", res.data.cikisYeriId);
+        setValue("dakika", res.data.dakika);
+        setValue("saat", res.data.saat);
+        setValue("guzergah", res.data.guzergah);
+        setValue("guzergahKodu", res.data.guzergahKodu);
+        setValue("mesafe", res.data.mesafe);
+        setValue("tuketim", res.data.tuketimOran);
+        setValue("varisSehir", res.data.varisSehri);
+        setValue("varisSehriId", res.data.varisSehriId);
+        setValue("varisYeri", res.data.varisYeri);
+        setValue("varisYeriId", res.data.varisYeriId);
+        setGuzergahId(res.data.guzergahId);
+      });
+    }
+  }, [selectedRow, drawerVisible]);
 
   const onSubmit = handleSubmit((values) => {
     const body = {
@@ -75,12 +77,12 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
 
     UpdateGuzergahService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         reset(defaultValues);
       }
     });
-    setStatus(false);
+    onRefresh();
   });
 
   const footer = [
@@ -91,7 +93,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
+        onDrawerClose();
         reset(defaultValues);
       }}
     >
@@ -100,7 +102,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, setStatus, id }) => {
   ];
 
   return (
-    <Modal title={t("yeniSehirGirisi")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={600}>
+    <Modal title={t("guzergahGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={600}>
       <FormProvider {...methods}>
         <form>
           <div className="grid gap-1">

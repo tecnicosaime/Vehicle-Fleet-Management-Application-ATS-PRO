@@ -262,11 +262,11 @@ const Yakit = () => {
       key: "satinAlmaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.satinAlmaMaliyeti === null) return -1;
         if (b.satinAlmaMaliyeti === null) return 1;
-        return a.satinAlmaMaliyeti.localeCompare(b.satinAlmaMaliyeti);
+        return a.satinAlmaMaliyeti - b.satinAlmaMaliyeti;
       },
     },
     {
@@ -275,11 +275,11 @@ const Yakit = () => {
       key: "sigortaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.sigortaMaliyeti === null) return -1;
         if (b.sigortaMaliyeti === null) return 1;
-        return a.sigortaMaliyeti.localeCompare(b.sigortaMaliyeti);
+        return a.sigortaMaliyeti - b.sigortaMaliyeti;
       },
     },
     {
@@ -288,11 +288,11 @@ const Yakit = () => {
       key: "bakimOnarimMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.bakimOnarimMaliyeti === null) return -1;
         if (b.bakimOnarimMaliyeti === null) return 1;
-        return a.bakimOnarimMaliyeti.localeCompare(b.bakimOnarimMaliyeti);
+        return a.bakimOnarimMaliyeti - b.bakimOnarimMaliyeti;
       },
     },
     {
@@ -301,11 +301,11 @@ const Yakit = () => {
       key: "harcamaMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.harcamaMaliyeti === null) return -1;
         if (b.harcamaMaliyeti === null) return 1;
-        return a.harcamaMaliyeti.localeCompare(b.harcamaMaliyeti);
+        return a.harcamaMaliyeti - b.harcamaMaliyeti;
       },
     },
     {
@@ -314,11 +314,11 @@ const Yakit = () => {
       key: "lastikMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.lastikMaliyeti === null) return -1;
         if (b.lastikMaliyeti === null) return 1;
-        return a.lastikMaliyeti.localeCompare(b.lastikMaliyeti);
+        return a.lastikMaliyeti - b.lastikMaliyeti;
       },
     },
     {
@@ -327,11 +327,11 @@ const Yakit = () => {
       key: "yakitMaliyeti",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.yakitMaliyeti === null) return -1;
         if (b.yakitMaliyeti === null) return 1;
-        return a.yakitMaliyeti.localeCompare(b.yakitMaliyeti);
+        return a.yakitMaliyeti - b.yakitMaliyeti;
       },
     },
     {
@@ -340,11 +340,11 @@ const Yakit = () => {
       key: "toplam",
       width: 120,
       ellipsis: true,
-      visible: true,
+      visible: true, // Varsayılan olarak açık   
       sorter: (a, b) => {
         if (a.toplam === null) return -1;
         if (b.toplam === null) return 1;
-        return a.toplam.localeCompare(b.toplam);
+        return a.toplam - b.toplam;
       },
     },
 
