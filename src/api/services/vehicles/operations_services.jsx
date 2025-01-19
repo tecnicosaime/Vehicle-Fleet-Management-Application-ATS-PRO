@@ -71,7 +71,7 @@ export const UpdateExpenseItemService = async (data) => {
 };
 
 export const GetExpensesListService = async (search, page, data) => {
-  return await http.get(`/Expenses/GetExpensesList?page=${page}&parameter=${search}`, data);
+  return await http.post(`/Expenses/GetExpensesList?page=${page}&parameter=${search}`, data);
 };
 
 // sefer
