@@ -207,7 +207,7 @@ const AuthLayout = () => {
           </Form>
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "34px" }}>
-          <img src="/images/orjinLogo.png" alt="ats logo" style={{ width: "150px" }} />
+          {/* <img src="/images/orjinLogo.png" alt="ats logo" style={{ width: "150px" }} /> */}
         </div>
       </FormContainer>
     </div>
