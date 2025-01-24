@@ -258,6 +258,21 @@ const Yakit = () => {
     },
 
     {
+      title: t("periyodik"),
+      dataIndex: "periyodik",
+      key: "periyodik",
+      width: 60,
+      ellipsis: true,
+      visible: true,
+      render: (value) => (value ? <CheckOutlined style={{ color: "green" }} /> : <CloseOutlined style={{ color: "red" }} />),
+      sorter: (a, b) => {
+        if (a.periyodik === null) return -1;
+        if (b.periyodik === null) return 1;
+        return a.periyodik.localeCompare(b.periyodik);
+      },
+    },
+
+    {
       title: t("km"),
       dataIndex: "km",
       key: "km",
