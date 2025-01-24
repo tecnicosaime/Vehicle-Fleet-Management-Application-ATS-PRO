@@ -144,7 +144,7 @@ function YillikYakitTuketimleri() {
                   }
                 />
                 <Legend />
-                <Bar dataKey="deger" fill="#8884d8" name={parameterTypeNameMap[parameterType]} />
+                <Bar dataKey="deger" fill="#00b7ce" name={parameterTypeNameMap[parameterType]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
