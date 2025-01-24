@@ -44,6 +44,9 @@ const Ekspertiz = ({ visible, onClose, id }) => {
       setSelectedOptions({});
       setTableData([]);
       // Diğer gerekli temizleme işlemleri...
+      // Fetch fresh data
+      fetchVehicleExpertData();
+      fetchColorStyles();
     }
   }, [visible]);
 
@@ -69,10 +72,12 @@ const Ekspertiz = ({ visible, onClose, id }) => {
   const fetchVehicleExpertData = async () => {
     try {
       const response = await AxiosInstance.get(`VehicleAppraisals/GetVehicleAppraisalsInfo?vehicleId=${id}`);
-      const vehicleApiData = response.data;
-      setVehicleExpertData(vehicleApiData); // Set the vehicle expert data
+      if (response && response.data) {
+        setVehicleExpertData(response.data);
+      }
     } catch (error) {
-      console.error("Error fetching vehicle expert data: ", error);
+      console.error("Error fetching vehicle expert data:", error);
+      message.error("Ekspertiz bilgileri alınamadı");
     }
   };
 
