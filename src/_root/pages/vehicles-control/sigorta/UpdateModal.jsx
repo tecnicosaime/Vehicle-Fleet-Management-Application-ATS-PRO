@@ -13,7 +13,7 @@ import PersonalFields from "../../../components/form/personal-fields/PersonalFie
 import FileUpload from "../../../components/upload/FileUpload";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 
-const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const { plaka } = useContext(PlakaContext);
   const [activeKey, setActiveKey] = useState("1");
   // file
@@ -119,8 +119,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   // }, [watch("baslangicTarih")]);
 
   useEffect(() => {
-    if (updateModal) {
-      GetInsuranceItemByIdService(id).then((res) => {
+    if (drawerVisible && selectedRow) {
+      GetInsuranceItemByIdService(selectedRow?.key).then((res) => {
         setValue("acenta", res?.data.acenta);
         setValue("acentaKodId", res?.data.acentaKodId);
         setValue("baslangicTarih", res?.data.baslangicTarih ? dayjs(res?.data.baslangicTarih) : null);
@@ -160,16 +160,16 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "SIGORTA").then((res) => setImageUrls(res.data));
+      GetPhotosByRefGroupService(selectedRow?.key, "SIGORTA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "SIGORTA").then((res) => setFilesUrl(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "SIGORTA").then((res) => setFilesUrl(res.data));
     }
-  }, [id, updateModal]);
+  }, [selectedRow, drawerVisible]);
 
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "SIGORTA", files);
+      uploadFile(selectedRow?.key, "SIGORTA", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -180,7 +180,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "SIGORTA", images, false);
+      const data = uploadPhoto(selectedRow?.key, "SIGORTA", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -191,7 +191,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
   const onSubmit = handleSubmit((values) => {
     const body = {
-      siraNo: id,
+      siraNo: selectedRow?.key,
       aracId: watch("aracId"),
       aciklama: values.aciklama,
       tutar: values.tutar || 0,
@@ -227,8 +227,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     UpdateInsuranceItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
         if (plaka.length === 1) {
           reset();
@@ -241,7 +241,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     uploadFiles();
     uploadImages();
-    setStatus(false);
+    // setStatus(false);
   });
 
   const personalProps = {
@@ -281,8 +281,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
       }}
     >
@@ -291,7 +291,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   ];
 
   return (
-    <Modal title={t("sigortaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("sigortaBilgisiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
