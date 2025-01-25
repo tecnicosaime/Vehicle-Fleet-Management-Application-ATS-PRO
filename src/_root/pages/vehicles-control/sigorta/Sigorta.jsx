@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip, Progress, ConfigProvider } from "antd";
 import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
@@ -12,6 +12,7 @@ import styled from "styled-components";
 import ContextMenu from "./components/ContextMenu/ContextMenu";
 import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
+import Filters from "./filter/Filters";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
@@ -169,6 +170,11 @@ const Sigorta = () => {
 
   const [selectedRows, setSelectedRows] = useState([]);
 
+  const [body, setBody] = useState({
+    keyword: "",
+    filters: {},
+  });
+
   // API Data Fetching with diff and setPointId
   const fetchData = async (diff, targetPage) => {
     setLoading(true);
@@ -185,7 +191,10 @@ const Sigorta = () => {
         currentSetPointId = 0;
       }
 
-      const response = await AxiosInstance.post(`Insurance/GetInsuranceList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`);
+      // Determine what to send for customfilters
+      const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
+
+      const response = await AxiosInstance.post(`Insurance/GetInsuranceList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`, customFilters);
 
       const total = response.data.recordCount;
       setTotalCount(total);
@@ -214,6 +223,16 @@ const Sigorta = () => {
     fetchData(0, 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (body !== prevBodyRef.current) {
+      fetchData(0, 1);
+      prevBodyRef.current = body;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [body]);
+
+  const prevBodyRef = useRef(body);
 
   // Search handling
   // Define handleSearch function
@@ -633,6 +652,16 @@ const Sigorta = () => {
     setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
   }, [currentLang]);
 
+  // filtreleme işlemi için kullanılan useEffect
+  const handleBodyChange = useCallback((type, newBody) => {
+    setBody((state) => ({
+      ...state,
+      [type]: newBody,
+    }));
+    setCurrentPage(1); // Filtreleme yapıldığında sayfa numarasını 1'e ayarla
+  }, []);
+  // filtreleme işlemi için kullanılan useEffect son
+
   return (
     <>
       <ConfigProvider locale={currentLocale}>
@@ -756,6 +785,7 @@ const Sigorta = () => {
               // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
               suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
             />
+            <Filters onChange={handleBodyChange} />
             {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
             {/* Other toolbar components */}
           </div>
