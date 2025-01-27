@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller, useFormContext } from "react-hook-form";
 import { Typography, Select } from "antd";
 import dayjs from "dayjs";
@@ -22,17 +22,25 @@ export default function ZamanAraligi() {
   } = useFormContext();
 
   const selectedTimeRange = watch("timeRange");
+  const [isInitialMount, setIsInitialMount] = useState(true);
 
   useEffect(() => {
-    // Set default value on initial render if not already set
-    if (selectedTimeRange === undefined) {
-      setValue("timeRange", "all", { shouldValidate: true });
-      handleTimeRangeChange("all");
-    } else {
+    if (isInitialMount) {
+      setValue("timeRange", "all");
+      setValue("startDate", null);
+      setValue("endDate", null);
+      setIsInitialMount(false);
+      return;
+    }
+
+    if (selectedTimeRange && selectedTimeRange !== "all") {
       handleTimeRangeChange(selectedTimeRange);
+    } else if (selectedTimeRange === "all") {
+      setValue("startDate", null);
+      setValue("endDate", null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTimeRange]);
+  }, [selectedTimeRange, isInitialMount]);
 
   const handleTimeRangeChange = (value) => {
     let startDate;
