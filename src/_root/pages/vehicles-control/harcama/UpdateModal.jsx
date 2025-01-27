@@ -13,7 +13,7 @@ import FileUpload from "../../../components/upload/FileUpload";
 import dayjs from "dayjs";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 
-const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const { plaka } = useContext(PlakaContext);
   const [activeKey, setActiveKey] = useState("1");
   // file
@@ -108,11 +108,11 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const methods = useForm({
     defaultValues: defaultValues,
   });
-  const { handleSubmit, reset, setValue } = methods;
+  const { handleSubmit, reset, setValue, watch } = methods;
 
   useEffect(() => {
-    if (updateModal) {
-      GetExpenseByIdService(id).then((res) => {
+    if (drawerVisible && selectedRow) {
+      GetExpenseByIdService(selectedRow?.key).then((res) => {
         setValue("aracId", res?.data.aracId);
         setValue("plaka", res?.data.plaka);
         setValue("tarih", dayjs(res?.data.tarih));
@@ -142,16 +142,16 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "HARCAMA").then((res) => setImageUrls(res.data));
+      GetPhotosByRefGroupService(selectedRow?.key, "HARCAMA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "HARCAMA").then((res) => setFilesUrl(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "HARCAMA").then((res) => setFilesUrl(res.data));
     }
-  }, [id, updateModal]);
+  }, [drawerVisible, selectedRow]);
 
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "HARCAMA", files);
+      uploadFile(selectedRow?.key, "HARCAMA", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -162,7 +162,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "HARCAMA", images, false);
+      const data = uploadPhoto(selectedRow?.key, "HARCAMA", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -172,9 +172,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   };
 
   const onSubmit = handleSubmit((values) => {
-    console.log(1);
     const body = {
-      siraNo: id,
+      siraNo: selectedRow?.key,
       tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
       surucuId: values.surucuId || 0,
       lokasyonId: values.lokasyonId || 0,
@@ -199,8 +198,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     UpdateExpenseItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
         if (plaka.length === 1) {
           reset();
@@ -212,7 +211,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     uploadFiles();
     uploadImages();
-    setStatus(false);
+    // setStatus(false);
   });
 
   const personalProps = {
@@ -252,8 +251,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
         setActiveKey("1");
       }}
     >
@@ -262,7 +260,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   ];
 
   return (
-    <Modal title={t("harcamaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("harcamaBilgisiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
