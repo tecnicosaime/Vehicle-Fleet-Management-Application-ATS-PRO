@@ -50,6 +50,14 @@ export default function CustomFilter({ onSubmit }) {
     }));
   };
 
+  const handleInputChange = (e, rowId) => {
+    const { value } = e.target;
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [`input-${rowId}`]: value,
+    }));
+  };
+
   // Add this function to determine which input to show
   const renderInput = (rowId) => {
     const selectedValue = selectedValues[rowId];
@@ -81,52 +89,66 @@ export default function CustomFilter({ onSubmit }) {
 
   const handleSubmit = () => {
     // Combine selected values and input values for each row
-    const rowData = rows.map((row) => ({
-      selectedValue: selectedValues[row.id] || "",
-      inputValue: inputValues[`input-${row.id}`] || "",
-    }));
+    const filters = {};
 
-    // Filter out rows where both selectedValue and inputValue are empty
-    const filteredData = rowData.filter(({ selectedValue, inputValue }) => {
-      return selectedValue !== "" || inputValue !== "";
+    rows.forEach((row) => {
+      const selectedValue = selectedValues[row.id];
+      const inputValue = inputValues[`input-${row.id}`];
+
+      // Only add to filters if both values exist
+      if (selectedValue && inputValue) {
+        filters[selectedValue] = inputValue;
+      }
     });
 
-    if (filteredData.length > 0) {
-      // Convert the filteredData array to the desired JSON format
-      const json = filteredData.reduce((acc, { selectedValue, inputValue }) => {
-        return {
-          ...acc,
-          [selectedValue]: inputValue,
-        };
-      }, {});
+    // Send the active filters to parent
+    onSubmit(filters);
 
-      console.log(json);
-      // You can now submit or process the json object as needed.
-      onSubmit(json);
-    } else {
-      // Handle the case where there are no non-empty filters (optional)
-      console.log("No filters to submit.");
-    }
     setOpen(false);
   };
 
   const handleCancelClick = (rowId) => {
-    setFilters({});
-    setRows((prevRows) => prevRows.filter((row) => row.id !== rowId));
+    // Remove the row
+    setRows((prevRows) => {
+      const newRows = prevRows.filter((row) => row.id !== rowId);
+      // If no rows left, reset states
+      if (newRows.length === 0) {
+        setNewObjectsAdded(false);
+        setFiltersExist(false);
+      }
+      return newRows;
+    });
 
-    const filtersRemaining = rows.length > 1;
-    setFiltersExist(filtersRemaining);
-    if (!filtersRemaining) {
-      setNewObjectsAdded(false);
-    }
-    onSubmit("");
-  };
+    // Get the selected value before removing it
+    const selectedValue = selectedValues[rowId];
 
-  const handleInputChange = (e, rowId) => {
-    setInputValues((prevInputValues) => ({
-      ...prevInputValues,
-      [`input-${rowId}`]: e.target.value,
-    }));
+    // Clear the removed row's values
+    setSelectedValues((prev) => {
+      const newValues = { ...prev };
+      delete newValues[rowId];
+      return newValues;
+    });
+
+    setInputValues((prev) => {
+      const newValues = { ...prev };
+      delete newValues[`input-${rowId}`];
+      return newValues;
+    });
+
+    // Create a new filters object without the cancelled filter
+    const updatedFilters = {};
+    rows.forEach((row) => {
+      if (row.id !== rowId) {
+        const value = selectedValues[row.id];
+        const inputValue = inputValues[`input-${row.id}`];
+        if (value && inputValue) {
+          updatedFilters[value] = inputValue;
+        }
+      }
+    });
+
+    // Send the updated filters to parent
+    onSubmit(updatedFilters);
   };
 
   const handleAddFilterClick = () => {
@@ -229,10 +251,10 @@ export default function CustomFilter({ onSubmit }) {
                       value: "lokasyon",
                       label: "Lokasyon",
                     },
-                    {
+                    /*  {
                       value: "status",
                       label: "Durum",
-                    },
+                    }, */
                   ]}
                 />
                 {renderInput(row.id)}

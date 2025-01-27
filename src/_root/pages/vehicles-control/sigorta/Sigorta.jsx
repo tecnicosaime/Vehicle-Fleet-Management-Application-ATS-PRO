@@ -13,6 +13,7 @@ import ContextMenu from "./components/ContextMenu/ContextMenu";
 import AddModal from "./AddModal";
 import UpdateModal from "./UpdateModal";
 import Filters from "./filter/Filters";
+import Status from "./filter/custom-filter/components/Status";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
@@ -172,7 +173,7 @@ const Sigorta = () => {
 
   const [body, setBody] = useState({
     keyword: "",
-    filters: {},
+    filters: { status: 1 },
   });
 
   // API Data Fetching with diff and setPointId
@@ -194,7 +195,7 @@ const Sigorta = () => {
       // Determine what to send for customfilters
       const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
 
-      const response = await AxiosInstance.post(`Insurance/GetInsuranceList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`, customFilters);
+      const response = await AxiosInstance.post(`Insurance/GetInsuranceList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`, body.filters);
 
       const total = response.data.recordCount;
       setTotalCount(total);
@@ -654,11 +655,28 @@ const Sigorta = () => {
 
   // filtreleme işlemi için kullanılan useEffect
   const handleBodyChange = useCallback((type, newBody) => {
-    setBody((state) => ({
-      ...state,
-      [type]: newBody,
-    }));
-    setCurrentPage(1); // Filtreleme yapıldığında sayfa numarasını 1'e ayarla
+    setBody((prevBody) => {
+      if (type === "filters") {
+        // If newBody is a function, call it with previous filters
+        const updatedFilters =
+          typeof newBody === "function"
+            ? newBody(prevBody.filters)
+            : {
+                ...prevBody.filters,
+                ...newBody,
+              };
+
+        return {
+          ...prevBody,
+          filters: updatedFilters,
+        };
+      }
+      return {
+        ...prevBody,
+        [type]: newBody,
+      };
+    });
+    setCurrentPage(1);
   }, []);
   // filtreleme işlemi için kullanılan useEffect son
 
@@ -785,6 +803,9 @@ const Sigorta = () => {
               // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
               suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
             />
+            <div style={{ width: "100px" }}>
+              <Status value={body?.filters?.status ?? 1} onChange={handleBodyChange} />
+            </div>
             <Filters onChange={handleBodyChange} />
             {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
             {/* Other toolbar components */}
