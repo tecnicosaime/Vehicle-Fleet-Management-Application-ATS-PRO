@@ -45,18 +45,23 @@ export default function CustomFilter({ onSubmit }) {
   const [rows, setRows] = useState([]);
   const [newObjectsAdded, setNewObjectsAdded] = useState(false);
   const [filtersExist, setFiltersExist] = useState(false);
-  const [inputValues, setInputValues] = useState({}); // Input değerlerini saklamak için bir state kullanıyoruz
+  const [inputValues, setInputValues] = useState({});
   const [filters, setFilters] = useState({});
   const [filterValues, setFilterValues] = useState({});
+  const [isInitialMount, setIsInitialMount] = useState(true);
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  // selectboxtan seçilen tarihlerin watch edilmesi ve set edilmesi
   const startDateSelected = watch("startDate");
   const endDateSelected = watch("endDate");
 
   useEffect(() => {
+    if (isInitialMount) {
+      setIsInitialMount(false);
+      return;
+    }
+
     if (startDateSelected === null) {
       setStartDate(null);
     } else {
@@ -67,14 +72,14 @@ export default function CustomFilter({ onSubmit }) {
     } else {
       setEndDate(dayjs(endDateSelected));
     }
-  }, [startDateSelected, endDateSelected]);
+  }, [startDateSelected, endDateSelected, isInitialMount]);
 
   useEffect(() => {
-    if ((startDate !== null && endDate !== null) || (startDate === null && endDate === null)) {
-      handleSubmit();
-    }
+    if (isInitialMount) return;
+
+    // Always submit after initial mount when dates change (including null)
+    handleSubmit();
   }, [startDate, endDate]);
-  // selectboxtan seçilen tarihlerin watch edilmesi ve set edilmesi sonu
 
   // Create a state variable to store selected values for each row
   const [selectedValues, setSelectedValues] = useState({});
