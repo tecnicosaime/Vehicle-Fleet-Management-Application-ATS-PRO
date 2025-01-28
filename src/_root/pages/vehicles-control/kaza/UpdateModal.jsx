@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import GeriOdeme from "./tabs/GeriOdeme";
 import SigortaBilgileri from "./tabs/SigortaBilgileri";
 
-const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const { plaka } = useContext(PlakaContext);
   const [activeKey, setActiveKey] = useState("1");
   // file
@@ -113,8 +113,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   const { handleSubmit, reset, setValue } = methods;
 
   useEffect(() => {
-    if (updateModal) {
-      GetAccidentItemByIdService(id).then((res) => {
+    if (drawerVisible && selectedRow) {
+      GetAccidentItemByIdService(selectedRow?.key).then((res) => {
         setValue("aracKm", res?.data.aracKm);
         setValue("aracId", res?.data.aracId);
         setValue("asliKusur", res?.data.asliKusur);
@@ -169,16 +169,16 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "KAZA").then((res) => setImageUrls(res.data));
+      GetPhotosByRefGroupService(selectedRow?.key, "KAZA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "KAZA").then((res) => setFilesUrl(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "KAZA").then((res) => setFilesUrl(res.data));
     }
-  }, [id, updateModal]);
+  }, [selectedRow, drawerVisible]);
 
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "KAZA", files);
+      uploadFile(selectedRow?.key, "KAZA", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -189,7 +189,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "KAZA", images, false);
+      const data = uploadPhoto(selectedRow?.key, "KAZA", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -200,7 +200,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
 
   const onSubmit = handleSubmit((values) => {
     const body = {
-      siraNo: id,
+      siraNo: selectedRow?.key,
       surucuId: values.surucuId || 0,
       aciklama: values.aciklama,
       lokasyonId: values.lokasyonId,
@@ -243,8 +243,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
 
     UpdateAccidentItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
         if (plaka.length === 1) {
           reset();
@@ -256,7 +256,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
 
     uploadFiles();
     uploadImages();
-    setStatus(false);
+    // setStatus(false);
   });
 
   const personalProps = {
@@ -306,8 +306,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
         setActiveKey("1");
       }}
     >
@@ -316,7 +315,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, aracId, setStatus }) => 
   ];
 
   return (
-    <Modal title={t("kazaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("kazaBilgisiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
