@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/tr"; // For Turkish locale
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import advancedFormat from "dayjs/plugin/advancedFormat";
+import DatePickerComponent from "./components/DatePickerComponent";
 
 dayjs.extend(weekOfYear);
 dayjs.extend(advancedFormat);
@@ -143,6 +144,13 @@ export default function CustomFilter({ onSubmit }) {
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
       [`input-${rowId}`]: e.target.value,
+    }));
+  };
+
+  const handleDateChange = (date, rowId) => {
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [`input-${rowId}`]: date ? date.format("YYYY-MM-DD") : "",
     }));
   };
 
@@ -282,10 +290,14 @@ export default function CustomFilter({ onSubmit }) {
                 />
                 <Input
                   placeholder="Arama Yap"
-                  name={`input-${row.id}`} // Use a unique name for each input based on the row ID
-                  value={inputValues[`input-${row.id}`] || ""} // Use the corresponding input value
-                  onChange={(e) => handleInputChange(e, row.id)} // Pass the rowId to handleInputChange
+                  name={`input-${row.id}`}
+                  value={inputValues[`input-${row.id}`] || ""}
+                  onChange={(e) => handleInputChange(e, row.id)}
+                  style={{ display: selectedValues[row.id] === "tebligBaslangicTarih" || selectedValues[row.id] === "tebligBitisTarih" ? "none" : "block" }}
                 />
+                {(selectedValues[row.id] === "tebligBaslangicTarih" || selectedValues[row.id] === "tebligBitisTarih") && (
+                  <DatePickerComponent value={inputValues[`input-${row.id}`]} onChange={(date) => handleDateChange(date, row.id)} />
+                )}
               </Col>
             </Col>
           </Row>

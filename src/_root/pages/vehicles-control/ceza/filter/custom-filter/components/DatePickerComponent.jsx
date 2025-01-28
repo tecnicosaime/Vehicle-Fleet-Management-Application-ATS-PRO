@@ -1,11 +1,10 @@
 import React from "react";
-import { DatePicker, Space } from "antd";
-const onChange = (date, dateString) => {
-  console.log(date, dateString);
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
+import "dayjs/locale/tr";
+
+const DatePickerComponent = ({ value, onChange, placeholder = "Tarih Seçin" }) => {
+  return <DatePicker style={{ width: "100%" }} placeholder={placeholder} onChange={onChange} value={value ? dayjs(value) : null} format="DD.MM.YYYY" locale={dayjs.locale("tr")} />;
 };
-const DatePickerComponent = () => (
-  <Space direction="vertical">
-    <DatePicker onChange={onChange} />
-  </Space>
-);
+
 export default DatePickerComponent;
