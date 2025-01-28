@@ -13,7 +13,7 @@ import FileUpload from "../../../components/upload/FileUpload";
 import PhotoUpload from "../../../components/upload/PhotoUpload";
 import dayjs from "dayjs";
 
-const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
+const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus, selectedRow, onDrawerClose, drawerVisible, onRefresh }) => {
   const { plaka } = useContext(PlakaContext);
   const [activeKey, setActiveKey] = useState("1");
   // file
@@ -111,8 +111,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const { handleSubmit, reset, setValue } = methods;
 
   useEffect(() => {
-    if (updateModal) {
-      GetVehicleFineItemService(id).then((res) => {
+    if (drawerVisible && selectedRow) {
+      GetVehicleFineItemService(selectedRow?.key).then((res) => {
         setValue("aracId", res?.data.aracId);
         setValue("plaka", res?.data.plaka);
         setValue("tarih", res?.data.tarih ? dayjs(res?.data.tarih) : null);
@@ -153,16 +153,16 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
         setValue("ozelAlan12", res?.data.ozelAlan12);
       });
 
-      GetPhotosByRefGroupService(id, "CEZA").then((res) => setImageUrls(res.data));
+      GetPhotosByRefGroupService(selectedRow?.key, "CEZA").then((res) => setImageUrls(res.data));
 
-      GetDocumentsByRefGroupService(id, "CEZA").then((res) => setFilesUrl(res.data));
+      GetDocumentsByRefGroupService(selectedRow?.key, "CEZA").then((res) => setFilesUrl(res.data));
     }
-  }, [id, updateModal]);
+  }, [selectedRow, drawerVisible]);
 
   const uploadFiles = () => {
     try {
       setLoadingFiles(true);
-      uploadFile(id, "CEZA", files);
+      uploadFile(selectedRow?.key, "CEZA", files);
     } catch (error) {
       message.error("Dosya yüklenemedi. Yeniden deneyin.");
     } finally {
@@ -173,7 +173,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   const uploadImages = () => {
     try {
       setLoadingImages(true);
-      const data = uploadPhoto(id, "CEZA", images, false);
+      const data = uploadPhoto(selectedRow?.key, "CEZA", images, false);
       setImageUrls([...imageUrls, data.imageUrl]);
     } catch (error) {
       message.error("Resim yüklenemedi. Yeniden deneyin.");
@@ -184,7 +184,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
   const onSubmit = handleSubmit((values) => {
     const body = {
-      siraNo: id,
+      siraNo: selectedRow?.key,
       tarih: dayjs(values.tarih).format("YYYY-MM-DD"),
       saat: dayjs(values.saat).format("HH:mm:ss"),
       cezaTuruKodId: values.cezaTuruKodId || 0,
@@ -220,8 +220,8 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     UpdateVehicleFineItemService(body).then((res) => {
       if (res.data.statusCode === 202) {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
+        onRefresh();
         setActiveKey("1");
         if (plaka.length === 1) {
           reset();
@@ -233,7 +233,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
 
     uploadFiles();
     uploadImages();
-    setStatus(false);
+    // setStatus(false);
   });
 
   const personalProps = {
@@ -273,8 +273,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
       key="back"
       className="btn btn-min cancel-btn"
       onClick={() => {
-        setUpdateModal(false);
-        setStatus(true);
+        onDrawerClose();
         setActiveKey("1");
       }}
     >
@@ -283,7 +282,7 @@ const UpdateModal = ({ updateModal, setUpdateModal, id, setStatus }) => {
   ];
 
   return (
-    <Modal title={t("cezaBilgisiGuncelle")} open={updateModal} onCancel={() => setUpdateModal(false)} maskClosable={false} footer={footer} width={1200}>
+    <Modal title={t("cezaBilgisiGuncelle")} open={drawerVisible} onCancel={() => onDrawerClose()} maskClosable={false} footer={footer} width={1200}>
       <FormProvider {...methods}>
         <form>
           <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
