@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message } from "antd";
+import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message, ConfigProvider } from "antd";
 import { HolderOutlined, SearchOutlined, MenuOutlined, CheckOutlined, CloseOutlined, HomeOutlined } from "@ant-design/icons";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -16,8 +16,34 @@ import dayjs from "dayjs";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
 import Filters from "./filter/Filters";
 import Ekspertiz from "../../vehicle-detail/detail-info/modals/ekspertiz/Ekspertiz.jsx";
-
 import { t } from "i18next";
+import trTR from "antd/lib/locale/tr_TR";
+import enUS from "antd/lib/locale/en_US";
+import ruRU from "antd/lib/locale/ru_RU";
+import azAZ from "antd/lib/locale/az_AZ";
+
+const localeMap = {
+  tr: trTR,
+  en: enUS,
+  ru: ruRU,
+  az: azAZ,
+};
+
+// Define date format mapping based on language
+const dateFormatMap = {
+  tr: "DD.MM.YYYY",
+  en: "MM/DD/YYYY",
+  ru: "DD.MM.YYYY",
+  az: "DD.MM.YYYY",
+};
+
+// Define time format mapping based on language
+const timeFormatMap = {
+  tr: "HH:mm",
+  en: "hh:mm A",
+  ru: "HH:mm",
+  az: "HH:mm",
+};
 
 const { Text } = Typography;
 
@@ -141,6 +167,8 @@ const Sigorta = () => {
   const [label, setLabel] = useState("Yükleniyor..."); // Başlangıç değeri özel alanlar için
   const [totalDataCount, setTotalDataCount] = useState(0); // Tüm veriyi tutan state
   const [pageSize, setPageSize] = useState(10); // Başlangıçta sayfa başına 10 kayıt göster
+  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY");
+  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm");
   const [editDrawer1Visible, setEditDrawer1Visible] = useState(false);
   const [editDrawer1Data, setEditDrawer1Data] = useState(null);
 
@@ -426,7 +454,7 @@ const Sigorta = () => {
     try {
       setLoading(true);
       // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.post(`Vehicle/GetVehicles?page=${currentPage}&parameter=${keyword}&isForAppraisal=true`, filters.customfilter || {});
+      const response = await AxiosInstance.post(`Vehicle/GetVehicles?page=${currentPage}&parameter=${keyword}&isForAppraisal=true`, body.filters);
       if (response.data) {
         // Toplam sayfa sayısını ayarla
         setTotalPages(response.data.page);
@@ -459,11 +487,28 @@ const Sigorta = () => {
 
   // filtreleme işlemi için kullanılan useEffect
   const handleBodyChange = useCallback((type, newBody) => {
-    setBody((state) => ({
-      ...state,
-      [type]: newBody,
-    }));
-    setCurrentPage(1); // Filtreleme yapıldığında sayfa numarasını 1'e ayarla
+    setBody((prevBody) => {
+      if (type === "filters") {
+        // If newBody is a function, call it with previous filters
+        const updatedFilters =
+          typeof newBody === "function"
+            ? newBody(prevBody.filters)
+            : {
+                ...prevBody.filters,
+                ...newBody,
+              };
+
+        return {
+          ...prevBody,
+          filters: updatedFilters,
+        };
+      }
+      return {
+        ...prevBody,
+        [type]: newBody,
+      };
+    });
+    setCurrentPage(1);
   }, []);
   // filtreleme işlemi için kullanılan useEffect son
 
@@ -662,9 +707,20 @@ const Sigorta = () => {
 
   // sütunları sıfırlamak için kullanılan fonksiyon sonu
 
+  // Kullanıcının dilini localStorage'den alın
+  const currentLang = localStorage.getItem("i18nextLng") || "en";
+  const currentLocale = localeMap[currentLang] || enUS;
+
+  useEffect(() => {
+    // Ay ve tarih formatını dil bazında ayarlayın
+    setLocaleDateFormat(dateFormatMap[currentLang] || "MM/DD/YYYY");
+    setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
+  }, [currentLang]);
+
   return (
     <>
-      {/* <div
+      <ConfigProvider locale={currentLocale}>
+        {/* <div
         style={{
           backgroundColor: "white",
           marginBottom: "15px",
@@ -675,58 +731,22 @@ const Sigorta = () => {
       >
         <BreadcrumbComp items={breadcrumb} />
       </div> */}
-      <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
-        <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-            marginTop: "10px",
-          }}
-        >
-          <Button onClick={resetColumns} style={{ marginBottom: "15px" }}>
-            Sütunları Sıfırla
-          </Button>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
+          <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
           <div
             style={{
-              width: "46%",
-              border: "1px solid #8080806e",
-              borderRadius: "8px",
-              padding: "10px",
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              marginTop: "10px",
             }}
           >
-            <div
-              style={{
-                marginBottom: "20px",
-                borderBottom: "1px solid #80808051",
-                padding: "8px 8px 12px 8px",
-              }}
-            >
-              <Text style={{ fontWeight: 600 }}>Sütunları Göster / Gizle</Text>
-            </div>
-            <div style={{ height: "400px", overflow: "auto" }}>
-              {initialColumns.map((col) => (
-                <div style={{ display: "flex", gap: "10px" }} key={col.key}>
-                  <Checkbox checked={columns.find((column) => column.key === col.key)?.visible || false} onChange={(e) => toggleVisibility(col.key, e.target.checked)} />
-                  {col.title}
-                </div>
-              ))}
-            </div>
+            <Button onClick={resetColumns} style={{ marginBottom: "15px" }}>
+              Sütunları Sıfırla
+            </Button>
           </div>
 
-          <DndContext
-            onDragEnd={handleDragEnd}
-            sensors={useSensors(
-              useSensor(PointerSensor),
-              useSensor(KeyboardSensor, {
-                coordinateGetter: sortableKeyboardCoordinates,
-              })
-            )}
-          >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
               style={{
                 width: "46%",
@@ -742,100 +762,137 @@ const Sigorta = () => {
                   padding: "8px 8px 12px 8px",
                 }}
               >
-                <Text style={{ fontWeight: 600 }}>Sütunların Sıralamasını Ayarla</Text>
+                <Text style={{ fontWeight: 600 }}>Sütunları Göster / Gizle</Text>
               </div>
               <div style={{ height: "400px", overflow: "auto" }}>
-                <SortableContext items={columns.filter((col) => col.visible).map((col) => col.key)} strategy={verticalListSortingStrategy}>
-                  {columns
-                    .filter((col) => col.visible)
-                    .map((col, index) => (
-                      <DraggableRow key={col.key} id={col.key} index={index} text={col.title} />
-                    ))}
-                </SortableContext>
+                {initialColumns.map((col) => (
+                  <div style={{ display: "flex", gap: "10px" }} key={col.key}>
+                    <Checkbox checked={columns.find((column) => column.key === col.key)?.visible || false} onChange={(e) => toggleVisibility(col.key, e.target.checked)} />
+                    {col.title}
+                  </div>
+                ))}
               </div>
             </div>
-          </DndContext>
-        </div>
-      </Modal>
-      <div
-        style={{
-          backgroundColor: "white",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          marginBottom: "15px",
-          gap: "10px",
-          padding: "15px",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
+
+            <DndContext
+              onDragEnd={handleDragEnd}
+              sensors={useSensors(
+                useSensor(PointerSensor),
+                useSensor(KeyboardSensor, {
+                  coordinateGetter: sortableKeyboardCoordinates,
+                })
+              )}
+            >
+              <div
+                style={{
+                  width: "46%",
+                  border: "1px solid #8080806e",
+                  borderRadius: "8px",
+                  padding: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    borderBottom: "1px solid #80808051",
+                    padding: "8px 8px 12px 8px",
+                  }}
+                >
+                  <Text style={{ fontWeight: 600 }}>Sütunların Sıralamasını Ayarla</Text>
+                </div>
+                <div style={{ height: "400px", overflow: "auto" }}>
+                  <SortableContext items={columns.filter((col) => col.visible).map((col) => col.key)} strategy={verticalListSortingStrategy}>
+                    {columns
+                      .filter((col) => col.visible)
+                      .map((col, index) => (
+                        <DraggableRow key={col.key} id={col.key} index={index} text={col.title} />
+                      ))}
+                  </SortableContext>
+                </div>
+              </div>
+            </DndContext>
+          </div>
+        </Modal>
         <div
           style={{
+            backgroundColor: "white",
             display: "flex",
-            gap: "10px",
-            alignItems: "center",
-            width: "100%",
-            maxWidth: "935px",
             flexWrap: "wrap",
+            justifyContent: "space-between",
+            marginBottom: "15px",
+            gap: "10px",
+            padding: "15px",
+            borderRadius: "8px 8px 8px 8px",
+            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
           }}
         >
-          <StyledButton onClick={() => setIsModalVisible(true)}>
-            <MenuOutlined />
-          </StyledButton>
-          <Input
-            style={{ width: "250px" }}
-            type="text"
-            placeholder="Arama yap..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
-          />
-          <Filters onChange={handleBodyChange} />
-          {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
-        </div>
-        {/*  <div style={{ display: "flex", gap: "10px" }}>
-          <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
-        </div> */}
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "10px",
-          height: "calc(100vh - 270px)",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
-        <Spin spinning={loading}>
-          <CustomTable
-            components={components}
-            rowSelection={rowSelection}
-            columns={filteredColumns}
-            dataSource={data}
-            pagination={{
-              current: currentPage,
-              total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
-              pageSize: pageSize,
-              defaultPageSize: 10,
-              showSizeChanger: true,
-              pageSizeOptions: ["10", "20", "50", "100"],
-              position: ["bottomRight"],
-              onChange: handleTableChange,
-              showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
-              showQuickJumper: true,
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+              width: "100%",
+              maxWidth: "935px",
+              flexWrap: "wrap",
             }}
-            // onRow={onRowClick}
-            scroll={{ y: "calc(100vh - 400px)" }}
-            onChange={handleTableChange}
-            rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
-          />
-        </Spin>
-        <Ekspertiz visible={drawer.visible} onClose={() => setDrawer({ ...drawer, visible: false })} id={drawer.data?.key} />
-        {/*<EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />*/}
-      </div>
+          >
+            <StyledButton onClick={() => setIsModalVisible(true)}>
+              <MenuOutlined />
+            </StyledButton>
+            <Input
+              style={{ width: "250px" }}
+              type="text"
+              placeholder="Arama yap..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+            />
+            <Filters onChange={handleBodyChange} />
+            {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
+          <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
+          </div>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
+            {/* <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} /> */}
+          </div>
+        </div>
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "10px",
+            height: "calc(100vh - 270px)",
+            borderRadius: "8px 8px 8px 8px",
+            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+          }}
+        >
+          <Spin spinning={loading}>
+            <CustomTable
+              components={components}
+              rowSelection={rowSelection}
+              columns={filteredColumns}
+              dataSource={data}
+              pagination={{
+                current: currentPage,
+                total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
+                pageSize: pageSize,
+                defaultPageSize: 10,
+                showSizeChanger: true,
+                pageSizeOptions: ["10", "20", "50", "100"],
+                position: ["bottomRight"],
+                onChange: handleTableChange,
+                showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
+                showQuickJumper: true,
+              }}
+              // onRow={onRowClick}
+              scroll={{ y: "calc(100vh - 400px)" }}
+              onChange={handleTableChange}
+              rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
+            />
+          </Spin>
+          <Ekspertiz visible={drawer.visible} onClose={() => setDrawer({ ...drawer, visible: false })} id={drawer.data?.key} />
+          {/*<EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />*/}
+        </div>
+      </ConfigProvider>
     </>
   );
 };
