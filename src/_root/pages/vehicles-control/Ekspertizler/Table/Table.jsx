@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message, ConfigProvider } from "antd";
-import { HolderOutlined, SearchOutlined, MenuOutlined, CheckOutlined, CloseOutlined, HomeOutlined } from "@ant-design/icons";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip, Progress, ConfigProvider } from "antd";
+import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -10,12 +10,10 @@ import AxiosInstance from "../../../../../api/http";
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import ContextMenu from "../components/ContextMenu/ContextMenu";
-import CreateDrawer from "../Insert/CreateDrawer";
-import EditDrawer from "../Update/EditDrawer";
-import dayjs from "dayjs";
-import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
 import Filters from "./filter/Filters";
 import Ekspertiz from "../../vehicle-detail/detail-info/modals/ekspertiz/Ekspertiz.jsx";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import trTR from "antd/lib/locale/tr_TR";
 import enUS from "antd/lib/locale/en_US";
@@ -47,8 +45,6 @@ const timeFormatMap = {
 
 const { Text } = Typography;
 
-const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("ekspertizler") }];
-
 const StyledButton = styled(Button)`
   display: flex;
   align-items: center;
@@ -57,15 +53,14 @@ const StyledButton = styled(Button)`
   height: 32px !important;
 `;
 
-const CustomSpin = styled(Spin)`
-  .ant-spin-dot-item {
-    background-color: #0091ff !important; /* Blue color */
-  }
-`;
+const StyledTable = styled(Table)`
+  .active-row {
+    color: #23b545; // Green text color
 
-const CustomTable = styled(Table)`
-  .ant-pagination-item-ellipsis {
-    display: flex !important;
+    // This ensures links within active rows are also green
+    a {
+      color: #23b545;
+    }
   }
 `;
 
@@ -156,77 +151,125 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 
 const Sigorta = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { setValue } = useFormContext();
   const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set initial loading state to false
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0); // Toplam sayfa sayısı için state
-  const [label, setLabel] = useState("Yükleniyor..."); // Başlangıç değeri özel alanlar için
-  const [totalDataCount, setTotalDataCount] = useState(0); // Tüm veriyi tutan state
-  const [pageSize, setPageSize] = useState(10); // Başlangıçta sayfa başına 10 kayıt göster
+  const [totalCount, setTotalCount] = useState(0); // Total data count
+  const [pageSize, setPageSize] = useState(10); // Page size
   const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY");
   const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm");
-  const [editDrawer1Visible, setEditDrawer1Visible] = useState(false);
-  const [editDrawer1Data, setEditDrawer1Data] = useState(null);
-
-  // edit drawer için
   const [drawer, setDrawer] = useState({
     visible: false,
     data: null,
   });
-  // edit drawer için son
+  const navigate = useNavigate();
 
   const [selectedRows, setSelectedRows] = useState([]);
 
-  function hexToRGBA(hex, opacity) {
-    // hex veya opacity null ise hata döndür
-    if (hex === null || opacity === null) {
-      // console.error("hex veya opacity null olamaz!");
-      return; // veya uygun bir varsayılan değer döndürebilirsiniz
+  const [body, setBody] = useState({
+    keyword: "",
+    filters: {},
+  });
+
+  // API Data Fetching with diff and setPointId
+  const fetchData = async (diff, targetPage) => {
+    setLoading(true);
+    try {
+      let currentSetPointId = 0;
+
+      if (diff > 0) {
+        // Moving forward
+        currentSetPointId = data[data.length - 1]?.aracId || 0;
+      } else if (diff < 0) {
+        // Moving backward
+        currentSetPointId = data[0]?.aracId || 0;
+      } else {
+        currentSetPointId = 0;
+      }
+
+      // Determine what to send for customfilters
+      const customFilters = body.filters.customfilters === "" ? null : body.filters.customfilters;
+
+      const response = await AxiosInstance.post(`Vehicle/GetVehicles?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}&isForAppraisal=true`, body.filters);
+
+      const total = response.data.vehicleCount;
+      setTotalCount(total);
+      setCurrentPage(targetPage);
+
+      const newData = response.data.vehicleList.map((item) => ({
+        ...item,
+        key: item.aracId, // Assign key directly from aracId
+      }));
+
+      if (newData.length > 0) {
+        setData(newData);
+      } else {
+        message.warning("No data found.");
+        setData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      message.error("An error occurred while fetching data.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    let r = 0,
-      g = 0,
-      b = 0;
-    // 3 karakterli hex kodunu kontrol et
-    if (hex.length === 4) {
-      r = parseInt(hex[1] + hex[1], 16);
-      g = parseInt(hex[2] + hex[2], 16);
-      b = parseInt(hex[3] + hex[3], 16);
+  useEffect(() => {
+    fetchData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (body !== prevBodyRef.current) {
+      fetchData(0, 1);
+      prevBodyRef.current = body;
     }
-    // 6 karakterli hex kodunu kontrol et
-    else if (hex.length === 7) {
-      r = parseInt(hex[1] + hex[2], 16);
-      g = parseInt(hex[3] + hex[4], 16);
-      b = parseInt(hex[5] + hex[6], 16);
-    }
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [body]);
 
-  // Özel Alanların nameleri backend çekmek için api isteği
+  const prevBodyRef = useRef(body);
 
-  // useEffect(() => {
-  //   // API'den veri çekme işlemi
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await AxiosInstance.get("OzelAlan?form=ISEMRI"); // API URL'niz
-  //       localStorage.setItem("ozelAlanlarEkspertiz", JSON.stringify(response));
-  //       setLabel(response); // Örneğin, API'den dönen yanıt doğrudan etiket olacak
-  //     } catch (error) {
-  //       console.error("API isteğinde hata oluştu:", error);
-  //       setLabel("Hata! Veri yüklenemedi."); // Hata durumunda kullanıcıya bilgi verme
-  //     }
-  //   };
-  //
-  //   fetchData();
-  // }, [drawer.visible]);
+  // Search handling
+  // Define handleSearch function
+  const handleSearch = () => {
+    fetchData(0, 1);
+  };
 
-  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarEkspertiz"));
+  const handleTableChange = (page) => {
+    const diff = page - currentPage;
+    fetchData(diff, page);
+  };
 
-  // Özel Alanların nameleri backend çekmek için api isteği sonu
+  const onSelectChange = (newSelectedRowKeys) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+
+    // Find selected rows data
+    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
+    setSelectedRows(newSelectedRows);
+  };
+
+  const rowSelection = {
+    type: "checkbox",
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const onRowClick = (record) => {
+    setDrawer({ visible: true, data: record });
+  };
+
+  const refreshTableData = useCallback(() => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    fetchData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Columns definition (adjust as needed)
   const initialColumns = [
     {
       title: t("plaka"),
@@ -410,170 +453,7 @@ const Sigorta = () => {
 
   // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için sonu
 
-  const [body, setBody] = useState({
-    keyword: "",
-    filters: {},
-  });
-
-  // ana tablo api isteği için kullanılan useEffect
-
-  useEffect(() => {
-    fetchEquipmentData(body, currentPage, pageSize);
-  }, [body, currentPage, pageSize]);
-
-  // ana tablo api isteği için kullanılan useEffect son
-
-  // arama işlemi için kullanılan useEffect
-  useEffect(() => {
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-
-    // Arama terimi değiştiğinde ve boş olduğunda API isteğini tetikle
-    const timeout = setTimeout(() => {
-      if (searchTerm !== body.keyword) {
-        handleBodyChange("keyword", searchTerm);
-        setCurrentPage(1); // Arama yapıldığında veya arama sıfırlandığında sayfa numarasını 1'e ayarla
-        // setDrawer({ ...drawer, visible: false }); // Arama yapıldığında veya arama sıfırlandığında Drawer'ı kapat
-      }
-    }, 2000);
-
-    setSearchTimeout(timeout);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
-
-  // arama işlemi için kullanılan useEffect son
-
-  const fetchEquipmentData = async (body, page, size) => {
-    // body'nin undefined olması durumunda varsayılan değerler atanıyor
-    const { keyword = "", filters = {} } = body || {};
-    // page'in undefined olması durumunda varsayılan değer olarak 1 atanıyor
-    const currentPage = page || 1;
-
-    try {
-      setLoading(true);
-      // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.post(`Vehicle/GetVehicles?page=${currentPage}&parameter=${keyword}&isForAppraisal=true`, body.filters);
-      if (response.data) {
-        // Toplam sayfa sayısını ayarla
-        setTotalPages(response.data.page);
-        setTotalDataCount(response.data.vehicleCount);
-
-        // Gelen veriyi formatla ve state'e ata
-        const formattedData = response.data.vehicleList.map((item) => ({
-          ...item,
-          key: item.aracId,
-          // Diğer alanlarınız...
-        }));
-        setData(formattedData);
-        setLoading(false);
-      } else {
-        console.error("API response is not in expected format");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error in API request:", error);
-      setLoading(false);
-      if (navigator.onLine) {
-        // İnternet bağlantısı var
-        message.error("Hata Mesajı: " + error.message);
-      } else {
-        // İnternet bağlantısı yok
-        message.error("Internet Bağlantısı Mevcut Değil.");
-      }
-    }
-  };
-
-  // filtreleme işlemi için kullanılan useEffect
-  const handleBodyChange = useCallback((type, newBody) => {
-    setBody((prevBody) => {
-      if (type === "filters") {
-        // If newBody is a function, call it with previous filters
-        const updatedFilters =
-          typeof newBody === "function"
-            ? newBody(prevBody.filters)
-            : {
-                ...prevBody.filters,
-                ...newBody,
-              };
-
-        return {
-          ...prevBody,
-          filters: updatedFilters,
-        };
-      }
-      return {
-        ...prevBody,
-        [type]: newBody,
-      };
-    });
-    setCurrentPage(1);
-  }, []);
-  // filtreleme işlemi için kullanılan useEffect son
-
-  // sayfalama için kullanılan useEffect
-  const handleTableChange = (pagination, filters, sorter, extra) => {
-    if (pagination) {
-      setCurrentPage(pagination.current);
-      setPageSize(pagination.pageSize); // pageSize güncellemesi
-    }
-  };
-  // sayfalama için kullanılan useEffect son
-
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-    if (newSelectedRowKeys.length > 0) {
-      setValue("selectedLokasyonId", newSelectedRowKeys[0]);
-    } else {
-      setValue("selectedLokasyonId", null);
-    }
-    // Seçilen satırların verisini bul
-    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
-    setSelectedRows(newSelectedRows); // Seçilen satırların verilerini state'e ata
-  };
-
-  const rowSelection = {
-    type: "checkbox",
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
-  // const onRowClick = (record) => {
-  //   return {
-  //     onClick: () => {
-  //       setDrawer({ visible: true, data: record });
-  //     },
-  //   };
-  // };
-
-  const onRowClick = (record) => {
-    setDrawer({ visible: true, data: record });
-  };
-
-  const refreshTableData = useCallback(() => {
-    // Sayfa numarasını 1 yap
-    // setCurrentPage(1);
-
-    // `body` içerisindeki filtreleri ve arama terimini sıfırla
-    // setBody({
-    //   keyword: "",
-    //   filters: {},
-    // });
-    // setSearchTerm("");
-
-    // Tablodan seçilen kayıtların checkbox işaretini kaldır
-    setSelectedRowKeys([]);
-    setSelectedRows([]);
-
-    // Verileri yeniden çekmek için `fetchEquipmentData` fonksiyonunu çağır
-    fetchEquipmentData(body, currentPage);
-    // Burada `body` ve `currentPage`'i güncellediğimiz için, bu değerlerin en güncel hallerini kullanarak veri çekme işlemi yapılır.
-    // Ancak, `fetchEquipmentData` içinde `body` ve `currentPage`'e bağlı olarak veri çekiliyorsa, bu değerlerin güncellenmesi yeterli olacaktır.
-    // Bu nedenle, doğrudan `fetchEquipmentData` fonksiyonunu çağırmak yerine, bu değerlerin güncellenmesini bekleyebiliriz.
-  }, [body, currentPage]); // Bağımlılıkları kaldırdık, çünkü fonksiyon içindeki değerler zaten en güncel halleriyle kullanılıyor.
-
-  // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz
+  // Manage columns from localStorage or default
   const [columns, setColumns] = useState(() => {
     const savedOrder = localStorage.getItem("columnOrderEkspertiz");
     const savedVisibility = localStorage.getItem("columnVisibilityEkspertiz");
@@ -604,9 +484,8 @@ const Sigorta = () => {
       return { ...column, visible: visibility[key], width: widths[key] };
     });
   });
-  // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz sonu
 
-  // sütunları local storage'a kaydediyoruz
+  // Save columns to localStorage
   useEffect(() => {
     localStorage.setItem("columnOrderEkspertiz", JSON.stringify(columns.map((col) => col.key)));
     localStorage.setItem(
@@ -634,9 +513,8 @@ const Sigorta = () => {
       )
     );
   }, [columns]);
-  // sütunları local storage'a kaydediyoruz sonu
 
-  // sütunların boyutlarını ayarlamak için kullanılan fonksiyon
+  // Handle column resize
   const handleResize =
     (key) =>
     (_, { size }) => {
@@ -657,14 +535,10 @@ const Sigorta = () => {
     }),
   }));
 
-  // fitrelenmiş sütunları birleştiriyoruz ve sadece görünür olanları alıyoruz ve tabloya gönderiyoruz
-
+  // Filtered columns
   const filteredColumns = mergedColumns.filter((col) => col.visible);
 
-  // fitrelenmiş sütunları birleştiriyoruz ve sadece görünür olanları alıyoruz ve tabloya gönderiyoruz sonu
-
-  // sütunların sıralamasını değiştirmek için kullanılan fonksiyon
-
+  // Handle drag and drop
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over.id) {
@@ -678,10 +552,7 @@ const Sigorta = () => {
     }
   };
 
-  // sütunların sıralamasını değiştirmek için kullanılan fonksiyon sonu
-
-  // sütunların görünürlüğünü değiştirmek için kullanılan fonksiyon
-
+  // Toggle column visibility
   const toggleVisibility = (key, checked) => {
     const index = columns.findIndex((col) => col.key === key);
     if (index !== -1) {
@@ -693,19 +564,13 @@ const Sigorta = () => {
     }
   };
 
-  // sütunların görünürlüğünü değiştirmek için kullanılan fonksiyon sonu
-
-  // sütunları sıfırlamak için kullanılan fonksiyon
-
-  function resetColumns() {
+  // Reset columns
+  const resetColumns = () => {
     localStorage.removeItem("columnOrderEkspertiz");
     localStorage.removeItem("columnVisibilityEkspertiz");
     localStorage.removeItem("columnWidthsEkspertiz");
-    localStorage.removeItem("ozelAlanlarEkspertiz");
     window.location.reload();
-  }
-
-  // sütunları sıfırlamak için kullanılan fonksiyon sonu
+  };
 
   // Kullanıcının dilini localStorage'den alın
   const currentLang = localStorage.getItem("i18nextLng") || "en";
@@ -717,20 +582,37 @@ const Sigorta = () => {
     setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
   }, [currentLang]);
 
+  // filtreleme işlemi için kullanılan useEffect
+  const handleBodyChange = useCallback((type, newBody) => {
+    setBody((prevBody) => {
+      if (type === "filters") {
+        // If newBody is a function, call it with previous filters
+        const updatedFilters =
+          typeof newBody === "function"
+            ? newBody(prevBody.filters)
+            : {
+                ...prevBody.filters,
+                ...newBody,
+              };
+
+        return {
+          ...prevBody,
+          filters: updatedFilters,
+        };
+      }
+      return {
+        ...prevBody,
+        [type]: newBody,
+      };
+    });
+    setCurrentPage(1);
+  }, []);
+  // filtreleme işlemi için kullanılan useEffect son
+
   return (
     <>
       <ConfigProvider locale={currentLocale}>
-        {/* <div
-        style={{
-          backgroundColor: "white",
-          marginBottom: "15px",
-          padding: "15px",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
-        <BreadcrumbComp items={breadcrumb} />
-      </div> */}
+        {/* Modal for managing columns */}
         <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
           <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
           <div
@@ -813,6 +695,7 @@ const Sigorta = () => {
             </DndContext>
           </div>
         </Modal>
+        {/* Toolbar */}
         <div
           style={{
             backgroundColor: "white",
@@ -845,52 +728,50 @@ const Sigorta = () => {
               placeholder="Arama yap..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+              onPressEnter={handleSearch}
+              // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+              suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
             />
+
             <Filters onChange={handleBodyChange} />
-            {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
+            {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
+            {/* Other toolbar components */}
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
             <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
-            {/* <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} /> */}
+            {/* <AddModal selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} /> */}
           </div>
         </div>
+        {/* Table */}
         <div
           style={{
             backgroundColor: "white",
             padding: "10px",
-            height: "calc(100vh - 270px)",
+            height: "calc(100vh - 200px)",
             borderRadius: "8px 8px 8px 8px",
             filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
           }}
         >
           <Spin spinning={loading}>
-            <CustomTable
+            <StyledTable
               components={components}
               rowSelection={rowSelection}
               columns={filteredColumns}
               dataSource={data}
               pagination={{
                 current: currentPage,
-                total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
-                pageSize: pageSize,
-                defaultPageSize: 10,
-                showSizeChanger: true,
-                pageSizeOptions: ["10", "20", "50", "100"],
-                position: ["bottomRight"],
-                onChange: handleTableChange,
-                showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
+                total: totalCount,
+                pageSize: 10,
+                showTotal: (total, range) => `Toplam ${total}`,
+                showSizeChanger: false,
                 showQuickJumper: true,
+                onChange: handleTableChange,
               }}
-              // onRow={onRowClick}
-              scroll={{ y: "calc(100vh - 400px)" }}
-              onChange={handleTableChange}
-              rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
+              scroll={{ y: "calc(100vh - 335px)" }}
             />
           </Spin>
           <Ekspertiz visible={drawer.visible} onClose={() => setDrawer({ ...drawer, visible: false })} id={drawer.data?.key} />
-          {/*<EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />*/}
+          {/* <UpdateModal selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} /> */}
         </div>
       </ConfigProvider>
     </>
