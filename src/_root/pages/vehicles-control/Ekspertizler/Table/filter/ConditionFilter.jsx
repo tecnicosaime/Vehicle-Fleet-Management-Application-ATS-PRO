@@ -1,95 +1,110 @@
-import React, { useState, useEffect } from "react";
-import { Select, Button, Popover } from "antd";
-import AxiosInstance from "../../../../../../api/http";
+import React, { useState } from "react";
+import { Select, Button, Dropdown, Menu } from "antd";
+import AxiosInstance from "../../../../../api/http";
 
 const { Option } = Select;
 
 const ConditionFilter = ({ onSubmit }) => {
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-  // selectedValues artık seçilen TB_KOD_ID değerlerini saklayacak
-  const [selectedValues, setSelectedValues] = useState([]);
+  const [visible, setVisible] = useState(false);
 
-  const handleChange = (selectedOptionValues) => {
-    setSelectedValues(selectedOptionValues);
+  // useeffect ile api den veri data cekip options a atayacagiz
+  const [options, setOptions] = React.useState([]);
+  const [filters, setFilters] = useState({});
+
+  const handleChange = (value) => {
+    // Create a copy of the current selected items
+    const selectedItemsCopy = { ...filters };
+
+    // Loop through all options
+    options.forEach((option) => {
+      const isSelected = selectedItemsCopy[option.key] !== undefined;
+
+      // If the option is already selected, and it's not in the new value, remove it
+      if (isSelected && !value.includes(option.value)) {
+        delete selectedItemsCopy[option.key];
+      }
+      // If the option is not selected and it's in the new value, add it
+      else if (!isSelected && value.includes(option.value)) {
+        selectedItemsCopy[option.key] = option.value;
+      }
+    });
+
+    // Update the filters state with the updated selection
+    setFilters(selectedItemsCopy);
   };
 
-  useEffect(() => {
-    if (open) {
-      AxiosInstance.get("KodList?grup=32801")
-        .then((response) => {
-          const options = response.map((option) => ({
-            key: option.TB_KOD_ID,
-            value: option.TB_KOD_ID, // value olarak TB_KOD_ID kullanılıyor
-            label: option.KOD_TANIM,
-          }));
-          setOptions(options);
-        })
-        .catch((error) => {
-          console.log("API Error:", error);
-        });
-    }
-  }, [open]);
+  React.useEffect(() => {
+    AxiosInstance.get("KodList?grup=32801")
+      .then((response) => {
+        const options = response.map((option, index) => ({ key: index, value: option.KOD_TANIM }));
+        setOptions(options);
+
+        const definitions = response.map((option, index) => ({ index: index, value: option.IMT_DEFINITION }));
+      })
+      .catch((error) => {
+        console.log("API Error:", error);
+      });
+  }, []);
 
   const handleSubmit = () => {
-    // Seçilen TB_KOD_ID değerlerini kullanarak istenen objeyi oluştur
-    const selectedOptionsObj = selectedValues.reduce((acc, currentValue) => {
-      const option = options.find((option) => option.value === currentValue);
-      if (option) {
-        acc[option.value] = option.label;
-      }
-      return acc;
-    }, {});
+    // Seçilen öğeleri başka bir bileşene iletmek için prop olarak gelen işlevi çağırın
+    onSubmit(filters);
 
-    onSubmit(selectedOptionsObj);
-    setOpen(false);
+    // Seçilen öğeleri sıfırlayabiliriz
+    // setFilters({});
+    // Dropdown'ı gizle
+    setVisible(false);
   };
 
   const handleCancelClick = () => {
-    setSelectedValues([]);
-    setOpen(false);
+    // Seçimleri iptal etmek için seçilen öğeleri sıfırlayın
+    setFilters([]);
+    // Dropdown'ı gizle
+    setVisible(false);
+
+    // onSubmit({})
     onSubmit("");
   };
 
-  const content = (
-    <div style={{ width: "300px" }}>
+  const menu = (
+    <Menu style={{ width: "300px" }}>
       <div
-        style={{
-          borderBottom: "1px solid #ccc",
-          padding: "10px",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+        style={{ borderBottom: "1px solid #ccc", padding: "10px", display: "flex", justifyContent: "space-between" }}>
         <Button onClick={handleCancelClick}>İptal</Button>
         <Button type="primary" onClick={handleSubmit}>
           Uygula
         </Button>
       </div>
       <div style={{ padding: "10px" }}>
-        <Select mode="multiple" style={{ width: "100%" }} placeholder="Ara..." value={selectedValues} onChange={handleChange} allowClear>
+        <Select
+          mode="multiple"
+          style={{ width: "100%" }}
+          placeholder="Ara..."
+          value={Object.values(filters)}
+          onChange={handleChange}
+          allowClear
+          showArrow={false}>
+          {/* Seçenekleri elle ekleyin */}
           {options.map((option) => (
             <Option key={option.key} value={option.value}>
-              {option.label}
+              {option.value}
             </Option>
           ))}
         </Select>
       </div>
-    </div>
+    </Menu>
   );
 
   return (
-    <Popover content={content} trigger="click" open={open} onOpenChange={setOpen} placement="bottom">
-      <Button
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+    <Dropdown
+      overlay={menu}
+      placement="bottomLeft"
+      trigger={["click"]}
+      visible={visible}
+      onVisibleChange={(v) => setVisible(v)}>
+      <Button style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
         Durum
-        <div
+        <span
           style={{
             marginLeft: "5px",
             background: "#006cb8",
@@ -100,12 +115,11 @@ const ConditionFilter = ({ onSubmit }) => {
             justifyContent: "center",
             alignItems: "center",
             color: "white",
-          }}
-        >
-          {selectedValues.length}
-        </div>
+          }}>
+          {Object.keys(filters).length}{" "}
+        </span>
       </Button>
-    </Popover>
+    </Dropdown>
   );
 };
 

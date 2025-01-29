@@ -1,72 +1,85 @@
-import React, { useState, useEffect } from "react";
-import { Select, Button, Popover } from "antd";
-import AxiosInstance from "../../../../../../api/http";
+import React, { useState } from "react";
+import { Select, Button, Dropdown, Menu } from "antd";
+import AxiosInstance from "../../../../../api/http";
 
 const { Option } = Select;
 
 const LocationFilter = ({ onSubmit }) => {
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-  // filters state'ini bir obje olarak başlat
+  const [visible, setVisible] = useState(false);
+
+  // useeffect ile api den veri data cekip options a atayacagiz
+  const [options, setOptions] = React.useState([]);
   const [filters, setFilters] = useState({});
 
-  const handleChange = (selectedValues) => {
-    // Seçilen değerlerin id'lerini kullanarak filters objesini güncelle
-    const newFilters = selectedValues.reduce((acc, currentValue) => {
-      const option = options.find((option) => option.value === currentValue);
-      if (option) {
-        acc[option.key] = option.value;
+  const handleChange = (value) => {
+    // Create a copy of the current selected items
+    const selectedItemsCopy = { ...filters };
+
+    // Loop through all options
+    options.forEach((option) => {
+      const isSelected = selectedItemsCopy[option.key] !== undefined;
+
+      // If the option is already selected, and it's not in the new value, remove it
+      if (isSelected && !value.includes(option.value)) {
+        delete selectedItemsCopy[option.key];
       }
-      return acc;
-    }, {});
-    setFilters(newFilters);
+      // If the option is not selected and it's in the new value, add it
+      else if (!isSelected && value.includes(option.value)) {
+        selectedItemsCopy[option.key] = option.value;
+      }
+    });
+
+    // Update the filters state with the updated selection
+    setFilters(selectedItemsCopy);
   };
 
-  useEffect(() => {
-    if (open) {
-      AxiosInstance.get("getLokasyonlar")
-        .then((response) => {
-          // API'den gelen veriye göre options dizisini oluştur
-          const options = response.map((option, index) => ({
-            key: index.toString(), // Benzersiz bir key olarak index kullan
-            value: option, // Gösterilecek değer
-          }));
-          setOptions(options);
-        })
-        .catch((error) => {
-          console.log("API Error:", error);
-        });
-    }
-  }, [open]);
+  React.useEffect(() => {
+    AxiosInstance.get("getLokasyonlar")
+      .then((response) => {
+        setOptions(response.map((option, index) => ({ key: index, value: option })));
+      })
+      .catch((error) => {
+        console.log("API Error:", error);
+      });
+  }, []);
 
   const handleSubmit = () => {
+    // Seçilen öğeleri başka bir bileşene iletmek için prop olarak gelen işlevi çağırın
     onSubmit(filters);
-    setOpen(false);
+
+    // Seçilen öğeleri sıfırlayabiliriz
+    // setFilters({});
+    // Dropdown'ı gizle
+    setVisible(false);
   };
 
   const handleCancelClick = () => {
+    // Seçimleri iptal etmek için seçilen öğeleri sıfırlayın
     setFilters({});
-    setOpen(false);
+    // Dropdown'ı gizle
+    setVisible(false);
     onSubmit("");
   };
 
-  const content = (
-    <div style={{ width: "300px" }}>
+  const menu = (
+    <Menu style={{ width: "300px" }}>
       <div
-        style={{
-          borderBottom: "1px solid #ccc",
-          padding: "10px",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+        style={{ borderBottom: "1px solid #ccc", padding: "10px", display: "flex", justifyContent: "space-between" }}>
         <Button onClick={handleCancelClick}>İptal</Button>
         <Button type="primary" onClick={handleSubmit}>
           Uygula
         </Button>
       </div>
       <div style={{ padding: "10px" }}>
-        <Select mode="multiple" style={{ width: "100%" }} placeholder="Ara..." value={Object.values(filters)} onChange={handleChange} allowClear>
+        <Select
+          mode="multiple"
+          style={{ width: "100%" }}
+          placeholder="Ara..."
+          value={Object.values(filters)}
+          onChange={handleChange}
+          allowClear
+          showArrow={false}>
+          {/* Seçenekleri elle ekleyin */}
           {options.map((option) => (
             <Option key={option.key} value={option.value}>
               {option.value}
@@ -74,21 +87,19 @@ const LocationFilter = ({ onSubmit }) => {
           ))}
         </Select>
       </div>
-    </div>
+    </Menu>
   );
 
   return (
-    <Popover content={content} trigger="click" open={open} onOpenChange={setOpen} placement="bottom">
-      <Button
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+    <Dropdown
+      overlay={menu}
+      placement="bottomLeft"
+      trigger={["click"]}
+      visible={visible}
+      onVisibleChange={(v) => setVisible(v)}>
+      <Button style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
         Lokasyon
-        <div
+        <span
           style={{
             marginLeft: "5px",
             background: "#006cb8",
@@ -99,12 +110,11 @@ const LocationFilter = ({ onSubmit }) => {
             justifyContent: "center",
             alignItems: "center",
             color: "white",
-          }}
-        >
-          {Object.keys(filters).length}
-        </div>
+          }}>
+          {Object.keys(filters).length}{" "}
+        </span>
       </Button>
-    </Popover>
+    </Dropdown>
   );
 };
 
