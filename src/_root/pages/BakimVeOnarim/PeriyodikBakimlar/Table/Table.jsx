@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message } from "antd";
 import { HolderOutlined, SearchOutlined, MenuOutlined, CheckOutlined, CloseOutlined, HomeOutlined } from "@ant-design/icons";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
@@ -13,6 +13,7 @@ import styled from "styled-components";
 import ContextMenu from "../components/ContextMenu/ContextMenu";
 import CreateDrawer from "../Insert/CreateDrawer";
 import EditDrawer from "../Update/EditDrawer";
+import Filters from "./filter/Filters";
 import dayjs from "dayjs";
 import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -552,7 +553,7 @@ const Sigorta = () => {
       date.setHours(hoursInt, minutesInt, 0);
 
       // Kullanıcının lokal ayarlarına uygun olarak saat ve dakikayı formatla
-      // `hour12` seçeneğini belirtmeyerek Intl.DateTimeFormat'ın kullanıcının yerel ayarlarına göre otomatik seçim yapmasına izin ver
+      // `hour12` seçeneğini belirtmeyerek Intl.DateTimeFormat'ın kullanıcının sistem ayarlarına göre otomatik seçim yapmasına izin ver
       const formatter = new Intl.DateTimeFormat(navigator.language, {
         hour: "numeric",
         minute: "2-digit",
@@ -576,12 +577,20 @@ const Sigorta = () => {
   });
 
   // ana tablo api isteği için kullanılan useEffect
+  useEffect(() => {
+    fetchEquipmentData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    fetchEquipmentData(body, currentPage, pageSize);
-  }, [body, currentPage, pageSize]);
+    if (body !== prevBodyRef.current) {
+      fetchEquipmentData(0, 1);
+      prevBodyRef.current = body;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [body]);
 
-  // ana tablo api isteği için kullanılan useEffect son
+  const prevBodyRef = useRef(body);
 
   // arama işlemi için kullanılan useEffect
   useEffect(() => {
@@ -605,16 +614,27 @@ const Sigorta = () => {
 
   // arama işlemi için kullanılan useEffect son
 
-  const fetchEquipmentData = async (body, page, size) => {
-    // body'nin undefined olması durumunda varsayılan değerler atanıyor
-    const { keyword = "", filters = {} } = body || {};
-    // page'in undefined olması durumunda varsayılan değer olarak 1 atanıyor
-    const currentPage = page || 1;
-
+  const fetchEquipmentData = async (diff, targetPage) => {
+    setLoading(true);
     try {
-      setLoading(true);
+      let currentSetPointId = 0;
+
+      if (diff > 0) {
+        // Moving forward
+        currentSetPointId = data[data.length - 1]?.siraNo || 0;
+      } else if (diff < 0) {
+        // Moving backward
+        currentSetPointId = data[0]?.siraNo || 0;
+      } else {
+        currentSetPointId = 0;
+      }
+
       // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.get(`PeriodicMaintenance/GetPeriodicMaintenanceList?page=${currentPage}&parameter=${keyword}`);
+      const response = await AxiosInstance.post(
+        `PeriodicMaintenance/GetPeriodicMaintenanceList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`,
+        body.filters?.customfilter || {}
+      );
+
       if (response.data.statusCode == 401) {
         navigate("/unauthorized");
       } else if (response.data) {
@@ -626,17 +646,20 @@ const Sigorta = () => {
         const formattedData = response.data.list.map((item) => ({
           ...item,
           key: item.siraNo,
-          // Diğer alanlarınız...
         }));
-        setData(formattedData);
-        setLoading(false);
+
+        if (formattedData.length > 0) {
+          setData(formattedData);
+          setCurrentPage(targetPage);
+        } else {
+          message.warning(t("kayitBulunamadi"));
+          setData([]);
+        }
       } else {
         console.error("API response is not in expected format");
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error in API request:", error);
-      setLoading(false);
       if (navigator.onLine) {
         // İnternet bağlantısı var
         message.error("Hata Mesajı: " + error.message);
@@ -644,6 +667,8 @@ const Sigorta = () => {
         // İnternet bağlantısı yok
         message.error("Internet Bağlantısı Mevcut Değil.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -658,10 +683,10 @@ const Sigorta = () => {
   // filtreleme işlemi için kullanılan useEffect son
 
   // sayfalama için kullanılan useEffect
-  const handleTableChange = (pagination, filters, sorter, extra) => {
-    if (pagination) {
-      setCurrentPage(pagination.current);
-      setPageSize(pagination.pageSize); // pageSize güncellemesi
+  const handleTableChange = (page) => {
+    if (page) {
+      const diff = page - currentPage;
+      fetchEquipmentData(diff, page);
     }
   };
   // sayfalama için kullanılan useEffect son
@@ -697,26 +722,13 @@ const Sigorta = () => {
   };
 
   const refreshTableData = useCallback(() => {
-    // Sayfa numarasını 1 yap
-    // setCurrentPage(1);
-
-    // `body` içerisindeki filtreleri ve arama terimini sıfırla
-    // setBody({
-    //   keyword: "",
-    //   filters: {},
-    // });
-    // setSearchTerm("");
-
     // Tablodan seçilen kayıtların checkbox işaretini kaldır
     setSelectedRowKeys([]);
     setSelectedRows([]);
 
     // Verileri yeniden çekmek için `fetchEquipmentData` fonksiyonunu çağır
-    fetchEquipmentData(body, currentPage);
-    // Burada `body` ve `currentPage`'i güncellediğimiz için, bu değerlerin en güncel hallerini kullanarak veri çekme işlemi yapılır.
-    // Ancak, `fetchEquipmentData` içinde `body` ve `currentPage`'e bağlı olarak veri çekiliyorsa, bu değerlerin güncellenmesi yeterli olacaktır.
-    // Bu nedenle, doğrudan `fetchEquipmentData` fonksiyonunu çağırmak yerine, bu değerlerin güncellenmesini bekleyebiliriz.
-  }, [body, currentPage]); // Bağımlılıkları kaldırdık, çünkü fonksiyon içindeki değerler zaten en güncel halleriyle kullanılıyor.
+    fetchEquipmentData(0, 1);
+  }, []); // Remove body and currentPage from dependencies
 
   // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz
   const [columns, setColumns] = useState(() => {
@@ -981,6 +993,7 @@ const Sigorta = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
           />
+          <Filters onChange={handleBodyChange} />
           {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
           <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
         </div>
@@ -993,7 +1006,7 @@ const Sigorta = () => {
         style={{
           backgroundColor: "white",
           padding: "10px",
-          height: "calc(100vh - 270px)",
+          height: "calc(100vh - 200px)",
           borderRadius: "8px 8px 8px 8px",
           filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
         }}
@@ -1007,19 +1020,14 @@ const Sigorta = () => {
             dataSource={data}
             pagination={{
               current: currentPage,
-              total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
-              pageSize: pageSize,
-              defaultPageSize: 10,
-              showSizeChanger: true,
-              pageSizeOptions: ["10", "20", "50", "100"],
-              position: ["bottomRight"],
-              onChange: handleTableChange,
-              showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
+              total: totalDataCount,
+              pageSize: 10,
+              showTotal: (total, range) => `Toplam ${total}`,
+              showSizeChanger: false,
               showQuickJumper: true,
+              onChange: (page) => handleTableChange(page),
             }}
-            // onRow={onRowClick}
             scroll={{ y: "calc(100vh - 400px)" }}
-            onChange={handleTableChange}
             rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
           />
         </Spin>
