@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, Divider, Modal, Button } from "antd";
 import { PieChartOutlined, CarOutlined } from "@ant-design/icons";
 import { MdOutlineSystemUpdateAlt } from "react-icons/md";
@@ -14,7 +14,9 @@ import Draggable from "react-draggable";
 import Ayarlar from "../pages/Ayarlar/Ayarlar";
 
 const Sidebar = () => {
-  const [openKeys, setOpenKeys] = useState([]);
+  const location = useLocation();
+  const draggleRef = useRef(null);
+
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
@@ -24,35 +26,8 @@ const Sidebar = () => {
     right: 0,
   });
 
-  const onOpenChange = (keys) => {
-    const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-    setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-  };
-
-  const draggleRef = useRef(null);
   const showModal = () => {
     setOpen(true);
-  };
-  const handleOk = (e) => {
-    console.log(e);
-    setOpen(false);
-  };
-  const handleCancel = (e) => {
-    console.log(e);
-    setOpen(false);
-  };
-  const onStart = (_event, uiData) => {
-    const { clientWidth, clientHeight } = window.document.documentElement;
-    const targetRect = draggleRef.current?.getBoundingClientRect();
-    if (!targetRect) {
-      return;
-    }
-    setBounds({
-      left: -targetRect.left + uiData.x,
-      right: clientWidth - (targetRect.right - uiData.x),
-      top: -targetRect.top + uiData.y,
-      bottom: clientHeight - (targetRect.bottom - uiData.y),
-    });
   };
 
   const items = [
@@ -74,10 +49,6 @@ const Sidebar = () => {
           key: "4",
           label: <Link to={"/yakit-islemleri"}>{t("yakitIslemleri")}</Link>,
         },
-        /* {
-          key: "5",
-          label: <Link to={"/servis-islemleri"}>{t("servisIslemleri")}</Link>,
-        },*/
         {
           key: "6",
           label: <Link to={"/sefer-islemleri"}>{t("seferler")}</Link>,
@@ -98,10 +69,6 @@ const Sidebar = () => {
           key: "10",
           label: <Link to={"/ceza-islemleri"}>{t("cezalar")}</Link>,
         },
-        /*  {
-          key: "11",
-          label: <Link to={"/lastik-tanimlari"}>{t("lastikler")}</Link>,
-        }, */
         {
           key: "121",
           label: <Link to={"/ekspertizler"}>{t("ekspertizler")}</Link>,
@@ -112,7 +79,6 @@ const Sidebar = () => {
         },
       ],
     },
-
     {
       key: "19",
       icon: <GiAutoRepair />,
@@ -130,43 +96,12 @@ const Sidebar = () => {
           key: "22",
           label: <Link to={"/sefer-islemleri"}>{t("randevuTakibi")}</Link>,
         },
-        /*{
-          key: "23",
-          label: <Link to={"/harcama-islemleri"}>{t("servısFaturalari")}</Link>,
-        },*/
         {
           key: "24",
           label: <Link to={"/malzeme-tanimlari"}>{t("atolyeTanimlari")}</Link>,
         },
       ],
     },
-    /* {
-      key: "345",
-      icon: <FaGears />,
-      label: t("lastikYonetimi"),
-      children: [
-        {
-          key: "2345",
-          label: <Link to={"/lastikIslemleri"}>{t("lastikIslemleri")}</Link>,
-        },
-        {
-          key: "99324",
-          label: <Link to={`/lastikEnvanteri`}>{t("lastikEnvanteri")}</Link>,
-        },
-        {
-          key: "divider-1",
-          label: <Divider className="menu-divider" />, // Special class for styling
-        },
-        {
-          key: "3647",
-          label: <Link to={`/lastikTanimlari`}>{t("lastikTanimlari")}</Link>,
-        },
-        {
-          key: "12344",
-          label: <Link to={`/aksTanimlari`}>{t("aksTanimlari")}</Link>,
-        },
-      ],
-    }, */
     {
       key: "31",
       icon: <LuWarehouse />,
@@ -233,49 +168,6 @@ const Sidebar = () => {
         },
       ],
     },
-    /*{
-      key: "338",
-      icon: <HiOutlineDocumentReport />,
-      label: t("finansYonetim"),
-      children: [
-        {
-          key: "435",
-          label: <Link to={"/hazirlaniyor"}>{t("faturalar")}</Link>,
-        },
-        {
-          key: "661",
-          label: <Link to={"/hazirlaniyor"}>{t("cariHesaplar")}</Link>,
-        },
-        {
-          key: "487",
-          label: <Link to={"/hazirlaniyor"}>{t("gelirIslemleri")}</Link>,
-        },
-      ],
-    },*/
-    /*{
-      key: "348",
-      icon: <HiOutlineDocumentReport />,
-      label: t("satinAlmaYonetim"),
-      children: [
-        {
-          key: "235",
-          label: <Link to={"/hazirlaniyor"}>{t("malzemeTalepleri")}</Link>,
-        },
-        {
-          key: "064",
-          label: <Link to={"/hazirlaniyor"}>{t("teklifler")}</Link>,
-        },
-        {
-          key: "832",
-          label: <Link to={"/hazirlaniyor"}>{t("siparisler")}</Link>,
-        },
-      ],
-    },*/
-    /*{
-      key: "368",
-      icon: <HiOutlineDocumentReport />,
-      label: <Link to={"/hazirlaniyor"}>{t("kurumsalModuller")}</Link>,
-    },*/
     {
       key: "2v34789",
       icon: <FaGears />,
@@ -351,16 +243,11 @@ const Sidebar = () => {
         },
       ],
     },
-
     {
       key: "50",
       icon: <FaGears />,
       label: t("sistemAyarari"),
       children: [
-        // {
-        //   key: "534",
-        //   label: <Link to={"/ayarlar"}>{t("ayarlar")}</Link>,
-        // },
         {
           key: "51",
           label: <div onClick={showModal}>{t("ayarlar")}</div>,
@@ -377,6 +264,96 @@ const Sidebar = () => {
     },
   ];
 
+  const findActiveKeys = () => {
+    const findInItems = (path) => {
+      for (const item of items) {
+        // Check if this item matches the path
+        if (item.label?.props?.to === path) {
+          return { menuKey: item.key, parentKey: null };
+        }
+        // Check children if they exist
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.label?.props?.to === path) {
+              return { menuKey: child.key, parentKey: item.key };
+            }
+          }
+        }
+      }
+      // If we're at root path, return dashboard
+      if (path === "/") {
+        return { menuKey: "1", parentKey: null };
+      }
+      return { menuKey: null, parentKey: null };
+    };
+
+    return findInItems(location.pathname);
+  };
+
+  const { menuKey, parentKey } = findActiveKeys();
+  const [selectedKey, setSelectedKey] = useState(menuKey || "1");
+  const [openKeys, setOpenKeys] = useState(parentKey ? [parentKey] : []);
+
+  useEffect(() => {
+    const { menuKey, parentKey } = findActiveKeys();
+    if (menuKey) {
+      setSelectedKey(menuKey);
+      // Eğer ana sayfadaysa (/) tüm grupları kapat
+      if (location.pathname === "/") {
+        setOpenKeys([]);
+      } else if (parentKey) {
+        setOpenKeys([parentKey]);
+      }
+    } else {
+      // Eğer menuKey bulunamazsa (geçersiz route vs.) tüm grupları kapat
+      setOpenKeys([]);
+    }
+  }, [location.pathname]);
+
+  const handleOk = (e) => {
+    console.log(e);
+    setOpen(false);
+  };
+
+  const handleCancel = (e) => {
+    console.log(e);
+    setOpen(false);
+  };
+
+  const onStart = (_event, uiData) => {
+    const { clientWidth, clientHeight } = window.document.documentElement;
+    const targetRect = draggleRef.current?.getBoundingClientRect();
+    if (!targetRect) {
+      return;
+    }
+    setBounds({
+      left: -targetRect.left + uiData.x,
+      right: clientWidth - (targetRect.right - uiData.x),
+      top: -targetRect.top + uiData.y,
+      bottom: clientHeight - (targetRect.bottom - uiData.y),
+    });
+  };
+
+  const onOpenChange = (keys) => {
+    // Eğer hiç açık menü yoksa veya son açılan menü kapandıysa
+    if (keys.length === 0) {
+      setOpenKeys([]);
+      return;
+    }
+
+    // En son açılan/kapanan menü
+    const latestOpenKey = keys[keys.length - 1];
+
+    // Eğer zaten açık olan menüye tıklandıysa (yani kapatma işlemi)
+    if (keys.length === 1 && keys[0] === openKeys[0]) {
+      setOpenKeys([]);
+      return;
+    }
+
+    // Yeni bir menü açıldığında sadece onu aç, diğerlerini kapat
+    setOpenKeys([latestOpenKey]);
+  };
+
   return (
     <>
       <div className="flex justify-center w-full py-20 text-center">
@@ -384,7 +361,7 @@ const Sidebar = () => {
           <img src="/images/logo_white.png" alt="ats logo" className="sidebar-logo" />
         </Link>
       </div>
-      <Menu mode="inline" theme="dark" openKeys={openKeys} onOpenChange={onOpenChange} items={items} />
+      <Menu mode="inline" theme="dark" openKeys={openKeys} selectedKeys={[selectedKey]} onOpenChange={onOpenChange} items={items} />
       <Modal
         title={
           <div
@@ -400,11 +377,8 @@ const Sidebar = () => {
             onMouseOut={() => {
               setDisabled(true);
             }}
-            // fix eslintjsx-a11y/mouse-events-have-key-events
-            // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/mouse-events-have-key-events.md
             onFocus={() => {}}
             onBlur={() => {}}
-            // end
           >
             <div style={{ fontSize: "20px" }}>{t("ayarlar")}</div>
           </div>
@@ -414,7 +388,7 @@ const Sidebar = () => {
         width={800}
         onOk={handleOk}
         onCancel={handleCancel}
-        footer={null} // Ok ve Cancel düğmelerini kaldırmak için
+        footer={null}
         modalRender={(modal) => (
           <Draggable disabled={disabled} bounds={bounds} nodeRef={draggleRef} onStart={(event, uiData) => onStart(event, uiData)}>
             <div ref={draggleRef}>{modal}</div>

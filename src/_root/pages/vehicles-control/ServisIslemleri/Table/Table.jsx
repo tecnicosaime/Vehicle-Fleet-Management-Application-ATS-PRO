@@ -1,26 +1,52 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, Progress, message } from "antd";
-import { HolderOutlined, SearchOutlined, MenuOutlined, CheckOutlined, CloseOutlined, HomeOutlined } from "@ant-design/icons";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import { useFormContext } from "react-hook-form";
+import ContextMenu from "../components/ContextMenu/ContextMenu";
+import CreateDrawer from "../Insert/CreateDrawer";
+import EditDrawer from "../Update/EditDrawer";
+import Filters from "./filter/Filters";
+import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { Table, Button, Modal, Checkbox, Input, Spin, Typography, Tag, message, Tooltip, Progress, ConfigProvider } from "antd";
+import { HolderOutlined, SearchOutlined, MenuOutlined, HomeOutlined, ArrowDownOutlined, ArrowUpOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Resizable } from "react-resizable";
 import "./ResizeStyle.css";
 import AxiosInstance from "../../../../../api/http";
-import { useFormContext } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import styled from "styled-components";
-import ContextMenu from "../components/ContextMenu/ContextMenu";
-import CreateDrawer from "../Insert/CreateDrawer";
-import EditDrawer from "../Update/EditDrawer";
 import dayjs from "dayjs";
-import BreadcrumbComp from "../../../../components/breadcrumb/Breadcrumb.jsx";
-import { Routes, Route, useNavigate } from "react-router-dom";
-
 import { t } from "i18next";
+import trTR from "antd/lib/locale/tr_TR";
+import enUS from "antd/lib/locale/en_US";
+import ruRU from "antd/lib/locale/ru_RU";
+import azAZ from "antd/lib/locale/az_AZ";
+
+const localeMap = {
+  tr: trTR,
+  en: enUS,
+  ru: ruRU,
+  az: azAZ,
+};
+
+// Define date format mapping based on language
+const dateFormatMap = {
+  tr: "DD.MM.YYYY",
+  en: "MM/DD/YYYY",
+  ru: "DD.MM.YYYY",
+  az: "DD.MM.YYYY",
+};
+
+// Define time format mapping based on language
+const timeFormatMap = {
+  tr: "HH:mm",
+  en: "hh:mm A",
+  ru: "HH:mm",
+  az: "HH:mm",
+};
 
 const { Text } = Typography;
-
-const breadcrumb = [{ href: "/", title: <HomeOutlined /> }, { title: t("servisIslemleri") }];
 
 const StyledButton = styled(Button)`
   display: flex;
@@ -30,17 +56,7 @@ const StyledButton = styled(Button)`
   height: 32px !important;
 `;
 
-const CustomSpin = styled(Spin)`
-  .ant-spin-dot-item {
-    background-color: #0091ff !important; /* Blue color */
-  }
-`;
-
-const CustomTable = styled(Table)`
-  .ant-pagination-item-ellipsis {
-    display: flex !important;
-  }
-`;
+const StyledTable = styled(Table)``;
 
 // Sütunların boyutlarını ayarlamak için kullanılan component
 
@@ -127,31 +143,31 @@ const DraggableRow = ({ id, text, index, moveRow, className, style, visible, onV
 
 // Sütunların sürüklenebilir olmasını sağlayan component sonu
 
-const Sigorta = () => {
+const Ceza = () => {
+  const formMethods = useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { setValue } = useFormContext();
   const [data, setData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set initial loading state to false
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0); // Toplam sayfa sayısı için state
-  const [label, setLabel] = useState("Yükleniyor..."); // Başlangıç değeri özel alanlar için
-  const [totalDataCount, setTotalDataCount] = useState(0); // Tüm veriyi tutan state
-  const [pageSize, setPageSize] = useState(10); // Başlangıçta sayfa başına 10 kayıt göster
-  const [editDrawer1Visible, setEditDrawer1Visible] = useState(false);
-  const [editDrawer1Data, setEditDrawer1Data] = useState(null);
-  const navigate = useNavigate();
-
-  // edit drawer için
+  const [totalCount, setTotalCount] = useState(0); // Total data count
+  const [pageSize, setPageSize] = useState(10); // Page size
+  const [localeDateFormat, setLocaleDateFormat] = useState("MM/DD/YYYY");
+  const [localeTimeFormat, setLocaleTimeFormat] = useState("HH:mm");
   const [drawer, setDrawer] = useState({
     visible: false,
     data: null,
   });
-  // edit drawer için son
+  const navigate = useNavigate();
 
   const [selectedRows, setSelectedRows] = useState([]);
+
+  const [body, setBody] = useState({
+    keyword: "",
+    filters: {},
+  });
 
   const statusTag = (statusId) => {
     switch (statusId) {
@@ -193,27 +209,104 @@ const Sigorta = () => {
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
 
-  // Özel Alanların nameleri backend çekmek için api isteği
+  // API Data Fetching with diff and setPointId
+  const fetchData = async (diff, targetPage) => {
+    setLoading(true);
+    try {
+      let currentSetPointId = 0;
 
-  // useEffect(() => {
-  //   // API'den veri çekme işlemi
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await AxiosInstance.get("OzelAlan?form=ISEMRI"); // API URL'niz
-  //       localStorage.setItem("ozelAlanlarServisIslemleri", JSON.stringify(response));
-  //       setLabel(response); // Örneğin, API'den dönen yanıt doğrudan etiket olacak
-  //     } catch (error) {
-  //       console.error("API isteğinde hata oluştu:", error);
-  //       setLabel("Hata! Veri yüklenemedi."); // Hata durumunda kullanıcıya bilgi verme
-  //     }
-  //   };
-  //
-  //   fetchData();
-  // }, [drawer.visible]);
+      if (diff > 0) {
+        // Moving forward
+        currentSetPointId = data[data.length - 1]?.siraNo || 0;
+      } else if (diff < 0) {
+        // Moving backward
+        currentSetPointId = data[0]?.siraNo || 0;
+      } else {
+        currentSetPointId = 0;
+      }
 
-  const ozelAlanlar = JSON.parse(localStorage.getItem("ozelAlanlarServisIslemleri"));
+      // Determine what to send for customfilters
 
-  // Özel Alanların nameleri backend çekmek için api isteği sonu
+      const response = await AxiosInstance.post(
+        `VehicleServices/GetVehicleServices?diff=${diff}&setPointId=${currentSetPointId}&parameter=${searchTerm}`,
+        body.filters?.customfilter || {}
+      );
+
+      const total = response.data.recordCount;
+      setTotalCount(total);
+      setCurrentPage(targetPage);
+
+      const newData = response.data.list.map((item) => ({
+        ...item,
+        key: item.siraNo, // Assign key directly from siraNo
+      }));
+
+      if (newData.length > 0) {
+        setData(newData);
+      } else {
+        message.warning(t("kayitBulunamadi"));
+        setData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      message.error(t("hataOlustu"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (body !== prevBodyRef.current) {
+      fetchData(0, 1);
+      prevBodyRef.current = body;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [body]);
+
+  const prevBodyRef = useRef(body);
+
+  // Search handling
+  // Define handleSearch function
+  const handleSearch = () => {
+    fetchData(0, 1);
+  };
+
+  const handleTableChange = (page) => {
+    const diff = page - currentPage;
+    fetchData(diff, page);
+  };
+
+  const onSelectChange = (newSelectedRowKeys) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+
+    // Find selected rows data
+    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
+    setSelectedRows(newSelectedRows);
+  };
+
+  const rowSelection = {
+    type: "checkbox",
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const onRowClick = (record) => {
+    setDrawer({ visible: true, data: record });
+  };
+
+  const refreshTableData = useCallback(() => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    fetchData(0, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Columns definition (adjust as needed)
   const initialColumns = [
     {
       title: t("plaka"),
@@ -231,6 +324,7 @@ const Sigorta = () => {
         return a.plaka.localeCompare(b.plaka);
       },
     },
+
     {
       title: t("tarih"),
       dataIndex: "tarih",
@@ -307,6 +401,20 @@ const Sigorta = () => {
         );
       },
       sorter: (a, b) => (a.durumBilgisi || 0) - (b.durumBilgisi || 0),
+    },
+
+    {
+      title: t("aracTipi"),
+      dataIndex: "aracTipi",
+      key: "aracTipi",
+      width: 120,
+      ellipsis: true,
+      visible: true,
+      sorter: (a, b) => {
+        if (a.aracTipi === null) return -1;
+        if (b.aracTipi === null) return 1;
+        return a.aracTipi.localeCompare(b.aracTipi);
+      },
     },
 
     {
@@ -698,155 +806,7 @@ const Sigorta = () => {
 
   // tarihleri kullanıcının local ayarlarına bakarak formatlayıp ekrana o şekilde yazdırmak için sonu
 
-  const [body, setBody] = useState({
-    keyword: "",
-    filters: {},
-  });
-
-  // ana tablo api isteği için kullanılan useEffect
-
-  useEffect(() => {
-    fetchEquipmentData(body, currentPage, pageSize);
-  }, [body, currentPage, pageSize]);
-
-  // ana tablo api isteği için kullanılan useEffect son
-
-  // arama işlemi için kullanılan useEffect
-  useEffect(() => {
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-
-    // Arama terimi değiştiğinde ve boş olduğunda API isteğini tetikle
-    const timeout = setTimeout(() => {
-      if (searchTerm !== body.keyword) {
-        handleBodyChange("keyword", searchTerm);
-        setCurrentPage(1); // Arama yapıldığında veya arama sıfırlandığında sayfa numarasını 1'e ayarla
-        // setDrawer({ ...drawer, visible: false }); // Arama yapıldığında veya arama sıfırlandığında Drawer'ı kapat
-      }
-    }, 2000);
-
-    setSearchTimeout(timeout);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm]);
-
-  // arama işlemi için kullanılan useEffect son
-
-  const fetchEquipmentData = async (body, page, size) => {
-    // body'nin undefined olması durumunda varsayılan değerler atanıyor
-    const { keyword = "", filters = {} } = body || {};
-    // page'in undefined olması durumunda varsayılan değer olarak 1 atanıyor
-    const currentPage = page || 1;
-
-    try {
-      setLoading(true);
-      // API isteğinde keyword ve currentPage kullanılıyor
-      const response = await AxiosInstance.get(`VehicleServices/GetVehicleServices?page=${currentPage}&parameter=${keyword}`);
-      if (response.data.statusCode == 401) {
-        navigate("/unauthorized");
-      } else if (response.data) {
-        // Toplam sayfa sayısını ayarla
-        setTotalPages(response.data.page);
-        setTotalDataCount(response.data.recordCount);
-
-        // Gelen veriyi formatla ve state'e ata
-        const formattedData = response.data.list.map((item) => ({
-          ...item,
-          key: item.siraNo,
-          // Diğer alanlarınız...
-        }));
-        setData(formattedData);
-        setLoading(false);
-      } else {
-        console.error("API response is not in expected format");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error in API request:", error);
-      setLoading(false);
-      if (navigator.onLine) {
-        // İnternet bağlantısı var
-        message.error("Hata Mesajı: " + error.message);
-      } else {
-        // İnternet bağlantısı yok
-        message.error("Internet Bağlantısı Mevcut Değil.");
-      }
-    }
-  };
-
-  // filtreleme işlemi için kullanılan useEffect
-  const handleBodyChange = useCallback((type, newBody) => {
-    setBody((state) => ({
-      ...state,
-      [type]: newBody,
-    }));
-    setCurrentPage(1); // Filtreleme yapıldığında sayfa numarasını 1'e ayarla
-  }, []);
-  // filtreleme işlemi için kullanılan useEffect son
-
-  // sayfalama için kullanılan useEffect
-  const handleTableChange = (pagination, filters, sorter, extra) => {
-    if (pagination) {
-      setCurrentPage(pagination.current);
-      setPageSize(pagination.pageSize); // pageSize güncellemesi
-    }
-  };
-  // sayfalama için kullanılan useEffect son
-
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-    if (newSelectedRowKeys.length > 0) {
-      setValue("selectedLokasyonId", newSelectedRowKeys[0]);
-    } else {
-      setValue("selectedLokasyonId", null);
-    }
-    // Seçilen satırların verisini bul
-    const newSelectedRows = data.filter((row) => newSelectedRowKeys.includes(row.key));
-    setSelectedRows(newSelectedRows); // Seçilen satırların verilerini state'e ata
-  };
-
-  const rowSelection = {
-    type: "checkbox",
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
-  // const onRowClick = (record) => {
-  //   return {
-  //     onClick: () => {
-  //       setDrawer({ visible: true, data: record });
-  //     },
-  //   };
-  // };
-
-  const onRowClick = (record) => {
-    setDrawer({ visible: true, data: record });
-  };
-
-  const refreshTableData = useCallback(() => {
-    // Sayfa numarasını 1 yap
-    // setCurrentPage(1);
-
-    // `body` içerisindeki filtreleri ve arama terimini sıfırla
-    // setBody({
-    //   keyword: "",
-    //   filters: {},
-    // });
-    // setSearchTerm("");
-
-    // Tablodan seçilen kayıtların checkbox işaretini kaldır
-    setSelectedRowKeys([]);
-    setSelectedRows([]);
-
-    // Verileri yeniden çekmek için `fetchEquipmentData` fonksiyonunu çağır
-    fetchEquipmentData(body, currentPage);
-    // Burada `body` ve `currentPage`'i güncellediğimiz için, bu değerlerin en güncel hallerini kullanarak veri çekme işlemi yapılır.
-    // Ancak, `fetchEquipmentData` içinde `body` ve `currentPage`'e bağlı olarak veri çekiliyorsa, bu değerlerin güncellenmesi yeterli olacaktır.
-    // Bu nedenle, doğrudan `fetchEquipmentData` fonksiyonunu çağırmak yerine, bu değerlerin güncellenmesini bekleyebiliriz.
-  }, [body, currentPage]); // Bağımlılıkları kaldırdık, çünkü fonksiyon içindeki değerler zaten en güncel halleriyle kullanılıyor.
-
-  // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz
+  // Manage columns from localStorage or default
   const [columns, setColumns] = useState(() => {
     const savedOrder = localStorage.getItem("columnOrderServisIslemleri");
     const savedVisibility = localStorage.getItem("columnVisibilityServisIslemleri");
@@ -877,9 +837,8 @@ const Sigorta = () => {
       return { ...column, visible: visibility[key], width: widths[key] };
     });
   });
-  // filtrelenmiş sütunları local storage'dan alıp state'e atıyoruz sonu
 
-  // sütunları local storage'a kaydediyoruz
+  // Save columns to localStorage
   useEffect(() => {
     localStorage.setItem("columnOrderServisIslemleri", JSON.stringify(columns.map((col) => col.key)));
     localStorage.setItem(
@@ -907,9 +866,8 @@ const Sigorta = () => {
       )
     );
   }, [columns]);
-  // sütunları local storage'a kaydediyoruz sonu
 
-  // sütunların boyutlarını ayarlamak için kullanılan fonksiyon
+  // Handle column resize
   const handleResize =
     (key) =>
     (_, { size }) => {
@@ -930,14 +888,10 @@ const Sigorta = () => {
     }),
   }));
 
-  // fitrelenmiş sütunları birleştiriyoruz ve sadece görünür olanları alıyoruz ve tabloya gönderiyoruz
-
+  // Filtered columns
   const filteredColumns = mergedColumns.filter((col) => col.visible);
 
-  // fitrelenmiş sütunları birleştiriyoruz ve sadece görünür olanları alıyoruz ve tabloya gönderiyoruz sonu
-
-  // sütunların sıralamasını değiştirmek için kullanılan fonksiyon
-
+  // Handle drag and drop
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over.id) {
@@ -951,10 +905,7 @@ const Sigorta = () => {
     }
   };
 
-  // sütunların sıralamasını değiştirmek için kullanılan fonksiyon sonu
-
-  // sütunların görünürlüğünü değiştirmek için kullanılan fonksiyon
-
+  // Toggle column visibility
   const toggleVisibility = (key, checked) => {
     const index = columns.findIndex((col) => col.key === key);
     if (index !== -1) {
@@ -966,194 +917,219 @@ const Sigorta = () => {
     }
   };
 
-  // sütunların görünürlüğünü değiştirmek için kullanılan fonksiyon sonu
-
-  // sütunları sıfırlamak için kullanılan fonksiyon
-
-  function resetColumns() {
+  // Reset columns
+  const resetColumns = () => {
     localStorage.removeItem("columnOrderServisIslemleri");
     localStorage.removeItem("columnVisibilityServisIslemleri");
     localStorage.removeItem("columnWidthsServisIslemleri");
-    localStorage.removeItem("ozelAlanlarServisIslemleri");
     window.location.reload();
-  }
+  };
 
-  // sütunları sıfırlamak için kullanılan fonksiyon sonu
+  // Kullanıcının dilini localStorage'den alın
+  const currentLang = localStorage.getItem("i18nextLng") || "en";
+  const currentLocale = localeMap[currentLang] || enUS;
+
+  useEffect(() => {
+    // Ay ve tarih formatını dil bazında ayarlayın
+    setLocaleDateFormat(dateFormatMap[currentLang] || "MM/DD/YYYY");
+    setLocaleTimeFormat(timeFormatMap[currentLang] || "HH:mm");
+  }, [currentLang]);
+
+  // filtreleme işlemi için kullanılan useEffect
+  const handleBodyChange = useCallback((type, newBody) => {
+    setBody((prevBody) => {
+      if (type === "filters") {
+        // If newBody is a function, call it with previous filters
+        const updatedFilters =
+          typeof newBody === "function"
+            ? newBody(prevBody.filters)
+            : {
+                ...prevBody.filters,
+                ...newBody,
+              };
+
+        return {
+          ...prevBody,
+          filters: updatedFilters,
+        };
+      }
+      return {
+        ...prevBody,
+        [type]: newBody,
+      };
+    });
+    setCurrentPage(1);
+  }, []);
+  // filtreleme işlemi için kullanılan useEffect son
 
   return (
     <>
-      {/* <div
-        style={{
-          backgroundColor: "white",
-          marginBottom: "15px",
-          padding: "15px",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
-        <BreadcrumbComp items={breadcrumb} />
-      </div> */}
-      <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
-        <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "center",
-            marginTop: "10px",
-          }}
-        >
-          <Button onClick={resetColumns} style={{ marginBottom: "15px" }}>
-            Sütunları Sıfırla
-          </Button>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div
-            style={{
-              width: "46%",
-              border: "1px solid #8080806e",
-              borderRadius: "8px",
-              padding: "10px",
-            }}
-          >
+      <ConfigProvider locale={currentLocale}>
+        <FormProvider {...formMethods}>
+          {/* Modal for managing columns */}
+          <Modal title="Sütunları Yönet" centered width={800} open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
+            <Text style={{ marginBottom: "15px" }}>Aşağıdaki Ekranlardan Sütunları Göster / Gizle ve Sıralamalarını Ayarlayabilirsiniz.</Text>
             <div
               style={{
-                marginBottom: "20px",
-                borderBottom: "1px solid #80808051",
-                padding: "8px 8px 12px 8px",
+                display: "flex",
+                width: "100%",
+                justifyContent: "center",
+                marginTop: "10px",
               }}
             >
-              <Text style={{ fontWeight: 600 }}>Sütunları Göster / Gizle</Text>
+              <Button onClick={resetColumns} style={{ marginBottom: "15px" }}>
+                Sütunları Sıfırla
+              </Button>
             </div>
-            <div style={{ height: "400px", overflow: "auto" }}>
-              {initialColumns.map((col) => (
-                <div style={{ display: "flex", gap: "10px" }} key={col.key}>
-                  <Checkbox checked={columns.find((column) => column.key === col.key)?.visible || false} onChange={(e) => toggleVisibility(col.key, e.target.checked)} />
-                  {col.title}
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <DndContext
-            onDragEnd={handleDragEnd}
-            sensors={useSensors(
-              useSensor(PointerSensor),
-              useSensor(KeyboardSensor, {
-                coordinateGetter: sortableKeyboardCoordinates,
-              })
-            )}
-          >
-            <div
-              style={{
-                width: "46%",
-                border: "1px solid #8080806e",
-                borderRadius: "8px",
-                padding: "10px",
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div
                 style={{
-                  marginBottom: "20px",
-                  borderBottom: "1px solid #80808051",
-                  padding: "8px 8px 12px 8px",
+                  width: "46%",
+                  border: "1px solid #8080806e",
+                  borderRadius: "8px",
+                  padding: "10px",
                 }}
               >
-                <Text style={{ fontWeight: 600 }}>Sütunların Sıralamasını Ayarla</Text>
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    borderBottom: "1px solid #80808051",
+                    padding: "8px 8px 12px 8px",
+                  }}
+                >
+                  <Text style={{ fontWeight: 600 }}>Sütunları Göster / Gizle</Text>
+                </div>
+                <div style={{ height: "400px", overflow: "auto" }}>
+                  {initialColumns.map((col) => (
+                    <div style={{ display: "flex", gap: "10px" }} key={col.key}>
+                      <Checkbox checked={columns.find((column) => column.key === col.key)?.visible || false} onChange={(e) => toggleVisibility(col.key, e.target.checked)} />
+                      {col.title}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div style={{ height: "400px", overflow: "auto" }}>
-                <SortableContext items={columns.filter((col) => col.visible).map((col) => col.key)} strategy={verticalListSortingStrategy}>
-                  {columns
-                    .filter((col) => col.visible)
-                    .map((col, index) => (
-                      <DraggableRow key={col.key} id={col.key} index={index} text={col.title} />
-                    ))}
-                </SortableContext>
-              </div>
+
+              <DndContext
+                onDragEnd={handleDragEnd}
+                sensors={useSensors(
+                  useSensor(PointerSensor),
+                  useSensor(KeyboardSensor, {
+                    coordinateGetter: sortableKeyboardCoordinates,
+                  })
+                )}
+              >
+                <div
+                  style={{
+                    width: "46%",
+                    border: "1px solid #8080806e",
+                    borderRadius: "8px",
+                    padding: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      marginBottom: "20px",
+                      borderBottom: "1px solid #80808051",
+                      padding: "8px 8px 12px 8px",
+                    }}
+                  >
+                    <Text style={{ fontWeight: 600 }}>Sütunların Sıralamasını Ayarla</Text>
+                  </div>
+                  <div style={{ height: "400px", overflow: "auto" }}>
+                    <SortableContext items={columns.filter((col) => col.visible).map((col) => col.key)} strategy={verticalListSortingStrategy}>
+                      {columns
+                        .filter((col) => col.visible)
+                        .map((col, index) => (
+                          <DraggableRow key={col.key} id={col.key} index={index} text={col.title} />
+                        ))}
+                    </SortableContext>
+                  </div>
+                </div>
+              </DndContext>
             </div>
-          </DndContext>
-        </div>
-      </Modal>
-      <div
-        style={{
-          backgroundColor: "white",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          marginBottom: "15px",
-          gap: "10px",
-          padding: "15px",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            alignItems: "center",
-            width: "100%",
-            maxWidth: "935px",
-            flexWrap: "wrap",
-          }}
-        >
-          <StyledButton onClick={() => setIsModalVisible(true)}>
-            <MenuOutlined />
-          </StyledButton>
-          <Input
-            style={{ width: "250px" }}
-            type="text"
-            placeholder="Arama yap..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
-          />
-          {/* <TeknisyenSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <AtolyeSubmit selectedRows={selectedRows} refreshTableData={refreshTableData} /> */}
-        </div>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
-          <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
-        </div>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "10px",
-          height: "calc(100vh - 270px)",
-          borderRadius: "8px 8px 8px 8px",
-          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
-        }}
-      >
-        <Spin spinning={loading}>
-          <CustomTable
-            components={components}
-            rowSelection={rowSelection}
-            columns={filteredColumns}
-            dataSource={data}
-            pagination={{
-              current: currentPage,
-              total: totalDataCount, // Toplam kayıt sayısı (sayfa başına kayıt sayısı ile çarpılır)
-              pageSize: pageSize,
-              defaultPageSize: 10,
-              showSizeChanger: true,
-              pageSizeOptions: ["10", "20", "50", "100"],
-              position: ["bottomRight"],
-              onChange: handleTableChange,
-              showTotal: (total, range) => `Toplam ${total}`, // Burada 'total' parametresi doğru kayıt sayısını yansıtacaktır
-              showQuickJumper: true,
+          </Modal>
+          {/* Toolbar */}
+          <div
+            style={{
+              backgroundColor: "white",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              marginBottom: "15px",
+              gap: "10px",
+              padding: "15px",
+              borderRadius: "8px 8px 8px 8px",
+              filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
             }}
-            // onRow={onRowClick}
-            scroll={{ y: "calc(100vh - 400px)" }}
-            onChange={handleTableChange}
-            rowClassName={(record) => (record.IST_DURUM_ID === 0 ? "boldRow" : "")}
-          />
-        </Spin>
-        <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
-      </div>
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                alignItems: "center",
+                width: "100%",
+                maxWidth: "935px",
+                flexWrap: "wrap",
+              }}
+            >
+              <StyledButton onClick={() => setIsModalVisible(true)}>
+                <MenuOutlined />
+              </StyledButton>
+              <Input
+                style={{ width: "250px" }}
+                type="text"
+                placeholder="Arama yap..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onPressEnter={handleSearch}
+                // prefix={<SearchOutlined style={{ color: "#0091ff" }} />}
+                suffix={<SearchOutlined style={{ color: "#0091ff" }} onClick={handleSearch} />}
+              />
+
+              <Filters onChange={handleBodyChange} />
+              {/* <StyledButton onClick={handleSearch} icon={<SearchOutlined />} /> */}
+              {/* Other toolbar components */}
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <ContextMenu selectedRows={selectedRows} refreshTableData={refreshTableData} />
+              <CreateDrawer selectedLokasyonId={selectedRowKeys[0]} onRefresh={refreshTableData} />
+            </div>
+          </div>
+          {/* Table */}
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "10px",
+              height: "calc(100vh - 200px)",
+              borderRadius: "8px 8px 8px 8px",
+              filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+            }}
+          >
+            <Spin spinning={loading}>
+              <StyledTable
+                components={components}
+                rowSelection={rowSelection}
+                columns={filteredColumns}
+                dataSource={data}
+                pagination={{
+                  current: currentPage,
+                  total: totalCount,
+                  pageSize: 10,
+                  showTotal: (total, range) => `Toplam ${total}`,
+                  showSizeChanger: false,
+                  showQuickJumper: true,
+                  onChange: handleTableChange,
+                }}
+                scroll={{ y: "calc(100vh - 335px)" }}
+              />
+            </Spin>
+            <EditDrawer selectedRow={drawer.data} onDrawerClose={() => setDrawer({ ...drawer, visible: false })} drawerVisible={drawer.visible} onRefresh={refreshTableData} />
+          </div>
+        </FormProvider>
+      </ConfigProvider>
     </>
   );
 };
 
-export default Sigorta;
+export default Ceza;

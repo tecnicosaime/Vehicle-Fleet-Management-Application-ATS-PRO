@@ -354,7 +354,7 @@ export default function IslemYapanTablo({ workshopSelectedId, onSubmit }) {
   return (
     <div>
       <Button onClick={handleModalToggle}>+</Button>
-      <Modal width={1200} centered title={modalTitle} visible={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle} destroyOnClose>
+      <Modal width={1200} centered title={modalTitle} open={isModalVisible} onOk={handleModalOk} onCancel={handleModalToggle} destroyOnClose>
         <Input
           style={{ width: "250px", marginBottom: "10px" }}
           type="text"
