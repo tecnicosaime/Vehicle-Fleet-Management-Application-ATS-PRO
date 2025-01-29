@@ -137,7 +137,6 @@ export default function CustomFilter({ onSubmit }) {
     if (!filtersRemaining) {
       setNewObjectsAdded(false);
     }
-    onSubmit("");
   };
 
   const handleInputChange = (e, rowId) => {
