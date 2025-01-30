@@ -182,10 +182,10 @@ const Sigorta = () => {
 
       if (diff > 0) {
         // Moving forward
-        currentSetPointId = data[data.length - 1]?.aracId || 0;
+        currentSetPointId = data[data.length - 1]?.aracEkspertizId || 0;
       } else if (diff < 0) {
         // Moving backward
-        currentSetPointId = data[0]?.aracId || 0;
+        currentSetPointId = data[0]?.aracEkspertizId || 0;
       } else {
         currentSetPointId = 0;
       }
@@ -201,7 +201,7 @@ const Sigorta = () => {
 
       const newData = response.data.vehicleList.map((item) => ({
         ...item,
-        key: item.aracId, // Assign key directly from aracId
+        key: item.aracEkspertizId, // Assign key directly from aracEkspertizId
       }));
 
       if (newData.length > 0) {
