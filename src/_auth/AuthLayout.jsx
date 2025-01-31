@@ -119,7 +119,6 @@ const AuthLayout = () => {
               <img src="/images/ats_pro_logo.png" alt="ats logo" className="login-logo-img self-center" />
               <LanguageSelectbox />
             </div>
-            <Text>{t("filoYonetimiYazilimi")}</Text>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
             <Text style={{ fontSize: "23px", fontWeight: 600 }}>{t("Giris")} !</Text>
