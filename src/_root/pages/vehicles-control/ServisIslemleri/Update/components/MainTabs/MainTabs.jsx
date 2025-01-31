@@ -468,7 +468,7 @@ export default function MainTabs({ modalOpen }) {
                 control={control}
                 render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
               />
-              <div>{errors.baslamaTarihi && <div style={{ color: "red" }}>{errors.baslamaTarihi.message}</div>}</div>
+              {errors.baslamaTarihi && <div style={{ color: "red" }}>{errors.baslamaTarihi.message}</div>}
             </div>
           </div>
           <div
@@ -515,7 +515,7 @@ export default function MainTabs({ modalOpen }) {
                 control={control}
                 render={({ field }) => <TimePicker {...field} style={{ width: "110px" }} format={localeTimeFormat} placeholder="Saat seçiniz" />}
               />
-              <div>{errors.bitisTarihi && <div style={{ color: "red" }}>{errors.bitisTarihi.message}</div>}</div>
+              {errors.bitisTarihi && <div style={{ color: "red" }}>{errors.bitisTarihi.message}</div>}
             </div>
           </div>
         </div>
