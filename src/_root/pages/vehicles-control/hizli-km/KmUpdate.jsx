@@ -555,23 +555,6 @@ const KmUpdate = () => {
 
   return (
     <div className="km">
-      {loading && (
-        <div className="loading-spin">
-          <div className="loader">
-            <Spin
-              indicator={
-                <LoadingOutlined
-                  style={{
-                    fontSize: 100,
-                  }}
-                  spin
-                />
-              }
-            />
-          </div>
-        </div>
-      )}
-
       {/* <div className="content">
         <BreadcrumbComp items={breadcrumb} />
       </div> */}
@@ -596,6 +579,7 @@ const KmUpdate = () => {
         <Table
           components={components}
           rowClassName={() => "editable-row"}
+          loading={loading}
           pagination={{
             ...tableParams.pagination,
             showTotal: (total) => `Toplam ${total}`,
