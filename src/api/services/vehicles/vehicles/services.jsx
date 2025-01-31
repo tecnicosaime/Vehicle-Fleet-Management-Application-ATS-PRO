@@ -86,8 +86,8 @@ export const UpdateDriverSubstitutionItemService = async (data) => {
 };
 
 // km
-export const GetKmUpdateListService = async (page, data) => {
-  return await http.post(`/QuickKmUpdate/GetKmUpdateList?page=${page}`, data);
+export const GetKmUpdateListService = async (diff, currentSetPointId, data) => {
+  return await http.post(`/QuickKmUpdate/GetKmUpdateList?diff=${diff}&setPointId=${currentSetPointId}`, data);
 };
 
 export const ValidateKmLogForAddService = async (data) => {
