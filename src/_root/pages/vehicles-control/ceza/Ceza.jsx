@@ -507,9 +507,9 @@ const Ceza = () => {
 
   // Manage columns from localStorage or default
   const [columns, setColumns] = useState(() => {
-    const savedOrder = localStorage.getItem("columnOrderCeza");
-    const savedVisibility = localStorage.getItem("columnVisibilityCeza");
-    const savedWidths = localStorage.getItem("columnWidthsCeza");
+    const savedOrder = localStorage.getItem("columnOrderCeza341");
+    const savedVisibility = localStorage.getItem("columnVisibilityCeza341");
+    const savedWidths = localStorage.getItem("columnWidthsCeza341");
 
     let order = savedOrder ? JSON.parse(savedOrder) : [];
     let visibility = savedVisibility ? JSON.parse(savedVisibility) : {};
@@ -527,9 +527,9 @@ const Ceza = () => {
       }
     });
 
-    localStorage.setItem("columnOrderCeza", JSON.stringify(order));
-    localStorage.setItem("columnVisibilityCeza", JSON.stringify(visibility));
-    localStorage.setItem("columnWidthsCeza", JSON.stringify(widths));
+    localStorage.setItem("columnOrderCeza341", JSON.stringify(order));
+    localStorage.setItem("columnVisibilityCeza341", JSON.stringify(visibility));
+    localStorage.setItem("columnWidthsCeza341", JSON.stringify(widths));
 
     return order.map((key) => {
       const column = initialColumns.find((col) => col.key === key);
@@ -539,9 +539,9 @@ const Ceza = () => {
 
   // Save columns to localStorage
   useEffect(() => {
-    localStorage.setItem("columnOrderCeza", JSON.stringify(columns.map((col) => col.key)));
+    localStorage.setItem("columnOrderCeza341", JSON.stringify(columns.map((col) => col.key)));
     localStorage.setItem(
-      "columnVisibilityCeza",
+      "columnVisibilityCeza341",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -553,7 +553,7 @@ const Ceza = () => {
       )
     );
     localStorage.setItem(
-      "columnWidthsCeza",
+      "columnWidthsCeza341",
       JSON.stringify(
         columns.reduce(
           (acc, col) => ({
@@ -618,9 +618,9 @@ const Ceza = () => {
 
   // Reset columns
   const resetColumns = () => {
-    localStorage.removeItem("columnOrderCeza");
-    localStorage.removeItem("columnVisibilityCeza");
-    localStorage.removeItem("columnWidthsCeza");
+    localStorage.removeItem("columnOrderCeza341");
+    localStorage.removeItem("columnVisibilityCeza341");
+    localStorage.removeItem("columnWidthsCeza341");
     window.location.reload();
   };
 

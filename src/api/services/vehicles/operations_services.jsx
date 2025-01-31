@@ -151,8 +151,8 @@ export const AddVehicleFineItemService = async (data) => {
   return await http.post(`/VehicleFines/AddVehicleFineItem`, data);
 };
 
-export const GetPenaltyDefListService = async (search, page) => {
-  return await http.get(`/PenaltyDef/GetPenaltyDefList?page=${page}&parameter=${search}`);
+export const GetPenaltyDefListService = async (diff, currentSetPointId, search) => {
+  return await http.get(`/PenaltyDef/GetPenaltyDefList?diff=${diff}&setPointId=${currentSetPointId}&parameter=${search}`);
 };
 
 export const GetVehicleFineItemService = async (id) => {
