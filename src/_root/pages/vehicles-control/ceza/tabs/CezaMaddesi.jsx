@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Input, Table } from "antd";
+import { Input, Table, message } from "antd";
 import { t } from "i18next";
 import { GetPenaltyDefListService } from "../../../../../api/services/vehicles/operations_services";
 
@@ -8,13 +8,16 @@ const CezaMaddesiTable = ({ setMadde, open, key }) => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
       pageSize: 10,
+      total: 0,
     },
   });
-  const [loading, setLoading] = useState(false);
 
   const columns = [
     {
@@ -61,33 +64,55 @@ const CezaMaddesiTable = ({ setMadde, open, key }) => {
     }
   }, [open]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const res = await GetPenaltyDefListService(search, tableParams.pagination.current);
+  const fetchData = async (diff, targetPage) => {
+    setLoading(true);
+    try {
+      let currentSetPointId = 0;
+
+      if (diff > 0) {
+        // Moving forward
+        currentSetPointId = data[data.length - 1]?.siraNo || 0;
+      } else if (diff < 0) {
+        // Moving backward
+        currentSetPointId = data[0]?.siraNo || 0;
+      } else {
+        currentSetPointId = 0;
+      }
+
+      const response = await GetPenaltyDefListService(diff, currentSetPointId, search);
+      const total = response?.data.recordCount;
+      setTotalCount(total);
+      setCurrentPage(targetPage);
+
+      if (response?.data.list?.length > 0) {
+        setData(response.data.list);
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: total,
+            current: targetPage,
+          },
+        });
+      } else {
+        message.warning("Veri bulunamadı.");
+        setData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      message.error("Veri getirme sırasında bir hata oluştu.");
+    } finally {
       setLoading(false);
-      setData(res?.data.list);
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: res?.data.recordCount,
-        },
-      });
-    };
-    fetchData();
-  }, [search, tableParams.pagination.current, key]);
-
-  const handleTableChange = (pagination, filters, sorter) => {
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
-
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      setData([]);
     }
+  };
+
+  useEffect(() => {
+    fetchData(0, 1);
+  }, [search, key]);
+
+  const handleTableChange = (pagination) => {
+    const diff = pagination.current - currentPage;
+    fetchData(diff, pagination.current);
   };
 
   const rowSelection = {
@@ -109,11 +134,9 @@ const CezaMaddesiTable = ({ setMadde, open, key }) => {
           dataSource={data}
           pagination={{
             ...tableParams.pagination,
-            showTotal: (total) => (
-              <p className="text-info">
-                [{total} {t("kayit")}]
-              </p>
-            ),
+            showTotal: (total) => `Toplam ${total}`,
+            showSizeChanger: false,
+            showQuickJumper: true,
             locale: {
               items_per_page: `/ ${t("sayfa")}`,
             },
