@@ -261,13 +261,16 @@ const KmUpdate = () => {
     y: 0,
   });
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
       pageSize: 10,
+      total: 0,
     },
   });
-  const [loading, setLoading] = useState(false);
   const [date, setDate] = useState({
     tarih: dayjs(new Date()).format("DD.MM.YYYY"),
     saat: dayjs(new Date()).format("HH:mm:ss"),
@@ -290,43 +293,75 @@ const KmUpdate = () => {
     },
   };
 
-  useEffect(() => {
+  const fetchData = async (diff, targetPage) => {
     setLoading(true);
-    GetKmUpdateListService(tableParams.pagination.current, filter).then((res) => {
-      const modifiedData = res?.data.km_list.map((item) => {
+    try {
+      let currentSetPointId = 0;
+
+      if (diff > 0) {
+        // Moving forward
+        currentSetPointId = dataSource[dataSource.length - 1]?.aracId || 0;
+      } else if (diff < 0) {
+        // Moving backward
+        currentSetPointId = dataSource[0]?.aracId || 0;
+      } else {
+        currentSetPointId = 0;
+      }
+
+      const response = await GetKmUpdateListService(diff, currentSetPointId, filter);
+      const total = response?.data.total_count;
+      setTotalCount(total);
+      setCurrentPage(targetPage);
+
+      const newData = response?.data.km_list.map((item) => {
         const rows = [...validatedRows, ...errorRows];
         const validatedRow = rows.find((row) => row.kmAracId === item.aracId);
         return {
-          aracId: item.aracId,
-          aracTip: item.aracTip,
-          marka: item.marka,
-          model: item.model,
-          lokasyon: item.lokasyon,
-          lokasyonId: item.lokasyonId,
-          departman: item.departman,
-          guncelKm: item.guncelKm,
-          plaka: item.plaka,
+          ...item,
+          key: item.aracId,
           tarih: date.tarih || validatedRow?.tarih,
           saat: date.saat || validatedRow?.saat,
           yeniKm: validatedRow?.yeniKm,
-          eskiKm: item.eskiKm,
         };
       });
 
-      setDataSource(modifiedData);
-
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: res?.data.total_count,
-        },
-      });
-
-      setStatus(false);
+      if (newData?.length > 0) {
+        setDataSource(newData);
+        setTableParams({
+          ...tableParams,
+          pagination: {
+            ...tableParams.pagination,
+            total: total,
+            current: targetPage,
+          },
+        });
+      } else {
+        message.warning("No data found.");
+        setDataSource([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      message.error("An error occurred while fetching data.");
+    } finally {
       setLoading(false);
-    });
-  }, [status, tableParams.pagination.current, date]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(0, 1);
+  }, []);
+
+  useEffect(() => {
+    if (status) {
+      fetchData(0, 1);
+      setStatus(false);
+    }
+  }, [status]);
+
+  const handleTableChange = (pagination) => {
+    const diff = pagination.current - currentPage;
+    fetchData(diff, pagination.current);
+  };
 
   const handleSave = async (row) => {
     try {
@@ -367,7 +402,7 @@ const KmUpdate = () => {
           kaynak: "GÜNCELLEME",
           dorse: true,
           aciklama: "",
-          lokasyonId: row.lokasyonId,
+          lokasyonId: item.lokasyonId,
         };
 
         if (body.tarih && body.saat && body.yeniKm) {
@@ -422,40 +457,6 @@ const KmUpdate = () => {
           nextCell.click();
         }
       }
-    }
-  };
-
-  const handleTableChange = (pagination, filters, sorter) => {
-    GetKmUpdateListService(pagination.current, filter).then((res) => {
-      const modifiedData = res?.data.km_list.map((item) => {
-        const rows = [...validatedRows, ...errorRows];
-        const validatedRow = rows.find((row) => row.kmAracId === item.aracId);
-        return {
-          aracId: item.aracId,
-          aracTip: item.aracTip,
-          marka: item.marka,
-          model: item.model,
-          lokasyon: item.lokasyon,
-          departman: item.departman,
-          guncelKm: item.guncelKm,
-          plaka: item.plaka,
-          tarih: validatedRow?.tarih || date.tarih,
-          saat: validatedRow?.saat || date.saat,
-          yeniKm: validatedRow?.yeniKm,
-        };
-      });
-
-      setDataSource(modifiedData);
-    });
-
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
-
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      setDataSource([]);
     }
   };
 
@@ -521,70 +522,10 @@ const KmUpdate = () => {
   };
 
   const getData = () => {
-    GetKmUpdateListService(tableParams.pagination.current, filter).then((res) => {
-      const modifiedData = res?.data.km_list.map((item) => {
-        const rows = [...validatedRows, ...errorRows];
-        const validatedRow = rows.find((row) => row.kmAracId === item.aracId);
-        return {
-          aracId: item.aracId,
-          aracTip: item.aracTip,
-          marka: item.marka,
-          model: item.model,
-          lokasyon: item.lokasyon,
-          departman: item.departman,
-          guncelKm: item.guncelKm,
-          plaka: item.plaka,
-          tarih: validatedRow?.tarih || date.tarih,
-          saat: validatedRow?.saat || date.saat,
-          yeniKm: validatedRow?.yeniKm,
-        };
-      });
-
-      setDataSource(modifiedData);
-
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: res?.data.total_count,
-        },
-      });
-
-      setStatus(false);
-    });
+    fetchData(0, 1);
   };
   const clear = () => {
-    GetKmUpdateListService(tableParams.pagination.current, null).then((res) => {
-      const modifiedData = res?.data.km_list.map((item) => {
-        const rows = [...validatedRows, ...errorRows];
-        const validatedRow = rows.find((row) => row.kmAracId === item.aracId);
-        return {
-          aracId: item.aracId,
-          aracTip: item.aracTip,
-          marka: item.marka,
-          model: item.model,
-          lokasyon: item.lokasyon,
-          departman: item.departman,
-          guncelKm: item.guncelKm,
-          plaka: item.plaka,
-          tarih: validatedRow?.tarih || date.tarih,
-          saat: validatedRow?.saat || date.saat,
-          yeniKm: validatedRow?.yeniKm,
-        };
-      });
-
-      setDataSource(modifiedData);
-
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: res?.data.total_count,
-        },
-      });
-
-      setStatus(false);
-    });
+    fetchData(0, 1);
     setFilter({ plaka: "", aracTip: "", lokasyon: "", departman: "" });
   };
 
@@ -652,13 +593,14 @@ const KmUpdate = () => {
       </div>
 
       <div className="content settings">
-        <p className="count">[ {tableParams?.pagination.total} kayıt ]</p>
         <Table
           components={components}
           rowClassName={() => "editable-row"}
           pagination={{
             ...tableParams.pagination,
-            showTotal: (total) => <p className="text-info">[{total} kayıt]</p>,
+            showTotal: (total) => `Toplam ${total}`,
+            showSizeChanger: false,
+            showQuickJumper: true,
           }}
           dataSource={dataSource}
           columns={columns}
